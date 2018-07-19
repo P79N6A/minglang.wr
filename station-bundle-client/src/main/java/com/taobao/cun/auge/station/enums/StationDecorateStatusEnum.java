@@ -23,6 +23,17 @@ public class StationDecorateStatusEnum  implements Serializable {
 	public static final StationDecorateStatusEnum NO_ORDER = new StationDecorateStatusEnum("NO_ORDER", "未下单");
 	public static final StationDecorateStatusEnum WAIT_PAY = new StationDecorateStatusEnum("WAIT_PAY", "待付款");
 	
+	public static final StationDecorateStatusEnum WAIT_DESIGN_UPLOAD = new StationDecorateStatusEnum("WAIT_DESIGN_UPLOAD", "装修设计图纸待上传");
+	public static final StationDecorateStatusEnum WAIT_DESIGN_AUDIT = new StationDecorateStatusEnum("WAIT_DESIGN_AUDIT", "装修设计图纸待审核");
+	public static final StationDecorateStatusEnum DESIGN_AUDIT_PASS = new StationDecorateStatusEnum("DESIGN_AUDIT_PASS", "装修设计图纸审核通过");
+	public static final StationDecorateStatusEnum DESIGN_AUDIT_NOT_PASS = new StationDecorateStatusEnum("DESIGN_AUDIT_PASS", "装修设计图纸审核不通过");
+
+	public static final StationDecorateStatusEnum WAIT_CHECK_UPLOAD = new StationDecorateStatusEnum("WAIT_CHECK_UPLOAD", "装修完工待上传");
+	public static final StationDecorateStatusEnum WAIT_CHECK_AUDIT = new StationDecorateStatusEnum("WAIT_CHECK_AUDIT", "装修完工待审核");
+	public static final StationDecorateStatusEnum CHECK_AUDIT_PASS = new StationDecorateStatusEnum("CHECK_AUDIT_PASS", "装修完工审核通过");
+	public static final StationDecorateStatusEnum CHECK_AUDIT_NOT_PASS = new StationDecorateStatusEnum("CHECK_AUDIT_NOT_PASS", "装修完工审核不通过");
+
+	
 	private static final Map<String, StationDecorateStatusEnum> mappings = new HashMap<String, StationDecorateStatusEnum>();
 	
 	static {
@@ -34,6 +45,16 @@ public class StationDecorateStatusEnum  implements Serializable {
 		mappings.put("NO_ORDER", NO_ORDER);
 		mappings.put("WAIT_PAY", WAIT_PAY);
 		mappings.put("AUDIT_NOT_PASS", AUDIT_NOT_PASS);
+		
+		mappings.put("WAIT_DESIGN_UPLOAD", WAIT_DESIGN_UPLOAD);
+		mappings.put("WAIT_DESIGN_AUDIT", WAIT_DESIGN_AUDIT);
+		mappings.put("DESIGN_AUDIT_PASS", DESIGN_AUDIT_PASS);
+		mappings.put("DESIGN_AUDIT_NOT_PASS", DESIGN_AUDIT_NOT_PASS);
+		
+		mappings.put("WAIT_CHECK_UPLOAD", WAIT_CHECK_UPLOAD);
+		mappings.put("WAIT_CHECK_AUDIT", WAIT_CHECK_AUDIT);
+		mappings.put("CHECK_AUDIT_PASS", CHECK_AUDIT_PASS);
+		mappings.put("CHECK_AUDIT_NOT_PASS", CHECK_AUDIT_NOT_PASS);
 	}
 
 	private String code;

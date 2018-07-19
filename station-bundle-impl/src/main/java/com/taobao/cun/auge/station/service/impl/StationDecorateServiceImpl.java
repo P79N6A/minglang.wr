@@ -39,14 +39,18 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
+import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
@@ -549,4 +553,68 @@ public class StationDecorateServiceImpl implements StationDecorateService {
     		stationDecorateBO.addStationDecorate(stationDecorateDto);
     	}
     }
+
+	
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Long uploadStationDecorateDesign(StationDecorateDesignDto stationDecorateDesignDto) {
+		Long result = stationDecorateBO.uploadStationDecorateDesign(stationDecorateDesignDto);
+		if(result != null){
+			 StartProcessDto startProcessDto =new StartProcessDto();
+		       startProcessDto.setBusiness(ProcessBusinessEnum.decorationDesignAudit);
+		       startProcessDto.setBusinessId(result);
+		       Station station=stationBO.getStationById(stationDecorateDesignDto.getStationId());
+		       startProcessDto.setBusinessName(station.getName()+station.getStationNum()+"自主装修设计图纸审批");
+		       startProcessDto.setBusinessOrgId(station.getApplyOrg());
+		       OperatorDto operator = new OperatorDto();
+		       operator.setOperator(stationDecorateDesignDto.getOperator());
+		       operator.setOperatorType(OperatorTypeEnum.HAVANA);
+		       startProcessDto.copyOperatorDto(operator);
+		       processService.startApproveProcess(startProcessDto);
+		}
+		return result;
+	}
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,
+			String auditOpinion) {
+		stationDecorateBO.auditStationDecorateDesign(stationId, approveResultEnum, auditOpinion);
+	}
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto) {
+		Long result = stationDecorateBO.uploadStationDecorateCheck(stationDecorateCheckDto);
+		if(result != null){
+			 StartProcessDto startProcessDto =new StartProcessDto();
+		       startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
+		       startProcessDto.setBusinessId(result);
+		       Station station=stationBO.getStationById(stationDecorateCheckDto.getStationId());
+		       startProcessDto.setBusinessName(station.getName()+station.getStationNum()+"自主装修完工审批");
+		       startProcessDto.setBusinessOrgId(station.getApplyOrg());
+		       OperatorDto operator = new OperatorDto();
+		       operator.setOperator(stationDecorateCheckDto.getOperator());
+		       operator.setOperatorType(OperatorTypeEnum.HAVANA);
+		       startProcessDto.copyOperatorDto(operator);
+		       processService.startApproveProcess(startProcessDto);
+		}
+		return result;
+	}
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void auditStationDecorateCheck(Long stationId, ProcessApproveResultEnum approveResultEnum,
+			String auditOpinion) {
+		stationDecorateBO.auditStationDecorateCheck(stationId, approveResultEnum, auditOpinion);
+		StationDecorate sd = stationDecorateBO.getStationDecorateByStationId(stationId);
+		StationDecorateAuditDto stationDecorateAuditDto = new StationDecorateAuditDto();
+		stationDecorateAuditDto.setAuditOpinion(auditOpinion);
+		stationDecorateAuditDto.setId(sd.getId());
+		stationDecorateAuditDto.setOperator("system");
+		stationDecorateAuditDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+		stationDecorateAuditDto.setIsAgree(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())?true:false);
+		setLifecycleDecorate(stationDecorateAuditDto, sd);
+	}
 }

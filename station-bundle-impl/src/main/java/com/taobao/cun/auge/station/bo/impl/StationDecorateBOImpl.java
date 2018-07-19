@@ -6,6 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -30,19 +37,17 @@ import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
+import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import com.taobao.cun.common.operator.OperatorTypeEnum;
 
 
 @Component("stationDecorateBO")
@@ -76,14 +81,11 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			//更新历史装修记录的有效性状态
 			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
-			//添加店铺id,仅自费装修需要添加
-			if (record.getSellerTaobaoUserId() == null
-					&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-							record.getPaymentType())) {
-				record.setSellerTaobaoUserId(getSeller(stationId));
-			}
 			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
 			record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
+			record.setDesignAuditStatus(StationDecorateStatusEnum.WAIT_DESIGN_UPLOAD.getCode());
+			record.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode());
+			record.setPartnerUserId(stationDecorateDto.getPartnerUserId());
 			DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
 			stationDecorateMapper.insert(record);
 			return record;
@@ -358,6 +360,119 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			sd.setStatus(StationDecorateStatusEnum.INVALID.getCode());
 			stationDecorateMapper.updateByPrimaryKey(sd);
 		}
+	}
+
+
+
+	@Override
+	public Long uploadStationDecorateDesign(StationDecorateDesignDto stationDecorateDesignDto) {
+		StationDecorate record = this.getStationDecorateByStationId(stationDecorateDesignDto.getStationId());
+		if(record == null){
+			return null;
+		}
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setMallArea(stationDecorateDesignDto.getMallArea());
+		updateRecord.setRepoArea(stationDecorateDesignDto.getRepoArea());
+		updateRecord.setRentMoney(stationDecorateDesignDto.getRentMoney());
+		updateRecord.setBudgetMoney(stationDecorateDesignDto.getBudgetMoney());
+		updateRecord.setDesignAuditStatus(StationDecorateStatusEnum.WAIT_DESIGN_AUDIT.getCode());
+		updateRecord.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
+		DomainUtils.beforeUpdate(updateRecord, stationDecorateDesignDto.getOperator());
+		
+		com.taobao.cun.common.operator.OperatorDto  operatorDto = new com.taobao.cun.common.operator.OperatorDto();
+		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		operatorDto.setOperator(stationDecorateDesignDto.getOperator());
+		if(stationDecorateDesignDto.getDoorAttachments() != null){
+			List<Long> doorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getDoorAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setDoorAttachments(StringUtils.join(doorAttachmentIds, ","));
+		}
+		if(stationDecorateDesignDto.getWallAttachments() !=null){
+			List<Long> wallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getWallAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setWallAttachments(StringUtils.join(wallAttachmentIds, ","));
+		}
+		if(stationDecorateDesignDto.getWallAttachments() != null){
+			List<Long> insideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getInsideAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setInsideAttachments(StringUtils.join(insideAttachmentIds, ","));
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+		return updateRecord.getId();
+	}
+
+	@Override
+	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion) {
+		StationDecorate record= this.getStationDecorateByStationId(stationId);
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setDesignAuditStatus(approveResultEnum.getCode());
+		updateRecord.setDesignAuditOpinion(auditOpinion);
+		if(approveResultEnum.getCode().equals(ProcessApproveResultEnum.APPROVE_PASS)){
+			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
+		}else{
+			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
+			updateRecord.setAuditOpinion(auditOpinion);
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+	}
+
+	@Override
+	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto) {
+		StationDecorate record = this.getStationDecorateByStationId(stationDecorateCheckDto.getStationId());
+		if(record == null){
+			return null;
+		}
+		StationDecorate updateRecord = new StationDecorate();
+		DomainUtils.beforeUpdate(updateRecord, stationDecorateCheckDto.getOperator());
+		updateRecord.setId(record.getId());
+		com.taobao.cun.common.operator.OperatorDto  operatorDto = new com.taobao.cun.common.operator.OperatorDto();
+		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		operatorDto.setOperator(stationDecorateCheckDto.getOperator());
+		record.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
+		updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
+		if(stationDecorateCheckDto.getCheckDoorAttachments() != null){
+			List<Long> checkDoorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckDoorAttachments(StringUtils.join(checkDoorAttachmentIds, ","));
+		}
+		if(stationDecorateCheckDto.getCheckWallAttachments() !=null){
+			List<Long> checkWallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckWallAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckWallAttachments(StringUtils.join(checkWallAttachmentIds, ","));
+		}
+		if(stationDecorateCheckDto.getCheckOutsideAttachments() != null){
+			List<Long> checkOutsideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckOutsideAttachments(StringUtils.join(checkOutsideAttachmentIds, ","));
+		}
+		if(stationDecorateCheckDto.getCheckDeskAttachments() != null){
+			List<Long> checkDeskAttachmenIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDeskAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckDeskAttachments(StringUtils.join(checkDeskAttachmenIds, ","));
+		}
+		if(stationDecorateCheckDto.getCheckInsideVideoAttachments() != null){
+			List<Long> checkInsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckInsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckInsideVideo(StringUtils.join(checkInsideVideoAttachmentIds, ","));
+		}
+		
+		if(stationDecorateCheckDto.getCheckOutsideVideoAttachments() != null){
+			List<Long> checkOutsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			updateRecord.setCheckOutsideVideo(StringUtils.join(checkOutsideVideoAttachmentIds, ","));
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+		return updateRecord.getId();
+	}
+
+	@Override
+	public void auditStationDecorateCheck(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion) {
+		StationDecorate record= this.getStationDecorateByStationId(stationId);
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
+		updateRecord.setCheckAuditOpinion(auditOpinion);
+		if(approveResultEnum.getCode().equals(ProcessApproveResultEnum.APPROVE_PASS)){
+			updateRecord.setReflectSatisfySolid("y");
+			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
+		}else{
+			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
+			updateRecord.setAuditOpinion(auditOpinion);
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 	}
 
 	
