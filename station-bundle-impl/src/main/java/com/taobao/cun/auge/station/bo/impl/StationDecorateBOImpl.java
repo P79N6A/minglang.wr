@@ -384,15 +384,15 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		operatorDto.setOperator(stationDecorateDesignDto.getOperator());
 		if(stationDecorateDesignDto.getDoorAttachments() != null){
-			List<Long> doorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getDoorAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> doorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getDoorAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_DESIGN, operatorDto);
 			updateRecord.setDoorAttachments(StringUtils.join(doorAttachmentIds, ","));
 		}
 		if(stationDecorateDesignDto.getWallAttachments() !=null){
-			List<Long> wallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getWallAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> wallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getWallAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_DESIGN, operatorDto);
 			updateRecord.setWallAttachments(StringUtils.join(wallAttachmentIds, ","));
 		}
 		if(stationDecorateDesignDto.getWallAttachments() != null){
-			List<Long> insideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getInsideAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> insideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateDesignDto.getInsideAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_DESIGN, operatorDto);
 			updateRecord.setInsideAttachments(StringUtils.join(insideAttachmentIds, ","));
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
@@ -430,28 +430,28 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		record.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
 		updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
 		if(stationDecorateCheckDto.getCheckDoorAttachments() != null){
-			List<Long> checkDoorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkDoorAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckDoorAttachments(StringUtils.join(checkDoorAttachmentIds, ","));
 		}
 		if(stationDecorateCheckDto.getCheckWallAttachments() !=null){
-			List<Long> checkWallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckWallAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkWallAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckWallAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckWallAttachments(StringUtils.join(checkWallAttachmentIds, ","));
 		}
 		if(stationDecorateCheckDto.getCheckOutsideAttachments() != null){
-			List<Long> checkOutsideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkOutsideAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckOutsideAttachments(StringUtils.join(checkOutsideAttachmentIds, ","));
 		}
 		if(stationDecorateCheckDto.getCheckDeskAttachments() != null){
-			List<Long> checkDeskAttachmenIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDeskAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkDeskAttachmenIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckDeskAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckDeskAttachments(StringUtils.join(checkDeskAttachmenIds, ","));
 		}
 		if(stationDecorateCheckDto.getCheckInsideVideoAttachments() != null){
-			List<Long> checkInsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckInsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkInsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckInsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckInsideVideo(StringUtils.join(checkInsideVideoAttachmentIds, ","));
 		}
 		
 		if(stationDecorateCheckDto.getCheckOutsideVideoAttachments() != null){
-			List<Long> checkOutsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, operatorDto);
+			List<Long> checkOutsideVideoAttachmentIds = criusAttachmentService.modifyAttachementBatch(stationDecorateCheckDto.getCheckOutsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK, operatorDto);
 			updateRecord.setCheckOutsideVideo(StringUtils.join(checkOutsideVideoAttachmentIds, ","));
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);

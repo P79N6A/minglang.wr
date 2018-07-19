@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.china.member.service.models.MemberModel;
@@ -16,7 +17,9 @@ import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -459,9 +462,28 @@ public class StationDecorateServiceImpl implements StationDecorateService {
                 sdDto.setStationDto(StationConverter.toStationDto(s));
             }
         }
+        List<AttachmentDto> designAttachments = criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATION_DESIGN);
+        sdDto.setDoorAttachments(getAttachmentsByType(designAttachments,AttachmentTypeIdEnum.DESIGN_DECORATION_DOOR));
+        sdDto.setWallAttachments(getAttachmentsByType(designAttachments,AttachmentTypeIdEnum.DESIGN_DECORATION_WALL));
+        sdDto.setInsideAttachments(getAttachmentsByType(designAttachments,AttachmentTypeIdEnum.DESIGN_DECORATION_INSIDE));
+        
+        List<AttachmentDto> checkAttachments = criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
+        sdDto.setCheckDeskAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_DESK));
+        sdDto.setCheckDoorAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR));
+        sdDto.setCheckWallAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_WALL));
+        sdDto.setCheckOutsideAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE));
+        sdDto.setCheckInsideVideoAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO));
+        sdDto.setCheckOutsideVideoAttachments(getAttachmentsByType(checkAttachments,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO));
         return sdDto;
     }
 
+    private  List<AttachmentDto> getAttachmentsByType(List<AttachmentDto> attachments,AttachmentTypeIdEnum type){
+    	if(attachments == null){
+    		return null;
+    	}
+    	return attachments.stream().filter(att-> type.getCode().equals(att.getAttachmentTypeId().getCode())).collect(Collectors.toList());
+    }
+    
     public DecorationInfoDecisionDto getDecorationDecisionById(Long id) {
         ValidateUtils.notNull(id);
         DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);

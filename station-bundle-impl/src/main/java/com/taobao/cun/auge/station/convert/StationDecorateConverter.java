@@ -46,6 +46,10 @@ public class StationDecorateConverter {
 		stationDecorateDto.setReflectSatisfySolid(stationDecorate.getReflectSatisfySolid());
 		stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.valueof(stationDecorate.getPaymentType()));
 		stationDecorateDto.setDecorateType(StationDecorateTypeEnum.valueof(stationDecorate.getDecorateType()));
+		stationDecorateDto.setRentMoney(stationDecorate.getRentMoney());
+		stationDecorateDto.setBudgetMoney(stationDecorate.getBudgetMoney());
+		stationDecorateDto.setMallArea(stationDecorate.getMallArea());
+		stationDecorateDto.setInsideArea(stationDecorate.getInsideArea());
 		return stationDecorateDto;
 	}
 

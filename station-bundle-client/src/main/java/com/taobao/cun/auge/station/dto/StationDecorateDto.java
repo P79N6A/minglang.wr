@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -129,6 +130,74 @@ public class StationDecorateDto  extends OperatorDto {
 	
 	private StationDecorateTypeEnum decorateType;
 
+	
+	/**
+	 * 卖场面积
+	 */
+	private String mallArea;
+	
+	/**
+	 * 仓库面积
+	 */
+	private String repoArea;
+	
+	/**
+	 * 租金
+	 */
+	private BigDecimal rentMoney;
+	
+	/**
+	 * 预算
+	 */
+	private BigDecimal budgetMoney;
+	
+	/**
+	 * 设计门头附件
+	 */
+	private List<AttachmentDto> doorAttachments;
+	
+	/**
+	 * 设计背景墙附件
+	 */
+	private List<AttachmentDto> wallAttachments;
+	
+	/**
+	 * 设计室内图附件
+	 */
+	private List<AttachmentDto> insideAttachments;
+	
+	
+	private List<AttachmentDto> checkDoorAttachments;
+	
+	/**
+	 * 反馈背景墙附件
+	 */
+	private List<AttachmentDto> checkWallAttachments;
+	
+	/**
+	 * 反馈室外全景图附件
+	 */
+	private List<AttachmentDto> checkOutsideAttachments;
+	
+	
+	/**
+	 * 反馈前台桌附件
+	 */
+	private List<AttachmentDto> checkDeskAttachments;
+	
+	
+	/**
+	 * 反馈室外视频附件
+	 */
+	private List<AttachmentDto> checkOutsideVideoAttachments;
+	
+	
+	/**
+	 * 反馈室内视频附件
+	 */
+	private List<AttachmentDto> checkInsideVideoAttachments;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -320,5 +389,109 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setAttachments(List<AttachmentDto> attachments) {
 		this.attachments = attachments;
+	}
+
+	public String getMallArea() {
+		return mallArea;
+	}
+
+	public void setMallArea(String mallArea) {
+		this.mallArea = mallArea;
+	}
+
+	public String getRepoArea() {
+		return repoArea;
+	}
+
+	public void setRepoArea(String repoArea) {
+		this.repoArea = repoArea;
+	}
+
+	public BigDecimal getRentMoney() {
+		return rentMoney;
+	}
+
+	public void setRentMoney(BigDecimal rentMoney) {
+		this.rentMoney = rentMoney;
+	}
+
+	public BigDecimal getBudgetMoney() {
+		return budgetMoney;
+	}
+
+	public void setBudgetMoney(BigDecimal budgetMoney) {
+		this.budgetMoney = budgetMoney;
+	}
+
+	public List<AttachmentDto> getDoorAttachments() {
+		return doorAttachments;
+	}
+
+	public void setDoorAttachments(List<AttachmentDto> doorAttachments) {
+		this.doorAttachments = doorAttachments;
+	}
+
+	public List<AttachmentDto> getWallAttachments() {
+		return wallAttachments;
+	}
+
+	public void setWallAttachments(List<AttachmentDto> wallAttachments) {
+		this.wallAttachments = wallAttachments;
+	}
+
+	public List<AttachmentDto> getInsideAttachments() {
+		return insideAttachments;
+	}
+
+	public void setInsideAttachments(List<AttachmentDto> insideAttachments) {
+		this.insideAttachments = insideAttachments;
+	}
+
+	public List<AttachmentDto> getCheckDoorAttachments() {
+		return checkDoorAttachments;
+	}
+
+	public void setCheckDoorAttachments(List<AttachmentDto> checkDoorAttachments) {
+		this.checkDoorAttachments = checkDoorAttachments;
+	}
+
+	public List<AttachmentDto> getCheckWallAttachments() {
+		return checkWallAttachments;
+	}
+
+	public void setCheckWallAttachments(List<AttachmentDto> checkWallAttachments) {
+		this.checkWallAttachments = checkWallAttachments;
+	}
+
+	public List<AttachmentDto> getCheckOutsideAttachments() {
+		return checkOutsideAttachments;
+	}
+
+	public void setCheckOutsideAttachments(List<AttachmentDto> checkOutsideAttachments) {
+		this.checkOutsideAttachments = checkOutsideAttachments;
+	}
+
+	public List<AttachmentDto> getCheckDeskAttachments() {
+		return checkDeskAttachments;
+	}
+
+	public void setCheckDeskAttachments(List<AttachmentDto> checkDeskAttachments) {
+		this.checkDeskAttachments = checkDeskAttachments;
+	}
+
+	public List<AttachmentDto> getCheckOutsideVideoAttachments() {
+		return checkOutsideVideoAttachments;
+	}
+
+	public void setCheckOutsideVideoAttachments(List<AttachmentDto> checkOutsideVideoAttachments) {
+		this.checkOutsideVideoAttachments = checkOutsideVideoAttachments;
+	}
+
+	public List<AttachmentDto> getCheckInsideVideoAttachments() {
+		return checkInsideVideoAttachments;
+	}
+
+	public void setCheckInsideVideoAttachments(List<AttachmentDto> checkInsideVideoAttachments) {
+		this.checkInsideVideoAttachments = checkInsideVideoAttachments;
 	}
 }
