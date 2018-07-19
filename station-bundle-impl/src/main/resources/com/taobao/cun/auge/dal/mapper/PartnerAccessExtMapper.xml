@@ -11,6 +11,7 @@
 	from station a,cuntao_org c,
 	(select taobao_user_id from d_cun_notlogin_partner where stat_date > #{statDate} group by taobao_user_id having(count(0) = #{dayNum}))b
 	where a.taobao_user_id=b.taobao_user_id and a.is_deleted ='n' and a.apply_org=c.id and c.is_deleted='n'
+	and a.status in('SERVICING','DECORATING','QUITING','CLOSING')
 	<if test="fullIdPath != null">
 	and concat(temp_full_id_path, '/') like concat(#{fullIdPath}, '/%')
 	</if>
