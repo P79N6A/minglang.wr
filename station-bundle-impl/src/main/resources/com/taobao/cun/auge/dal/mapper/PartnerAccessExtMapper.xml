@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerAccessExtMapper">
+	<select id="queryPartnerAccessList" parameterType="int" resultType="com.taobao.cun.auge.data.partner.dto.PartnerAccessDto">
+		select type,total_num as totalNum,access_num as accessNum,percent_num as percentNum,stat_date as statDate 
+		from d_cun_partner_access where stat_date > #{statDate} order by stat_date asc
+	</select>
+	
+	<select id="queryUnLoginPartners" parameterType="map" resultType="com.taobao.cun.auge.data.partner.dto.UnLoginPartnerDto">
+	select a.name as stationName,a.taobao_user_id as taobaoUserId,a.id as stationId,c.id as orgId,c.temp_full_name_path as orgFullNamePath,a.status as state
+	from station a,cuntao_org c,
+	(select taobao_user_id from d_cun_notlogin_partner where stat_date > #{statDate} group by taobao_user_id having(count(0) = #{dayNum}))b
+	where a.taobao_user_id=b.taobao_user_id and a.is_deleted ='n' and a.apply_org=c.id and c.is_deleted='n'
+	and a.status in('SERVICING','DECORATING','QUITING','CLOSING')
+	<if test="fullIdPath != null">
+	and concat(temp_full_id_path, '/') like concat(#{fullIdPath}, '/%')
+	</if>
+	order by a.id desc
+	</select>
+</mapper>
