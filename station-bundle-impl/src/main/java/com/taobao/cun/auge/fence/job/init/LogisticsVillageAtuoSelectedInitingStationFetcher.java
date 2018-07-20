@@ -17,8 +17,6 @@ import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
  */
 @Component
 public class LogisticsVillageAtuoSelectedInitingStationFetcher extends AbstractInitingStationFetcher {
-	@Value("${fence.templateid.logistics.village.atuoselected}")
-	private Long templateId;
 	@Override
 	protected List<Station> getFenceInitingStations() {
 		FenceInitingStationQueryCondition condition = new FenceInitingStationQueryCondition();
@@ -30,7 +28,7 @@ public class LogisticsVillageAtuoSelectedInitingStationFetcher extends AbstractI
 	
 	@Override
 	protected Long getTemplateId() {
-		return templateId;
+		return fenceInitTemplateConfig.getTemplateIdLogisticsVillageAtuoselected();
 	}
 
 }

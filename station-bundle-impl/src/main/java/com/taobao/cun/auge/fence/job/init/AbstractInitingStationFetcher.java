@@ -17,6 +17,8 @@ import com.taobao.cun.auge.station.bo.StationBO;
 public abstract class AbstractInitingStationFetcher implements InitingStationFetcher {
 	@Resource
 	protected StationBO stationBO;
+	@Resource
+	protected FenceInitTemplateConfig fenceInitTemplateConfig;
 	
 	@Override
 	public InitingStation getInitingStations() {

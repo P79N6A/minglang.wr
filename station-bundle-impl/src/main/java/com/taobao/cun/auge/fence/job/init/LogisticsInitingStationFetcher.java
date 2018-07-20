@@ -2,7 +2,6 @@ package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -17,8 +16,6 @@ import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
  */
 @Component
 public class LogisticsInitingStationFetcher extends AbstractInitingStationFetcher {
-	@Value("${fence.templateid.logistics}")
-	private Long templateId;
 	@Override
 	protected List<Station> getFenceInitingStations() {
 		FenceInitingStationQueryCondition condition = new FenceInitingStationQueryCondition();
@@ -29,7 +26,7 @@ public class LogisticsInitingStationFetcher extends AbstractInitingStationFetche
 	
 	@Override
 	protected Long getTemplateId() {
-		return templateId;
+		return fenceInitTemplateConfig.getTemplateIdLogistics();
 	}
 
 }
