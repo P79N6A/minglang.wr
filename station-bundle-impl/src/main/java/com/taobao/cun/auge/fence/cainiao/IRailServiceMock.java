@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.fence.cainiao;
 
+import org.springframework.stereotype.Component;
+
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
 import com.cainiao.dms.sorting.api.model.RailInfoResult;
@@ -7,6 +9,7 @@ import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailQueryRequest;
 import com.cainiao.dms.sorting.common.dataobject.vo.RailSortingResult;
 
+@Component
 public class IRailServiceMock implements IRailService {
 
 	@Override
