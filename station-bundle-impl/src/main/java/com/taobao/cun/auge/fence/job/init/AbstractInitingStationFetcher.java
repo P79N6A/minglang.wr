@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.StationBO;
 
 /**
- * 站点初始化抽闲实现
+ * 站点初始化抽像实现
  * 
  * @author chengyu.zhoucy
  *
@@ -20,20 +21,25 @@ public abstract class AbstractInitingStationFetcher implements InitingStationFet
 	protected FenceInitTemplateConfig fenceInitTemplateConfig;
 	
 	@Override
-	public InitingStation getInitingStations() {
-		List<Station> stations = getFenceInitingStations();
-		return new InitingStation(stations, getTemplateId());
+	public List<InitingStation> getInitingStations() {
+		List<InitingStation> initingStations = Lists.newArrayList();
+		
+		for(Long templateId : getTemplateIds()) {
+			initingStations.add(new InitingStation(getFenceInitingStations(templateId), templateId));
+		}
+		
+		return initingStations;
 	}
-
 	/**
-	 * 获取默认模板ID
+	 * 获取模板ID列表
 	 * @return
 	 */
-	protected abstract Long getTemplateId();
-
+	protected abstract List<Long> getTemplateIds();
+	
 	/**
-	 * 查询需要初始化的站点
+	 * 查询站点
+	 * @param templateId
 	 * @return
 	 */
-	protected abstract List<Station> getFenceInitingStations();
+	protected abstract List<Station> getFenceInitingStations(Long templateId);
 }
