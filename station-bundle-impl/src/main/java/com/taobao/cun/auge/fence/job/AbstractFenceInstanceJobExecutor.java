@@ -327,7 +327,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 		String errorMsg = error.getMessage();
 		if(errorMsg == null) {
-			errorMsg = error.getCause().getMessage();
+			if(error.getCause() != null) {
+				errorMsg = error.getCause().getMessage();
+			}
 			if(errorMsg == null) {
 				errorMsg = error.getClass().getSimpleName();
 			}
