@@ -2,6 +2,8 @@ package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
@@ -12,6 +14,7 @@ import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
  * @author chengyu.zhoucy
  *
  */
+@Component
 public class TownYoupinInitingStationFetcher extends AbstractInitingStationFetcher {
 
 	@Override
