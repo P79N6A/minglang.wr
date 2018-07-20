@@ -2,8 +2,8 @@ package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.collect.Lists;
 
@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
  * @author chengyu.zhoucy
  *
  */
-@Configurable
+@Configuration
 public class FenceInitTemplateConfig {
 	/**
 	 * 收费围栏 - 镇级服务站默认收费围栏
