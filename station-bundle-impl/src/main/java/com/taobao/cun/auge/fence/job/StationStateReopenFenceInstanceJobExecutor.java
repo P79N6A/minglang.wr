@@ -1,8 +1,12 @@
 package com.taobao.cun.auge.fence.job;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
+import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 
 /**
@@ -15,6 +19,15 @@ import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 public class StationStateReopenFenceInstanceJobExecutor extends AbstractFenceInstanceJobExecutor<StationStateReopenFenceInstanceJob> {
 	@Override
 	protected int doExecute(StationStateReopenFenceInstanceJob fenceInstanceJob) {
-		return updateFenceStateByStation(fenceInstanceJob.getStationId(), FenceConstants.ENABLE);
+		int intanceNum = 0;
+		List<FenceEntity> fenceEntities = fenceEntityBO.getFenceEntitiesByStationId(fenceInstanceJob.getStationId());
+		for(FenceEntity fenceEntity : fenceEntities) {
+			FenceTemplateDto template = getFenceTemplate(fenceEntity.getTemplateId());
+			if(template.getState().equals(FenceConstants.ENABLE)) {
+				updateFenceState(fenceEntity, FenceConstants.ENABLE, fenceInstanceJob.getCreator());
+				intanceNum++;
+			}
+		}
+		return intanceNum;
 	}
 }

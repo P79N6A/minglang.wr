@@ -253,10 +253,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				if(station != null) {
 					try {
 						if(!isClosed(station)) {//如果站点是CLOSED、QUITING则不处理
-							//更新菜鸟的状态
-							updateCainiaoFenceState(fenceEntity, state);
-							//更新实例状态
-							fenceEntityBO.updateEntityState(fenceEntity.getId(), state, fenceInstanceJob.getCreator());
+							doUpdateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
 						}
 					}catch(Exception e) {
 						addExecuteError("update-template:state", station.getId(), templateId, e);
@@ -268,16 +265,29 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		return 0;
 	}
 	
+	private void doUpdateFenceState(FenceEntity fenceEntity, String state, String operator) {
+		//更新菜鸟的状态
+		updateCainiaoFenceState(fenceEntity, state);
+		//更新实例状态
+		fenceEntityBO.updateEntityState(fenceEntity.getId(), state, operator);
+	}
+	
+	protected void updateFenceState(FenceEntity fenceEntity, String state, String operator) {
+		try {
+			doUpdateFenceState(fenceEntity, state, operator);
+		}catch(Exception e) {
+			addExecuteError("update:state", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
+		}
+	}
+	
+	
 	protected int updateFenceStateByStation(Long stationId, String state) {
 		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
 		List<FenceEntity> fenceEntities = fenceEntityBO.getFenceEntitiesByStationId(stationId);
 		if(fenceEntities != null) {
 			for(FenceEntity fenceEntity : fenceEntities) {
 				try {
-					//更新菜鸟的状态
-					updateCainiaoFenceState(fenceEntity, state);
-					//更新实例状态
-					fenceEntityBO.updateEntityState(fenceEntity.getId(), state, fenceInstanceJob.getCreator());
+					doUpdateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
 				}catch(Exception e) {
 					addExecuteError("update-station:state", stationId, 0L, e);
 				}
