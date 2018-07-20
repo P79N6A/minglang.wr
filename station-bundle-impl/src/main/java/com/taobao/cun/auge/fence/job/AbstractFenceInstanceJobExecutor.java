@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.fence.job;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +20,6 @@ import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
-import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
@@ -324,15 +326,12 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		
-		String errorMsg = error.getMessage();
-		if(errorMsg == null) {
-			if(error.getCause() != null) {
-				errorMsg = error.getCause().getMessage();
-			}
-			if(errorMsg == null) {
-				errorMsg = error.getClass().getSimpleName();
-			}
+		String errorMsg = null;
+		try(StringWriter stringWriter = new StringWriter();PrintWriter printWriter = new PrintWriter(stringWriter)){
+			error.printStackTrace(printWriter);
+			errorMsg = stringWriter.toString();
+		} catch (IOException e) {
+			errorMsg = error.getMessage();
 		}
 		threadLocal.get().add(new ExecuteError(action, stationId, templateId, errorMsg));
 	}
