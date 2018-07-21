@@ -324,7 +324,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getRootCauseMessage(error)));
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getStackTrace(error)));
 	}
 	
 	static class ExecuteError{
