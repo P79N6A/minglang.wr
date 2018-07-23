@@ -149,7 +149,7 @@
 	<if test="county != null and county != ''"> and a.county=#{county,jdbcType=VARCHAR}</if>
 	<if test="town != null and town != ''"> and a.town=#{town,jdbcType=VARCHAR}</if>
 	
-	<if test="stationTypes != null"> and 
+	<if test="stationTypes != null and stationTypes.size()>0"> and 
 		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
 			<if test="type == 'TP'">
 				c.type='TP'
@@ -162,10 +162,10 @@
 			</if>
 		</foreach>
 	</if>
-	<if test="stationStatus != null"> and a.status in
+	<if test="stationStatus != null and stationStatus.size() > 0"> and a.status in
 		<foreach collection="stationStatus" open="(" close=")" item="status" separator=","> #{status}</foreach>
 	</if>
-	<if test="stationLocations != null"> and 
+	<if test="stationLocations != null and stationLocations.size()>0"> and 
 		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
 			<if test="stationLocation == 'town'">
 			a.is_on_town = 'y'
@@ -186,7 +186,7 @@
 	]]>
 	and a.status in('SERVICING','DECORATING')
 	and b.state in('SERVICING','DECORATING')
-	<if test="stationTypes != null"> and 
+	<if test="stationTypes != null and stationTypes.size()>0"> and 
 		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
 			<if test="type == 'TP'">
 				b.type='TP'
@@ -199,7 +199,7 @@
 			</if>
 		</foreach>
 	</if>
-	<if test="stationLocations != null"> and 
+	<if test="stationLocations != null and stationLocations.size()>0"> and 
 		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
 			<if test="stationLocation == 'town'">
 			a.is_on_town = 'y'
