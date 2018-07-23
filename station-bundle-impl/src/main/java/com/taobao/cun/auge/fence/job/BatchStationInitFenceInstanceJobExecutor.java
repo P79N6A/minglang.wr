@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.fence.job;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,16 +29,22 @@ public class BatchStationInitFenceInstanceJobExecutor extends AbstractFenceInsta
 		int instanceNum = 0;
 		Map<String, InitingStationFetcher> map = applicationContext.getBeansOfType(InitingStationFetcher.class);
 		for(InitingStationFetcher initingStationFetcher : map.values()) {
-			InitingStation initingStation = initingStationFetcher.getInitingStations();
-			if(CollectionUtils.isNotEmpty(initingStation.getStations())) {
-				for(Station station : initingStation.getStations()) {
-					newFenceEntity(station.getId(), initingStation.getTemplateId());
-				}
-				
-				instanceNum += initingStation.getStations().size();
+			for(InitingStation initingStation : initingStationFetcher.getInitingStations()) {
+				instanceNum += init(initingStation);
 			}
 		}
 		return instanceNum;
+	}
+	
+	private int init(InitingStation initingStation) {
+		if(CollectionUtils.isNotEmpty(initingStation.getStations())) {
+			for(Station station : initingStation.getStations()) {
+				newFenceEntity(station.getId(), initingStation.getTemplateId());
+			}
+			return initingStation.getStations().size();
+		}else {
+			return 0;
+		}
 	}
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

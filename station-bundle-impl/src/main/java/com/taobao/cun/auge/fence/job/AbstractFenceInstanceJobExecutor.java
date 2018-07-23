@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
-import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
@@ -106,7 +106,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
-		if(!checkStation(station)) {
+		if(!isServicing(station)) {
 			return;
 		}
 		
@@ -139,14 +139,29 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param station
 	 * @return
 	 */
-	private boolean checkStation(Station station) {
+	private boolean isServicing(Station station) {
 		if(station == null) {
 			return false;
 		}
 		if(station.getStatus().equals(StationStatusEnum.DECORATING.getCode()) || 
-				station.getStatus().equals(StationStatusEnum.SERVICING.getCode()) ||
-				station.getStatus().equals(StationStatusEnum.QUITING.getCode()) ||
-				station.getStatus().equals(StationStatusEnum.CLOSING.getCode())) {
+				station.getStatus().equals(StationStatusEnum.SERVICING.getCode())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 检查站点状态
+	 * @param station
+	 * @return
+	 */
+	private boolean isClosed(Station station) {
+		if(station == null) {
+			return false;
+		}
+		if(station.getStatus().equals(StationStatusEnum.CLOSED.getCode()) || 
+				station.getStatus().equals(StationStatusEnum.QUITING.getCode())||
+				station.getStatus().equals(StationStatusEnum.QUIT.getCode())){
 			return true;
 		}
 		return false;
@@ -229,18 +244,53 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 	}
 	
-	protected int updateFenceState(Long templateId, String state) {
+	protected int updateFenceStateByTemplate(Long templateId, String state) {
 		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
-		if(FenceConstants.ENABLE.equals(state)) {
-			fenceEntityBO.enableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
-		}else {
-			fenceEntityBO.disableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
-		}
 		List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
 		if(fenceEntities != null) {
 			for(FenceEntity fenceEntity : fenceEntities) {
-				//更新菜鸟的状态
-				updateCainiaoFenceState(fenceEntity, state);
+				Station station = stationBo.getStationById(fenceEntity.getStationId());
+				if(station != null) {
+					try {
+						if(!isClosed(station)) {//如果站点是CLOSED、QUITING则不处理
+							doUpdateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
+						}
+					}catch(Exception e) {
+						addExecuteError("update-template:state", station.getId(), templateId, e);
+					}
+				}
+			}
+			return fenceEntities.size();
+		}
+		return 0;
+	}
+	
+	private void doUpdateFenceState(FenceEntity fenceEntity, String state, String operator) {
+		//更新菜鸟的状态
+		updateCainiaoFenceState(fenceEntity, state);
+		//更新实例状态
+		fenceEntityBO.updateEntityState(fenceEntity.getId(), state, operator);
+	}
+	
+	protected void updateFenceState(FenceEntity fenceEntity, String state, String operator) {
+		try {
+			doUpdateFenceState(fenceEntity, state, operator);
+		}catch(Exception e) {
+			addExecuteError("update:state", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
+		}
+	}
+	
+	
+	protected int updateFenceStateByStation(Long stationId, String state) {
+		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
+		List<FenceEntity> fenceEntities = fenceEntityBO.getFenceEntitiesByStationId(stationId);
+		if(fenceEntities != null) {
+			for(FenceEntity fenceEntity : fenceEntities) {
+				try {
+					doUpdateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
+				}catch(Exception e) {
+					addExecuteError("update-station:state", stationId, 0L, e);
+				}
 			}
 			return fenceEntities.size();
 		}
@@ -274,7 +324,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error.getMessage()));
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getStackTrace(error)));
 	}
 	
 	static class ExecuteError{

@@ -2,7 +2,6 @@ package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -10,27 +9,31 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
 
 /**
- * 物流围栏 - 绑定同镇推荐围栏
+ * 镇上的服务站（普通服务站、优品服务站）
  * 
  * @author chengyu.zhoucy
  *
  */
 @Component
-public class LogisticsTownInitingStationFetcher extends AbstractInitingStationFetcher {
-	@Value("${fence.templateid.logistics.town}")
-	private Long templateId;
+public class TownStationInitingStationFetcher extends AbstractInitingStationFetcher {
+
 	@Override
-	protected List<Station> getFenceInitingStations() {
+	protected List<Long> getTemplateIds() {
+		return Lists.newArrayList(
+			fenceInitTemplateConfig.getTemplateIdFeeTown(),
+			fenceInitTemplateConfig.getTemplateIdLogistics(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsTown(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsTownAtuoselected()
+		);
+	}
+
+	@Override
+	protected List<Station> getFenceInitingStations(Long templateId) {
 		FenceInitingStationQueryCondition condition = new FenceInitingStationQueryCondition();
 		condition.setStationLocations(Lists.newArrayList("town"));
 		condition.setStationTypes(Lists.newArrayList("TP"));
-		condition.setTemplateId(getTemplateId());
+		condition.setTemplateId(templateId);
 		return stationBO.getFenceInitingStations(condition);
-	}
-	
-	@Override
-	protected Long getTemplateId() {
-		return templateId;
 	}
 
 }
