@@ -530,6 +530,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 					// 集团资产变更责任人
 					changeOwner(updateAsset);
 					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+						logger.info("sync asset begin,a.getStatus()={}", a.getStatus());
 						Long assetId1 = a.getId();
 						// 如果有入库单 检查 是否删除入库单
 						AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId1);
