@@ -408,11 +408,11 @@ public class HsfConsumer2ndPartyConfiguration  {
            return context.hsfConsumerBuilder(StoreService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
-    /*
+    
     @Bean
     public IRailService iRailService(HsfConsumerContext context, @Value("${hsf.irailService.version}") String version) {
            return context.hsfConsumerBuilder(IRailService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
-    }*/
+    }
     
 }

@@ -9,7 +9,7 @@ import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailQueryRequest;
 import com.cainiao.dms.sorting.common.dataobject.vo.RailSortingResult;
 
-@Component
+//@Component
 public class IRailServiceMock implements IRailService {
 
 	@Override
