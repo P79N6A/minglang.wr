@@ -3,26 +3,39 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExt;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelExtMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelMapper;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.dto.PartnerProtocolDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerProtocolQueryService;
+import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 @Service("partnerProtocolQueryService")
 @HSFProvider(serviceInterface = PartnerProtocolQueryService.class)
 public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryService{
 
 	@Autowired
 	PartnerProtocolRelExtMapper partnerProtocolRelExtMapper;
+	
+	@Autowired
+	PartnerProtocolRelBO partnerProtocolRelBO;	
+	
+	@Autowired
+	private PartnerApplyService partnerApplyService;
 	
 	@Override
 	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId){
@@ -77,6 +90,19 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
 		
 		partnerProDto.setProtocol(pDto);
 		return partnerProDto;
+	}
+
+	@Override
+	public Boolean querySignedProjectNoticeProtocol(Long taobaoUserId) {
+		 ValidateUtils.notNull(taobaoUserId);
+		 PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
+         Assert.notNull(paDto, "partner apply not exists");
+        
+         PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+         if (pprDto != null) {
+        	 return Boolean.TRUE;
+         }
+         return Boolean.FALSE;
 	}
 
 }

@@ -477,6 +477,10 @@
             <groupId>com.taobao.union</groupId>
             <artifactId>union-api-client</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>com.alibaba.dw.shared</groupId>
+		    <artifactId>openapi-lib</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

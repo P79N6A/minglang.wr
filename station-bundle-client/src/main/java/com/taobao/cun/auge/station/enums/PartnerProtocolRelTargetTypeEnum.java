@@ -24,6 +24,9 @@ public class PartnerProtocolRelTargetTypeEnum  implements Serializable {
 	public static final PartnerProtocolRelTargetTypeEnum PARTNER_INSTANCE = new PartnerProtocolRelTargetTypeEnum(
 			"PARTNER_INSTANCE", "合伙实例");
 	
+	public static final PartnerProtocolRelTargetTypeEnum PARTNER_APPlY = new PartnerProtocolRelTargetTypeEnum(
+			"PARTNER_APPlY", "招募表主键id");
+	
 	public static final PartnerProtocolRelTargetTypeEnum PARTNER = new PartnerProtocolRelTargetTypeEnum(
 			"PARTNER", "合伙人");
 	
@@ -39,6 +42,7 @@ public class PartnerProtocolRelTargetTypeEnum  implements Serializable {
 		mappings.put("PARTNER", PARTNER);
 		mappings.put("AGREEMENT_ACCOUNT", AGREEMENT_ACCOUNT);
 		mappings.put("VENDOR", VENDOR);
+		mappings.put("PARTNER_APPlY", PARTNER_APPlY);
 	}
 
 	public PartnerProtocolRelTargetTypeEnum(String code, String desc) {
