@@ -144,7 +144,8 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			return false;
 		}
 		if(station.getStatus().equals(StationStatusEnum.DECORATING.getCode()) || 
-				station.getStatus().equals(StationStatusEnum.SERVICING.getCode())) {
+				station.getStatus().equals(StationStatusEnum.SERVICING.getCode()) ||
+				station.getStatus().equals(StationStatusEnum.CLOSING.getCode())) {
 			return true;
 		}
 		return false;
