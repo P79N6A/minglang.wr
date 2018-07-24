@@ -36,10 +36,11 @@ public class FengKongDataServiceImpl implements FengKongDataService {
 	
 	@Override
 	public Boolean checkXuJiaBlackList(Long taobaoUserId) {
+		
 		try {
 			User user = getUser();
 			Map<String, Object> conditions = new HashMap<String, Object>();
-			conditions.put("taobaoUserId", taobaoUserId);
+			conditions.put("taobao_user_id", taobaoUserId);
 			String[] returnFields = new String[] { "taobao_user_id"};
 			Results result = sqlIDQueryAPI.list(user, Integer.parseInt(sqlId), conditions,
 					returnFields);
