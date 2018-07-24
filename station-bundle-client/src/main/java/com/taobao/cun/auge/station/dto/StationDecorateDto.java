@@ -197,7 +197,9 @@ public class StationDecorateDto  extends OperatorDto {
 	 */
 	private List<AttachmentDto> checkInsideVideoAttachments;
 	
+	private String designAuditOpinion;
 	
+	private String checkAuditOpinion;
 	public Long getId() {
 		return id;
 	}
@@ -493,5 +495,21 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setCheckInsideVideoAttachments(List<AttachmentDto> checkInsideVideoAttachments) {
 		this.checkInsideVideoAttachments = checkInsideVideoAttachments;
+	}
+
+	public String getDesignAuditOpinion() {
+		return designAuditOpinion;
+	}
+
+	public void setDesignAuditOpinion(String designAuditOpinion) {
+		this.designAuditOpinion = designAuditOpinion;
+	}
+
+	public String getCheckAuditOpinion() {
+		return checkAuditOpinion;
+	}
+
+	public void setCheckAuditOpinion(String checkAuditOpinion) {
+		this.checkAuditOpinion = checkAuditOpinion;
 	}
 }

@@ -50,6 +50,8 @@ public class StationDecorateConverter {
 		stationDecorateDto.setBudgetMoney(stationDecorate.getBudgetMoney());
 		stationDecorateDto.setMallArea(stationDecorate.getMallArea());
 		stationDecorateDto.setInsideArea(stationDecorate.getInsideArea());
+		stationDecorateDto.setCheckAuditOpinion(stationDecorate.getCheckAuditOpinion());
+		stationDecorateDto.setDesignAuditOpinion(stationDecorate.getDesignAuditOpinion());
 		return stationDecorateDto;
 	}
 
