@@ -602,7 +602,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationDesignAudit);
 			startProcessDto.setBusinessId(result);
 			Station station = stationBO.getStationById(stationDecorateDesignDto.getStationId());
-			startProcessDto.setBusinessName(station.getName() + station.getStationNum() + "自主装修设计图纸审批");
+			startProcessDto.setBusinessName(station.getName() + station.getStationNum());
 			startProcessDto.setBusinessOrgId(station.getApplyOrg());
 			OperatorDto operator = new OperatorDto();
 			operator.setOperator(stationDecorateDesignDto.getOperator());
@@ -629,7 +629,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
 			startProcessDto.setBusinessId(result);
 			Station station = stationBO.getStationById(stationDecorateCheckDto.getStationId());
-			startProcessDto.setBusinessName(station.getName() + station.getStationNum() + "自主装修完工审批");
+			startProcessDto.setBusinessName(station.getName() + station.getStationNum());
 			startProcessDto.setBusinessOrgId(station.getApplyOrg());
 			OperatorDto operator = new OperatorDto();
 			operator.setOperator(stationDecorateCheckDto.getOperator());
