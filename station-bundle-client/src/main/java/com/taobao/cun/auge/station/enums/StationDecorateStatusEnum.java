@@ -26,7 +26,7 @@ public class StationDecorateStatusEnum  implements Serializable {
 	public static final StationDecorateStatusEnum WAIT_DESIGN_UPLOAD = new StationDecorateStatusEnum("WAIT_DESIGN_UPLOAD", "装修设计图纸待上传");
 	public static final StationDecorateStatusEnum WAIT_DESIGN_AUDIT = new StationDecorateStatusEnum("WAIT_DESIGN_AUDIT", "装修设计图纸待审核");
 	public static final StationDecorateStatusEnum DESIGN_AUDIT_PASS = new StationDecorateStatusEnum("DESIGN_AUDIT_PASS", "装修设计图纸审核通过");
-	public static final StationDecorateStatusEnum DESIGN_AUDIT_NOT_PASS = new StationDecorateStatusEnum("DESIGN_AUDIT_PASS", "装修设计图纸审核不通过");
+	public static final StationDecorateStatusEnum DESIGN_AUDIT_NOT_PASS = new StationDecorateStatusEnum("DESIGN_AUDIT_NOT_PASS", "装修设计图纸审核不通过");
 
 	public static final StationDecorateStatusEnum WAIT_CHECK_UPLOAD = new StationDecorateStatusEnum("WAIT_CHECK_UPLOAD", "装修完工待上传");
 	public static final StationDecorateStatusEnum WAIT_CHECK_AUDIT = new StationDecorateStatusEnum("WAIT_CHECK_AUDIT", "装修完工待审核");
