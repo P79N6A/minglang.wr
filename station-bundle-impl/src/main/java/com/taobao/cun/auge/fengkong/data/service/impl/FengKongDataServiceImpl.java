@@ -33,6 +33,7 @@ public class FengKongDataServiceImpl implements FengKongDataService {
 	@Value("${fengkong.oneService.attemp.sqlId}")
 	private String sqlId;
 	
+	
 	@Override
 	public Boolean checkXuJiaBlackList(Long taobaoUserId) {
 		try {
