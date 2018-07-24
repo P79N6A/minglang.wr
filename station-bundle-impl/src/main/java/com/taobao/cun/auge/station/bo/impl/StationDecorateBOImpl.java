@@ -84,6 +84,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			//更新历史装修记录的有效性状态
 			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
+			record.setDecorateType(StationDecorateTypeEnum.NEW_SELF.getCode());
+			record.setPaymentType(StationDecoratePaymentTypeEnum.SELF.getCode());
 			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
 			record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
 			record.setDesignAuditStatus(StationDecorateStatusEnum.WAIT_DESIGN_UPLOAD.getCode());

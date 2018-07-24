@@ -587,7 +587,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
 			stationDecorateDto.setStationId(stationId);
 			stationDecorateDto.setPartnerUserId(station.getTaobaoUserId());
-			stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+			stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
 			stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
 			stationDecorateBO.addStationDecorate(stationDecorateDto);
 		}

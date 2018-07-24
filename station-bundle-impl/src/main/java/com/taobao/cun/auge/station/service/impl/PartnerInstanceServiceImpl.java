@@ -1887,7 +1887,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
         stationDecorateDto.setStationId(psl.getStationId());
         stationDecorateDto.setPartnerUserId(psl.getTaobaoUserId());
-        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
         stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
         stationDecorateBO.addStationDecorate(stationDecorateDto);
         partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
