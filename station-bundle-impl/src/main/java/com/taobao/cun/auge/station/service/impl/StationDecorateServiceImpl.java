@@ -329,7 +329,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 		}
 
-		if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
+		/**if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
 			StationDecorateOrderDto sdod = stationDecorateOrderBO
 					.getDecorateOrderById(Long.parseLong(sdDto.getTaobaoOrderNum())).orElse(null);
 			if (sdod == null) {
@@ -348,7 +348,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		} else {
 			sdDto.setStatus(StationDecorateStatusEnum.NO_ORDER);
 		}
-		setShopItemInfo(sdDto);
+		setShopItemInfo(sdDto);**/
 		return sdDto;
 	}
 
