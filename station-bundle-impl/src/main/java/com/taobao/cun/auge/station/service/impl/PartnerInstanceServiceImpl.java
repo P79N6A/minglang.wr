@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -181,6 +182,8 @@ import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
@@ -306,6 +309,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+	private PartnerApplyService partnerApplyService;
     
     @Autowired
     private StoreWriteBO storeWriteBO;
@@ -924,10 +930,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
+			/*if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
 			}
-		/*	if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
+			if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}*/
 			
@@ -2489,6 +2495,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 		}
 		return true;
+	}
+
+
+	@Override
+	public void signProjectNoticeProtocol(Long taobaoUserId) {
+		 ValidateUtils.notNull(taobaoUserId);
+		 PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
+         Assert.notNull(paDto, "partner apply not exists");
+        
+         PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+         if (pprDto != null) {
+        	 return;
+         }
+         Date date =new Date();
+         partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, date, date, date,
+     			String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+		
 	}
 	
 }
