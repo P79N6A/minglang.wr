@@ -36,6 +36,7 @@ public class FengKongDataServiceImpl implements FengKongDataService {
 	
 	@Override
 	public Boolean checkXuJiaBlackList(Long taobaoUserId) {
+		
 		try {
 			User user = getUser();
 			Map<String, Object> conditions = new HashMap<String, Object>();
