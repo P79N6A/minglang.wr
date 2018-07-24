@@ -442,6 +442,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
+			updateRecord.setDesignAuditOpinion(auditOpinion);
 			updateRecord.setAuditOpinion(auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
@@ -502,6 +503,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
+			updateRecord.setCheckAuditStatus(auditOpinion);
 			updateRecord.setAuditOpinion(auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
