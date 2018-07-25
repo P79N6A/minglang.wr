@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
@@ -338,22 +339,37 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getStackFrames(error)));
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error)));
 	}
 	
 	static class ExecuteError{
+		@JSONField(ordinal=1)
 		private String action;
-		
+		@JSONField(ordinal=2)
 		private Long stationId;
-		
+		@JSONField(ordinal=3)
 		private Long templateId;
-		
-		private String[] errors;
-		ExecuteError(String action, Long stationId, Long templateId, String[] errors){
+		@JSONField(ordinal=4)
+		private String errorMsg;
+		@JSONField(ordinal=100)
+		private List<String> errors;
+		ExecuteError(String action, Long stationId, Long templateId, String errorMsg, String[] errors){
 			this.action = action;
 			this.stationId = stationId;
 			this.templateId = templateId;
-			this.errors = errors;
+			this.errorMsg = errorMsg;
+			
+			List<String> errorList = Lists.newArrayList();
+			for(String error : errors) {
+				errorList.add(error.replaceAll("\t", "-"));
+			}
+			this.errors = errorList;
+		}
+		public String getErrorMsg() {
+			return errorMsg;
+		}
+		public void setErrorMsg(String errorMsg) {
+			this.errorMsg = errorMsg;
 		}
 		public String getAction() {
 			return action;
@@ -379,11 +395,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			this.templateId = templateId;
 		}
 
-		public String[] getErrors() {
+		public List<String> getErrors() {
 			return errors;
 		}
 
-		public void setError(String[] errors) {
+		public void setError(List<String> errors) {
 			this.errors = errors;
 		}
 	}
