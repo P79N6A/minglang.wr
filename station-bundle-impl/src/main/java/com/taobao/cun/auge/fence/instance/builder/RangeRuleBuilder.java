@@ -36,13 +36,13 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 					textFilters.put("belongVillage", station.getVillageDetail());
 				}
 				
-				if(text.equals("landmark")) {
+				/*if(text.equals("landmark")) {
 					textFilters.put("landmark", text);
 				}
 				
 				if(text.equals("receiveVillage")) {
 					textFilters.put("receiveVillage", text);
-				}
+				}*/
 			}
 			result.put(FenceConstants.RANGE_MATCH, textFilters);
 		}
