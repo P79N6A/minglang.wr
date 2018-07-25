@@ -16,7 +16,7 @@ public class FenceInstanceJobExecuteServiceImpl implements FenceInstanceJobExecu
 			@Override
 			public void run() {
 				fenceInstanceJobExecutorFacade.startJob();
-			}}).run();
+			}}).start();
 	}
 
 }
