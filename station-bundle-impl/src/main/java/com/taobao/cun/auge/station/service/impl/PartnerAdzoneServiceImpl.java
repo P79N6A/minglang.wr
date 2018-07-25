@@ -10,6 +10,7 @@ import com.taobao.api.request.TbkDgNewuserOrderGetRequest;
 import com.taobao.api.response.TbkDgNewuserOrderGetResponse;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.UnionNewuserOrder;
 import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
@@ -19,6 +20,7 @@ import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.union.api.client.service.EntryService;
 import com.taobao.union.common.RpcResult;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.Map;
 
 @Service("partnerAdzoneService")
@@ -120,12 +123,18 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         //req.setAdzoneId();
         //req.setStartTime();
         //req.setEndTime();
+        String updateDate = DateFormatUtils.format(new Date().getTime(), "yyyyMMdd");
         logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
         try {
             TbkDgNewuserOrderGetResponse rsp = client.execute(req);
             if (rsp.isSuccess()) {
                 TbkDgNewuserOrderGetResponse.Data data = rsp.getResults().getData();
                 response.setHasNext(data.getHasNext());
+                data.getResults().forEach(res->{
+                    UnionNewuserOrder order = convertFromTbkNewuserOrder(res);
+                    order.setStatDate(request.getStatDate());
+                    order.setUpdateDate(updateDate);
+                });
             } else {
                 response.setSuccess(false);
                 logger.error("TbkDgNewuserOrderGetRequestError:" + JSON.toJSONString(rsp));
@@ -136,5 +145,22 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         }
 
         return response;
+    }
+
+    private UnionNewuserOrder convertFromTbkNewuserOrder(TbkDgNewuserOrderGetResponse.MapData data) {
+        UnionNewuserOrder order = new  UnionNewuserOrder();
+        order.setActivityId(data.getActivityId());
+        order.setActivityType(data.getActivityType());
+        order.setAdzoneId(data.getAdzoneId());
+        order.setBindCardTime(data.getBindCardTime());
+        order.setBizDate(data.getBizDate());
+        order.setBuyTime(data.getBuyTime());
+        order.setIsCardSave(data.getIsCardSave());
+        order.setMobile(data.getMobile());
+        order.setOrderTkType(data.getOrderTkType());
+        order.setRegisterTime(data.getRegisterTime());
+        order.setStatus(data.getStatus());
+        order.setTbTradeParentId(data.getStatus());
+        return order;
     }
 }
