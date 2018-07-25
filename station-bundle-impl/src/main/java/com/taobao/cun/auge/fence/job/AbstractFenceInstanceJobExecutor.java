@@ -73,7 +73,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			}else {
 				fenceInstanceJobUpdateDto.setState("ERROR");
 				String fileName = "fence_job_error_" + fenceInstanceJob.getId() + ".json";
-				fileStoreService.saveFile(fileName, fileName, JSON.toJSONString(list).getBytes());
+				fileStoreService.saveFile(fileName, fileName, JSON.toJSONString(list).getBytes(),"application/json");
 				fenceInstanceJobUpdateDto.setErrorMsg("http://crius.cn-hangzhou.oss-cdn.aliyun-inc.com/" + fileName);
 			}
 			fenceInstanceJobUpdateDto.setInstanceNum(instanceNum);
