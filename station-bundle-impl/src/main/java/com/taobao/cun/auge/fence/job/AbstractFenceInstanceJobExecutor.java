@@ -330,7 +330,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getStackTrace(error)));
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, ExceptionUtils.getStackFrames(error)));
 	}
 	
 	static class ExecuteError{
@@ -340,12 +340,12 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 		private Long templateId;
 		
-		private String error;
-		ExecuteError(String action, Long stationId, Long templateId, String error){
+		private String[] errors;
+		ExecuteError(String action, Long stationId, Long templateId, String[] errors){
 			this.action = action;
 			this.stationId = stationId;
 			this.templateId = templateId;
-			this.error = error;
+			this.errors = errors;
 		}
 		public String getAction() {
 			return action;
@@ -371,12 +371,12 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			this.templateId = templateId;
 		}
 
-		public String getError() {
-			return error;
+		public String[] getErrors() {
+			return errors;
 		}
 
-		public void setError(String error) {
-			this.error = error;
+		public void setError(String[] errors) {
+			this.errors = errors;
 		}
 	}
 }
