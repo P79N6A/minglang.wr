@@ -9,8 +9,10 @@ import com.taobao.api.internal.util.StringUtils;
 import com.taobao.api.request.TbkDgNewuserOrderGetRequest;
 import com.taobao.api.response.TbkDgNewuserOrderGetResponse;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.UnionNewuserOrder;
+import com.taobao.cun.auge.dal.mapper.UnionNewuserOrderMapper;
 import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
@@ -43,6 +45,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     PartnerInstanceBO partnerInstanceBO;
     @Autowired
     EntryService entryService;
+    @Autowired
+    UnionNewuserOrderMapper unionNewuserOrderMapper;
 
     @Value("${taobao.union.app.key}")
     private String appKey;
@@ -134,6 +138,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                     UnionNewuserOrder order = convertFromTbkNewuserOrder(res);
                     order.setStatDate(request.getStatDate());
                     order.setUpdateDate(updateDate);
+                    DomainUtils.beforeInsert(order,"sys");
+                    unionNewuserOrderMapper.insertSelective(order);
                 });
             } else {
                 response.setSuccess(false);

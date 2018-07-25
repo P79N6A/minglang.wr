@@ -8,4 +8,5 @@ public interface PartnerAdzoneBO {
     PartnerAdzoneInfoDto getPartnerAdzoneInfoByPid(String pid);
 
     void addAdzone(Long taobaoUserId, Long stationId, String pid);
+
 }
