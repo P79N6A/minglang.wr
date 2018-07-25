@@ -39,5 +39,7 @@ public interface PartnerAdzoneService {
 
     public void initAllNewUserOrder(NewuserOrderInitRequest request);
 
+    public void deleteNewuserOrder(String activityId, String statDate);
+
 
 }

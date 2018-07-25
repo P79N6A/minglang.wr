@@ -12,6 +12,7 @@ import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.UnionNewuserOrder;
+import com.taobao.cun.auge.dal.domain.UnionNewuserOrderExample;
 import com.taobao.cun.auge.dal.mapper.UnionNewuserOrderMapper;
 import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -155,7 +156,6 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
 
     @Override
     public void initAllNewUserOrder(NewuserOrderInitRequest request) {
-
         Long pageNO = request.getPageNo();
         Long pageSize = 20L;
         Long endNo = request.getPageSize();
@@ -175,6 +175,13 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                 break;
             }
         }
+    }
+
+    @Override
+    public void deleteNewuserOrder(String activityId, String statDate) {
+        UnionNewuserOrderExample example = new UnionNewuserOrderExample();
+        example.createCriteria().andStatDateEqualTo(statDate).andActivityIdEqualTo(activityId);
+        unionNewuserOrderMapper.deleteByExample(example);
     }
 
     private UnionNewuserOrder convertFromTbkNewuserOrder(TbkDgNewuserOrderGetResponse.MapData data) {
