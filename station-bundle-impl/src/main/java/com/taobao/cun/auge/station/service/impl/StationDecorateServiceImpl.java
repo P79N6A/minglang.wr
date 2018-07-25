@@ -472,12 +472,14 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 
 		List<AttachmentDto> checkAttachments = criusAttachmentService.getAttachmentList(sdDto.getId(),
 				AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
-		sdDto.setCheckDeskAttachments(
-				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_DESK));
+		sdDto.setCheckWallDeskAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK));
 		sdDto.setCheckDoorAttachments(
 				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_DOOR));
-		sdDto.setCheckWallAttachments(
-				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_WALL));
+		sdDto.setCheckInsideAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE));
+		sdDto.setCheckMaterielAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL));
 		sdDto.setCheckOutsideAttachments(
 				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE));
 		sdDto.setCheckInsideVideoAttachments(

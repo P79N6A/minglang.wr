@@ -2985,6 +2985,146 @@ public class StationDecorateExample {
             addCriterion("check_audit_opinion not between", value1, value2, "checkAuditOpinion");
             return (Criteria) this;
         }
+
+        public Criteria andCheckInsideAttachmentsIsNull() {
+            addCriterion("check_inside_attachments is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsIsNotNull() {
+            addCriterion("check_inside_attachments is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsEqualTo(String value) {
+            addCriterion("check_inside_attachments =", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsNotEqualTo(String value) {
+            addCriterion("check_inside_attachments <>", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsGreaterThan(String value) {
+            addCriterion("check_inside_attachments >", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsGreaterThanOrEqualTo(String value) {
+            addCriterion("check_inside_attachments >=", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsLessThan(String value) {
+            addCriterion("check_inside_attachments <", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsLessThanOrEqualTo(String value) {
+            addCriterion("check_inside_attachments <=", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsLike(String value) {
+            addCriterion("check_inside_attachments like", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsNotLike(String value) {
+            addCriterion("check_inside_attachments not like", value, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsIn(List<String> values) {
+            addCriterion("check_inside_attachments in", values, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsNotIn(List<String> values) {
+            addCriterion("check_inside_attachments not in", values, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsBetween(String value1, String value2) {
+            addCriterion("check_inside_attachments between", value1, value2, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckInsideAttachmentsNotBetween(String value1, String value2) {
+            addCriterion("check_inside_attachments not between", value1, value2, "checkInsideAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsIsNull() {
+            addCriterion("check_materiel_attachments is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsIsNotNull() {
+            addCriterion("check_materiel_attachments is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsEqualTo(String value) {
+            addCriterion("check_materiel_attachments =", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsNotEqualTo(String value) {
+            addCriterion("check_materiel_attachments <>", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsGreaterThan(String value) {
+            addCriterion("check_materiel_attachments >", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsGreaterThanOrEqualTo(String value) {
+            addCriterion("check_materiel_attachments >=", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsLessThan(String value) {
+            addCriterion("check_materiel_attachments <", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsLessThanOrEqualTo(String value) {
+            addCriterion("check_materiel_attachments <=", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsLike(String value) {
+            addCriterion("check_materiel_attachments like", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsNotLike(String value) {
+            addCriterion("check_materiel_attachments not like", value, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsIn(List<String> values) {
+            addCriterion("check_materiel_attachments in", values, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsNotIn(List<String> values) {
+            addCriterion("check_materiel_attachments not in", values, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsBetween(String value1, String value2) {
+            addCriterion("check_materiel_attachments between", value1, value2, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
+
+        public Criteria andCheckMaterielAttachmentsNotBetween(String value1, String value2) {
+            addCriterion("check_materiel_attachments not between", value1, value2, "checkMaterielAttachments");
+            return (Criteria) this;
+        }
     }
 
     /**

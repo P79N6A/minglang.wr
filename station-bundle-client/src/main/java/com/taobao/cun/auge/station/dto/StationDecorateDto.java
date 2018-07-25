@@ -170,9 +170,9 @@ public class StationDecorateDto  extends OperatorDto {
 	private List<AttachmentDto> checkDoorAttachments;
 	
 	/**
-	 * 反馈背景墙附件
+	 * 反馈背景墙前台桌附件
 	 */
-	private List<AttachmentDto> checkWallAttachments;
+	private List<AttachmentDto> checkWallDeskAttachments;
 	
 	/**
 	 * 反馈室外全景图附件
@@ -181,10 +181,14 @@ public class StationDecorateDto  extends OperatorDto {
 	
 	
 	/**
-	 * 反馈前台桌附件
+	 * 反馈室内全景图
 	 */
-	private List<AttachmentDto> checkDeskAttachments;
+	private List<AttachmentDto> checkInsideAttachments;
 	
+	/**
+	 * 反馈物料图
+	 */
+	private List<AttachmentDto> checkMaterielAttachments;
 	
 	/**
 	 * 反馈室外视频附件
@@ -457,14 +461,6 @@ public class StationDecorateDto  extends OperatorDto {
 		this.checkDoorAttachments = checkDoorAttachments;
 	}
 
-	public List<AttachmentDto> getCheckWallAttachments() {
-		return checkWallAttachments;
-	}
-
-	public void setCheckWallAttachments(List<AttachmentDto> checkWallAttachments) {
-		this.checkWallAttachments = checkWallAttachments;
-	}
-
 	public List<AttachmentDto> getCheckOutsideAttachments() {
 		return checkOutsideAttachments;
 	}
@@ -472,15 +468,7 @@ public class StationDecorateDto  extends OperatorDto {
 	public void setCheckOutsideAttachments(List<AttachmentDto> checkOutsideAttachments) {
 		this.checkOutsideAttachments = checkOutsideAttachments;
 	}
-
-	public List<AttachmentDto> getCheckDeskAttachments() {
-		return checkDeskAttachments;
-	}
-
-	public void setCheckDeskAttachments(List<AttachmentDto> checkDeskAttachments) {
-		this.checkDeskAttachments = checkDeskAttachments;
-	}
-
+	
 	public List<AttachmentDto> getCheckOutsideVideoAttachments() {
 		return checkOutsideVideoAttachments;
 	}
@@ -511,5 +499,29 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setCheckAuditOpinion(String checkAuditOpinion) {
 		this.checkAuditOpinion = checkAuditOpinion;
+	}
+
+	public List<AttachmentDto> getCheckWallDeskAttachments() {
+		return checkWallDeskAttachments;
+	}
+
+	public void setCheckWallDeskAttachments(List<AttachmentDto> checkWallDeskAttachments) {
+		this.checkWallDeskAttachments = checkWallDeskAttachments;
+	}
+
+	public List<AttachmentDto> getCheckInsideAttachments() {
+		return checkInsideAttachments;
+	}
+
+	public void setCheckInsideAttachments(List<AttachmentDto> checkInsideAttachments) {
+		this.checkInsideAttachments = checkInsideAttachments;
+	}
+
+	public List<AttachmentDto> getCheckMaterielAttachments() {
+		return checkMaterielAttachments;
+	}
+
+	public void setCheckMaterielAttachments(List<AttachmentDto> checkMaterielAttachments) {
+		this.checkMaterielAttachments = checkMaterielAttachments;
 	}
 }

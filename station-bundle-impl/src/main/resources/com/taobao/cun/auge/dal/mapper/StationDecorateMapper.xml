@@ -47,6 +47,8 @@
     <result column="check_audit_status" jdbcType="VARCHAR" property="checkAuditStatus" />
     <result column="design_audit_opinion" jdbcType="VARCHAR" property="designAuditOpinion" />
     <result column="check_audit_opinion" jdbcType="VARCHAR" property="checkAuditOpinion" />
+    <result column="check_inside_attachments" jdbcType="VARCHAR" property="checkInsideAttachments" />
+    <result column="check_materiel_attachments" jdbcType="VARCHAR" property="checkMaterielAttachments" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -126,7 +128,7 @@
     rent_money, budget_money, door_attachments, wall_attachments, inside_attachments, 
     check_outside_attachments, check_door_attachments, check_wall_attachments, check_desk_attachments, 
     check_inside_video, check_outside_video, design_audit_status, check_audit_status, 
-    design_audit_opinion, check_audit_opinion
+    design_audit_opinion, check_audit_opinion, check_inside_attachments, check_materiel_attachments
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationDecorateExample" resultMap="BaseResultMap">
     <!--
@@ -196,7 +198,8 @@
       check_outside_attachments, check_door_attachments, 
       check_wall_attachments, check_desk_attachments, 
       check_inside_video, check_outside_video, design_audit_status, 
-      check_audit_status, design_audit_opinion, check_audit_opinion
+      check_audit_status, design_audit_opinion, check_audit_opinion, 
+      check_inside_attachments, check_materiel_attachments
       )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{stationId,jdbcType=BIGINT}, 
@@ -211,7 +214,8 @@
       #{checkOutsideAttachments,jdbcType=VARCHAR}, #{checkDoorAttachments,jdbcType=VARCHAR}, 
       #{checkWallAttachments,jdbcType=VARCHAR}, #{checkDeskAttachments,jdbcType=VARCHAR}, 
       #{checkInsideVideo,jdbcType=VARCHAR}, #{checkOutsideVideo,jdbcType=VARCHAR}, #{designAuditStatus,jdbcType=VARCHAR}, 
-      #{checkAuditStatus,jdbcType=VARCHAR}, #{designAuditOpinion,jdbcType=VARCHAR}, #{checkAuditOpinion,jdbcType=VARCHAR}
+      #{checkAuditStatus,jdbcType=VARCHAR}, #{designAuditOpinion,jdbcType=VARCHAR}, #{checkAuditOpinion,jdbcType=VARCHAR}, 
+      #{checkInsideAttachments,jdbcType=VARCHAR}, #{checkMaterielAttachments,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.StationDecorate">
@@ -344,6 +348,12 @@
       <if test="checkAuditOpinion != null">
         check_audit_opinion,
       </if>
+      <if test="checkInsideAttachments != null">
+        check_inside_attachments,
+      </if>
+      <if test="checkMaterielAttachments != null">
+        check_materiel_attachments,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -465,6 +475,12 @@
       </if>
       <if test="checkAuditOpinion != null">
         #{checkAuditOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="checkInsideAttachments != null">
+        #{checkInsideAttachments,jdbcType=VARCHAR},
+      </if>
+      <if test="checkMaterielAttachments != null">
+        #{checkMaterielAttachments,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -608,6 +624,12 @@
       <if test="record.checkAuditOpinion != null">
         check_audit_opinion = #{record.checkAuditOpinion,jdbcType=VARCHAR},
       </if>
+      <if test="record.checkInsideAttachments != null">
+        check_inside_attachments = #{record.checkInsideAttachments,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkMaterielAttachments != null">
+        check_materiel_attachments = #{record.checkMaterielAttachments,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -659,7 +681,9 @@
       design_audit_status = #{record.designAuditStatus,jdbcType=VARCHAR},
       check_audit_status = #{record.checkAuditStatus,jdbcType=VARCHAR},
       design_audit_opinion = #{record.designAuditOpinion,jdbcType=VARCHAR},
-      check_audit_opinion = #{record.checkAuditOpinion,jdbcType=VARCHAR}
+      check_audit_opinion = #{record.checkAuditOpinion,jdbcType=VARCHAR},
+      check_inside_attachments = #{record.checkInsideAttachments,jdbcType=VARCHAR},
+      check_materiel_attachments = #{record.checkMaterielAttachments,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -791,6 +815,12 @@
       <if test="checkAuditOpinion != null">
         check_audit_opinion = #{checkAuditOpinion,jdbcType=VARCHAR},
       </if>
+      <if test="checkInsideAttachments != null">
+        check_inside_attachments = #{checkInsideAttachments,jdbcType=VARCHAR},
+      </if>
+      <if test="checkMaterielAttachments != null">
+        check_materiel_attachments = #{checkMaterielAttachments,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -839,7 +869,9 @@
       design_audit_status = #{designAuditStatus,jdbcType=VARCHAR},
       check_audit_status = #{checkAuditStatus,jdbcType=VARCHAR},
       design_audit_opinion = #{designAuditOpinion,jdbcType=VARCHAR},
-      check_audit_opinion = #{checkAuditOpinion,jdbcType=VARCHAR}
+      check_audit_opinion = #{checkAuditOpinion,jdbcType=VARCHAR},
+      check_inside_attachments = #{checkInsideAttachments,jdbcType=VARCHAR},
+      check_materiel_attachments = #{checkMaterielAttachments,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

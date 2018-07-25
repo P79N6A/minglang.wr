@@ -218,12 +218,14 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 		List<AttachmentDto> checkAttachments = criusAttachmentService.getAttachmentList(sdDto.getId(),
 				AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
-		sdDto.setCheckDeskAttachments(
-				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_DESK));
+		sdDto.setCheckWallDeskAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK));
 		sdDto.setCheckDoorAttachments(
 				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_DOOR));
-		sdDto.setCheckWallAttachments(
-				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_WALL));
+		sdDto.setCheckInsideAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE));
+		sdDto.setCheckMaterielAttachments(
+				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL));
 		sdDto.setCheckOutsideAttachments(
 				getAttachmentsByType(checkAttachments, AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE));
 		sdDto.setCheckInsideVideoAttachments(
@@ -464,15 +466,19 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(stationDecorateCheckDto.getCheckDoorAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR, operatorDto);
 		}
-		if(stationDecorateCheckDto.getCheckWallAttachments() !=null){
-			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckWallAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_WALL, operatorDto);
+		if(stationDecorateCheckDto.getCheckWallDeskAttachments() !=null){
+			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckWallDeskAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK, operatorDto);
 		}
 		if(stationDecorateCheckDto.getCheckOutsideAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckOutsideAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE, operatorDto);
 		}
-		if(stationDecorateCheckDto.getCheckDeskAttachments() != null){
-			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckDeskAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_DESK, operatorDto);
+		if(stationDecorateCheckDto.getCheckInsideAttachments()!= null){
+			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckInsideAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE, operatorDto);
 		}
+		if(stationDecorateCheckDto.getCheckMaterielAttachments()!= null){
+			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckMaterielAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL, operatorDto);
+		}
+		
 		if(stationDecorateCheckDto.getCheckInsideVideoAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckInsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO, operatorDto);
 		}
