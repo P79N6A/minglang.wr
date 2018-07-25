@@ -139,7 +139,9 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                     UnionNewuserOrder order = convertFromTbkNewuserOrder(res);
                     order.setStatDate(request.getStatDate());
                     order.setUpdateDate(updateDate);
-                    DomainUtils.beforeInsert(order, "sys");
+                    Date now = new Date();
+                    order.setGmtCreate(now);
+                    order.setGmtModified(now);
                     unionNewuserOrderMapper.insertSelective(order);
                 });
             } else {
