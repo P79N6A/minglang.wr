@@ -756,8 +756,14 @@
 			<dependency>
 				<groupId>com.taobao.union</groupId>
 				<artifactId>union-api-client</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>1.0.2-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.top</groupId>
+				<artifactId>top-api-sdk-dev</artifactId>
+				<version>cuntao-taoke-1.0.0-SNAPSHOT</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<build>

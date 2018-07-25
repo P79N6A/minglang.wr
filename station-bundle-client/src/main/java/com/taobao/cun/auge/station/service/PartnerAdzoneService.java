@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
+import com.taobao.cun.auge.station.dto.NewuserOrderInitResponse;
 import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
 
 public interface PartnerAdzoneService {
@@ -27,5 +29,12 @@ public interface PartnerAdzoneService {
      * @return
      */
     public PartnerAdzoneInfoDto getPartnerAdzoneInfoByPid(String pid);
+
+    /**
+     * 分页初始化拉新订单数据
+     * @param request
+     * @return
+     */
+    public NewuserOrderInitResponse initNewUserOrder(NewuserOrderInitRequest request);
 
 }

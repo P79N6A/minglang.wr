@@ -2,10 +2,18 @@ package com.taobao.cun.auge.station.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import com.taobao.api.ApiException;
+import com.taobao.api.DefaultTaobaoClient;
+import com.taobao.api.TaobaoClient;
+import com.taobao.api.internal.util.StringUtils;
+import com.taobao.api.request.TbkDgNewuserOrderGetRequest;
+import com.taobao.api.response.TbkDgNewuserOrderGetResponse;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
+import com.taobao.cun.auge.station.dto.NewuserOrderInitResponse;
 import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
 import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -39,6 +47,10 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     private String siteId;
     @Value("${taobao.union.tb.num}")
     private Long tbNumId;
+    @Value("${taobao.union.app.secret}")
+    private String appSecret;
+    @Value("${taobao.union.app.url}")
+    private String appUrl;
     private static final String CREATE_ADZONE_QUERY_ID = "adzone.create";
 
     @Override
@@ -92,5 +104,37 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     @Override
     public PartnerAdzoneInfoDto getPartnerAdzoneInfoByPid(String pid) {
         return partnerAdzoneBO.getPartnerAdzoneInfoByPid(pid);
+    }
+
+    @Override
+    public NewuserOrderInitResponse initNewUserOrder(NewuserOrderInitRequest request) {
+        NewuserOrderInitResponse response = new NewuserOrderInitResponse();
+        response.setSuccess(true);
+        TaobaoClient client = new DefaultTaobaoClient(appUrl, appKey, appSecret);
+        TbkDgNewuserOrderGetRequest req = new TbkDgNewuserOrderGetRequest();
+        Long pageNO = request.getPageNo();
+        String activityId = request.getActivityId();
+        req.setActivityId(activityId);
+        req.setPageNo(pageNO);
+        req.setPageSize(request.getPageSize());
+        //req.setAdzoneId();
+        //req.setStartTime();
+        //req.setEndTime();
+        logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
+        try {
+            TbkDgNewuserOrderGetResponse rsp = client.execute(req);
+            if (rsp.isSuccess()) {
+                TbkDgNewuserOrderGetResponse.Data data = rsp.getResults().getData();
+                response.setHasNext(data.getHasNext());
+            } else {
+                response.setSuccess(false);
+                logger.error("TbkDgNewuserOrderGetRequestError:" + JSON.toJSONString(rsp));
+            }
+        } catch (ApiException e) {
+            logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
+            response.setSuccess(false);
+        }
+
+        return response;
     }
 }
