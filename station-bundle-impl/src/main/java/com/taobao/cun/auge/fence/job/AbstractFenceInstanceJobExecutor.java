@@ -361,7 +361,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			
 			List<String> errorList = Lists.newArrayList();
 			for(String error : errors) {
-				errorList.add(error.replaceAll("\t", "-"));
+				errorList.add(error.replaceAll("\t", " - "));
 			}
 			this.errors = errorList;
 		}
