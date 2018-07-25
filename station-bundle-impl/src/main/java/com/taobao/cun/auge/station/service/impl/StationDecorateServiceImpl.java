@@ -311,17 +311,14 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		if (sdDto == null) {
 			return null;
 		}
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-		if (!StationDecoratePaymentTypeEnum.SELF.getCode().equals(sdDto.getPaymentType().getCode())
-				|| PartnerInstanceTypeEnum.TPS.getCode().equals(rel.getType())) {
-			return sdDto;
-		}
-		if (StationDecorateStatusEnum.AUDIT_NOT_PASS.equals(sdDto.getStatus())
-				|| StationDecorateStatusEnum.DONE.equals(sdDto.getStatus())) {
-			return sdDto;
-		}
+		//兼容老数据
+		if(!StationDecorateTypeEnum.NEW_SELF.getCode().equals(sdDto.getDecorateType().getCode())){
+	        	if(StationDecorateStatusEnum.DECORATING.getCode().equals(sdDto.getStatus().getCode())){
+	        		sdDto.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD);
+	        	}
+	    }
 		// 容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
-		if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus())
+		  /**if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus())
 				|| StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())
 				|| StationDecorateStatusEnum.AUDIT_NOT_PASS.equals(sdDto.getStatus())
 				|| StationDecorateStatusEnum.WAIT_AUDIT.equals(sdDto.getStatus())) {
@@ -329,7 +326,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 		}
 
-		/**if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
+		if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
 			StationDecorateOrderDto sdod = stationDecorateOrderBO
 					.getDecorateOrderById(Long.parseLong(sdDto.getTaobaoOrderNum())).orElse(null);
 			if (sdod == null) {
