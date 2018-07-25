@@ -217,10 +217,10 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			for(FenceEntity fenceEntity : fenceEntities) {
 				if(!fenceEntity.getJobId().equals(jobId)) {
 					deleteCainiaoFence(fenceEntity);
+					//删除围栏实例
+					fenceEntityBO.deleteById(fenceEntity.getId(), fenceTemplateDto.getCreator());
 				}
 			}
-			//删除围栏实例
-			fenceEntityBO.deleteFences(stationId, fenceTemplateDto.getTypeEnum().getCode());
 			//新建围栏
 			buildFenceEntity(stationId, templateId, jobId);
 		}catch(Exception e) {
