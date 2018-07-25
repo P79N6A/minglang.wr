@@ -24,6 +24,7 @@ import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.instance.FencenInstanceBuilder;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.crius.oss.client.FileStoreService;
 
 /**
  * 抽象实现，对围栏实例的操作，与菜鸟的交互都在这里了
@@ -46,6 +47,8 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	protected StationBO stationBo;
 	@Resource
 	private RailServiceAdapter railServiceAdapter;
+	@Resource
+	private FileStoreService fileStoreService;
 	
 	private static final ThreadLocal<List<ExecuteError>> threadLocal = new ThreadLocal<List<ExecuteError>>();
 	
@@ -69,7 +72,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceInstanceJobUpdateDto.setState("SUCCESS");
 			}else {
 				fenceInstanceJobUpdateDto.setState("ERROR");
-				fenceInstanceJobUpdateDto.setErrorMsg(JSON.toJSONString(list));
+				String fileName = "fence_job_error_" + fenceInstanceJob.getId() + ".json";
+				fileStoreService.saveFile(fileName, fileName, JSON.toJSONString(list).getBytes());
+				fenceInstanceJobUpdateDto.setErrorMsg("http://crius.cn-hangzhou.oss-cdn.aliyun-inc.com/" + fileName);
 			}
 			fenceInstanceJobUpdateDto.setInstanceNum(instanceNum);
 			fenceInstanceJobUpdateDto.setGmtEndTime(new Date());

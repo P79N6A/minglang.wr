@@ -24,8 +24,12 @@
 	</properties>
 	<dependencies>
 		<dependency>
-				<artifactId>dms-sorting.common</artifactId>  
-		  	<groupId>dms-sorting</groupId>  
+		  <groupId>com.taobao.crius</groupId>
+		  <artifactId>oss-client</artifactId>
+		</dependency>
+		<dependency>
+		  <artifactId>dms-sorting.common</artifactId>  
+		  <groupId>dms-sorting</groupId>  
 		</dependency>
 		<dependency>
 		  <groupId>dms-sorting</groupId>
