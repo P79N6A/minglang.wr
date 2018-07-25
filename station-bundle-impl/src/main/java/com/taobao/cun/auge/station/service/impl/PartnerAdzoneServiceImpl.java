@@ -128,17 +128,17 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         //req.setStartTime();
         //req.setEndTime();
         String updateDate = DateFormatUtils.format(new Date().getTime(), "yyyyMMdd");
-        logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
         try {
+            logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
             TbkDgNewuserOrderGetResponse rsp = client.execute(req);
             if (rsp.isSuccess()) {
                 TbkDgNewuserOrderGetResponse.Data data = rsp.getResults().getData();
                 response.setHasNext(data.getHasNext());
-                data.getResults().forEach(res->{
+                data.getResults().forEach(res -> {
                     UnionNewuserOrder order = convertFromTbkNewuserOrder(res);
                     order.setStatDate(request.getStatDate());
                     order.setUpdateDate(updateDate);
-                    DomainUtils.beforeInsert(order,"sys");
+                    DomainUtils.beforeInsert(order, "sys");
                     unionNewuserOrderMapper.insertSelective(order);
                 });
             } else {
@@ -153,8 +153,32 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         return response;
     }
 
+    @Override
+    public void initAllNewUserOrder(NewuserOrderInitRequest request) {
+
+        Long pageNO = request.getPageNo();
+        Long pageSize = 20L;
+        Long endNo = request.getPageSize();
+        request.setPageSize(pageSize);
+        while (true) {
+            request.setPageNo(pageNO);
+            NewuserOrderInitResponse response = initNewUserOrder(request);
+            if (response.getSuccess()) {
+                if (response.getHasNext()) {
+                    pageNO++;
+                } else {
+                    logger.error("----------------initAllNewUserOrderEnd");
+                    break;
+                }
+            } else {
+                logger.error("----------------initAllNewUserOrderError");
+                break;
+            }
+        }
+    }
+
     private UnionNewuserOrder convertFromTbkNewuserOrder(TbkDgNewuserOrderGetResponse.MapData data) {
-        UnionNewuserOrder order = new  UnionNewuserOrder();
+        UnionNewuserOrder order = new UnionNewuserOrder();
         order.setActivityId(data.getActivityId());
         order.setActivityType(data.getActivityType());
         order.setAdzoneId(data.getAdzoneId());

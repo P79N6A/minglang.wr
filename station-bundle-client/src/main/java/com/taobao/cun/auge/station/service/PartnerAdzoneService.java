@@ -37,4 +37,7 @@ public interface PartnerAdzoneService {
      */
     public NewuserOrderInitResponse initNewUserOrder(NewuserOrderInitRequest request);
 
+    public void initAllNewUserOrder(NewuserOrderInitRequest request);
+
+
 }
