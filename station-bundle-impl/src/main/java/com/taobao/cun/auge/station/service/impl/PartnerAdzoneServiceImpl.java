@@ -192,14 +192,15 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         order.setActivityType(data.getActivityType());
         order.setAdzoneId(data.getAdzoneId());
         order.setBindCardTime(data.getBindCardTime());
+        order.setBindTime(data.getBindTime());
         order.setBizDate(data.getBizDate());
         order.setBuyTime(data.getBuyTime());
-        order.setIsCardSave(data.getIsCardSave());
+        order.setIsCardSave(null == data.getIsCardSave() ? 0 : data.getIsCardSave());
         order.setMobile(data.getMobile());
         order.setOrderTkType(data.getOrderTkType());
         order.setRegisterTime(data.getRegisterTime());
         order.setStatus(data.getStatus());
-        order.setTbTradeParentId(data.getStatus());
+        order.setTbTradeParentId(data.getTbTradeParentId());
         return order;
     }
 }
