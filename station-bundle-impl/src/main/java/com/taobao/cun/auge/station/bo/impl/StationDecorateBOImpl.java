@@ -437,7 +437,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setId(record.getId());
 		updateRecord.setDesignAuditStatus(approveResultEnum.getCode());
 		updateRecord.setDesignAuditOpinion(auditOpinion);
-		if(approveResultEnum.getCode().equals(ProcessApproveResultEnum.APPROVE_PASS)){
+		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
@@ -491,7 +491,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setId(record.getId());
 		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
 		updateRecord.setCheckAuditOpinion(auditOpinion);
-		if(approveResultEnum.getCode().equals(ProcessApproveResultEnum.APPROVE_PASS)){
+		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setReflectSatisfySolid("y");
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
 		}else{
