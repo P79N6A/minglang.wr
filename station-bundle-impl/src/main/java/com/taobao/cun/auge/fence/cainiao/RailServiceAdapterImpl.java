@@ -88,9 +88,8 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			Range range = JSON.parseObject(fenceEntity.getRangeRule(), Range.class);
 			
 			RailDistance railDistance = new RailDistance();
-			if(range.getDistance() != null) {
-				railDistance.setDistance(range.getDistance());
-			}
+			railDistance.setDistance(range.getDistance() == null ? 0 : range.getDistance());
+			railDistance.setDistance(range.getDistance());
 			railDistance.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
 			railDistance.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
 			if(!Strings.isNullOrEmpty(fenceEntity.getCounty())) {
