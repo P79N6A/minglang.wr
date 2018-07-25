@@ -21,9 +21,9 @@ public interface FenceConstants {
     String RANGE_DIVISION = "division";
 
     //商品类型_行业
-    String INDUSTRY = "industry";
+    String INDUSTRIES = "industries";
 
     //商品类型_按类型
-    String GOODS = "goods";
+    String TAGS = "tags";
 
 }
