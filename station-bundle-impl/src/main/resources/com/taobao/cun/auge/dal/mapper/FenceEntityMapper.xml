@@ -29,6 +29,7 @@
     <result column="lng" jdbcType="VARCHAR" property="lng" />
     <result column="lat" jdbcType="VARCHAR" property="lat" />
     <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="job_id" jdbcType="BIGINT" property="jobId" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -110,7 +111,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, template_id, station_id, 
     cainiao_station_id, name, type, user_type, state, default_check, commodity, province, 
-    city, county, town, cainiao_fence_id, lng, lat, version
+    city, county, town, cainiao_fence_id, lng, lat, version, job_id
   </sql>
   <sql id="Blob_Column_List">
     <!--
@@ -201,8 +202,8 @@
       state, default_check, commodity, 
       province, city, county, 
       town, cainiao_fence_id, lng, 
-      lat, version, range_rule
-      )
+      lat, version, job_id, 
+      range_rule)
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, 
       #{templateId,jdbcType=BIGINT}, #{stationId,jdbcType=BIGINT}, #{cainiaoStationId,jdbcType=BIGINT}, 
@@ -210,8 +211,8 @@
       #{state,jdbcType=VARCHAR}, #{defaultCheck,jdbcType=CHAR}, #{commodity,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, 
       #{town,jdbcType=VARCHAR}, #{cainiaoFenceId,jdbcType=BIGINT}, #{lng,jdbcType=VARCHAR}, 
-      #{lat,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{rangeRule,jdbcType=LONGVARCHAR}
-      )
+      #{lat,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{jobId,jdbcType=BIGINT}, 
+      #{rangeRule,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -289,6 +290,9 @@
       <if test="version != null">
         version,
       </if>
+      <if test="jobId != null">
+        job_id,
+      </if>
       <if test="rangeRule != null">
         range_rule,
       </if>
@@ -362,6 +366,9 @@
       </if>
       <if test="version != null">
         #{version,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null">
+        #{jobId,jdbcType=BIGINT},
       </if>
       <if test="rangeRule != null">
         #{rangeRule,jdbcType=LONGVARCHAR},
@@ -454,6 +461,9 @@
       <if test="record.version != null">
         version = #{record.version,jdbcType=INTEGER},
       </if>
+      <if test="record.jobId != null">
+        job_id = #{record.jobId,jdbcType=BIGINT},
+      </if>
       <if test="record.rangeRule != null">
         range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -491,6 +501,7 @@
       lng = #{record.lng,jdbcType=VARCHAR},
       lat = #{record.lat,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=INTEGER},
+      job_id = #{record.jobId,jdbcType=BIGINT},
       range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -524,7 +535,8 @@
       cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
       lng = #{record.lng,jdbcType=VARCHAR},
       lat = #{record.lat,jdbcType=VARCHAR},
-      version = #{record.version,jdbcType=INTEGER}
+      version = #{record.version,jdbcType=INTEGER},
+      job_id = #{record.jobId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -602,6 +614,9 @@
       <if test="version != null">
         version = #{version,jdbcType=INTEGER},
       </if>
+      <if test="jobId != null">
+        job_id = #{jobId,jdbcType=BIGINT},
+      </if>
       <if test="rangeRule != null">
         range_rule = #{rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -636,6 +651,7 @@
       lng = #{lng,jdbcType=VARCHAR},
       lat = #{lat,jdbcType=VARCHAR},
       version = #{version,jdbcType=INTEGER},
+      job_id = #{jobId,jdbcType=BIGINT},
       range_rule = #{rangeRule,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -666,7 +682,8 @@
       cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
       lng = #{lng,jdbcType=VARCHAR},
       lat = #{lat,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER}
+      version = #{version,jdbcType=INTEGER},
+      job_id = #{jobId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

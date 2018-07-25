@@ -17,9 +17,9 @@ public class StationCreateFenceInstanceJobExecutor extends AbstractFenceInstance
 	protected int doExecute(StationCreateFenceInstanceJob fenceInstanceJob) {
 		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
 			if(fenceInstanceJob.getCreateRule().equals(FenceInstanceJob.CREATE_RULE_OVERRIDE)){
-				overrideFenceEntity(fenceInstanceJob.getStationId(), templateId);
+				overrideFenceEntity(fenceInstanceJob.getStationId(), templateId, fenceInstanceJob.getId());
 			}else {
-				newFenceEntity(fenceInstanceJob.getStationId(), templateId);
+				newFenceEntity(fenceInstanceJob.getStationId(), templateId, fenceInstanceJob.getId());
 			}
 		}
 		return fenceInstanceJob.getTemplateIds().size();

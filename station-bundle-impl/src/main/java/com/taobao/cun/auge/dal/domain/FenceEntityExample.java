@@ -1724,6 +1724,66 @@ public class FenceEntityExample {
             addCriterion("version not between", value1, value2, "version");
             return (Criteria) this;
         }
+
+        public Criteria andJobIdIsNull() {
+            addCriterion("job_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdIsNotNull() {
+            addCriterion("job_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdEqualTo(Long value) {
+            addCriterion("job_id =", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdNotEqualTo(Long value) {
+            addCriterion("job_id <>", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdGreaterThan(Long value) {
+            addCriterion("job_id >", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("job_id >=", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdLessThan(Long value) {
+            addCriterion("job_id <", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdLessThanOrEqualTo(Long value) {
+            addCriterion("job_id <=", value, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdIn(List<Long> values) {
+            addCriterion("job_id in", values, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdNotIn(List<Long> values) {
+            addCriterion("job_id not in", values, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdBetween(Long value1, Long value2) {
+            addCriterion("job_id between", value1, value2, "jobId");
+            return (Criteria) this;
+        }
+
+        public Criteria andJobIdNotBetween(Long value1, Long value2) {
+            addCriterion("job_id not between", value1, value2, "jobId");
+            return (Criteria) this;
+        }
     }
 
     /**

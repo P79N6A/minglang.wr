@@ -30,16 +30,16 @@ public class BatchStationInitFenceInstanceJobExecutor extends AbstractFenceInsta
 		Map<String, InitingStationFetcher> map = applicationContext.getBeansOfType(InitingStationFetcher.class);
 		for(InitingStationFetcher initingStationFetcher : map.values()) {
 			for(InitingStation initingStation : initingStationFetcher.getInitingStations()) {
-				instanceNum += init(initingStation);
+				instanceNum += init(initingStation, fenceInstanceJob);
 			}
 		}
 		return instanceNum;
 	}
 	
-	private int init(InitingStation initingStation) {
+	private int init(InitingStation initingStation, BatchStationInitFenceInstanceJob fenceInstanceJob) {
 		if(CollectionUtils.isNotEmpty(initingStation.getStations())) {
 			for(Station station : initingStation.getStations()) {
-				newFenceEntity(station.getId(), initingStation.getTemplateId());
+				newFenceEntity(station.getId(), initingStation.getTemplateId(), fenceInstanceJob.getId());
 			}
 			return initingStation.getStations().size();
 		}else {

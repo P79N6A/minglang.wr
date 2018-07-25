@@ -107,7 +107,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param stationId
 	 * @param templateId
 	 */
-	private void buildFenceEntity(Long stationId, Long templateId) {
+	private void buildFenceEntity(Long stationId, Long templateId, Long jobId) {
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
@@ -125,6 +125,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceEntity.setCainiaoFenceId(old.getCainiaoFenceId());
 				fenceEntity.setGmtCreate(old.getGmtCreate());
 				fenceEntity.setVersion(old.getVersion() + 1);
+				fenceEntity.setJobId(old.getJobId());
 				fenceEntity.setCreator(old.getCreator());
 				fenceEntity.setModifier(fenceInstanceJob.getCreator());
 				updateCainiaoFence(fenceEntity);
@@ -132,6 +133,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			}else {
 				fenceEntity.setCreator(fenceInstanceJob.getCreator());
 				fenceEntity.setModifier(fenceInstanceJob.getCreator());
+				fenceEntity.setJobId(jobId);
 				Long cainiaoFenceId = addCainiaoFence(fenceEntity);
 				fenceEntity.setCainiaoFenceId(cainiaoFenceId);
 				fenceEntityBO.addFenceEntity(fenceEntity);
@@ -206,35 +208,41 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param stationId
 	 * @param templateId
 	 */
-	protected void overrideFenceEntity(Long stationId, Long templateId) {
+	protected void overrideFenceEntity(Long stationId, Long templateId, Long jobId) {
 		try {
 			FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 			Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 			//删除菜鸟的围栏
 			List<FenceEntity> fenceEntities = fenceEntityBO.getStationFenceEntitiesByFenceType(stationId, fenceTemplateDto.getTypeEnum().getCode());
 			for(FenceEntity fenceEntity : fenceEntities) {
-				deleteCainiaoFence(fenceEntity);
+				if(!fenceEntity.getJobId().equals(jobId)) {
+					deleteCainiaoFence(fenceEntity);
+				}
 			}
 			//删除围栏实例
 			fenceEntityBO.deleteFences(stationId, fenceTemplateDto.getTypeEnum().getCode());
 			//新建围栏
-			buildFenceEntity(stationId, templateId);
+			buildFenceEntity(stationId, templateId, jobId);
 		}catch(Exception e) {
 			addExecuteError("create:override", stationId, templateId, e);
 		}
 	}
 	
-	protected void newFenceEntity(Long stationId, Long templateId) {
+	protected void newFenceEntity(Long stationId, Long templateId, Long jobId) {
 		try {
-			buildFenceEntity(stationId, templateId);
+			buildFenceEntity(stationId, templateId, jobId);
 		}catch(Exception e) {
 			addExecuteError("create:new", stationId, templateId, e);
 		}
 	}
 	
 	protected void updateFenceEntity(Long stationId, Long templateId) {
+		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
+		if(fenceEntity == null) {
+			return;
+		}
 		try {
-			buildFenceEntity(stationId, templateId);
+			buildFenceEntity(stationId, templateId, 0L);
 		}catch(Exception e) {
 			addExecuteError("update", stationId, templateId, e);
 		}
