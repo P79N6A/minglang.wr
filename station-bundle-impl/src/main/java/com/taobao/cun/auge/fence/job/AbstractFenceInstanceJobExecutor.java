@@ -216,7 +216,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			//删除菜鸟的围栏
 			List<FenceEntity> fenceEntities = fenceEntityBO.getStationFenceEntitiesByFenceType(stationId, fenceTemplateDto.getTypeEnum().getCode());
 			for(FenceEntity fenceEntity : fenceEntities) {
-				if(!fenceEntity.getJobId().equals(jobId)) {
+				if(!fenceEntity.getJobId().equals(jobId)) {//不覆盖本任务生成的实例
 					deleteCainiaoFence(fenceEntity);
 					//删除围栏实例
 					fenceEntityBO.deleteById(fenceEntity.getId(), fenceTemplateDto.getCreator());
