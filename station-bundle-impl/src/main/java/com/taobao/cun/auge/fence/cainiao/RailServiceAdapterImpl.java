@@ -73,7 +73,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setRailType(fenceEntity.getType());
 		request.setRailName(fenceEntity.getName());
 		request.setRailBusinessTags(buildRailBusinessTags(fenceEntity));
-		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? 1 : 2);
+		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? 1 : 0);
 		request.setSiteId("CUNTAO_" + fenceEntity.getCainiaoStationId());
 		request.setCountryId(COUNTRY_ID);
 		request.setProvinceId(Long.valueOf(fenceEntity.getProvince()));
