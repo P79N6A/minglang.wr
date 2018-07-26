@@ -84,18 +84,19 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	}
 	
 	private void buildRange(RailInfoRequest request, FenceEntity fenceEntity) {
+		RailDistance railDistance = new RailDistance();
+		railDistance.setDistance(-1L);
+		railDistance.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
+		railDistance.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
+		
 		if(!Strings.isNullOrEmpty(fenceEntity.getRangeRule())) {
 			Range range = JSON.parseObject(fenceEntity.getRangeRule(), Range.class);
-			
-			RailDistance railDistance = new RailDistance();
-			railDistance.setDistance(range.getDistance() == null ? -1L : range.getDistance());
-			railDistance.setDistance(range.getDistance());
-			railDistance.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
-			railDistance.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
+			if(range.getDistance() != null) {
+				railDistance.setDistance(range.getDistance());
+			}
 			if(!Strings.isNullOrEmpty(fenceEntity.getCounty())) {
 				railDistance.setAreaId(Long.valueOf(fenceEntity.getCounty()));
 			}
-			request.setRailDistance(railDistance);
 			
 			List<RailKeyword> keywords = Lists.newArrayList();
 			if(!Strings.isNullOrEmpty(range.getDivision())) {
@@ -116,6 +117,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			
 			request.setKeywords(keywords);
 		}
+		request.setRailDistance(railDistance);
 	}
 	
 	private List<RailBusinessTag> buildRailBusinessTags(FenceEntity fenceEntity){
