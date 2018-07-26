@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailBusinessTag;
+import com.cainiao.dms.sorting.common.dataobject.rail.RailDistance;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailKeyword;
 import com.google.common.base.Strings;
@@ -32,6 +33,8 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	private String cpcode;
 	@Resource
 	private IRailService railService;
+	
+	private static Long COUNTRY_ID = 86L;
 	
 	@Override
 	public Long addCainiaoFence(FenceEntity fenceEntity) {
@@ -72,15 +75,10 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setRailBusinessTags(buildRailBusinessTags(fenceEntity));
 		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? 1 : 2);
 		request.setSiteId("CUNTAO_" + fenceEntity.getCainiaoStationId());
+		request.setCountryId(COUNTRY_ID);
 		request.setProvinceId(Long.valueOf(fenceEntity.getProvince()));
 		request.setCityId(Long.valueOf(fenceEntity.getCity()));
-		request.setCountryId(Long.valueOf(fenceEntity.getCounty()));
-		request.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
-		request.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
 		request.setCpCode(cpcode);
-		if(!Strings.isNullOrEmpty(fenceEntity.getTown())) {
-			request.setAreaId(Long.valueOf(fenceEntity.getTown()));
-		}
 		buildRange(request, fenceEntity);
 		return request;
 	}
@@ -88,9 +86,16 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	private void buildRange(RailInfoRequest request, FenceEntity fenceEntity) {
 		if(!Strings.isNullOrEmpty(fenceEntity.getRangeRule())) {
 			Range range = JSON.parseObject(fenceEntity.getRangeRule(), Range.class);
-			if(range.getDistance() != null) {
-				request.setDistance(range.getDistance());
+			
+			RailDistance railDistance = new RailDistance();
+			railDistance.setDistance(range.getDistance() == null ? 0 : range.getDistance());
+			railDistance.setDistance(range.getDistance());
+			railDistance.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
+			railDistance.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
+			if(!Strings.isNullOrEmpty(fenceEntity.getCounty())) {
+				railDistance.setAreaId(Long.valueOf(fenceEntity.getCounty()));
 			}
+			request.setRailDistance(railDistance);
 			
 			List<RailKeyword> keywords = Lists.newArrayList();
 			if(!Strings.isNullOrEmpty(range.getDivision())) {
@@ -103,7 +108,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			if(range.getMatch() != null) {
 				range.getMatch().forEach((k, v)->{
 					RailKeyword keyword = new RailKeyword();
-					keyword.setKeyword(k);
+					keyword.setKeyword(v);
 					keyword.setTownId(Long.parseLong(fenceEntity.getTown()));
 					keywords.add(keyword);
 				});
