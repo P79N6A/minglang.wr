@@ -502,7 +502,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
-			updateRecord.setCheckAuditStatus(auditOpinion);
+			updateRecord.setCheckAuditStatus(StationDecorateStatusEnum.CHECK_AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
