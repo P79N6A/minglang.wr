@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
+import com.cainiao.dms.sorting.common.constant.SortingConstants;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailBusinessTag;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailDistance;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
@@ -73,7 +74,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setRailType(fenceEntity.getType());
 		request.setRailName(fenceEntity.getName());
 		request.setRailBusinessTags(buildRailBusinessTags(fenceEntity));
-		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? 1 : 0);
+		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? SortingConstants.UseStatus.STATUS_ENABLED : SortingConstants.UseStatus.STATUS_DISABLED);
 		request.setSiteId("CUNTAO_" + fenceEntity.getCainiaoStationId());
 		request.setCountryId(COUNTRY_ID);
 		request.setProvinceId(Long.valueOf(fenceEntity.getProvince()));
