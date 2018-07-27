@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
 import com.taobao.cun.auge.station.dto.NewuserOrderInitResponse;
+import com.taobao.cun.auge.station.dto.NewuserOrderStat;
 import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
 
 public interface PartnerAdzoneService {
@@ -37,9 +38,26 @@ public interface PartnerAdzoneService {
      */
     public NewuserOrderInitResponse initNewUserOrder(NewuserOrderInitRequest request);
 
+    /**
+     * 初始化所有的用户拉新订单数据
+     * @param request
+     */
     public void initAllNewUserOrder(NewuserOrderInitRequest request);
 
+    /**
+     * 删除某一天的统计数据
+     * @param activityId
+     * @param statDate
+     */
     public void deleteNewuserOrder(String activityId, String statDate);
 
+    /**
+     * 获取拉新统计数据
+     * @param taobaoUserId
+     * @param stationId 可为空，默认当前taobaoUserId对应的村点
+     * @param statDate
+     * @return
+     */
+    public NewuserOrderStat getNewuserOrderStat(Long taobaoUserId, Long stationId, String statDate);
 
 }

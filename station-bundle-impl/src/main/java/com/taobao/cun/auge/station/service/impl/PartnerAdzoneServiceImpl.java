@@ -5,11 +5,10 @@ import com.google.common.collect.Maps;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
-import com.taobao.api.internal.util.StringUtils;
 import com.taobao.api.request.TbkDgNewuserOrderGetRequest;
 import com.taobao.api.response.TbkDgNewuserOrderGetResponse;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.UnionNewuserOrder;
 import com.taobao.cun.auge.dal.domain.UnionNewuserOrderExample;
@@ -18,11 +17,13 @@ import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
 import com.taobao.cun.auge.station.dto.NewuserOrderInitResponse;
+import com.taobao.cun.auge.station.dto.NewuserOrderStat;
 import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
 import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.union.api.client.service.EntryService;
 import com.taobao.union.common.RpcResult;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     EntryService entryService;
     @Autowired
     UnionNewuserOrderMapper unionNewuserOrderMapper;
+    @Autowired
+    AppResourceService appResourceService;
 
     @Value("${taobao.union.app.key}")
     private String appKey;
@@ -60,6 +63,9 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     @Value("${taobao.union.app.url}")
     private String appUrl;
     private static final String CREATE_ADZONE_QUERY_ID = "adzone.create";
+    private static final String CONFIG_UNION_NEWUSER_TYPE = "union_newuser";
+    private static final String CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE = "current_update_date";
+
 
     @Override
     public String createAdzone(Long taobaoUserId) {
@@ -184,6 +190,29 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         UnionNewuserOrderExample example = new UnionNewuserOrderExample();
         example.createCriteria().andStatDateEqualTo(statDate).andActivityIdEqualTo(activityId);
         unionNewuserOrderMapper.deleteByExample(example);
+    }
+
+    @Override
+    public NewuserOrderStat getNewuserOrderStat(Long taobaoUserId, Long stationId, String statDate) {
+        Assert.notNull(taobaoUserId, "taobaoUserId is null");
+        Assert.notNull(statDate, "statDate is null");
+        String unionPid = getUnionPid(taobaoUserId, stationId);
+        if (StringUtils.isBlank(unionPid)) {
+            logger.error("getNewuserOrderStatError, invalid param {}, {}", taobaoUserId, stationId);
+            NewuserOrderStat stat = new NewuserOrderStat();
+            stat.setTaobaoUserId(taobaoUserId);
+            stat.setStatDate(statDate);
+            return stat;
+        }
+        Long adzoneId = Long.parseLong(unionPid.split("_")[3]);
+
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE);
+        Assert.notNull(currentUpdateDate, "system error");
+        
+        NewuserOrderStat stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
+        stat.setTaobaoUserId(taobaoUserId);
+        stat.setStatDate(statDate);
+        return stat;
     }
 
     private UnionNewuserOrder convertFromTbkNewuserOrder(TbkDgNewuserOrderGetResponse.MapData data) {
