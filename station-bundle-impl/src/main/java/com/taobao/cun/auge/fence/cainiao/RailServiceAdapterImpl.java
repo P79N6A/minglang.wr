@@ -16,6 +16,7 @@ import com.cainiao.dms.sorting.common.dataobject.rail.RailBusinessTag;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailDistance;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailKeyword;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
@@ -123,6 +124,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setRailDistance(railDistance);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<RailBusinessTag> buildRailBusinessTags(FenceEntity fenceEntity){
 		List<RailBusinessTag> railBusinessTags = Lists.newArrayList();
 		RailBusinessTag versionTag = new RailBusinessTag();
@@ -138,10 +140,18 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		}
 		
 		if(!Strings.isNullOrEmpty(fenceEntity.getCommodity())) {
-			RailBusinessTag tag = new RailBusinessTag();
-			tag.setTagKey("commodity");
-			tag.setTagValue(fenceEntity.getCommodity());
-			railBusinessTags.add(tag);
+			Map<String, Object> commodities = JSON.parseObject(fenceEntity.getCommodity(), Map.class);
+			commodities.forEach((k,v)->{
+				RailBusinessTag tag = new RailBusinessTag();
+				tag.setTagKey(k);
+				if(v instanceof Iterable) {
+					tag.setTagValue(Joiner.on(",").join((Iterable<?>)v));
+				}else {
+					tag.setTagValue(v.toString());
+				}
+				
+				railBusinessTags.add(tag);
+			});
 		}
 		
 		return railBusinessTags;
