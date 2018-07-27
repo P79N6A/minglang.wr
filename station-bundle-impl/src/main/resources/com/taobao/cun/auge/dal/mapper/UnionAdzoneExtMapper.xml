@@ -6,10 +6,10 @@
       adzone_id adzoneId,
       stat_date statDate,
       sum(case when status= 4 then 1 else 0 end) confirmCnt,
-      sum(case when ord.status>=3 then 1 else 0 end) buyCnt,
-      sum(case when ord.status>=2 then 1 else 0 end) activateCnt,
-      sum(case when ord.status>=1 then 1 else 0 end) registerCnt,
-      sum(case when ord.is_card_save= 1 and bind_card_time is not null then 1 else 0 end) carBindCnt
+      sum(case when status>=3 then 1 else 0 end) buyCnt,
+      sum(case when status>=2 then 1 else 0 end) activateCnt,
+      sum(case when status>=1 then 1 else 0 end) registerCnt,
+      sum(case when is_card_save= 1 and bind_card_time is not null then 1 else 0 end) carBindCnt
     from union_newuser_order
     where stat_date=#{statDate,jdbcType=VARCHAR}
     and adzone_id=#{adzoneId,jdbcType=BIGINT}
