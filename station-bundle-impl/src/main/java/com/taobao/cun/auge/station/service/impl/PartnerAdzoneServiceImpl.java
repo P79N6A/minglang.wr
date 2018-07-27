@@ -163,30 +163,14 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     }
 
     @Override
-    public void initAllNewUserOrder(NewuserOrderInitRequest request) {
-        Long pageNO = request.getPageNo();
-        Long pageSize = 20L;
-        Long endNo = request.getPageSize();
-        request.setPageSize(pageSize);
-        while (true) {
-            request.setPageNo(pageNO);
-            NewuserOrderInitResponse response = initNewUserOrder(request);
-            if (response.getSuccess()) {
-                if (response.getHasNext()) {
-                    pageNO++;
-                } else {
-                    logger.error("----------------initAllNewUserOrderEnd");
-                    break;
-                }
-            } else {
-                logger.error("----------------initAllNewUserOrderError");
-                break;
-            }
-        }
-    }
-
-    @Override
     public void deleteNewuserOrder(String activityId, String statDate) {
+        Assert.notNull(activityId, "activityId is null");
+        Assert.notNull(statDate, "statDate is null");
+
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE);
+        if (currentUpdateDate != null && currentUpdateDate.equalsIgnoreCase(statDate)) {
+            return;
+        }
         UnionNewuserOrderExample example = new UnionNewuserOrderExample();
         example.createCriteria().andStatDateEqualTo(statDate).andActivityIdEqualTo(activityId);
         unionNewuserOrderMapper.deleteByExample(example);
@@ -208,11 +192,34 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
 
         String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE);
         Assert.notNull(currentUpdateDate, "system error");
-        
+
         NewuserOrderStat stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
         stat.setTaobaoUserId(taobaoUserId);
         stat.setStatDate(statDate);
         return stat;
+    }
+
+    @Override
+    public void initAllNewUserOrder(NewuserOrderInitRequest request) {
+        Long pageNO = request.getPageNo();
+        Long pageSize = 20L;
+        Long endNo = request.getPageSize();
+        request.setPageSize(pageSize);
+        while (true) {
+            request.setPageNo(pageNO);
+            NewuserOrderInitResponse response = initNewUserOrder(request);
+            if (response.getSuccess()) {
+                if (response.getHasNext()) {
+                    pageNO++;
+                } else {
+                    logger.error("----------------initAllNewUserOrderEnd");
+                    break;
+                }
+            } else {
+                logger.error("----------------initAllNewUserOrderError");
+                break;
+            }
+        }
     }
 
     private UnionNewuserOrder convertFromTbkNewuserOrder(TbkDgNewuserOrderGetResponse.MapData data) {
