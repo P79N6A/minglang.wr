@@ -50,13 +50,17 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 		if(!Strings.isNullOrEmpty(fenceRule.getDivision())){
 			Map<String, String> division = Maps.newHashMap();
 			if(fenceRule.getDivision().equals("province")) {
-				division.put("province", station.getProvince());
+				division.put("code", station.getProvince());
+				division.put("name", station.getProvinceDetail());
 			}else if(fenceRule.getDivision().equals("city")) {
-				division.put("city", station.getCity());
+				division.put("code", station.getCity());
+				division.put("name", station.getCityDetail());
 			}else if(fenceRule.getDivision().equals("county")) {
-				division.put("county", station.getCounty());
+				division.put("code", station.getCounty());
+				division.put("name", station.getCountyDetail());
 			}else {
-				division.put("town", station.getTown());
+				division.put("code", station.getTown());
+				division.put("name", station.getTownDetail());
 			}
 			
 			result.put(FenceConstants.RANGE_DIVISION, division);

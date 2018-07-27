@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
 import com.cainiao.dms.sorting.common.constant.SortingConstants;
+import com.cainiao.dms.sorting.common.dataobject.rail.RailAreaCover;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailBusinessTag;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailDistance;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
@@ -87,6 +88,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		return request;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void buildRange(RailInfoRequest request, FenceEntity fenceEntity) {
 		RailDistance railDistance = new RailDistance();
 		railDistance.setDistance(-1L);
@@ -104,6 +106,10 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			
 			List<RailKeyword> keywords = Lists.newArrayList();
 			if(!Strings.isNullOrEmpty(range.getDivision())) {
+				Map<String, String> division = JSON.parseObject(range.getDivision(), Map.class);
+				RailAreaCover railAreaCover = new RailAreaCover();
+				railAreaCover.setAreaName(division.get("name"));
+				railAreaCover.setAreaId(Long.parseLong(division.get("code")));
 				RailKeyword keyword = new RailKeyword();
 				keyword.setKeyword(range.getDivision());
 				keyword.setTownId(Long.parseLong(fenceEntity.getTown()));
