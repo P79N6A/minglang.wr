@@ -39,19 +39,21 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	
 	@Override
 	public Long addCainiaoFence(FenceEntity fenceEntity) {
-		BaseResult<Long> result = railService.addRail(toCainiaoFence(fenceEntity));
+		RailInfoRequest request = toCainiaoFence(fenceEntity);
+		BaseResult<Long> result = railService.addRail(request);
 		if(result.isSuccess()) {
 			return result.getResult();
 		}else {
-			throw new RailException("code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 
 	@Override
 	public void updateCainiaoFence(FenceEntity fenceEntity) {
-		BaseResult<Boolean> result = railService.updateRailById(toCainiaoFence(fenceEntity));
+		RailInfoRequest request = toCainiaoFence(fenceEntity);
+		BaseResult<Boolean> result = railService.updateRailById(request);
 		if(!result.isSuccess()) {
-			throw new RailException("code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 
@@ -62,7 +64,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setCpCode(cpcode);
 		BaseResult<Boolean> result = railService.deleteRailById(request);
 		if(!result.isSuccess()) {
-			throw new RailException("code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 

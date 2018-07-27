@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
+import com.taobao.cun.auge.fence.cainiao.RailException;
 import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
@@ -339,7 +341,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error)));
+		ExecuteError executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
+		if(error instanceof RailException) {
+			executeError.setRequest(((RailException)error).getRequest());
+		}
+		threadLocal.get().add(executeError);
 	}
 	
 	static class ExecuteError{
@@ -351,6 +357,8 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		private Long templateId;
 		@JSONField(ordinal=4)
 		private String errorMsg;
+		@JSONField(ordinal=5)
+		private RailInfoRequest request;
 		@JSONField(ordinal=100)
 		private List<String> errors;
 		ExecuteError(String action, Long stationId, Long templateId, String errorMsg, String[] errors){
@@ -364,6 +372,12 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				errorList.add(error.replaceAll("\t", " - "));
 			}
 			this.errors = errorList;
+		}
+		public RailInfoRequest getRequest() {
+			return request;
+		}
+		public void setRequest(RailInfoRequest request) {
+			this.request = request;
 		}
 		public String getErrorMsg() {
 			return errorMsg;
