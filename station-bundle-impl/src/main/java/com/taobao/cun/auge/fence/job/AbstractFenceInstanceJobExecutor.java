@@ -343,7 +343,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
 		ExecuteError executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
 		if(error instanceof RailException) {
-			executeError.setRequest(((RailException)error).getRequest());
+			executeError.setRailInfoRequest(((RailException)error).getRailInfoRequest());
 		}
 		threadLocal.get().add(executeError);
 	}
@@ -358,7 +358,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		@JSONField(ordinal=4)
 		private String errorMsg;
 		@JSONField(ordinal=5)
-		private RailInfoRequest request;
+		private RailInfoRequest railInfoRequest;
 		@JSONField(ordinal=100)
 		private List<String> errors;
 		ExecuteError(String action, Long stationId, Long templateId, String errorMsg, String[] errors){
@@ -373,11 +373,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			}
 			this.errors = errorList;
 		}
-		public RailInfoRequest getRequest() {
-			return request;
+		public RailInfoRequest getRailInfoRequest() {
+			return railInfoRequest;
 		}
-		public void setRequest(RailInfoRequest request) {
-			this.request = request;
+		public void setRailInfoRequest(RailInfoRequest railInfoRequest) {
+			this.railInfoRequest = railInfoRequest;
 		}
 		public String getErrorMsg() {
 			return errorMsg;
