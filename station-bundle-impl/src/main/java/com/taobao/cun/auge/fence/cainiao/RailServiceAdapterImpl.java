@@ -110,10 +110,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 				RailAreaCover railAreaCover = new RailAreaCover();
 				railAreaCover.setAreaName(division.get("name"));
 				railAreaCover.setAreaId(Long.parseLong(division.get("code")));
-				RailKeyword keyword = new RailKeyword();
-				keyword.setKeyword(range.getDivision());
-				keyword.setTownId(Long.parseLong(fenceEntity.getTown()));
-				keywords.add(keyword);
+				request.setRailAreaCover(railAreaCover);
 			}
 			
 			if(range.getMatch() != null) {
