@@ -6,22 +6,22 @@ public class RailException extends RuntimeException {
 
 	private static final long serialVersionUID = -4235558769562786954L;
 
-	private RailInfoRequest request;
+	private RailInfoRequest railInfoRequest;
 	
 	public RailException(RailInfoRequest request, String message) {
 		super(message);
-		this.request = request;
+		this.railInfoRequest = request;
 	}
 	
 	public RailException(String message) {
 		super(message);
 	}
 
-	public RailInfoRequest getRequest() {
-		return request;
+	public RailInfoRequest getRailInfoRequest() {
+		return railInfoRequest;
 	}
 
-	public void setRequest(RailInfoRequest request) {
-		this.request = request;
+	public void setRailInfoRequest(RailInfoRequest railInfoRequest) {
+		this.railInfoRequest = railInfoRequest;
 	}
 }
