@@ -37,4 +37,10 @@ public class IRailServiceMock implements IRailService {
 		return null;
 	}
 
+	@Override
+	public BaseResult<Boolean> updateRailStatusById(RailInfoResult arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

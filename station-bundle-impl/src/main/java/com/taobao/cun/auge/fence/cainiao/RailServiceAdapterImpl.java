@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
+import com.cainiao.dms.sorting.api.model.RailInfoResult;
 import com.cainiao.dms.sorting.common.constant.SortingConstants;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailAreaCover;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailBusinessTag;
@@ -23,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
+import com.taobao.cun.common.util.BeanCopy;
 
 /**
  * 调用菜鸟围栏接口
@@ -125,6 +127,19 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			request.setKeywords(keywords);
 		}
 		request.setRailDistance(railDistance);
+	}
+	
+	@Override
+	public void updateCainiaoFenceState(FenceEntity fenceEntity) {
+		RailInfoResult request = new RailInfoResult();
+		request.setId(fenceEntity.getCainiaoFenceId());
+		request.setCpCode(cpcode);
+		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? SortingConstants.UseStatus.STATUS_ENABLED : SortingConstants.UseStatus.STATUS_DISABLED);
+		BaseResult<Boolean> result = railService.updateRailStatusById(request);
+		if(!result.isSuccess()) {
+			throw new RailException(BeanCopy.copy(RailInfoRequest.class, request), "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+		}
+		
 	}
 	
 	@SuppressWarnings("unchecked")

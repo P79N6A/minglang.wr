@@ -28,4 +28,9 @@ public interface RailServiceAdapter {
 	 */
 	void deleteCainiaoFence(Long cainiaoFenceId);
 	
+	/**
+	 * 更新菜鸟围栏状态
+	 * @param fenceEntity
+	 */
+	void updateCainiaoFenceState(FenceEntity fenceEntity);
 }
