@@ -8,7 +8,7 @@ import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
 
 /**
- * 执行从模板批量开启围栏的任务
+ * 删除围栏模板后，删除关联的实例
  * 
  * @author chengyu.zhoucy
  *
