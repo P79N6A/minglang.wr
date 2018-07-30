@@ -272,7 +272,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		try {
 			//更新菜鸟的状态
 			fenceEntity.setState(state);
-			railServiceAdapter.updateCainiaoFence(fenceEntity);
+			railServiceAdapter.updateCainiaoFenceState(fenceEntity);
 			//更新实例状态
 			fenceEntityBO.updateEntityState(fenceEntity.getId(), state, operator);
 		}catch(Exception e) {
