@@ -185,7 +185,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Assert.notNull(statDate, "statDate is null");
         String unionPid = getUnionPid(taobaoUserId, stationId);
         if (StringUtils.isBlank(unionPid)) {
-            logger.error(PARTNER_ADZONE_ERROR + "getNewuserOrderStatError, invalid param {}, {}", taobaoUserId, stationId);
+            logger.error("getNewuserOrderStatError, invalid param {}, {}", taobaoUserId, stationId);
             NewuserOrderStat stat = new NewuserOrderStat();
             stat.setTaobaoUserId(taobaoUserId);
             stat.setStatDate(statDate);
