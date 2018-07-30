@@ -62,9 +62,12 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     private String appSecret;
     @Value("${taobao.union.app.url}")
     private String appUrl;
+    private static final String PARTNER_ADZONE_ERROR = "PARTNER_ADZONE_ERROR:";
+
     private static final String CREATE_ADZONE_QUERY_ID = "adzone.create";
     private static final String CONFIG_UNION_NEWUSER_TYPE = "union_newuser";
-    private static final String CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE = "current_update_date";
+    private static final String CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE = "current_update_date_";
+    private static final String CONFIG_UNION_NEWUSER_ACTIVITY_ID = "activity_id_";
 
 
     @Override
@@ -72,7 +75,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Assert.notNull(taobaoUserId, "taobaoUserId is null");
         PartnerStationRel instance = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
         if (null == instance || null == instance.getStationId()) {
-            logger.error("createAdzoneError(instance is null): {} ", taobaoUserId);
+            logger.error(PARTNER_ADZONE_ERROR + "createAdzoneError(instance is null): {} ", taobaoUserId);
             return null;
         }
         Long stationId = instance.getStationId();
@@ -92,7 +95,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
-            logger.error("create adzone erroor: {}, {}", JSON.toJSONString(variables), result.toString());
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone erroor: {}, {}", JSON.toJSONString(variables), result.toString());
             throw new AugeSystemException(result.toString());
         }
         Map data = (Map) result.getData();
@@ -152,10 +155,10 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                 });
             } else {
                 response.setSuccess(false);
-                logger.error("TbkDgNewuserOrderGetRequestError:" + JSON.toJSONString(rsp));
+                logger.error(PARTNER_ADZONE_ERROR + "TbkDgNewuserOrderGetRequestError:" + JSON.toJSONString(rsp));
             }
         } catch (ApiException e) {
-            logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
+            logger.info(PARTNER_ADZONE_ERROR + "start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
             response.setSuccess(false);
         }
 
@@ -167,7 +170,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Assert.notNull(activityId, "activityId is null");
         Assert.notNull(statDate, "statDate is null");
 
-        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE);
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
         if (currentUpdateDate != null && currentUpdateDate.equalsIgnoreCase(statDate)) {
             return;
         }
@@ -182,7 +185,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Assert.notNull(statDate, "statDate is null");
         String unionPid = getUnionPid(taobaoUserId, stationId);
         if (StringUtils.isBlank(unionPid)) {
-            logger.error("getNewuserOrderStatError, invalid param {}, {}", taobaoUserId, stationId);
+            logger.error(PARTNER_ADZONE_ERROR + "getNewuserOrderStatError, invalid param {}, {}", taobaoUserId, stationId);
             NewuserOrderStat stat = new NewuserOrderStat();
             stat.setTaobaoUserId(taobaoUserId);
             stat.setStatDate(statDate);
@@ -190,7 +193,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         }
         Long adzoneId = Long.parseLong(unionPid.split("_")[3]);
 
-        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE);
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
         Assert.notNull(currentUpdateDate, "system error");
 
         NewuserOrderStat stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
