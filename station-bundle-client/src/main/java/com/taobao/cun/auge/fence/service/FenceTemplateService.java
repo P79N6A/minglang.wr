@@ -24,6 +24,13 @@ public interface FenceTemplateService {
     Long addFenceTemplate(FenceTemplateEditDto detailDto);
 
     /**
+     * 删除一批电子围栏模板
+     * @param idList
+     * @param operator
+     */
+    void deleteFenceTemplateList(List<Long> idList, String operator);
+
+    /**
      * 更新模板
      * @param detailDto
      */

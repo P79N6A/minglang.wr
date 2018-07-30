@@ -17,10 +17,12 @@ import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by xiao on 18/6/15.
@@ -40,6 +42,16 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public Long addFenceTemplate(FenceTemplateEditDto detailDto) {
         return fenceTemplateBO.addFenceTemplate(detailDto);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteFenceTemplateList(List<Long> idList, String operator) {
+        fenceTemplateBO.deleteFenceTemplateList(idList, operator);
+        TemplateDeleteFenceInstanceJob job = new TemplateDeleteFenceInstanceJob();
+        job.setTemplateIds(idList);
+        job.setCreator(operator);
+        jobService.createJob(job);
     }
 
     @Override

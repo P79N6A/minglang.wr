@@ -30,4 +30,6 @@ public interface FenceTemplateBO {
 
     List<FenceTemplateDto> getFenceTemplateListByIdList(List<Long> idList);
 
+    void deleteFenceTemplateList(List<Long> idList, String operator);
+
 }

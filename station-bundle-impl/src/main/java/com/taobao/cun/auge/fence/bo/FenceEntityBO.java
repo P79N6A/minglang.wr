@@ -10,8 +10,18 @@ import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
  */
 public interface FenceEntityBO {
 
+    /**
+     * 启用电子围栏实例
+     * @param templateId
+     * @param operator
+     */
     void enableEntityListByTemplateId(Long templateId, String operator);
 
+    /**
+     * 禁用电子围栏实例
+     * @param templateId
+     * @param operator
+     */
     void disableEntityListByTemplateId(Long templateId, String operator);
     
     void updateEntityState(Long id, String state, String operator);
@@ -28,8 +38,9 @@ public interface FenceEntityBO {
     List<Long> getTemplateIdListByStationId(Long stationId);
 
     /**
-     * 删除单个站点关联的电子围栏
-     * @param fenceTemplateStation
+     *
+     * @param stationId
+     * @param fenceType
      */
     void deleteFences(Long stationId, String fenceType);
     
@@ -51,17 +62,18 @@ public interface FenceEntityBO {
      * @return
      */
     List<FenceEntity> getFenceEntityByTemplateId(Long templateId);
-    
+
     /**
      * 获取站点关联的围栏实例
-     * @param templateId
+     * @param stationId
      * @return
      */
     List<FenceEntity> getFenceEntitiesByStationId(Long stationId);
-    
+
     /**
      * 获取村点某个类型的围栏实例
-     * @param templateId
+     * @param stationId
+     * @param fenceType
      * @return
      */
     List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, String fenceType);
