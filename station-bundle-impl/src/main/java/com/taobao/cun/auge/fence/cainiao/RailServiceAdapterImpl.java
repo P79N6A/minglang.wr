@@ -96,14 +96,16 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		railDistance.setDistance(-1L);
 		railDistance.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
 		railDistance.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
+		if(!Strings.isNullOrEmpty(fenceEntity.getCounty())) {
+			railDistance.setAreaId(Long.valueOf(fenceEntity.getCounty()));
+		}else {
+			railDistance.setAreaId(Long.valueOf(fenceEntity.getCity()));
+		}
 		
 		if(!Strings.isNullOrEmpty(fenceEntity.getRangeRule())) {
 			Range range = JSON.parseObject(fenceEntity.getRangeRule(), Range.class);
 			if(range.getDistance() != null) {
 				railDistance.setDistance(range.getDistance());
-			}
-			if(!Strings.isNullOrEmpty(fenceEntity.getCounty())) {
-				railDistance.setAreaId(Long.valueOf(fenceEntity.getCounty()));
 			}
 			
 			List<RailKeyword> keywords = Lists.newArrayList();
