@@ -169,16 +169,16 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     }
 
     @Override
-    public void deleteNewuserOrder(String activityId, String statDate) {
+    public void deleteNewuserOrder(String activityId, String updateDate) {
         Assert.notNull(activityId, "activityId is null");
-        Assert.notNull(statDate, "statDate is null");
+        Assert.notNull(updateDate, "updateDate is null");
 
-        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
-        if (currentUpdateDate != null && currentUpdateDate.equalsIgnoreCase(statDate)) {
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + updateDate.substring(0, 6));
+        if (currentUpdateDate != null && currentUpdateDate.equalsIgnoreCase(updateDate)) {
             return;
         }
         UnionNewuserOrderExample example = new UnionNewuserOrderExample();
-        example.createCriteria().andStatDateEqualTo(statDate).andActivityIdEqualTo(activityId);
+        example.createCriteria().andUpdateDateEqualTo(updateDate).andActivityIdEqualTo(activityId);
         unionNewuserOrderMapper.deleteByExample(example);
     }
 
@@ -245,4 +245,5 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         order.setTbTradeParentId(data.getTbTradeParentId());
         return order;
     }
+
 }

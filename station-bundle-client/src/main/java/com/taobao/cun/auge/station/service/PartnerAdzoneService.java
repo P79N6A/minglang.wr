@@ -47,9 +47,9 @@ public interface PartnerAdzoneService {
     /**
      * 删除某一天的统计数据
      * @param activityId
-     * @param statDate
+     * @param updateDate
      */
-    public void deleteNewuserOrder(String activityId, String statDate);
+    public void deleteNewuserOrder(String activityId, String updateDate);
 
     /**
      * 获取拉新统计数据
