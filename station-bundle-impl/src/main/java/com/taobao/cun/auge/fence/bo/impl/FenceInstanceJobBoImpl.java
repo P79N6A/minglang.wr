@@ -83,6 +83,9 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 		if(entity != null) {
 			BeanCopyUtils.copyNotNullProperties(fenceInstanceJobUpdateDto, entity);
 			entity.setGmtModified(new Date());
+			if(fenceInstanceJobUpdateDto.getErrorMsg() == null) {
+				entity.setErrorMsg(null);
+			}
 			fenceInstanceJobEntityMapper.updateByPrimaryKeyWithBLOBs(entity);
 		}
 	}
