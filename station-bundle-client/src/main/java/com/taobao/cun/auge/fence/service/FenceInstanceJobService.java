@@ -10,6 +10,7 @@ import com.taobao.cun.auge.fence.dto.job.StationStateClosedFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 
@@ -33,6 +34,12 @@ public interface FenceInstanceJobService {
 	 * @param templateCloseFenceInstanceJob
 	 */
 	void createJob(TemplateCloseFenceInstanceJob templateCloseFenceInstanceJob);
+	
+	/**
+	 * 删除围栏模板后，删除关联的实例
+	 * @param templateDeleteFenceInstanceJob
+	 */
+	void createJob(TemplateDeleteFenceInstanceJob templateDeleteFenceInstanceJob);
 	
 	/**
 	 * 编辑模板后触发的任务
