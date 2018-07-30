@@ -137,7 +137,10 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         //req.setAdzoneId();
         //req.setStartTime();
         //req.setEndTime();
-        String updateDate = DateFormatUtils.format(new Date().getTime(), "yyyyMMdd");
+        if (null == request.getUpdateDate()) {
+            String updateDate = DateFormatUtils.format(new Date().getTime(), "yyyyMMdd");
+            request.setUpdateDate(updateDate);
+        }
         try {
             logger.info("start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
             TbkDgNewuserOrderGetResponse rsp = client.execute(req);
@@ -147,7 +150,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                 data.getResults().forEach(res -> {
                     UnionNewuserOrder order = convertFromTbkNewuserOrder(res);
                     order.setStatDate(request.getStatDate());
-                    order.setUpdateDate(updateDate);
+                    order.setUpdateDate(request.getUpdateDate());
                     Date now = new Date();
                     order.setGmtCreate(now);
                     order.setGmtModified(now);

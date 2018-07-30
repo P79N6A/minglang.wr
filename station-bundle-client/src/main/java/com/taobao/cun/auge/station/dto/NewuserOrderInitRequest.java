@@ -16,6 +16,11 @@ public class NewuserOrderInitRequest implements Serializable{
      */
     private String statDate;
 
+    /**
+     * 数据更新日期
+     */
+    private String updateDate;
+
     public Long getPageNo() {
         return pageNo;
     }
@@ -46,5 +51,13 @@ public class NewuserOrderInitRequest implements Serializable{
 
     public void setStatDate(String statDate) {
         this.statDate = statDate;
+    }
+
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
     }
 }
