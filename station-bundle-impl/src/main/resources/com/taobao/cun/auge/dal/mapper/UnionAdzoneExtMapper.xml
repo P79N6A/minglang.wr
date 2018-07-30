@@ -13,7 +13,7 @@
     from union_newuser_order
     where stat_date=#{statDate,jdbcType=VARCHAR}
     and adzone_id=#{adzoneId,jdbcType=BIGINT}
-    and update_date=#{statDate,jdbcType=VARCHAR}
+    and update_date=#{currentUpdateDate,jdbcType=VARCHAR}
     group by adzone_id,stat_date
     </select>
 

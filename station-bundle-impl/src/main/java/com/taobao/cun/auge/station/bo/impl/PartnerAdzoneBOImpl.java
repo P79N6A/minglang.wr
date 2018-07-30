@@ -70,6 +70,9 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         Assert.notNull(statDate, "statDate is null");
         Assert.notNull(currentUpdateDate, "currentUpdateDate is null");
         Map<String, Object> param = new HashMap<String, Object>();
+        param.put("adzoneId",adzoneId);
+        param.put("statDate",statDate);
+        param.put("currentUpdateDate",currentUpdateDate);
         List<NewuserOrderStat> statList = unionAdzoneExtMapper.getNewuserOrderStat(param);
         NewuserOrderStat stat = null;
         if (CollectionUtils.isEmpty(statList)) {
