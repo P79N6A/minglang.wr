@@ -142,4 +142,13 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
         return templateList.stream().map(FenceTemplateConvertor::convertToDto).collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteFenceTemplateList(List<Long> idList, String operator) {
+        FenceTemplateExample example = new FenceTemplateExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+        FenceTemplate record = new FenceTemplate();
+        DomainUtils.beforeDelete(record, operator);
+        templateMapper.updateByExampleSelective(record, example);
+    }
+
 }
