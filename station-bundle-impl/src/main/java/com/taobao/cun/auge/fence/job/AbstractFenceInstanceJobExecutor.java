@@ -73,6 +73,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			List<ExecuteError> list = threadLocal.get();
 			if(list.isEmpty()) {
 				fenceInstanceJobUpdateDto.setState("SUCCESS");
+				fenceInstanceJobUpdateDto.setErrorMsg(null);
 			}else {
 				fenceInstanceJobUpdateDto.setState("ERROR");
 				String fileName = "fence_job_error_" + fenceInstanceJob.getId() + ".json";

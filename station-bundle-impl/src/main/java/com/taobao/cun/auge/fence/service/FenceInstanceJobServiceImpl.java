@@ -16,6 +16,7 @@ import com.taobao.cun.auge.fence.dto.job.StationStateClosedFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -101,5 +102,10 @@ public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 	@Override
 	public void createJob(StationStateReopenFenceInstanceJob stationStateReopenFenceInstanceJob) {
 		fenceInstanceJobBo.insertJob(stationStateReopenFenceInstanceJob);
+	}
+
+	@Override
+	public void createJob(TemplateDeleteFenceInstanceJob templateDeleteFenceInstanceJob) {
+		fenceInstanceJobBo.insertJob(templateDeleteFenceInstanceJob);
 	}
 }
