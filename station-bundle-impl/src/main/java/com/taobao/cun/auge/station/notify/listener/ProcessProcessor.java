@@ -307,13 +307,25 @@ public class ProcessProcessor {
             }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
 				String resultCode = ob.getString("result");
+				ProcessApproveResultEnum decorationDesignAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
 				String desc = ob.getString("taskRemark");
-				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  ProcessApproveResultEnum.valueof(resultCode), desc);
+				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
 				String resultCode = ob.getString("result");
 				String desc = ob.getString("taskRemark");
-				stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(),  ProcessApproveResultEnum.valueof(resultCode), desc);
+				ProcessApproveResultEnum decorationCheckAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
+				stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
 			}
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
