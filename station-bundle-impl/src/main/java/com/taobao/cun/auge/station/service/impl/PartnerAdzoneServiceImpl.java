@@ -197,9 +197,10 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Long adzoneId = Long.parseLong(unionPid.split("_")[3]);
 
         String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
-        Assert.notNull(currentUpdateDate, "system error");
-
-        NewuserOrderStat stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
+        NewuserOrderStat stat = new NewuserOrderStat();
+        if (null != currentUpdateDate) {
+            stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
+        }
         stat.setTaobaoUserId(taobaoUserId);
         stat.setStatDate(statDate);
         return stat;
