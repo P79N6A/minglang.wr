@@ -340,4 +340,13 @@ public interface PartnerInstanceService {
      * @return
      */
     public boolean freezeBondForTrans(FreezeBondDto freezeBondDto);
+    
+    /**
+     * 更新站点业态
+     * @param category
+     * @return
+     */
+    public boolean updateStationCategory(List<Long> stationId,String category);
+    
+    public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix);
 }

@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
+import com.taobao.cun.auge.client.operator.DefaultOperatorEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
@@ -33,7 +34,6 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
@@ -41,6 +41,10 @@ import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.sop.inspection.dto.InspectionInsPageCondition;
+import com.taobao.cun.auge.sop.inspection.dto.InspectionInsPageDto;
+import com.taobao.cun.auge.sop.inspection.enums.InspectionStateEnum;
+import com.taobao.cun.auge.sop.inspection.service.InspectionService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
@@ -108,7 +112,6 @@ import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
-import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -191,6 +194,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     @Autowired
     private UserTagService userTagService;
+    
+    @Autowired
+    private InspectionService inspectionService;
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
     }
@@ -259,10 +265,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
         }
         buildStoreInfo(insDto);
+        //buildInspectionInfo(insDto);
         return insDto;
     }
 
-    @Override
+   
+
+	@Override
     public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) {
         ValidateUtils.notNull(stationId);
         List<PartnerStationRel> psRels = partnerInstanceBO.findPartnerInstances(stationId);

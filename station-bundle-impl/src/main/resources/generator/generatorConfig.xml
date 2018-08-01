@@ -128,8 +128,9 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="fence_entity" domainObjectName="FenceEntity" enableCountByExample="true" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true"/>
-		
+		<table tableName="union_newuser_order" enableCountByExample="UnionNewuserOrder" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
 	</context>
 </generatorConfiguration>

@@ -3,6 +3,7 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.taobao.union.api.client.service.EntryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -385,8 +386,9 @@ public class HsfConsumer2ndPartyConfiguration  {
    
     @HSFConsumer(serviceVersion="${cbu.member.service.version}",serviceGroup="DUBBO")
    	private MemberReadService memberReadService;
-   
-    
+
+	@HSFConsumer(serviceVersion="${taobao.union.entry.service.version}",serviceGroup="HSF")
+	private EntryService entryService;
     
 
     

@@ -108,5 +108,9 @@ public interface StoreWriteService {
 	
 	
 	public void batchInitStoreEmployee();
+	
+	public void syncStore(Long stationId);
+	
+	public void syncStore();
 
 }

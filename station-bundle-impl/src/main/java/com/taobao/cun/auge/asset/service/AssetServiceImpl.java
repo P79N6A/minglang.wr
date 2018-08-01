@@ -184,7 +184,7 @@ public class AssetServiceImpl implements AssetService{
 		content.setContent("自" + cuntaoOrgServiceClient.getCuntaoOrg(transferDto.getOperatorOrgId()) + emp360Adapter.getName(transferDto.getOperator()) + "(" +transferDto.getOperator() + ")申请转移的资产已发出，请您注意签收，查看详情");
 		content.setRouteUrl("url");
 		signEvent.setContent(content);
-		EventDispatcherUtil.dispatch("CRM_ASSET_TRANSFER", new ExtEvent(JSON.toJSONString(signEvent)));
+		EventDispatcherUtil.dispatch("CRM_ASSET_TRANSFER", JSON.toJSONString(signEvent));
 	}
 
 	@Override

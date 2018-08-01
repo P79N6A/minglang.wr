@@ -47,6 +47,7 @@
     <result column="is_on_town" jdbcType="CHAR" property="isOnTown" />
     <result column="station_type" jdbcType="INTEGER" property="stationType" />
     <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -124,7 +125,7 @@
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
     manager_id, provider_id, feature, status, fixed_type, version, is_on_town, station_type, 
-    mode
+    mode, category
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
@@ -194,7 +195,7 @@
       area_type, manager_id, provider_id, 
       feature, status, fixed_type, 
       version, is_on_town, station_type, 
-      mode)
+      mode, category)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoNick,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
@@ -208,7 +209,7 @@
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
       #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{stationType,jdbcType=INTEGER}, 
-      #{mode,jdbcType=VARCHAR})
+      #{mode,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -340,6 +341,9 @@
       <if test="mode != null">
         mode,
       </if>
+      <if test="category != null">
+        category,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -461,6 +465,9 @@
       </if>
       <if test="mode != null">
         #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        #{category,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -604,6 +611,9 @@
       <if test="record.mode != null">
         mode = #{record.mode,jdbcType=VARCHAR},
       </if>
+      <if test="record.category != null">
+        category = #{record.category,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -655,7 +665,8 @@
       version = #{record.version,jdbcType=BIGINT},
       is_on_town = #{record.isOnTown,jdbcType=CHAR},
       station_type = #{record.stationType,jdbcType=INTEGER},
-      mode = #{record.mode,jdbcType=VARCHAR}
+      mode = #{record.mode,jdbcType=VARCHAR},
+      category = #{record.category,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -787,6 +798,9 @@
       <if test="mode != null">
         mode = #{mode,jdbcType=VARCHAR},
       </if>
+      <if test="category != null">
+        category = #{category,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -835,7 +849,8 @@
       version = #{version,jdbcType=BIGINT},
       is_on_town = #{isOnTown,jdbcType=CHAR},
       station_type = #{stationType,jdbcType=INTEGER},
-      mode = #{mode,jdbcType=VARCHAR}
+      mode = #{mode,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

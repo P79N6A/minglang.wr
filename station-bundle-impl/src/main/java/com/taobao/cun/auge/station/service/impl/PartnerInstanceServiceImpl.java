@@ -122,6 +122,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -147,7 +148,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -175,6 +175,7 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
@@ -306,6 +307,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
+    @Autowired
+    private StoreWriteBO storeWriteBO;
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
@@ -921,9 +924,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
-				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
-			}
 		/*	if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}*/
@@ -2260,6 +2260,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             lngDto.setLng(updateStation.getAddress().getLng());
             lngDto.setLat(updateStation.getAddress().getLat());
             caiNiaoService.modifyLngLatToCainiao(lngDto);
+            storeWriteBO.syncStore(updateStation.getId());
         }
     }
 
@@ -2448,4 +2449,43 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         return true;
 	}
+
+
+	@Override
+	public boolean updateStationCategory(List<Long> stationIds, String category) {
+		for (Long stationId : stationIds) {
+			try {
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setCategory(category);
+				stationBO.updateStation(stationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix) {
+		for (Long stationId : stationIds) {
+			try {
+				Station station = stationBO.getStationById(stationId);
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setName(station.getName().replaceAll(oldSuffix, newSuffix));
+				stationBO.updateStation(stationDto);
+				Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+				SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+				syncModifyCainiaoStationDto.setPartnerInstanceId(instanceId);
+				syncModifyCainiaoStationDto.setOperator("system");
+				syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+				caiNiaoService.updateCainiaoStation(syncModifyCainiaoStationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
+		}
+		return true;
+	}
+	
 }

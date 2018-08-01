@@ -20,12 +20,15 @@ public class CountyStationManageStatusEnum implements Serializable {
 
 	public static final CountyStationManageStatusEnum PLANNING = new CountyStationManageStatusEnum("PLANNING", "筹划中");
 	public static final CountyStationManageStatusEnum OPERATING = new CountyStationManageStatusEnum("OPERATING", "运营中");
-	public static final CountyStationManageStatusEnum STOP_OPERATION = new CountyStationManageStatusEnum(	"STOP_OPERATION", "停止运营");
+	public static final CountyStationManageStatusEnum STOP_OPERATION = new CountyStationManageStatusEnum("STOP_OPERATION", "停止运营");
+	public static final CountyStationManageStatusEnum OPENING = new CountyStationManageStatusEnum("OPENING", "已开业");
 
     static {
     	mappings.put("PLANNING", PLANNING);
 		mappings.put("OPERATING", OPERATING);
 		mappings.put("STOP_OPERATION", STOP_OPERATION);
+		mappings.put("OPENING", OPENING);
+
     }
 
     public CountyStationManageStatusEnum(String code, String desc) {
