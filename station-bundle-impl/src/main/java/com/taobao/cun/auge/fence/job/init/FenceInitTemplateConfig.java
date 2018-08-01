@@ -51,22 +51,22 @@ public class FenceInitTemplateConfig {
 	private Long templateIdLogisticsVillageAtuoselected;
 	
 	/**
-	 * 售卖围栏 - 体验店优品售卖围栏
+	 * 售卖围栏 - 优品体验店默认售卖围栏
 	 */
 	@Value("${fence.templateid.sell.store.town}")
 	private Long templateIdSellStoreTown;
 	
 	/**
-	 * 售卖围栏 - 镇类型服务站优品售卖围栏
+	 * 售卖围栏 - 镇服务站默认售卖围栏
 	 */
-	@Value("${fence.templateid.sell.youpin.town}")
-	private Long templateIdSellYoupinTown;
+	@Value("${fence.templateid.sell.town}")
+	private Long templateIdSellTown;
 	
 	/**
-	 * 售卖围栏 - 村类型服务站优品售卖围栏
+	 * 售卖围栏 - 村服务站默认售卖围栏
 	 */
-	@Value("${fence.templateid.sell.youpin.village}")
-	private Long templateIdSellYoupinVillage;
+	@Value("${fence.templateid.sell.village}")
+	private Long templateIdSellVillage;
 
 	public Long getTemplateIdFeeTown() {
 		return templateIdFeeTown;
@@ -124,29 +124,13 @@ public class FenceInitTemplateConfig {
 		this.templateIdSellStoreTown = templateIdSellStoreTown;
 	}
 
-	public Long getTemplateIdSellYoupinTown() {
-		return templateIdSellYoupinTown;
-	}
-
-	public void setTemplateIdSellYoupinTown(Long templateIdSellYoupinTown) {
-		this.templateIdSellYoupinTown = templateIdSellYoupinTown;
-	}
-
-	public Long getTemplateIdSellYoupinVillage() {
-		return templateIdSellYoupinVillage;
-	}
-
-	public void setTemplateIdSellYoupinVillage(Long templateIdSellYoupinVillage) {
-		this.templateIdSellYoupinVillage = templateIdSellYoupinVillage;
-	}
-	
 	public List<Long> getTownTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeTown, 
 				//templateIdLogisticsTownAtuoselected,
 				//templateIdLogisticsTown,
 				templateIdSellStoreTown,
-				templateIdSellYoupinTown
+				templateIdSellTown
 				);
 	}
 	
@@ -154,7 +138,7 @@ public class FenceInitTemplateConfig {
 		return Lists.newArrayList(
 				templateIdFeeVillage,
 				//templateIdLogisticsVillageAtuoselected,
-				templateIdSellYoupinVillage
+				templateIdSellVillage
 				);
 	}
 	
@@ -164,5 +148,21 @@ public class FenceInitTemplateConfig {
 	
 	public boolean isVillageTemplate(Long templateId) {
 		return getVillageTemplates().contains(templateId);
+	}
+
+	public Long getTemplateIdSellTown() {
+		return templateIdSellTown;
+	}
+
+	public void setTemplateIdSellTown(Long templateIdSellTown) {
+		this.templateIdSellTown = templateIdSellTown;
+	}
+
+	public Long getTemplateIdSellVillage() {
+		return templateIdSellVillage;
+	}
+
+	public void setTemplateIdSellVillage(Long templateIdSellVillage) {
+		this.templateIdSellVillage = templateIdSellVillage;
 	}
 }
