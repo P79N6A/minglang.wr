@@ -744,22 +744,6 @@
 			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
 				<version>3.0.3</version> </dependency> -->
 			<dependency>
-				<groupId>com.taobao.kfc</groupId>
-<<<<<<< HEAD
-				<artifactId>core</artifactId>
-				<version>3.0.3</version>
-		    </dependency> -->
-		    <dependency>
-			    <groupId>com.taobao.kfc</groupId>
-			    <artifactId>kfc-client</artifactId>
-			    <version>1.7.8-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				    <groupId>com.taobao.cun</groupId>
-				    <artifactId>order-fulfillment-client</artifactId>
-				    <version>1.0.6</version>
-				</dependency>
-			<dependency>
 			  <groupId>dms-sorting</groupId>
 			  <artifactId>dms-sorting.api</artifactId>
 			  <version>1.3.0-SNAPSHOT</version>
@@ -786,7 +770,8 @@
 				<artifactId>oss-client</artifactId>
 				<version>1.0.6</version>
 			</dependency>
-=======
+			<dependency>
+				<groupId>com.taobao.kfc</groupId>
 				<artifactId>kfc-client</artifactId>
 				<version>1.7.8-SNAPSHOT</version>
 			</dependency>
@@ -805,8 +790,6 @@
 				<artifactId>top-api-sdk-dev</artifactId>
 				<version>cuntao-taoke-1.0.0-SNAPSHOT</version>
 			</dependency>
-
->>>>>>> master
 		</dependencies>
 	</dependencyManagement>
 	<build>
