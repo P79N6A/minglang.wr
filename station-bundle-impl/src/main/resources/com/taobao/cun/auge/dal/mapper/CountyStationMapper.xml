@@ -51,6 +51,7 @@
     <result column="electric_payment" jdbcType="VARCHAR" property="electricPayment" />
     <result column="property_payment" jdbcType="VARCHAR" property="propertyPayment" />
     <result column="storage_area" jdbcType="VARCHAR" property="storageArea" />
+    <result column="gmt_start_open" jdbcType="TIMESTAMP" property="gmtStartOpen" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -129,7 +130,7 @@
     office_detail, free_deadline, self_costs, remark, manage_model, taobao_nick, parent_id, 
     employee_phone, lng, lat, logistics_phone, logistics_operator, gmt_start_operation, 
     feature, lease_protocol_begin_time, lease_protocol_end_time, lease_type, lease_payment, 
-    water_payment, electric_payment, property_payment, storage_area
+    water_payment, electric_payment, property_payment, storage_area, gmt_start_open
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CountyStationExample" resultMap="BaseResultMap">
     <!--
@@ -200,8 +201,8 @@
       logistics_operator, gmt_start_operation, 
       feature, lease_protocol_begin_time, lease_protocol_end_time, 
       lease_type, lease_payment, water_payment, 
-      electric_payment, property_payment, storage_area
-      )
+      electric_payment, property_payment, storage_area, 
+      gmt_start_open)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{provinceDetail,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
@@ -216,8 +217,8 @@
       #{logisticsOperator,jdbcType=VARCHAR}, #{gmtStartOperation,jdbcType=TIMESTAMP}, 
       #{feature,jdbcType=VARCHAR}, #{leaseProtocolBeginTime,jdbcType=TIMESTAMP}, #{leaseProtocolEndTime,jdbcType=TIMESTAMP}, 
       #{leaseType,jdbcType=VARCHAR}, #{leasePayment,jdbcType=VARCHAR}, #{waterPayment,jdbcType=VARCHAR}, 
-      #{electricPayment,jdbcType=VARCHAR}, #{propertyPayment,jdbcType=VARCHAR}, #{storageArea,jdbcType=VARCHAR}
-      )
+      #{electricPayment,jdbcType=VARCHAR}, #{propertyPayment,jdbcType=VARCHAR}, #{storageArea,jdbcType=VARCHAR}, 
+      #{gmtStartOpen,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CountyStation">
     <!--
@@ -361,6 +362,9 @@
       <if test="storageArea != null">
         storage_area,
       </if>
+      <if test="gmtStartOpen != null">
+        gmt_start_open,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -494,6 +498,9 @@
       </if>
       <if test="storageArea != null">
         #{storageArea,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtStartOpen != null">
+        #{gmtStartOpen,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -649,6 +656,9 @@
       <if test="record.storageArea != null">
         storage_area = #{record.storageArea,jdbcType=VARCHAR},
       </if>
+      <if test="record.gmtStartOpen != null">
+        gmt_start_open = #{record.gmtStartOpen,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -704,7 +714,8 @@
       water_payment = #{record.waterPayment,jdbcType=VARCHAR},
       electric_payment = #{record.electricPayment,jdbcType=VARCHAR},
       property_payment = #{record.propertyPayment,jdbcType=VARCHAR},
-      storage_area = #{record.storageArea,jdbcType=VARCHAR}
+      storage_area = #{record.storageArea,jdbcType=VARCHAR},
+      gmt_start_open = #{record.gmtStartOpen,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -848,6 +859,9 @@
       <if test="storageArea != null">
         storage_area = #{storageArea,jdbcType=VARCHAR},
       </if>
+      <if test="gmtStartOpen != null">
+        gmt_start_open = #{gmtStartOpen,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -900,7 +914,8 @@
       water_payment = #{waterPayment,jdbcType=VARCHAR},
       electric_payment = #{electricPayment,jdbcType=VARCHAR},
       property_payment = #{propertyPayment,jdbcType=VARCHAR},
-      storage_area = #{storageArea,jdbcType=VARCHAR}
+      storage_area = #{storageArea,jdbcType=VARCHAR},
+      gmt_start_open = #{gmtStartOpen,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
@@ -909,26 +924,31 @@
     <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
   </resultMap>
 
-  <select id="getProvinceList" resultMap="ProvinceResultMap" parameterType="map" >
+  <select id="getProvinceList" parameterType="map" resultMap="ProvinceResultMap">
 	SELECT DISTINCT  province as province, province_detail as provinceDetail
 	 FROM county_station where is_deleted = 'n' AND manage_status ='OPERATING' AND parent_id !=25
 	 and parent_id in
-	 <foreach collection="areaOrgIds" item="areaOrgId" open="(" close=")" separator="," >
+	 <foreach close=")" collection="areaOrgIds" item="areaOrgId" open="(" separator=",">
    		#{areaOrgId}
    	</foreach>
   </select>  
   
   <select id="queryCountyStation" parameterType="map" resultMap="BaseResultMap">
  	 select a.* from county_station a, cuntao_org b 
-  	<include refid="sql_queryCountyStation"/>
+  	<include refid="sql_queryCountyStation" />
   	order by a.id desc
   	limit #{startItem}, #{pageSize}
   </select>
   
+   <select id="countServicingStation" parameterType="java.lang.Long" resultType="int">
+  	select count(*) from partner_station_rel psr, station s,county_station cs where cs.id=#{id}
+  	and cs.is_deleted='n' and s.apply_org = cs.org_id and s.id=psr.station_id and psr.type = 'TP' and psr.state = 'SERVICING'
+  	and psr.is_deleted = 'n' and s.is_deleted = 'n'
+  </select>
   
    <select id="countCountyStation" parameterType="map" resultType="int">
   	select count(*) from county_station a, cuntao_org b 
-  	<include refid="sql_queryCountyStation"/>
+  	<include refid="sql_queryCountyStation" />
   </select>
   
   <sql id="sql_queryCountyStation">
@@ -936,7 +956,7 @@
   	<if test="teamLeader != null and teamLeader != ''">,cuntao_user_org d,cuntao_org e</if>
 	where a.org_id=b.id and a.is_deleted='n' and b.org_range_type='county'
 	<if test="state != null and state != ''"> and a.manage_status=#{state} </if>
-	<if test="fullIdPaths != null and fullIdPaths.size()>0">
+	<if test="fullIdPaths != null and fullIdPaths.size()&gt;0">
 		and(
 		<foreach collection="fullIdPaths" item="fullIdPath" separator=" or ">
 	  	CONCAT(b.temp_full_id_path,'/') like CONCAT(#{fullIdPath}, '/%') 

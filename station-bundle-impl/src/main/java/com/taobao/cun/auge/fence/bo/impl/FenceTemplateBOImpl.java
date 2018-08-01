@@ -136,6 +136,9 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
 
     @Override
     public List<FenceTemplateDto> getFenceTemplateListByIdList(List<Long> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return null;
+        }
         FenceTemplateExample example = new FenceTemplateExample();
         example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
         List<FenceTemplate> templateList = templateMapper.selectByExample(example);

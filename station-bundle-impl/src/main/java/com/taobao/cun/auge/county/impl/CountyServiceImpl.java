@@ -253,5 +253,18 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 	
-
+	@Override
+	public boolean startOpen(Long countyStationId,String operator){
+		try {
+			return countyBO.startOpen(countyStationId,operator);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public int countServicingStation(Long countyStationId) {
+		return countyStationMapper.countServicingStation(countyStationId);
+	}
+	
 }

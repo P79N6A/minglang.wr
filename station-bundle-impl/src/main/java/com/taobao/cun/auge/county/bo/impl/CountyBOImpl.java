@@ -406,6 +406,7 @@ public class CountyBOImpl implements CountyBO {
 		dto.setCreateTime(cs.getGmtCreate());
 		// 开始运营时间
 		dto.setStartOperationTime(cs.getGmtStartOperation());
+		dto.setGmtOpenDate(cs.getGmtStartOpen());
 		if (cs.getEmployeeId() != null) {
 			String empName = emp360Adapter.getName(cs.getEmployeeId());
 			if (!StringUtils.isEmpty(empName)) {
@@ -1184,4 +1185,15 @@ public class CountyBOImpl implements CountyBO {
         Validate.notEmpty(countyDto.getOfficeDetail(), "countyDto.officeDetail is empty");
     }
 
+	@Override
+	public boolean startOpen(Long countyStationId,String workNo) {
+		CountyStation record = new CountyStation();
+		record.setId(countyStationId);
+		record.setGmtModified(new Date());
+		record.setModifier(workNo);
+		record.setManageStatus(CountyStationManageStatusEnum.OPENING.getCode());
+		record.setGmtStartOpen(new Date());
+		countyStationMapper.updateByPrimaryKeySelective(record);
+		return true;
+	}
 }

@@ -481,10 +481,19 @@
       			<groupId>com.taobao.mmp</groupId>  
       			<artifactId>mmp-box</artifactId>  
     	</dependency> 
-    		<dependency>
-				    <groupId>com.taobao.cun</groupId>
-				    <artifactId>order-fulfillment-client</artifactId>
-				</dependency>
+    	<dependency>
+			    <groupId>com.taobao.cun</groupId>
+			    <artifactId>order-fulfillment-client</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>com.taobao.union</groupId>
+            <artifactId>union-api-client</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.taobao.top</groupId>
+			<artifactId>top-api-sdk-dev</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
