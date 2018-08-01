@@ -56,7 +56,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				division.put("code", station.getCity());
 				division.put("name", station.getCityDetail());
 			}else if(fenceRule.getDivision().equals("county")) {
-				if(Strings.isNullOrEmpty(station.getCounty())) {
+				if(!Strings.isNullOrEmpty(station.getCounty())) {
 					division.put("code", station.getCounty());
 					division.put("name", station.getCountyDetail());
 				}else {//属于县级市
