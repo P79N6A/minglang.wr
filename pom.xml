@@ -746,7 +746,7 @@
 			<dependency>
 			  <groupId>dms-sorting</groupId>
 			  <artifactId>dms-sorting.api</artifactId>
-			  <version>1.3.0-SNAPSHOT</version>
+			  <version>1.3.0</version>
 			  <exclusions>
 			  	<exclusion>
 			  		<groupId>com.taobao.tair</groupId>
@@ -757,7 +757,7 @@
 			<dependency>
 				<artifactId>dms-sorting.common</artifactId>  
 		  		<groupId>dms-sorting</groupId>  
-		  		<version>1.0.10-SNAPSHOT</version>
+		  		<version>1.0.10</version>
 		  		<exclusions>
 		  			<exclusion>
 		  				<groupId>*</groupId>
