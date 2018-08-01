@@ -143,8 +143,8 @@ public class FenceInitTemplateConfig {
 	public List<Long> getTownTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeTown, 
-				templateIdLogisticsTownAtuoselected,
-				templateIdLogisticsTown,
+				//templateIdLogisticsTownAtuoselected,
+				//templateIdLogisticsTown,
 				templateIdSellStoreTown,
 				templateIdSellYoupinTown
 				);
@@ -153,7 +153,7 @@ public class FenceInitTemplateConfig {
 	public List<Long> getVillageTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeVillage,
-				templateIdLogisticsVillageAtuoselected,
+				//templateIdLogisticsVillageAtuoselected,
 				templateIdSellYoupinVillage
 				);
 	}
