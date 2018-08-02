@@ -1,8 +1,19 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -10,6 +21,7 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationStatusChangeEvent;
@@ -38,13 +50,6 @@ import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @Service("stationService")
 @HSFProvider(serviceInterface = StationService.class)
@@ -81,6 +86,9 @@ public class StationServiceImpl implements StationService {
     
     @Autowired
     KFCServiceConfig kfcServiceConfig;
+    
+    @Autowired
+    private StationMapper stationMapper;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void auditQuitStation(Long stationId, ProcessApproveResultEnum approveResult){
@@ -229,5 +237,31 @@ public class StationServiceImpl implements StationService {
         lifeCycleValidator.stationModelBusCheck(ins);
         return true;
     }
+
+	@Override
+	public void updateStationCategory(List<Long> stationIds, String category) {
+		for(Long stationId : stationIds){
+			updateStationCategory(stationId,category);
+		}
+	}
+
+	private void updateStationCategory(Long stationId, String category) {
+		Station station = new Station();
+		station.setId(stationId);
+		station.setCategory(category);
+		station.setGmtModified(new Date());
+		station.setModifier("system");
+		this.stationMapper.updateByPrimaryKeySelective(station);
+		
+	}
+
+	@Override
+	public void updateStationCategoryByNum(List<String> stationNums, String category) {
+		for(String stationNum : stationNums){
+			Station station = this.stationBO.getStationByStationNum(stationNum);
+			this.updateStationCategory(station.getId(), category);
+		}
+		
+	}
 
 }
