@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -41,5 +43,9 @@ public interface StationService {
      * @param instanceId、stationDto
      */
     public boolean getStationInfoValidateRule(Long instanceId,StationDto station);
+    
+    public void updateStationCategory(List<Long> stationIds,String category);
+    
+    public void updateStationCategoryByNum(List<String> stationNums, String category);
     
 }

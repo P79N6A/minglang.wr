@@ -489,11 +489,14 @@
             <groupId>com.taobao.union</groupId>
             <artifactId>union-api-client</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>com.alibaba.dw.shared</groupId>
+		    <artifactId>openapi-lib</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.top</groupId>
 			<artifactId>top-api-sdk-dev</artifactId>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
