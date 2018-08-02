@@ -141,7 +141,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		stationDecorateDto.setStationId(partnerInstanceDto.getStationId());
 		stationDecorateDto.setPartnerUserId(partnerInstanceDto.getTaobaoUserId());
-		stationDecorateDto.setDecorateType(partnerInstanceDto.getStationDecorateTypeEnum());
+		stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
 		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
 	}
@@ -170,20 +170,8 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		StationDecoratePaymentTypeEnum pay = partnerInstanceDto.getStationDecoratePaymentTypeEnum();
 		ValidateUtils.notNull(decorate);
 		ValidateUtils.notNull(pay);
-
-		if (decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.SELF)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_PART)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"illegal decorate_type & payment_type combination");
-		}
 	}
 	
-	private boolean decoratePaymentTypeEquals(StationDecorateTypeEnum decorate, StationDecorateTypeEnum decorateExpect,
-            StationDecoratePaymentTypeEnum pay, StationDecoratePaymentTypeEnum payExpect) {
-		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
-	}
 
 	
 
