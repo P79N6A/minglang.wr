@@ -85,7 +85,7 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         param.put("type", "alipay");
         List<NewuserOrderStat> alipayStatList = unionAdzoneExtMapper.getNewuserOrderStat(param);
         if (!CollectionUtils.isEmpty(alipayStatList)) {
-            NewuserOrderStat alipayStat = statList.iterator().next();
+            NewuserOrderStat alipayStat = alipayStatList.iterator().next();
             stat.setAlipayBuyCnt(alipayStat.getAlipayBuyCnt());
             stat.setAlipayConfirmCnt(alipayStat.getAlipayConfirmCnt());
         }
