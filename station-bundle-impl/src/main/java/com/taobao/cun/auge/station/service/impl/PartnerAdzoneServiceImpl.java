@@ -244,6 +244,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         order.setRegisterTime(data.getRegisterTime());
         order.setStatus(data.getStatus());
         order.setTbTradeParentId(data.getTbTradeParentId());
+        order.setLoginTime(data.getLoginTime());
         return order;
     }
 
