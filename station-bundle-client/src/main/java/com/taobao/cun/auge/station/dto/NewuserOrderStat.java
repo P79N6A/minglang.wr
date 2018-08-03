@@ -13,25 +13,35 @@ public class NewuserOrderStat implements Serializable {
      */
     private String statDate;
     /**
-     * 注册人数
+     * 手淘拉新注册人数
      */
     private Long registerCnt;
     /**
-     * 激活人数
+     * 手淘拉新激活人数
      */
     private Long activateCnt;
     /**
-     * 首购人数
+     * 手淘拉新首购人数
      */
     private Long buyCnt;
     /**
-     * 确认收货人数
+     * 手淘拉新确认收货人数
      */
     private Long confirmCnt;
     /**
-     * 绑卡人数
+     * 手淘拉新绑卡人数
      */
     private Long carBindCnt;
+
+    /**
+     * 支付宝新登首购人数
+     */
+    private Long alipayBuyCnt;
+
+    /**
+     * 支付宝新登确认收货人数
+     */
+    private Long alipayConfirmCnt;
 
 
     public NewuserOrderStat() {
@@ -40,6 +50,8 @@ public class NewuserOrderStat implements Serializable {
         buyCnt = 0L;
         confirmCnt = 0L;
         carBindCnt = 0L;
+        alipayBuyCnt = 0L;
+        alipayConfirmCnt = 0L;
     }
 
     public Long getTaobaoUserId() {
@@ -104,5 +116,21 @@ public class NewuserOrderStat implements Serializable {
 
     public void setAdzoneId(Long adzoneId) {
         this.adzoneId = adzoneId;
+    }
+
+    public Long getAlipayBuyCnt() {
+        return alipayBuyCnt;
+    }
+
+    public void setAlipayBuyCnt(Long alipayBuyCnt) {
+        this.alipayBuyCnt = alipayBuyCnt;
+    }
+
+    public Long getAlipayConfirmCnt() {
+        return alipayConfirmCnt;
+    }
+
+    public void setAlipayConfirmCnt(Long alipayConfirmCnt) {
+        this.alipayConfirmCnt = alipayConfirmCnt;
     }
 }
