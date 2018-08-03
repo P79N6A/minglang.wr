@@ -17,6 +17,8 @@ public class StationDecorateTypeEnum implements Serializable{
 			"ORIGIN", "固点免装修");
 	public static final StationDecorateTypeEnum ORIGIN_UPGRADE = new StationDecorateTypeEnum(
 			"ORIGIN_UPGRADE", "固点翻新");
+	public static final StationDecorateTypeEnum NEW_SELF = new StationDecorateTypeEnum(
+			"NEW_SELF", "新村点自主装修");
 
 	private static final Map<String, StationDecorateTypeEnum> mappings = new HashMap<String, StationDecorateTypeEnum>();
 
@@ -24,6 +26,7 @@ public class StationDecorateTypeEnum implements Serializable{
 		mappings.put("NEW", NEW);
 		mappings.put("ORIGIN", ORIGIN);
 		mappings.put("ORIGIN_UPGRADE", ORIGIN_UPGRADE);
+		mappings.put("NEW_SELF", NEW_SELF);
 	}
 
 	private String code;
