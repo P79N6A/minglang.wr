@@ -187,8 +187,8 @@
 	<![CDATA[
 	and d.gmt_create < date_add(NOW(),INTERVAL 10 MINUTE)
 	]]>
-	and a.status in('SERVICING','DECORATING')
-	and b.state in('SERVICING','DECORATING')
+	and a.status in('SERVICING','DECORATING','CLOSING')
+	and b.state in('SERVICING','DECORATING','CLOSING')
 	<if test="stationTypes != null and stationTypes.size()>0"> and 
 		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
 			<if test="type == 'TP'">
