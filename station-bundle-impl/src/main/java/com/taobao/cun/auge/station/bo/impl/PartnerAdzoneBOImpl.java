@@ -70,9 +70,10 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         Assert.notNull(statDate, "statDate is null");
         Assert.notNull(currentUpdateDate, "currentUpdateDate is null");
         Map<String, Object> param = new HashMap<String, Object>();
-        param.put("adzoneId",adzoneId);
-        param.put("statDate",statDate);
-        param.put("currentUpdateDate",currentUpdateDate);
+        param.put("type", "taobao");
+        param.put("adzoneId", adzoneId);
+        param.put("statDate", statDate);
+        param.put("currentUpdateDate", currentUpdateDate);
         List<NewuserOrderStat> statList = unionAdzoneExtMapper.getNewuserOrderStat(param);
         NewuserOrderStat stat = null;
         if (CollectionUtils.isEmpty(statList)) {
@@ -80,6 +81,15 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         } else {
             stat = statList.iterator().next();
         }
+
+        param.put("type", "alipay");
+        List<NewuserOrderStat> alipayStatList = unionAdzoneExtMapper.getNewuserOrderStat(param);
+        if (!CollectionUtils.isEmpty(alipayStatList)) {
+            NewuserOrderStat alipayStat = statList.iterator().next();
+            stat.setAlipayBuyCnt(alipayStat.getAlipayBuyCnt());
+            stat.setAlipayConfirmCnt(alipayStat.getAlipayConfirmCnt());
+        }
+
         return stat;
     }
 }
