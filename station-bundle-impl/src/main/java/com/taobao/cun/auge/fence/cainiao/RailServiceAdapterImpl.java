@@ -121,6 +121,9 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 				range.getMatch().forEach((k, v)->{
 					RailKeyword keyword = new RailKeyword();
 					keyword.setKeyword(v);
+					if(Strings.isNullOrEmpty(fenceEntity.getTown())) {
+						throw new RuntimeException("设置关键字时镇CODE为空");
+					}
 					keyword.setTownId(Long.parseLong(fenceEntity.getTown()));
 					keywords.add(keyword);
 				});

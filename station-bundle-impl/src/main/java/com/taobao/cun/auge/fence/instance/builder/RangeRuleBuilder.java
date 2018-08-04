@@ -33,6 +33,9 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getMatch()) {
 				if(text.equals("belongVillage")) {
+					if(Strings.isNullOrEmpty(station.getVillageDetail())) {
+						throw new RuntimeException("所属行政村为空");
+					}
 					textFilters.put("belongVillage", station.getVillageDetail());
 				}
 				
