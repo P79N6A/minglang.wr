@@ -29,6 +29,8 @@ import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
+import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
@@ -202,4 +204,14 @@ public class StationBOImpl implements StationBO {
         criteria.andStatusNotIn(Lists.newArrayList(StationStatusEnum.QUIT.getCode(),StationStatusEnum.INVALID.getCode()));
         return ResultUtils.selectCount(stationMapper.selectByExample(example));
     }
+
+	@Override
+	public List<Station> getFenceStations(FenceStationQueryCondition fenceStationQueryCondition) {
+		return stationExtMapper.getFenceStations(fenceStationQueryCondition);
+	}
+
+	@Override
+	public List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition) {
+		return stationExtMapper.getFenceInitingStations(fenceStationQueryCondition);
+	}
 }

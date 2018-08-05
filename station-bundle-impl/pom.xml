@@ -24,6 +24,18 @@
 	</properties>
 	<dependencies>
 		<dependency>
+		  <groupId>com.taobao.crius</groupId>
+		  <artifactId>oss-client</artifactId>
+		</dependency>
+		<dependency>
+		  <artifactId>dms-sorting.common</artifactId>  
+		  <groupId>dms-sorting</groupId>  
+		</dependency>
+		<dependency>
+		  <groupId>dms-sorting</groupId>
+		  <artifactId>dms-sorting.api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.cun.endor</groupId>
 			<artifactId>endor-client</artifactId>
 		</dependency>
