@@ -123,4 +123,95 @@
 	      and LOCATE(#{name,jdbcType=VARCHAR},s.name)>0
 	    </if>
 	</select>
+
+    <select id="getFenceTemplateStation" resultType="com.taobao.cun.auge.fence.dto.FenceTemplateStation">
+        select
+        s.id as stationId,
+        f.template_id as templateId,
+        s.name as name
+        from station s, fence_entity f
+        where s.id = f.station_id
+        and f.template_id = #{templateId}
+        <if test="stationName != null and stationName != ''" >
+            and s.name like concat('%', #{stationName,jdbcType=VARCHAR}, '%')
+        </if>
+        and s.is_deleted = 'n'
+        and f.is_deleted = 'n'
+    </select>
+    
+    <select id="getFenceStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
+    select a.* from station a, cuntao_org b,partner_station_rel c 
+     where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and a.apply_org=b.id and a.id=c.station_id
+     and c.state in('SERVICING','DECORATING','CLOSING')
+	<if test="fullIdPath != null and fullIdPath != ''"> and concat(b.temp_full_id_path,'/') like concat(#{fullIdPath,jdbcType=VARCHAR}, '/%')</if>
+	<if test="province != null and province != ''"> and a.province=#{province,jdbcType=VARCHAR}</if>
+	<if test="city != null and city != ''"> and a.city=#{city,jdbcType=VARCHAR}</if>
+	<if test="county != null and county != ''"> and a.county=#{county,jdbcType=VARCHAR}</if>
+	<if test="town != null and town != ''"> and a.town=#{town,jdbcType=VARCHAR}</if>
+	
+	<if test="stationTypes != null and stationTypes.size()>0"> and 
+		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
+			<if test="type == 'TP'">
+				c.type='TP'
+			</if>
+			<if test="type == 'TPS'">
+				c.type='TPS'
+			</if>
+			<if test="type == 'TP_v4'">
+				c.type='TP' and c.mode='v4'
+			</if>
+		</foreach>
+	</if>
+	<if test="stationTypes == null or stationTypes.size() == 0">
+	c.type in('TPS','TP')
+	</if>
+	<if test="stationStatus != null and stationStatus.size() > 0"> and a.status in
+		<foreach collection="stationStatus" open="(" close=")" item="status" separator=","> #{status}</foreach>
+	</if>
+	<if test="stationLocations != null and stationLocations.size()>0"> and 
+		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
+			<if test="stationLocation == 'town'">
+			a.is_on_town = 'y'
+			</if>
+			<if test="stationLocation == 'village'">
+			(a.is_on_town = 'n' or a.is_on_town is null)
+			</if>
+		</foreach>
+	</if>
+    </select>
+    
+    <select id="getFenceInitingStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
+    select a.* from station a,partner_station_rel b,cuntao_cainiao_station_rel d,cuntao_org e where a.id=b.station_id and a.id=d.object_id and d.type='STATION'
+	and a.is_deleted='n' and b.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+	and e.id=a.apply_org and e.temp_full_id_path not like '/1/500004/%'
+	<![CDATA[
+	and d.gmt_create < date_add(NOW(),INTERVAL 10 MINUTE)
+	]]>
+	and a.status in('SERVICING','DECORATING','CLOSING')
+	and b.state in('SERVICING','DECORATING','CLOSING')
+	<if test="stationTypes != null and stationTypes.size()>0"> and 
+		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
+			<if test="type == 'TP'">
+				b.type='TP'
+			</if>
+			<if test="type == 'TPS'">
+				b.type='TPS'
+			</if>
+			<if test="type == 'TP_v4'">
+				b.type='TP' and b.mode='v4'
+			</if>
+		</foreach>
+	</if>
+	<if test="stationLocations != null and stationLocations.size()>0"> and 
+		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
+			<if test="stationLocation == 'town'">
+			a.is_on_town = 'y'
+			</if>
+			<if test="stationLocation == 'village'">
+			(a.is_on_town = 'n' or a.is_on_town is null)
+			</if>
+		</foreach>
+	</if>
+	and not exists(select 0 from fence_entity c where c.station_id=a.id and c.template_id=#{templateId})
+    </select>
 </mapper>
