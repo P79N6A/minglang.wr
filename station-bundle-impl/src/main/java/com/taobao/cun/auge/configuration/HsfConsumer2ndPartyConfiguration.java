@@ -3,7 +3,6 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.taobao.union.api.client.service.EntryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +24,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService
 import com.alibaba.ceres.commonservice.po.PoQueryService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
+import com.alibaba.china.dw.dataopen.api.SQLIDQueryAPI;
 import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.crm.pacific.facade.refund.ApplyRefundService;
 import com.alibaba.crm.pacific.facade.refund.RefundBaseCommonService;
@@ -43,6 +43,7 @@ import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
+import com.cainiao.dms.sorting.api.IRailService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
@@ -80,6 +81,7 @@ import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
+import com.taobao.union.api.client.service.EntryService;
 import com.taobao.wws.hsf2icesrv;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration  {
@@ -155,6 +157,11 @@ public class HsfConsumer2ndPartyConfiguration  {
 	
 	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
 	private UicDataWriteService uicDataWriteService;
+	
+	@Bean
+	public SQLIDQueryAPI sqlIDQueryAPI(HsfConsumerContext hsfConsumerContext) {
+		return hsfConsumerContext.hsfConsumerBuilder(SQLIDQueryAPI.class, HSFGroup.DUBBO.getName(), "${hsf.consumer.auge.SQLIDQueryAPI.version}").clientTimeout(8000).build();
+	}
 	
 	@HSFConsumer(serviceVersion="${ctFulFillStockService.version}",serviceGroup="HSF")
 	private CtFulFillStockService ctFulFillStockService; 
@@ -407,6 +414,12 @@ public class HsfConsumer2ndPartyConfiguration  {
     @Bean
     public StoreService storeService(HsfConsumerContext context, @Value("${storeService.version}") String version) {
            return context.hsfConsumerBuilder(StoreService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public IRailService iRailService(HsfConsumerContext context, @Value("${hsf.irailService.version}") String version) {
+           return context.hsfConsumerBuilder(IRailService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     

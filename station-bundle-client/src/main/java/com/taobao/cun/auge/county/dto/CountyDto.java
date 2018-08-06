@@ -113,6 +113,8 @@ public class CountyDto implements Serializable{
 
 	private AddressDto addressDto;
 	
+	private Date gmtOpenDate;
+	
 	public AddressDto getAddressDto() {
 		return addressDto;
 	}
@@ -567,6 +569,14 @@ public class CountyDto implements Serializable{
 
 	public void setStartOperationTimeStr(String startOperationTimeStr) {
 		this.startOperationTimeStr = startOperationTimeStr;
+	}
+
+	public Date getGmtOpenDate() {
+		return gmtOpenDate;
+	}
+
+	public void setGmtOpenDate(Date gmtOpenDate) {
+		this.gmtOpenDate = gmtOpenDate;
 	}
 
 

@@ -232,7 +232,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
         stationDecorateDto.setStationId(rel.getStationId());
         stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
         stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
         stationDecorateBO.addStationDecorate(stationDecorateDto);
         

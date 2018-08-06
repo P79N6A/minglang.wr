@@ -421,6 +421,7 @@ public class PartnerInstance {
 	
 	private String transStatus;
 	
+	private String category;
 	public String getFlowerName() {
 		return flowerName;
 	}
@@ -1656,5 +1657,13 @@ public class PartnerInstance {
 
 	public void setTransStatus(String transStatus) {
 		this.transStatus = transStatus;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

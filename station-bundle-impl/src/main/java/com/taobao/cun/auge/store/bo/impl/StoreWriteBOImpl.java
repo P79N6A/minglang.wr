@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.bo.impl;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ import com.taobao.cun.auge.dal.domain.StoreCreateError;
 import com.taobao.cun.auge.dal.domain.StoreCreateErrorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.dal.mapper.StoreCreateErrorMapper;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -134,6 +136,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private PartnerInstanceBO partnerInstanceBO;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 
+	 @Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException {
@@ -818,9 +822,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if(CollectionUtils.isEmpty(areaList)){
 				return Integer.parseInt(countyCode);
 			}
-			StandardAreaDO areaDO = areaList.stream().filter(ar -> ar.getAreaName().startsWith(countyDetail)).findFirst().get();
-			if(areaDO != null){
-				return areaDO.getAreaCode().intValue();
+			Optional<StandardAreaDO> areaDO = areaList.stream().filter(ar -> ar.getAreaName().startsWith(countyDetail)).findFirst();
+			if(areaDO.isPresent()){
+				return areaDO.get().getAreaCode().intValue();
 			}
 			return Integer.parseInt(countyCode);
 		}
@@ -853,6 +857,102 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		logger.info("finish batchInitStoreEmployee");
 	}
+
+	@Override
+	public void syncStore(Long stationId) {
+		try {
+			Station station = stationBO.getStationById(stationId);
+			//过滤掉测试村点
+			if(cuntaoOrgServiceClient.getCuntaoOrg(station.getApplyOrg()).getFullIdPath().contains("/500004")){
+				return;
+			}
+			StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+			if(store == null){
+				return;
+			}
+			StoreDTO storeDTO = new StoreDTO();
+			storeDTO.setStoreId(store.getShareStoreId());
+			storeDTO.setName(station.getName());
+			storeDTO.setAddress(station.getAddress());
+			if (!Strings.isNullOrEmpty(station.getProvince())) {
+				Long cityCode = tb2gbCode(Long.parseLong(station.getCity()));
+				if (cityCode == null) {
+					cityCode = Long.parseLong(station.getCity());
+				}
+				StandardAreaDO standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+				if (standardAreaDO != null && standardAreaDO.getParentId() != null) {
+					storeDTO.setProv(standardAreaDO.getParentId().intValue());
+				} else {
+					storeDTO.setProv(Integer.parseInt(station.getProvince()));
+				}
+				storeDTO.setProvName(station.getProvinceDetail());
+			}
+			// 市
+			if (!Strings.isNullOrEmpty(station.getCity())) {
+				Long gbCode = tb2gbCode(Long.parseLong(station.getCity()));
+				if (gbCode != null) {
+					storeDTO.setCity(gbCode.intValue());
+				} else {
+					// 重庆市特殊处理，共享需要500200标准code
+					if ("500100".equals(station.getCity())) {
+						Long countyCode = tb2gbCode(Long.parseLong(station.getCounty()));
+						if (countyCode == null) {
+							countyCode = Long.parseLong(station.getCounty());
+						}
+						StandardAreaDO standardAreaDO = standardAreaService.getStandardAreaDOById(countyCode);
+						storeDTO.setCity(standardAreaDO.getParentId().intValue());
+					} else {
+						storeDTO.setCity(Integer.parseInt(station.getCity()));
+					}
+				}
+				storeDTO.setCityName(station.getCityDetail());
+			}
+			// 区/县
+			// 区/县
+			if (!Strings.isNullOrEmpty(station.getCounty())) {
+				Integer district = getCountyCode(station.getCounty(),station.getCountyDetail(),station.getCity());
+				storeDTO.setDistrict(district);
+				storeDTO.setDistrictName(station.getCountyDetail());
+			}
+			if (!Strings.isNullOrEmpty(station.getTown())) {
+				StandardAreaDO area = this.standardAreaService.getStandardAreaDOById(Long.parseLong(station.getTown()));
+				if(area != null){
+					storeDTO.setTown(Integer.parseInt(station.getTown()));
+					storeDTO.setTownName(station.getTownDetail());
+				}
+			}
+
+			
+			if (!Strings.isNullOrEmpty(station.getLat())) {
+				storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+			}
+			if (!Strings.isNullOrEmpty(station.getLng())) {
+				storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
+			}
+			CuntaoStore cs = new CuntaoStore();
+			cs.setId(store.getId());
+			cs.setName(station.getName());
+			cs.setGmtModified(new Date());
+			cs.setModifier("system");
+			cuntaoStoreMapper.updateByPrimaryKeySelective(cs);
+			storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+		} catch (Exception e) {
+			logger.error("syncStore error["+stationId+"]",e);
+		}
+		
+	}
 	
+	public void syncStore(){
+		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
+		  for(Long storeId :storeIds){
+			 StoreDto store =  storeReadBO.getStoreBySharedStoreId(storeId);
+			 try {
+				 this.syncStore(store.getStationId());
+			} catch (Exception e) {
+				logger.error("syncStore error["+store.getStationId()+"]",e);
+			}
+			
+		  }
+	}
 	
 }

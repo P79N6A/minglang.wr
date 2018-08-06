@@ -217,6 +217,13 @@ public class BailServiceImpl implements BailService {
 			Long taobaoUserId = instance.getTaobaoUserId();
 			try {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
+				if(freezeAmount != null && !freezeAmount.isSuccess() && "NOT_SIGN".equals(freezeAmount.getMsgCode())){
+					resultModel.setSuccess(true);
+					resultModel.setResult(Boolean.TRUE);
+					resultModel.setMessage("铺货金未冻结");
+					return resultModel;
+				}
+				
 				if (freezeAmount != null && freezeAmount.isSuccess() && freezeAmount.getResult() != null) {
 					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
 					if (amount > 0L) {
@@ -230,6 +237,11 @@ public class BailServiceImpl implements BailService {
 						cuntaoUnFreezeBailDto.setOutOrderId("CT_REPLENISH_" + partnerInstanceId + "_UNFREEZE");
 						cuntaoUnFreezeBailDto.setUserTypeEnum(UserTypeEnum.STORE);
 						return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
+					}else{
+						resultModel.setSuccess(true);
+						resultModel.setResult(Boolean.TRUE);
+						resultModel.setMessage("铺货金为零无需解冻");
+						return resultModel;
 					}
 				}else{
 					logger.warn("unfreezeUserReplenishBail warn instanceId:{}, amountResult:{}",

@@ -24,6 +24,18 @@
 	</properties>
 	<dependencies>
 		<dependency>
+		  <groupId>com.taobao.crius</groupId>
+		  <artifactId>oss-client</artifactId>
+		</dependency>
+		<dependency>
+		  <artifactId>dms-sorting.common</artifactId>  
+		  <groupId>dms-sorting</groupId>  
+		</dependency>
+		<dependency>
+		  <groupId>dms-sorting</groupId>
+		  <artifactId>dms-sorting.api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.cun.endor</groupId>
 			<artifactId>endor-client</artifactId>
 		</dependency>
@@ -469,14 +481,22 @@
       			<groupId>com.taobao.mmp</groupId>  
       			<artifactId>mmp-box</artifactId>  
     	</dependency> 
-    		<dependency>
-				    <groupId>com.taobao.cun</groupId>
-				    <artifactId>order-fulfillment-client</artifactId>
-				</dependency>
+    	<dependency>
+			    <groupId>com.taobao.cun</groupId>
+			    <artifactId>order-fulfillment-client</artifactId>
+		</dependency>
         <dependency>
             <groupId>com.taobao.union</groupId>
             <artifactId>union-api-client</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>com.alibaba.dw.shared</groupId>
+		    <artifactId>openapi-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.top</groupId>
+			<artifactId>top-api-sdk-dev</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

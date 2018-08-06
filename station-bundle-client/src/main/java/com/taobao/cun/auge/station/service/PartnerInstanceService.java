@@ -346,5 +346,14 @@ public interface PartnerInstanceService {
      * @param category
      * @return
      */
-    public boolean updateStationCategory(Long stationId,String category);
+    public boolean updateStationCategory(List<Long> stationId,String category);
+    
+    public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix);
+    
+    /**
+     * 签署项目通告协议
+     * @param taobaoUserId
+     */
+    public void signProjectNoticeProtocol(Long taobaoUserId);
+    
 }

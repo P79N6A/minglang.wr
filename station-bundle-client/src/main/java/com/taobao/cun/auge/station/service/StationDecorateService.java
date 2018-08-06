@@ -5,8 +5,11 @@ import java.util.Map;
 
 import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
+import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 
 /**
@@ -149,4 +152,38 @@ public interface StationDecorateService {
      * @
      */
     public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId);
+    
+    
+    public void fixStationDecorate(List<Long> stationIds);
+    
+    
+ 	/**
+ 	 * 上传村点装修设计图
+ 	 * @param stationDecorateDto
+ 	 * @return
+ 	 */
+ 	public Long uploadStationDecorateDesign(StationDecorateDesignDto stationDecorateDesignDto);
+ 	
+ 	/**
+ 	 * 审核村点装修设计
+ 	 * @param stationId
+ 	 * @param approveResultEnum
+ 	 * @return
+ 	 */
+ 	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+ 	
+ 	/**
+ 	 * 上传站点装修反馈信息
+ 	 * @param stationDecorateDto
+ 	 * @return
+ 	 */
+ 	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto);
+ 	
+ 	/**
+ 	 * 审核村点装修反馈信息
+ 	 * @param stationId
+ 	 * @param approveResultEnum
+ 	 * @return
+ 	 */
+ 	public void auditStationDecorateCheck(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 }

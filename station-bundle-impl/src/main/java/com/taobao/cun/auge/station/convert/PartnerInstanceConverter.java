@@ -228,7 +228,7 @@ public final class PartnerInstanceConverter {
 		stationDto.setStatus(StationStatusEnum.valueof(instance.getStatus()));
 		stationDto.setAddress(convertAddress(instance));
 		stationDto.setFixedType(StationFixedTypeEnum.valueof(instance.getFixedType()));
-
+		stationDto.setCategory(instance.getCategory());
 		return stationDto;
 	}
 
@@ -472,6 +472,9 @@ public final class PartnerInstanceConverter {
 		
 		if (null != condition.getIsCurrent()) {
 			example.setIsCurrent(Boolean.TRUE.equals(condition.getIsCurrent()) ? "y" : "n");
+		}
+		if(null != condition.getTpCategoryEnum()){
+			example.setCategory(condition.getTpCategoryEnum().getCode());
 		}
 		return example;
 	}

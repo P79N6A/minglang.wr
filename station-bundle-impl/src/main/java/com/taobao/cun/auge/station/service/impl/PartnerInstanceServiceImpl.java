@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -121,6 +122,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -172,11 +174,14 @@ import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
@@ -301,6 +306,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
+    @Autowired
+	private PartnerApplyService partnerApplyService;
+    
+    @Autowired
+    private StoreWriteBO storeWriteBO;
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
@@ -900,7 +910,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
+			/*if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
 			}
 		/*	if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
@@ -1829,7 +1839,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
         stationDecorateDto.setStationId(psl.getStationId());
         stationDecorateDto.setPartnerUserId(psl.getTaobaoUserId());
-        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
         stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
         stationDecorateBO.addStationDecorate(stationDecorateDto);
         partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
@@ -2197,6 +2207,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             lngDto.setLng(updateStation.getAddress().getLng());
             lngDto.setLat(updateStation.getAddress().getLat());
             caiNiaoService.modifyLngLatToCainiao(lngDto);
+            storeWriteBO.syncStore(updateStation.getId());
         }
     }
 
@@ -2385,16 +2396,57 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 
 	@Override
-	public boolean updateStationCategory(Long stationId,String category) {
-		  StationDto stationDto = new StationDto();
-		  stationDto.setId(stationId);
-		  stationDto.setCategory(category);
-		  try {
-			  stationBO.updateStation(stationDto);
-		} catch (Exception e) {
-			logger.error("updateStationCategory error["+stationId+"]",e);
-			return false;
+	public boolean updateStationCategory(List<Long> stationIds, String category) {
+		for (Long stationId : stationIds) {
+			try {
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setCategory(category);
+				stationBO.updateStation(stationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
 		}
-		  return true;
+		return true;
 	}
+	
+	@Override
+	public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix) {
+		for (Long stationId : stationIds) {
+			try {
+				Station station = stationBO.getStationById(stationId);
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setName(station.getName().replaceAll(oldSuffix, newSuffix));
+				stationBO.updateStation(stationDto);
+				Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+				SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+				syncModifyCainiaoStationDto.setPartnerInstanceId(instanceId);
+				syncModifyCainiaoStationDto.setOperator("system");
+				syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+				caiNiaoService.updateCainiaoStation(syncModifyCainiaoStationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
+		}
+		return true;
+	}
+
+
+	@Override
+	public void signProjectNoticeProtocol(Long taobaoUserId) {
+		 ValidateUtils.notNull(taobaoUserId);
+		 PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
+         Assert.notNull(paDto, "partner apply not exists");
+        
+         PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+         if (pprDto != null) {
+        	 return;
+         }
+         Date date =new Date();
+         partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, date, date, date,
+     			String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+		
+	}
+	
 }

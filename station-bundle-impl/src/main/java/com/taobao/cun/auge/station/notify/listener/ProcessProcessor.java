@@ -301,7 +301,29 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 serviceAbilityDecisionService.updateServiceAbilityMemo(sdd);
-            }
+            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
+				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String resultCode = ob.getString("result");
+				ProcessApproveResultEnum decorationDesignAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
+				String desc = ob.getString("taskRemark");
+				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
+			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
+				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String resultCode = ob.getString("result");
+				String desc = ob.getString("taskRemark");
+				ProcessApproveResultEnum decorationCheckAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
+				stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+			}
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				levelAuditFlowService.afterStartApproveProcessSuccess(ob);
