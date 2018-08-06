@@ -1485,16 +1485,6 @@ public class PartnerStationRelExample {
             return (Criteria) this;
         }
 
-        public Criteria andStationApplyIdIsNull() {
-            addCriterion("station_apply_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdIsNotNull() {
-            addCriterion("station_apply_id is not null");
-            return (Criteria) this;
-        }
-
         public Criteria andVersionIsNull() {
             addCriterion("version is null");
             return (Criteria) this;
