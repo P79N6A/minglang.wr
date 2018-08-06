@@ -21,7 +21,6 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
@@ -57,7 +56,6 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,10 +222,6 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(instanceId,SyncStationApplyEnum.UPDATE_STATE);
-
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
@@ -341,8 +335,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
-		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
-		
+
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
@@ -361,8 +354,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
-		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
-		
+
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}

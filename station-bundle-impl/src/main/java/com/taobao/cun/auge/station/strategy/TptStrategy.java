@@ -24,7 +24,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
@@ -77,7 +76,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
@@ -360,10 +358,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 		param.setLifecycleId(items.getId());
 		partnerLifecycleBO.updateLifecycle(param);
-
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(partnerInstanceId,SyncStationApplyEnum.UPDATE_STATE);
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();

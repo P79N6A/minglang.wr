@@ -26,7 +26,6 @@
     <result column="is_current" jdbcType="CHAR" property="isCurrent" />
     <result column="applier_type" jdbcType="VARCHAR" property="applierType" />
     <result column="close_type" jdbcType="VARCHAR" property="closeType" />
-    <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
     <result column="version" jdbcType="BIGINT" property="version" />
     <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
     <result column="mode" jdbcType="VARCHAR" property="mode" />
@@ -106,7 +105,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, station_id, apply_time, 
     service_begin_time, service_end_time, partner_id, parent_station_id, state, applier_id, 
-    bit, type, open_date, is_current, applier_type, close_type, station_apply_id, version, 
+    bit, type, open_date, is_current, applier_type, close_type, version,
     taobao_user_id, mode, seller_id, trans_status
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRelExample" resultMap="BaseResultMap">
@@ -170,7 +169,7 @@
       partner_id, parent_station_id, state, 
       applier_id, bit, type, 
       open_date, is_current, applier_type, 
-      close_type, station_apply_id, version, 
+      close_type, version,
       taobao_user_id, mode, seller_id, 
       trans_status)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
@@ -179,7 +178,7 @@
       #{partnerId,jdbcType=BIGINT}, #{parentStationId,jdbcType=BIGINT}, #{state,jdbcType=VARCHAR}, 
       #{applierId,jdbcType=VARCHAR}, #{bit,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
       #{openDate,jdbcType=TIMESTAMP}, #{isCurrent,jdbcType=CHAR}, #{applierType,jdbcType=VARCHAR}, 
-      #{closeType,jdbcType=VARCHAR}, #{stationApplyId,jdbcType=BIGINT}, #{version,jdbcType=BIGINT}, 
+      #{closeType,jdbcType=VARCHAR},  #{version,jdbcType=BIGINT},
       #{taobaoUserId,jdbcType=BIGINT}, #{mode,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}, 
       #{transStatus,jdbcType=VARCHAR})
   </insert>
@@ -250,9 +249,7 @@
       <if test="closeType != null">
         close_type,
       </if>
-      <if test="stationApplyId != null">
-        station_apply_id,
-      </if>
+
       <if test="version != null">
         version,
       </if>
@@ -326,9 +323,6 @@
       </if>
       <if test="closeType != null">
         #{closeType,jdbcType=VARCHAR},
-      </if>
-      <if test="stationApplyId != null">
-        #{stationApplyId,jdbcType=BIGINT},
       </if>
       <if test="version != null">
         #{version,jdbcType=BIGINT},
@@ -424,9 +418,6 @@
       <if test="record.closeType != null">
         close_type = #{record.closeType,jdbcType=VARCHAR},
       </if>
-      <if test="record.stationApplyId != null">
-        station_apply_id = #{record.stationApplyId,jdbcType=BIGINT},
-      </if>
       <if test="record.version != null">
         version = #{record.version,jdbcType=BIGINT},
       </if>
@@ -473,7 +464,6 @@
       is_current = #{record.isCurrent,jdbcType=CHAR},
       applier_type = #{record.applierType,jdbcType=VARCHAR},
       close_type = #{record.closeType,jdbcType=VARCHAR},
-      station_apply_id = #{record.stationApplyId,jdbcType=BIGINT},
       version = #{record.version,jdbcType=BIGINT},
       taobao_user_id = #{record.taobaoUserId,jdbcType=BIGINT},
       mode = #{record.mode,jdbcType=VARCHAR},
@@ -547,9 +537,6 @@
       <if test="closeType != null">
         close_type = #{closeType,jdbcType=VARCHAR},
       </if>
-      <if test="stationApplyId != null">
-        station_apply_id = #{stationApplyId,jdbcType=BIGINT},
-      </if>
       <if test="version != null">
         version = #{version,jdbcType=BIGINT},
       </if>
@@ -593,7 +580,6 @@
       is_current = #{isCurrent,jdbcType=CHAR},
       applier_type = #{applierType,jdbcType=VARCHAR},
       close_type = #{closeType,jdbcType=VARCHAR},
-      station_apply_id = #{stationApplyId,jdbcType=BIGINT},
       version = #{version,jdbcType=BIGINT},
       taobao_user_id = #{taobaoUserId,jdbcType=BIGINT},
       mode = #{mode,jdbcType=VARCHAR},
