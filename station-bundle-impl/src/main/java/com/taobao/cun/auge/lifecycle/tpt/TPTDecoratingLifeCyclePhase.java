@@ -16,7 +16,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -129,16 +128,6 @@ public class TPTDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId =partnerInstanceDto.getId();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-	}
-
-
-	
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 

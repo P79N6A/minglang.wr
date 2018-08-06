@@ -11,7 +11,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
@@ -173,7 +172,7 @@ public class TPSServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 			
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
-			 
+
 			//重新开业后将站点的围栏开启
 			StationStateReopenFenceInstanceJob job = new StationStateReopenFenceInstanceJob();
 			job.setStationId(partnerInstanceDto.getStationId());
@@ -203,14 +202,6 @@ public class TPSServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		
 	}
 
-	@Override
-	@PhaseStepMeta
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-	}
-
-	
 	private void dispachToServiceEvent(PartnerInstanceDto partnerInstanceDto, Long instanceId) {
         PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
         PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();
