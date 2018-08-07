@@ -95,6 +95,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 		FenceInstanceJobEntity record = new FenceInstanceJobEntity();
 		record.setGmtModified(new Date());
 		record.setGmtStartTime(new Date());
+		record.setState("PEDING");
 		FenceInstanceJobEntityExample example = new FenceInstanceJobEntityExample();
 		example.createCriteria().andIdEqualTo(jobId).andStateEqualTo("NEW");
 		return fenceInstanceJobEntityMapper.updateByExampleSelective(record, example) != 0;

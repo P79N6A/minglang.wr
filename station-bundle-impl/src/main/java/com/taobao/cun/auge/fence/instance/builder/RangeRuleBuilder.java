@@ -68,8 +68,12 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 					division.put("name", station.getCityDetail());
 				}
 			}else {
-				division.put("code", station.getTown());
-				division.put("name", station.getTownDetail());
+				if(!Strings.isNullOrEmpty(station.getTown())) {
+					division.put("code", station.getTown());
+					division.put("name", station.getTownDetail());
+				}else {
+					throw new RuntimeException("设置行政区划时，镇为空");
+				}
 			}
 			
 			result.put(FenceConstants.RANGE_DIVISION, division);
