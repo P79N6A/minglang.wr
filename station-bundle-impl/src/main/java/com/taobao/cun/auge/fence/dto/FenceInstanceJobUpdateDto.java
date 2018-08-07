@@ -15,8 +15,6 @@ public class FenceInstanceJobUpdateDto {
 	
 	private Integer instanceNum = 0;
 
-    private Date gmtStartTime;
-
     private Date gmtEndTime;
     
     private String errorMsg;
@@ -51,14 +49,6 @@ public class FenceInstanceJobUpdateDto {
 
 	public void setInstanceNum(Integer instanceNum) {
 		this.instanceNum = instanceNum;
-	}
-
-	public Date getGmtStartTime() {
-		return gmtStartTime;
-	}
-
-	public void setGmtStartTime(Date gmtStartTime) {
-		this.gmtStartTime = gmtStartTime;
 	}
 
 	public Date getGmtEndTime() {

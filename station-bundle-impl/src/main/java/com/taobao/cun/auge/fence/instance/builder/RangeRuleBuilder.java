@@ -33,10 +33,9 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getMatch()) {
 				if(text.equals("belongVillage")) {
-					if(Strings.isNullOrEmpty(station.getVillageDetail())) {
-						throw new RuntimeException("所属行政村为空");
+					if(!Strings.isNullOrEmpty(station.getVillageDetail())) {
+						textFilters.put("belongVillage", station.getVillageDetail());
 					}
-					textFilters.put("belongVillage", station.getVillageDetail());
 				}
 				
 				/*if(text.equals("landmark")) {
@@ -47,7 +46,9 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 					textFilters.put("receiveVillage", text);
 				}*/
 			}
-			result.put(FenceConstants.RANGE_MATCH, textFilters);
+			if(!textFilters.isEmpty()) {
+				result.put(FenceConstants.RANGE_MATCH, textFilters);
+			}
 		}
 		//行政区划
 		if(!Strings.isNullOrEmpty(fenceRule.getDivision())){
