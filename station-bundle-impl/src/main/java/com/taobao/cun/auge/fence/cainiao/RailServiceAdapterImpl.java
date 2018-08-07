@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
+import com.taobao.cun.auge.fence.FenceParamException;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.common.util.BeanCopy;
 
@@ -48,7 +49,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		if(result.isSuccess()) {
 			return result.getResult();
 		}else {
-			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "addRail:code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 
@@ -57,7 +58,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		RailInfoRequest request = toCainiaoFence(fenceEntity);
 		BaseResult<Boolean> result = railService.updateRailById(request);
 		if(!result.isSuccess()) {
-			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "updateRailById:code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 
@@ -68,7 +69,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setCpCode(cpcode);
 		BaseResult<Boolean> result = railService.deleteRailById(request);
 		if(!result.isSuccess()) {
-			throw new RailException(request, "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(request, "deleteRailById:code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 	}
 
@@ -122,7 +123,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 					RailKeyword keyword = new RailKeyword();
 					keyword.setKeyword(v);
 					if(Strings.isNullOrEmpty(fenceEntity.getTown())) {
-						throw new RuntimeException("设置关键字时镇CODE为空");
+						throw new FenceParamException("设置关键字时镇CODE为空");
 					}
 					keyword.setTownId(Long.parseLong(fenceEntity.getTown()));
 					keywords.add(keyword);
@@ -142,7 +143,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setStatus(fenceEntity.getState().equals(FenceConstants.ENABLE) ? SortingConstants.UseStatus.STATUS_ENABLED : SortingConstants.UseStatus.STATUS_DISABLED);
 		BaseResult<Boolean> result = railService.updateRailStatusById(request);
 		if(!result.isSuccess()) {
-			throw new RailException(BeanCopy.copy(RailInfoRequest.class, request), "code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
+			throw new RailException(BeanCopy.copy(RailInfoRequest.class, request), "updateRailStatusById:code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
 		}
 		
 	}
