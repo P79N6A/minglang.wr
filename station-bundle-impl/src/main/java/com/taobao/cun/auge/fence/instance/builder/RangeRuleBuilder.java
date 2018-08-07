@@ -36,8 +36,6 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				if(text.equals("belongVillage")) {
 					if(!Strings.isNullOrEmpty(station.getVillageDetail())) {
 						textFilters.put("belongVillage", station.getVillageDetail());
-					}else {
-						throw new FenceParamException("围栏范围->文本匹配->所在行政村为空");
 					}
 				}
 				
