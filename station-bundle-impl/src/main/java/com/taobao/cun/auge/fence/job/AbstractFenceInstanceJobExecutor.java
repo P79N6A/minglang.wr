@@ -14,6 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.fence.FenceParamException;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
@@ -327,10 +328,16 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
-		ExecuteError executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
+		ExecuteError executeError = null;
 		if(error instanceof RailException) {
+			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), new String[] {});
 			executeError.setRailInfoRequest(((RailException)error).getRailInfoRequest());
+		}else if(error instanceof FenceParamException) {
+			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), new String[] {});
+		}else {
+			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
 		}
+		
 		threadLocal.get().add(executeError);
 	}
 	
@@ -354,8 +361,10 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			this.errorMsg = errorMsg;
 			
 			List<String> errorList = Lists.newArrayList();
-			for(String error : errors) {
-				errorList.add(error.replaceAll("\t", " - "));
+			if(errors != null) {
+				for(String error : errors) {
+					errorList.add(error.replaceAll("\t", " - "));
+				}
 			}
 			this.errors = errorList;
 		}

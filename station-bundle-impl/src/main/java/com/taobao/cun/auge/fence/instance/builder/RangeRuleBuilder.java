@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.fence.FenceParamException;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.instance.rule.RangeFenceRule;
 
@@ -35,6 +36,8 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				if(text.equals("belongVillage")) {
 					if(!Strings.isNullOrEmpty(station.getVillageDetail())) {
 						textFilters.put("belongVillage", station.getVillageDetail());
+					}else {
+						throw new FenceParamException("围栏范围->文本匹配->所在行政村为空");
 					}
 				}
 				
@@ -68,8 +71,12 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 					division.put("name", station.getCityDetail());
 				}
 			}else {
-				division.put("code", station.getTown());
-				division.put("name", station.getTownDetail());
+				if(!Strings.isNullOrEmpty(station.getTown())) {
+					division.put("code", station.getTown());
+					division.put("name", station.getTownDetail());
+				}else {
+					throw new FenceParamException("围栏范围->行政区划->乡镇街道级:镇为空");
+				}
 			}
 			
 			result.put(FenceConstants.RANGE_DIVISION, division);
