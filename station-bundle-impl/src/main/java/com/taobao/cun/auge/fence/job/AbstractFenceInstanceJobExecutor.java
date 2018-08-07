@@ -330,10 +330,10 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
 		ExecuteError executeError = null;
 		if(error instanceof RailException) {
-			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), null);
+			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), new String[] {});
 			executeError.setRailInfoRequest(((RailException)error).getRailInfoRequest());
 		}else if(error instanceof FenceParamException) {
-			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), null);
+			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), new String[] {});
 		}else {
 			executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
 		}
@@ -361,8 +361,10 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			this.errorMsg = errorMsg;
 			
 			List<String> errorList = Lists.newArrayList();
-			for(String error : errors) {
-				errorList.add(error.replaceAll("\t", " - "));
+			if(errors != null) {
+				for(String error : errors) {
+					errorList.add(error.replaceAll("\t", " - "));
+				}
 			}
 			this.errors = errorList;
 		}
