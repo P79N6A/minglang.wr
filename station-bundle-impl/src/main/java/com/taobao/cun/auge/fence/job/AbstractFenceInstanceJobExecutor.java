@@ -288,7 +288,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		if(fenceEntities != null) {
 			Station station = stationBo.getStationById(stationId);
 			for(FenceEntity fenceEntity : fenceEntities) {
-				if(station != null && !isClosed(station)) {
+				if(station != null) {
 					//如果站点是CLOSED、QUITING、QUIT,并且试图将状态改为开启状态则不处理
 					if(isClosed(station) && state.equals(FenceConstants.ENABLE)) {
 						continue;
