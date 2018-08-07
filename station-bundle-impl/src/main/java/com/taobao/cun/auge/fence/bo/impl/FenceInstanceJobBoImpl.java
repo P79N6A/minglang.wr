@@ -89,4 +89,14 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 			fenceInstanceJobEntityMapper.updateByPrimaryKeyWithBLOBs(entity);
 		}
 	}
+
+	@Override
+	public boolean lockJob(Long jobId) {
+		FenceInstanceJobEntity record = new FenceInstanceJobEntity();
+		record.setGmtModified(new Date());
+		record.setGmtStartTime(new Date());
+		FenceInstanceJobEntityExample example = new FenceInstanceJobEntityExample();
+		example.createCriteria().andIdEqualTo(jobId).andStateEqualTo("NEW");
+		return fenceInstanceJobEntityMapper.updateByExampleSelective(record, example) != 0;
+	}
 }
