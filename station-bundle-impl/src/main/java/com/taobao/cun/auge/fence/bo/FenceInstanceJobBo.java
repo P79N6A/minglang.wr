@@ -31,4 +31,11 @@ public interface FenceInstanceJobBo {
 	 * @return
 	 */
 	List<FenceInstanceJob> getNewFenceInstanceJobs();
+	
+	/**
+	 * 锁住该JOB，保证只有一个处理线程
+	 * @param jobId
+	 * @return
+	 */
+	boolean lockJob(Long jobId);
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -21,6 +19,7 @@ import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.cainiao.RailException;
 import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
+import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
@@ -37,7 +36,6 @@ import com.taobao.cun.crius.oss.client.FileStoreService;
  * @param <F>
  */
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
-	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
 	protected FenceEntityBO fenceEntityBO;
 	@Resource
@@ -58,12 +56,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	private static final ThreadLocal<FenceInstanceJob> fenceInstanceJobThreadLocal = new ThreadLocal<FenceInstanceJob>();
 	
 	public void execute(F fenceInstanceJob) {
+		if(!fenceInstanceJobBo.lockJob(fenceInstanceJob.getId())) {
+			return;
+		}
 		FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto = new FenceInstanceJobUpdateDto();
 		fenceInstanceJobUpdateDto.setId(fenceInstanceJob.getId());
-		fenceInstanceJobUpdateDto.setGmtStartTime(new Date());
-		fenceInstanceJobUpdateDto.setState("PENDING");
-		fenceInstanceJobUpdateDto.setInstanceNum(0);
-		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 		Integer instanceNum = null;
 		threadLocal.set(Lists.newArrayList());
 		fenceInstanceJobThreadLocal.set(fenceInstanceJob);
@@ -258,7 +255,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		if(fenceEntities != null) {
 			for(FenceEntity fenceEntity : fenceEntities) {
 				Station station = stationBo.getStationById(fenceEntity.getStationId());
-				if(station != null && !isClosed(station)) {//如果站点是CLOSED、QUITING则不处理
+				if(station != null) {
+					//如果站点是CLOSED、QUITING、QUIT,并且试图将状态改为开启状态则不处理
+					if(isClosed(station) && state.equals(FenceConstants.ENABLE)) {
+						continue;
+					}
 					updateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
 				}
 			}
@@ -287,7 +288,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		if(fenceEntities != null) {
 			Station station = stationBo.getStationById(stationId);
 			for(FenceEntity fenceEntity : fenceEntities) {
-				if(station != null && !isClosed(station)) {//如果站点是CLOSED、QUITING则不处理
+				if(station != null && !isClosed(station)) {
+					//如果站点是CLOSED、QUITING、QUIT,并且试图将状态改为开启状态则不处理
+					if(isClosed(station) && state.equals(FenceConstants.ENABLE)) {
+						continue;
+					}
 					updateFenceState(fenceEntity, state, fenceInstanceJob.getCreator());
 				}
 			}
@@ -322,7 +327,6 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
-		logger.error("action={}, stationId={}, templateId={}", action, stationId, templateId, error);
 		ExecuteError executeError = new ExecuteError(action, stationId, templateId, error.getMessage(), ExceptionUtils.getStackFrames(error));
 		if(error instanceof RailException) {
 			executeError.setRailInfoRequest(((RailException)error).getRailInfoRequest());
