@@ -134,5 +134,13 @@ public interface StationDecorateBO {
  	 * @return
  	 */
  	public void auditStationDecorateCheck(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+ 	
+ 	/**
+ 	 * 审核村点装修反馈信息县小二审核
+ 	 * @param stationId
+ 	 * @param approveResultEnum
+ 	 * @return
+ 	 */
+ 	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 
 }

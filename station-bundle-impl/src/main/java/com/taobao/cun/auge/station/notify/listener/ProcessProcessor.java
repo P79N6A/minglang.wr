@@ -63,6 +63,8 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
+import com.taobao.cun.crius.bpm.dto.CuntaoTask;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
@@ -145,7 +147,8 @@ public class ProcessProcessor {
 	@Autowired
 	private AddressInfoDecisionService addressInfoDecisionService;
 	
-
+	@Autowired
+	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -314,6 +317,8 @@ public class ProcessProcessor {
 				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String taskId = ob.getString("taskId");
+				CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
 				String resultCode = ob.getString("result");
 				String desc = ob.getString("taskRemark");
 				ProcessApproveResultEnum decorationCheckAuditResult = null;
@@ -322,7 +327,11 @@ public class ProcessProcessor {
 				}else{
 					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
 				}
-				stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+				if("县小二审批".equals(task.getTaskName())){
+					stationDecorateService.auditStationDecorateCheckByCountyLeader(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+				}else{
+					stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+				}
 			}
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
