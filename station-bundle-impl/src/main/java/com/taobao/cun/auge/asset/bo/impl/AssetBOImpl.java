@@ -413,7 +413,6 @@ public class AssetBOImpl implements AssetBO {
         cuntaoAsset.setRemark(cuntaoAssetDto.getRemark());
         cuntaoAsset.setBoNo(cuntaoAssetDto.getBoNo());
         cuntaoAsset.setAssetOwner(cuntaoAssetDto.getAssetOwner());
-        cuntaoAsset.setStationId(cuntaoAssetDto.getStationId());
         cuntaoAsset.setStationName(cuntaoAssetDto.getStationName());
         cuntaoAsset.setCheckStatus(cuntaoAssetDto.getCheckStatus());
         cuntaoAsset.setCheckTime(cuntaoAssetDto.getCheckTime());
@@ -444,13 +443,13 @@ public class AssetBOImpl implements AssetBO {
             cuntaoAssetDto.setRemark(cuntaoAsset.getRemark());
             cuntaoAssetDto.setBoNo(cuntaoAsset.getBoNo());
             cuntaoAssetDto.setAssetOwner(cuntaoAsset.getAssetOwner());
-            cuntaoAssetDto.setStationId(cuntaoAsset.getStationId());
             cuntaoAssetDto.setStationName(cuntaoAsset.getStationName());
             cuntaoAssetDto.setCheckStatus(cuntaoAsset.getCheckStatus());
             cuntaoAssetDto.setCheckTime(cuntaoAsset.getCheckTime());
             cuntaoAssetDto.setOperatorRole(cuntaoAsset.getOperatorRole());
             cuntaoAssetDto.setCheckOperator(cuntaoAsset.getCheckOperator());
             cuntaoAssetDto.setCheckRole(cuntaoAsset.getCheckRole());
+            cuntaoAssetDto.setNewStationId(cuntaoAsset.getNewStationId());
         }
         return cuntaoAssetDto;
     }
