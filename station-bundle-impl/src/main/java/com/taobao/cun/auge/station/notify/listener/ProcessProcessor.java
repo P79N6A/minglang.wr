@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -146,7 +147,8 @@ public class ProcessProcessor {
 	private ServiceAbilityDecisionService serviceAbilityDecisionService;
 	@Autowired
 	private AddressInfoDecisionService addressInfoDecisionService;
-	
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Autowired
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -327,7 +329,7 @@ public class ProcessProcessor {
 				}else{
 					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
 				}
-				if("县小二审批".equals(task.getTaskName())){
+				if(diamondConfiguredProperties.getDecorateCountyAuditActivityId().equals(task.getActivityId())){
 					stationDecorateService.auditStationDecorateCheckByCountyLeader(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
 				}else{
 					stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
