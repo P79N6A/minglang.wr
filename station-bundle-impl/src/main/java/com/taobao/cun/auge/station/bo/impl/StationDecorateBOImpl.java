@@ -461,7 +461,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		operatorDto.setOperator(stationDecorateCheckDto.getOperator());
 		record.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
-		updateRecord.setStatus(StationDecorateStatusEnum.WAIT_LEADER_AUDIT.getCode());
+		updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
 		if(stationDecorateCheckDto.getCheckDoorAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR, operatorDto);
 		}
@@ -515,7 +515,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
 		updateRecord.setCheckAuditOpinion(auditOpinion);
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
-			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_LEADER_AUDIT.getCode());
+			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);

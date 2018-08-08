@@ -317,10 +317,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	        		sdDto.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD);
 	        	}
 	    }
-		//新审批流如果是等待县小二审批也统一转换成待审批状态
-		if(StationDecorateTypeEnum.NEW_SELF.getCode().equals(sdDto.getDecorateType().getCode()) && StationDecorateStatusEnum.WAIT_LEADER_AUDIT.getCode().equals(sdDto.getStatus().getCode())){
-			sdDto.setStatus(StationDecorateStatusEnum.WAIT_AUDIT);
-		}
+
 		// 容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
 		  /**if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus())
 				|| StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())
