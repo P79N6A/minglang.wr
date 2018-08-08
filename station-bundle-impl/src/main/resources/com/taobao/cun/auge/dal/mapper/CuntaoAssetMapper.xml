@@ -27,7 +27,6 @@
     <result column="bo_no" property="boNo" jdbcType="VARCHAR" />
     <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
     <result column="asset_owner" property="assetOwner" jdbcType="VARCHAR" />
-    <result column="station_id" property="stationId" jdbcType="VARCHAR" />
     <result column="station_name" property="stationName" jdbcType="VARCHAR" />
     <result column="check_status" property="checkStatus" jdbcType="VARCHAR" />
     <result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
@@ -110,7 +109,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, ali_no, serial_no, brand, model, 
     category, status, receiver, operator, operate_time, county, org_id, province, remark, 
-    bo_no, is_deleted, asset_owner, station_id, station_name, check_status, check_time, 
+    bo_no, is_deleted, asset_owner, station_name, check_status, check_time,
     operator_role, check_operator, check_role, partner_instance_id, new_station_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.CuntaoAssetExample" >
@@ -174,7 +173,7 @@
       status, receiver, operator, 
       operate_time, county, org_id, 
       province, remark, bo_no, 
-      is_deleted, asset_owner, station_id, 
+      is_deleted, asset_owner,
       station_name, check_status, check_time, 
       operator_role, check_operator, check_role, 
       partner_instance_id, new_station_id)
@@ -184,7 +183,7 @@
       #{status,jdbcType=VARCHAR}, #{receiver,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR}, 
       #{operateTime,jdbcType=TIMESTAMP}, #{county,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{boNo,jdbcType=VARCHAR}, 
-      #{isDeleted,jdbcType=CHAR}, #{assetOwner,jdbcType=VARCHAR}, #{stationId,jdbcType=VARCHAR}, 
+      #{isDeleted,jdbcType=CHAR}, #{assetOwner,jdbcType=VARCHAR},
       #{stationName,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, #{checkTime,jdbcType=TIMESTAMP}, 
       #{operatorRole,jdbcType=VARCHAR}, #{checkOperator,jdbcType=VARCHAR}, #{checkRole,jdbcType=VARCHAR}, 
       #{partnerInstanceId,jdbcType=BIGINT}, #{newStationId,jdbcType=BIGINT})
@@ -258,9 +257,6 @@
       </if>
       <if test="assetOwner != null" >
         asset_owner,
-      </if>
-      <if test="stationId != null" >
-        station_id,
       </if>
       <if test="stationName != null" >
         station_name,
@@ -347,9 +343,6 @@
       </if>
       <if test="assetOwner != null" >
         #{assetOwner,jdbcType=VARCHAR},
-      </if>
-      <if test="stationId != null" >
-        #{stationId,jdbcType=VARCHAR},
       </if>
       <if test="stationName != null" >
         #{stationName,jdbcType=VARCHAR},
@@ -457,9 +450,6 @@
       <if test="record.assetOwner != null" >
         asset_owner = #{record.assetOwner,jdbcType=VARCHAR},
       </if>
-      <if test="record.stationId != null" >
-        station_id = #{record.stationId,jdbcType=VARCHAR},
-      </if>
       <if test="record.stationName != null" >
         station_name = #{record.stationName,jdbcType=VARCHAR},
       </if>
@@ -516,7 +506,6 @@
       bo_no = #{record.boNo,jdbcType=VARCHAR},
       is_deleted = #{record.isDeleted,jdbcType=CHAR},
       asset_owner = #{record.assetOwner,jdbcType=VARCHAR},
-      station_id = #{record.stationId,jdbcType=VARCHAR},
       station_name = #{record.stationName,jdbcType=VARCHAR},
       check_status = #{record.checkStatus,jdbcType=VARCHAR},
       check_time = #{record.checkTime,jdbcType=TIMESTAMP},
@@ -596,9 +585,6 @@
       <if test="assetOwner != null" >
         asset_owner = #{assetOwner,jdbcType=VARCHAR},
       </if>
-      <if test="stationId != null" >
-        station_id = #{stationId,jdbcType=VARCHAR},
-      </if>
       <if test="stationName != null" >
         station_name = #{stationName,jdbcType=VARCHAR},
       </if>
@@ -652,7 +638,6 @@
       bo_no = #{boNo,jdbcType=VARCHAR},
       is_deleted = #{isDeleted,jdbcType=CHAR},
       asset_owner = #{assetOwner,jdbcType=VARCHAR},
-      station_id = #{stationId,jdbcType=VARCHAR},
       station_name = #{stationName,jdbcType=VARCHAR},
       check_status = #{checkStatus,jdbcType=VARCHAR},
       check_time = #{checkTime,jdbcType=TIMESTAMP},
