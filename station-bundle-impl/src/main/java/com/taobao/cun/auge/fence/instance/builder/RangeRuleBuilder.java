@@ -30,7 +30,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			result.put(FenceConstants.RANGE_DISTANCE, fenceRule.getDistance());
 		}
 		//文本过滤
-		if(CollectionUtils.isNotEmpty(fenceRule.getMatch())){
+		if(CollectionUtils.isNotEmpty(fenceRule.getMatch()) && !Strings.isNullOrEmpty(station.getTown())){
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getMatch()) {
 				if(text.equals("belongVillage")) {
