@@ -1784,6 +1784,76 @@ public class FenceEntityExample {
             addCriterion("job_id not between", value1, value2, "jobId");
             return (Criteria) this;
         }
+
+        public Criteria andDeleteSourceIsNull() {
+            addCriterion("delete_source is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceIsNotNull() {
+            addCriterion("delete_source is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceEqualTo(String value) {
+            addCriterion("delete_source =", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceNotEqualTo(String value) {
+            addCriterion("delete_source <>", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceGreaterThan(String value) {
+            addCriterion("delete_source >", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceGreaterThanOrEqualTo(String value) {
+            addCriterion("delete_source >=", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceLessThan(String value) {
+            addCriterion("delete_source <", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceLessThanOrEqualTo(String value) {
+            addCriterion("delete_source <=", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceLike(String value) {
+            addCriterion("delete_source like", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceNotLike(String value) {
+            addCriterion("delete_source not like", value, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceIn(List<String> values) {
+            addCriterion("delete_source in", values, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceNotIn(List<String> values) {
+            addCriterion("delete_source not in", values, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceBetween(String value1, String value2) {
+            addCriterion("delete_source between", value1, value2, "deleteSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteSourceNotBetween(String value1, String value2) {
+            addCriterion("delete_source not between", value1, value2, "deleteSource");
+            return (Criteria) this;
+        }
     }
 
     /**
