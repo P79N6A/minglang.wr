@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.fence.job;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -9,10 +8,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
 import com.taobao.cun.auge.fence.job.init.InitingStation;
 import com.taobao.cun.auge.fence.job.init.InitingStationFetcher;
+import com.taobao.cun.auge.fence.job.init.InvalidFenceFetcher;
 
 /**
  * 批量初始化站点围栏实例
@@ -31,6 +32,13 @@ public class BatchStationInitFenceInstanceJobExecutor extends AbstractFenceInsta
 		for(InitingStationFetcher initingStationFetcher : map.values()) {
 			for(InitingStation initingStation : initingStationFetcher.getInitingStations()) {
 				instanceNum += init(initingStation, fenceInstanceJob);
+			}
+		}
+		//如果站点类型发生了变化，也要删除原先的围栏
+		Map<String, InvalidFenceFetcher> invalidFenceFetchers = applicationContext.getBeansOfType(InvalidFenceFetcher.class);
+		for(InvalidFenceFetcher invalidFenceFetcher : invalidFenceFetchers.values()) {
+			for(FenceEntity fenceEntity : invalidFenceFetcher.getFenceEntities()) {
+				deleteFenceEntity(fenceEntity);
 			}
 		}
 		return instanceNum;
