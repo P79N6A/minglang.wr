@@ -274,8 +274,8 @@ public class AssetServiceImpl implements AssetService{
 
 	@Override
 	public Boolean changeOwner(Long orgId, String ownerWorkNo,
-			String ownerName, List<Long> assetId) {
-		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, assetId);
+			String ownerName, List<String> aliNos) {
+		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, aliNos);
 	}
 
 	@Override

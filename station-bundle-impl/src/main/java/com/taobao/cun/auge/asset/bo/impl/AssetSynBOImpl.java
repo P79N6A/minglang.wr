@@ -70,9 +70,7 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
-import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 
 @Component
 public class AssetSynBOImpl implements AssetSynBO {
@@ -117,11 +115,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 	@Autowired
 	private StationBO stationBO;
 
-	@Autowired
-	private CuntaoUserService cuntaoUserService;
-
-	@Autowired
-	private MmpAuthReadService mmpAuthReadService;
 
 	@HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
 	private CuntaoApiService cuntaoApiService;
@@ -497,11 +490,11 @@ public class AssetSynBOImpl implements AssetSynBO {
 	}
 
 	@Override
-	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName, List<Long> assetId) {
+	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName, List<String> aliNos) {
 
 		AssetExample assetExample = new AssetExample();
-		if (assetId != null) {
-			assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetId);// .andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode())
+		if (aliNos != null) {
+			assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoIn(aliNos);// .andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode())
 		} else {
 			assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerOrgIdEqualTo(orgId);// .andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
 		}
@@ -511,24 +504,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 			logger.info("sync asset begin,count={}", assetList.size());
 			for (Asset a : assetList) {
 				try {
-					Asset updateAsset = new Asset();
-					DomainUtils.beforeUpdate(updateAsset, "sys");
-					updateAsset.setId(a.getId());
-					updateAsset.setAliNo(a.getAliNo());
-					updateAsset.setOwnerName(ownerName);
-					updateAsset.setOwnerWorkno(ownerWorkNo);
-					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
-						updateAsset.setStatus(AssetStatusEnum.USE.getCode());
-					}
-					if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
-						updateAsset.setUseAreaId(a.getOwnerOrgId());
-						updateAsset.setUserId(ownerWorkNo);
-						updateAsset.setUserName(ownerName);
-					}
-					assetMapper.updateByPrimaryKeySelective(updateAsset);
-
-					// 集团资产变更责任人
-					changeOwner(updateAsset);
 					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
 						logger.info("sync asset begin,a.getStatus()={}", a.getStatus());
 						Long assetId1 = a.getId();
@@ -560,6 +535,25 @@ public class AssetSynBOImpl implements AssetSynBO {
 						}
 					}
 
+					Asset updateAsset = new Asset();
+					DomainUtils.beforeUpdate(updateAsset, "sys");
+					updateAsset.setId(a.getId());
+					updateAsset.setAliNo(a.getAliNo());
+					updateAsset.setOwnerName(ownerName);
+					updateAsset.setOwnerWorkno(ownerWorkNo);
+					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+						updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+					}
+					if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
+						updateAsset.setUseAreaId(a.getOwnerOrgId());
+						updateAsset.setUserId(ownerWorkNo);
+						updateAsset.setUserName(ownerName);
+					}
+					assetMapper.updateByPrimaryKeySelective(updateAsset);
+
+					// 集团资产变更责任人
+					changeOwner(updateAsset);
+				
 				} catch (Exception e) {
 					logger.error("sync asset error,asset=" + JSONObject.toJSONString(a), e);
 				}
