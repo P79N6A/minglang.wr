@@ -13,5 +13,11 @@ public interface PartnerProtocolQueryService {
 	 * @return
 	 */
 	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId);
+	/**
+	 * 是否已经签署的项目告知协议
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Boolean querySignedProjectNoticeProtocol(Long taobaoUserId);
 	
 }

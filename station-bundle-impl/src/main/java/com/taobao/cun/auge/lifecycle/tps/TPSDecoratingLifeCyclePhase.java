@@ -14,7 +14,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -36,7 +35,6 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -46,7 +44,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
-import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
@@ -165,16 +162,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId =partnerInstanceDto.getId();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-	}
-
-
-	
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 
@@ -245,7 +232,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
         stationDecorateDto.setStationId(rel.getStationId());
         stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
         stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
         stationDecorateBO.addStationDecorate(stationDecorateDto);
         

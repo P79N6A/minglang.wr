@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.ext.ExtFenceEntityMapper">
+  <select id="selectStationQuitedFenceEntities" resultMap="com.taobao.cun.auge.dal.mapper.FenceEntityMapper.BaseResultMap">
+  select a.* from fence_entity a,station b 
+  	where a.station_id=b.id 
+  	and a.is_deleted='n' 
+  	and b.is_deleted='n'
+  	and b.status='QUIT'
+  </select>
+</mapper>

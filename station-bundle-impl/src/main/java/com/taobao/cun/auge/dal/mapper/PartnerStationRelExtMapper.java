@@ -27,13 +27,6 @@ public interface PartnerStationRelExtMapper {
 	List<Long> getWaitThawMoney(Map param);
 	
 	/**
-	 * 重构过度使用，请正常业务不要使用
-	 * @param stationApplyIds
-	 * @return
-	 */
-	List<PartnerInstance> selectPartnerInstancesByStationApplyIds(List<Long> stationApplyIds);
-	
-	/**
 	 * 根据合伙人实例id,批量查询实例
 	 * 
 	 * @param partnerInstanceIds

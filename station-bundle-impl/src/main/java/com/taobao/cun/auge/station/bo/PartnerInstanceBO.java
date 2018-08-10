@@ -42,16 +42,6 @@ public interface PartnerInstanceBO {
      */
     public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent);
 
-
-
-    /**
-     * 根据stationapplyId查询实例
-     *
-     * @param stationApplyId
-     * @return
-     */
-    public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId);
-
     /**
      * 根据taobaoUserId 查询合伙人实例表主键id
      *
@@ -283,8 +273,6 @@ public interface PartnerInstanceBO {
      */
     public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId);
 
-    public Long findStationIdByStationApplyId(Long stationApplyId);
-
     public List<PartnerStationRel> getBatchActivePartnerInstance(
         List<Long> taobaoUserId, List<String> instanceType, List<String> statusList);
 
@@ -295,16 +283,6 @@ public interface PartnerInstanceBO {
     public Partner getPartnerByStationId(Long stationId);
 
     public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId);
-
-
-	/**
-	 * 根据stationapplyId查询实例id
-	 *
-	 * @param stationApplyId
-	 * @return
-	 */
-	public Long getInstanceIdByStationApplyId(Long stationApplyId);
-
 
 	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state);
 	/**

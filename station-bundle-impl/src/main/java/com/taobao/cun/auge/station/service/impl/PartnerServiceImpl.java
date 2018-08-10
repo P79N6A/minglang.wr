@@ -9,7 +9,6 @@ import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -23,7 +22,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +41,6 @@ public class PartnerServiceImpl implements PartnerService {
 	
 	@Autowired
 	CountyStationBO countyStationBO;
-	
-	@Autowired
-	StationApplySyncBO syncStationApplyBO;
 	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -144,11 +139,7 @@ public class PartnerServiceImpl implements PartnerService {
         dto.setBirthday(birthday);
         dto.setId(rel.getPartnerId());
         partnerBO.updatePartner(dto);
-		String isSync = diamondConfiguredProperties.getIsSync();
-		if("y".equals(isSync)) {
-			//同步stationApply;
-			syncStationApplyBO.updateStationApply(rel.getId(), SyncStationApplyEnum.UPDATE_BASE);
-		}
+
         //同步菜鸟
         if (isNeedToUpdateCainiaoStation(rel.getState())) {
 			generalTaskSubmitService.submitUpdateCainiaoStation(rel.getId(),String.valueOf(taobaoUserId));

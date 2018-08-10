@@ -94,7 +94,6 @@ public final class PartnerInstanceConverter {
 		instanceDto.setBit(instance.getBit());
 		instanceDto.setOpenDate(instance.getOpenDate());
 		instanceDto.setApplierType(instance.getApplierType());
-		instanceDto.setStationApplyId(instance.getStationApplyId());
 		instanceDto.setTaobaoUserId(instance.getTaobaoUserId());
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(instance.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(instance.getIsCurrent()));
@@ -177,7 +176,6 @@ public final class PartnerInstanceConverter {
 		instanceDto.setBit(psRel.getBit());
 		instanceDto.setOpenDate(psRel.getOpenDate());
 		instanceDto.setApplierType(psRel.getApplierType());
-		instanceDto.setStationApplyId(psRel.getStationApplyId());
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(psRel.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
 
@@ -305,7 +303,6 @@ public final class PartnerInstanceConverter {
 
 		rel.setBit(partnerInstanceDto.getBit());
 		rel.setOpenDate(partnerInstanceDto.getOpenDate());
-		rel.setStationApplyId(partnerInstanceDto.getStationApplyId());
 
 		if (null != partnerInstanceDto.getType()) {
 			rel.setType(partnerInstanceDto.getType().getCode());

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.taobao.cun.auge.dal.mapper.UnionAdzoneExtMapper" >
+    <select id="getNewuserOrderStat" parameterType="java.util.Map" resultType="com.taobao.cun.auge.station.dto.NewuserOrderStat">
+    select
+      adzone_id adzoneId,
+      stat_date statDate
+        <if test="type != null and type == 'taobao'">
+      ,
+      sum(case when status= 4 then 1 else 0 end) confirmCnt,
+      sum(case when status>=3 then 1 else 0 end) buyCnt,
+      sum(case when status>=2 then 1 else 0 end) activateCnt,
+      sum(case when status>=1 then 1 else 0 end) registerCnt,
+      sum(case when is_card_save= 1 and bind_card_time is not null then 1 else 0 end) carBindCnt
+        </if>
+        <if test="type != null and type == 'alipay'">
+            ,
+            sum(case when status= 4 then 1 else 0 end) alipayConfirmCnt,
+            sum(case when status>=3 then 1 else 0 end) alipayBuyCnt
+        </if>
+    from union_newuser_order
+    where stat_date=#{statDate,jdbcType=VARCHAR}
+    and adzone_id=#{adzoneId,jdbcType=BIGINT}
+    and update_date=#{currentUpdateDate,jdbcType=VARCHAR}
+    and activity_type=#{type,jdbcType=VARCHAR}
+    group by adzone_id,stat_date
+    </select>
+
+</mapper>
