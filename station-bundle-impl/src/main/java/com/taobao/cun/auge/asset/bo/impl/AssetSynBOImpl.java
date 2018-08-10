@@ -511,7 +511,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 						AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId1);
 						if (detail != null
 								&& detail.getType().equals(AssetRolloutIncomeDetailTypeEnum.TRANSFER.getCode())) {
-							assetRolloutIncomeDetailBO.signAsset(assetId1, "zhuanyi");
+							assetRolloutIncomeDetailBO.signAsset(detail.getId(), "zhuanyi");
 							Long incomeId = detail.getIncomeId();
 							Long rolloutId = detail.getRolloutId();
 							if (incomeId != null) {
@@ -817,7 +817,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 						// 如果有入库单 检查 是否删除入库单
 						AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId1);
 						if (detail != null) {
-							assetRolloutIncomeDetailBO.signAsset(assetId1, "fenfa");
+							assetRolloutIncomeDetailBO.signAsset(detail.getId(), "fenfa");
 							Long incomeId = detail.getIncomeId();
 							Long rolloutId = detail.getRolloutId();
 							if (incomeId != null) {
