@@ -183,7 +183,18 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param templateId
 	 */
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
-		deleteFenceEntity(fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId));
+		deleteFenceEntity(stationId, templateId, "system");
+	}
+	
+	/**
+	 * 删除围栏实例
+	 * @param stationId
+	 * @param templateId
+	 */
+	protected void deleteFenceEntity(Long stationId, Long templateId, String deleteSource) {
+		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
+		fenceEntity.setDeleteSource(deleteSource);
+		deleteFenceEntity(fenceEntity);
 	}
 	
 	/**
@@ -195,7 +206,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		try {
 			if(fenceEntity != null) {
 				deleteCainiaoFence(fenceEntity);
-				fenceEntityBO.deleteById(fenceEntity.getId(), fenceInstanceJob.getCreator());
+				fenceEntityBO.deleteById(fenceEntity.getId(), fenceInstanceJob.getCreator(), fenceEntity.getDeleteSource());
 			}
 		}catch(Exception e) {
 			addExecuteError("delete", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
@@ -220,7 +231,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				if(!fenceEntity.getJobId().equals(jobId)) {//不覆盖本任务生成的实例
 					deleteCainiaoFence(fenceEntity);
 					//删除围栏实例
-					fenceEntityBO.deleteById(fenceEntity.getId(), fenceTemplateDto.getCreator());
+					fenceEntityBO.deleteById(fenceEntity.getId(), fenceTemplateDto.getCreator(), fenceEntity.getDeleteSource());
 				}
 			}
 			//新建围栏
