@@ -213,7 +213,7 @@
 		</foreach>
 	</if>
 	<![CDATA[
-	and not exists(select 0 from fence_entity c where c.station_id=a.id and c.template_id=#{templateId} and delete_source<>'system')
+	and not exists(select 0 from fence_entity c where c.station_id=a.id and c.template_id=#{templateId} and (c.is_deleted='n' or (c.is_deleted='y' and delete_source='system')))
 	]]>
     </select>
 </mapper>
