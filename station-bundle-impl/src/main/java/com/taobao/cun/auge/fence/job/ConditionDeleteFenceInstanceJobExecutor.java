@@ -22,7 +22,7 @@ public class ConditionDeleteFenceInstanceJobExecutor extends AbstractConditionFe
 		if(stations != null) {
 			for(Station station : stations) {
 				for(Long templateId : fenceInstanceJob.getTemplateIds()) {
-					deleteFenceEntity(station.getId(), templateId);
+					deleteFenceEntity(station.getId(), templateId, fenceInstanceJob.getCreator());
 				}
 			}
 			return stations.size() * fenceInstanceJob.getTemplateIds().size();

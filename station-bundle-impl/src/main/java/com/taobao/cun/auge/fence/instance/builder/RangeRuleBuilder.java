@@ -30,7 +30,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			result.put(FenceConstants.RANGE_DISTANCE, fenceRule.getDistance());
 		}
 		//文本过滤
-		if(CollectionUtils.isNotEmpty(fenceRule.getMatch())){
+		if(CollectionUtils.isNotEmpty(fenceRule.getMatch()) && !Strings.isNullOrEmpty(station.getTown())){
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getMatch()) {
 				if(text.equals("belongVillage")) {
@@ -72,12 +72,14 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				if(!Strings.isNullOrEmpty(station.getTown())) {
 					division.put("code", station.getTown());
 					division.put("name", station.getTownDetail());
-				}else {
-					throw new FenceParamException("围栏范围->行政区划->乡镇街道级:镇为空");
 				}
 			}
-			
-			result.put(FenceConstants.RANGE_DIVISION, division);
+			if(!division.isEmpty()) {
+				result.put(FenceConstants.RANGE_DIVISION, division);
+			}
+		}
+		if(result.isEmpty()) {
+			throw new FenceParamException("围栏范围规则为空");
 		}
 		return JSON.toJSONString(result);
 	}

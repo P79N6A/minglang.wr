@@ -87,6 +87,25 @@ public class FenceInitTemplateConfig {
 				);
 	}
 	
+	public List<Long> getStoreTemplates(){
+		return Lists.newArrayList(
+				templateIdSellStoreTown
+				);
+	}
+	
+	public List<Long> getTPTemplates(){
+		return Lists.newArrayList(
+				templateIdFeeTown, 
+				templateIdSellTown,
+				templateIdFeeVillage,
+				templateIdSellVillage
+				);
+	}
+	
+	public boolean isStoreTemplate(Long templateId) {
+		return getStoreTemplates().contains(templateId);
+	}
+	
 	public boolean isTownTemplate(Long templateId) {
 		return getTownTemplates().contains(templateId);
 	}

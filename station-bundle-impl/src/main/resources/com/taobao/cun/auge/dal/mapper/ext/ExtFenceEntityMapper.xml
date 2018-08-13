@@ -8,4 +8,16 @@
   	and b.is_deleted='n'
   	and b.status='QUIT'
   </select>
+  
+  <select id="selectTypeChangedDefaultFenceEntities" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.FenceEntityMapper.BaseResultMap">
+  	select a.* from fence_entity a, partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.station_id=b.station_id
+	and a.template_id in
+	<foreach collection="templateIds" item="templateId" open="(" close=")" separator=",">#{templateId}</foreach>
+  	<![CDATA[
+	and b.state in('SERVICING','DECORATING','CLOSING')
+	and b.type <> #{type}
+  	]]>
+  </select>
 </mapper>

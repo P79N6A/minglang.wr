@@ -125,13 +125,14 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 	}
 
 	@Override
-	public void deleteById(Long id, String operator) {
+	public void deleteById(Long id, String operator, String deleteSource) {
 		FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andIdEqualTo(id);
         FenceEntity fenceEntity = new FenceEntity();
         fenceEntity.setIsDeleted("y");
         fenceEntity.setModifier(operator);
         fenceEntity.setGmtModified(new Date());
+        fenceEntity.setDeleteSource(deleteSource);
         entityMapper.updateByExampleSelective(fenceEntity, example);
 	}
 

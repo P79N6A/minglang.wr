@@ -54,7 +54,7 @@ public interface FenceEntityBO {
      * 按ID删除
      * @param id
      */
-    void deleteById(Long id, String operator);
+    void deleteById(Long id, String operator, String deleteSource);
 
     /**
      * 获取模板关联的围栏实例

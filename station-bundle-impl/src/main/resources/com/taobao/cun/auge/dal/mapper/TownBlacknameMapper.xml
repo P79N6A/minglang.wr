@@ -5,6 +5,14 @@
   	select count(0) from town_blackname where
   	county_name=#{countyName}
   	and town_name=#{townName}
+  	and white_name = 'N'
+  </select>
+  
+  <select id="countWhitename" parameterType="map" resultType="int">
+  	select count(0) from town_blackname where
+  	county_name=#{countyName}
+  	and town_name=#{townName}
+  	and white_name = 'Y'
   </select>
   
   <insert id="insertInBlacknamePartnerApply" parameterType="long">
