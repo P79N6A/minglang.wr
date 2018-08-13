@@ -314,7 +314,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		//兼容老数据
 		if(!StationDecorateTypeEnum.NEW_SELF.getCode().equals(sdDto.getDecorateType().getCode())){
 	        	if(StationDecorateStatusEnum.DECORATING.getCode().equals(sdDto.getStatus().getCode())){
-	        		sdDto.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD);
+	        		sdDto.setStatus(StationDecorateStatusEnum.UNDECORATE);
 	        	}
 	    }
 
