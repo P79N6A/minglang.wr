@@ -200,6 +200,9 @@
 			<if test="type == 'TP_v4'">
 				b.type='TP' and b.mode='v4'
 			</if>
+			<if test="type == 'TPA'">
+				b.type='TPA'
+			</if>
 		</foreach>
 	</if>
 	<if test="stationLocations != null and stationLocations.size()>0"> and 
