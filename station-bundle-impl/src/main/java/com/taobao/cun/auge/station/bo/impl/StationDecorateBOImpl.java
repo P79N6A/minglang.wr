@@ -506,5 +506,23 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 	}
 
+	@Override
+	public void auditStationDecorateCheckByCountyLeader(Long stationId, ProcessApproveResultEnum approveResultEnum,
+			String auditOpinion) {
+		StationDecorate record= this.getStationDecorateByStationId(stationId);
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
+		updateRecord.setCheckAuditOpinion(auditOpinion);
+		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
+			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
+		}else{
+			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
+			updateRecord.setAuditOpinion(auditOpinion);
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+		
+	}
+
 	
 }

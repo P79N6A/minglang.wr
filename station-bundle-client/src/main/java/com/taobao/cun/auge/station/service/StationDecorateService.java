@@ -186,4 +186,13 @@ public interface StationDecorateService {
  	 * @return
  	 */
  	public void auditStationDecorateCheck(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+ 	
+ 	/**
+ 	 * 县小二审核村点装修反馈信息
+ 	 * @param stationId
+ 	 * @param approveResultEnum
+ 	 * @param auditOpinion
+ 	 */
+ 	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+
 }

@@ -317,6 +317,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	        		sdDto.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD);
 	        	}
 	    }
+
 		// 容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
 		  /**if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus())
 				|| StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())
@@ -653,5 +654,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		stationDecorateAuditDto.setIsAgree(
 				ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode()) ? true : false);
 		setLifecycleDecorate(stationDecorateAuditDto, sd);
+	}
+
+	@Override
+	public void auditStationDecorateCheckByCountyLeader(Long stationId, ProcessApproveResultEnum approveResultEnum,
+			String auditOpinion) {
+		stationDecorateBO.auditStationDecorateCheckByCountyLeader(stationId, approveResultEnum, auditOpinion);
 	}
 }
