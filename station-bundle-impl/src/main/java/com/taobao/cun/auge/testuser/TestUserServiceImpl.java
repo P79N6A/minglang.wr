@@ -33,5 +33,17 @@ public class TestUserServiceImpl implements TestUserService{
 		return testUserInfoManager.getUserConfig(bizCode, taobaoUserId);
 	}
 
+	@Override
+	public UserMatchInfo getUserMatchInfo(Long taobaoUserId) {
+		UserMatchInfo userMatchInfo = new UserMatchInfo();
+		boolean bigElec = this.isTestUser(taobaoUserId, "bigElec", true);
+		boolean smallElec = this.isTestUser(taobaoUserId, "smallElec", true);
+		boolean fmcg = this.isTestUser(taobaoUserId, "fmcg", true);
+		userMatchInfo.setBigElecUser(bigElec);
+		userMatchInfo.setSmallElecUser(smallElec);
+		userMatchInfo.setFmcgUser(fmcg);
+		return userMatchInfo;
+	}
+
     
 }

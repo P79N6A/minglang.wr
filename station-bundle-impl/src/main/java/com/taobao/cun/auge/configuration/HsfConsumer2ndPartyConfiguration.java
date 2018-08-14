@@ -84,6 +84,7 @@ import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 import com.taobao.union.api.client.service.EntryService;
 import com.taobao.wws.hsf2icesrv;
+import com.tmall.usc.channel.client.UscChannelRelationService;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration  {
 
@@ -399,6 +400,9 @@ public class HsfConsumer2ndPartyConfiguration  {
     
 	@HSFConsumer(serviceVersion="${shopMirrorService.version}",serviceGroup="HSF")
 	private ShopMirrorService shopMirrorService;
+	
+	@HSFConsumer(serviceVersion="${uscChannelRelationService.version}",serviceGroup="HSF")
+	private UscChannelRelationService uscChannelRelationService;
     
     @Bean
     public CtMdJxcWarehouseApi ctMdJxcWarehouseApi(HsfConsumerContext context, @Value("${ctMdJxcWarehouseApi.version}") String version) {

@@ -10,4 +10,6 @@ public interface TestUserService {
     boolean isTestUser(Long taobaoUserId,String bizCode,boolean allMatch);
     
     Map<String,String> getTestUserConfig(Long taobaoUserId,String bizCode);
+    
+    UserMatchInfo getUserMatchInfo(Long taobaoUserId);
 }
