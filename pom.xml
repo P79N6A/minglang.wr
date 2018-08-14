@@ -795,6 +795,16 @@
 				<artifactId>top-api-sdk-dev</artifactId>
 				<version>cuntao-taoke-1.0.0-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.sellercenter</groupId>
+				<artifactId>core-client</artifactId>
+				<version>shop-mirror-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tmall.usc.channel</groupId>
+				<artifactId>usc-channel-client</artifactId>
+				<version>1.0.4-830cai-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

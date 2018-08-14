@@ -65,6 +65,7 @@ import com.taobao.payment.account.service.query.AccountQueryService;
 import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
+import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
 import com.taobao.uic.common.cache.UICCacheService;
@@ -396,7 +397,8 @@ public class HsfConsumer2ndPartyConfiguration  {
 	@HSFConsumer(serviceVersion="${taobao.union.entry.service.version}",serviceGroup="HSF")
 	private EntryService entryService;
     
-
+	@HSFConsumer(serviceVersion="${shopMirrorService.version}",serviceGroup="HSF")
+	private ShopMirrorService shopMirrorService;
     
     @Bean
     public CtMdJxcWarehouseApi ctMdJxcWarehouseApi(HsfConsumerContext context, @Value("${ctMdJxcWarehouseApi.version}") String version) {
