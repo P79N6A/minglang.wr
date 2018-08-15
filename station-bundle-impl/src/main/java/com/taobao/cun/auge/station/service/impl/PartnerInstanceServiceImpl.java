@@ -2453,10 +2453,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 
 	@Override
-	public Result<Boolean> createPartnerInstanceShop(Long taobaoUserId) {
+	public Result<Boolean> createSellerInfo(Long taobaoUserId) {
 		Result<Boolean> result = new Result<Boolean>();
 		try {
-			
+			this.partnerInstanceBO.createPartnerSellerInfo(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
 		} catch (AugeBusinessException e) {
 			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
 			result.addErrorInfo(errorInfo);

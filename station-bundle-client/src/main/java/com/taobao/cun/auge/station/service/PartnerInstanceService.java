@@ -358,9 +358,9 @@ public interface PartnerInstanceService {
     public void signProjectNoticeProtocol(Long taobaoUserId);
     
     /**
-     * 创建店铺
+     * 创建卖家信息，包含卖家分销渠道ID，卖家UIC,卖家shopId
      * @param taobaoUserId
      */
-    public Result<Boolean> createPartnerInstanceShop(Long taobaoUserId);
+    public Result<Boolean> createSellerInfo(Long taobaoUserId);
     
 }
