@@ -31,6 +31,7 @@ import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -2453,7 +2454,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public Result<Boolean> createPartnerInstanceShop(Long taobaoUserId) {
-		return null;
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
 		
 	}
 	
