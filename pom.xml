@@ -799,16 +799,34 @@
 				<groupId>com.taobao.sellercenter</groupId>
 				<artifactId>core-client</artifactId>
 				<version>shop-mirror-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.tmall.usc.channel</groupId>
 				<artifactId>usc-channel-client</artifactId>
 				<version>1.0.4-830cai-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.sellercenter</groupId>
 				<artifactId>sellercenter-brands-client</artifactId>
 				<version>1.2.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
