@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
@@ -355,5 +356,11 @@ public interface PartnerInstanceService {
      * @param taobaoUserId
      */
     public void signProjectNoticeProtocol(Long taobaoUserId);
+    
+    /**
+     * 创建店铺
+     * @param taobaoUserId
+     */
+    public Result<Boolean> createPartnerInstanceShop(Long taobaoUserId);
     
 }

@@ -290,4 +290,22 @@ public interface PartnerInstanceBO {
 	 */
 	public void updateTransStatusByInstanceId(Long instanceId, PartnerInstanceTransStatusEnum transStatus, String operator);
 	
+	/**
+	 * 创建合伙人卖家账号信息
+	 * @param taobaoUserId
+	 */
+	public void createPartnerSellerInfo(Long taobaoUserId);
+	
+	/**
+	 * 创建卖家和店铺ID
+	 * @param taobaoUserId
+	 */
+	public void createSellerAndShopId(Long taobaoUserId);
+	
+	/**
+	 * 创建分销渠道ID
+	 * @param taobaoUserId
+	 */
+	public void createDistributionChannelId(Long taobaoUserId);
+	
 }

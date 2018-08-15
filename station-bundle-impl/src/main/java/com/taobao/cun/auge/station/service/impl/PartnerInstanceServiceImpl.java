@@ -31,6 +31,7 @@ import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -2446,6 +2447,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
          Date date =new Date();
          partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, date, date, date,
      			String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+		
+	}
+
+
+	@Override
+	public Result<Boolean> createPartnerInstanceShop(Long taobaoUserId) {
+		return null;
 		
 	}
 	

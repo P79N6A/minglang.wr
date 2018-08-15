@@ -805,6 +805,11 @@
 				<artifactId>usc-channel-client</artifactId>
 				<version>1.0.4-830cai-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.sellercenter</groupId>
+				<artifactId>sellercenter-brands-client</artifactId>
+				<version>1.2.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

@@ -97,6 +97,16 @@ public class StoreDto implements Serializable{
 	 */
 	Long endorOrgId;
 	
+	/**
+	 * 店铺ID
+	 */
+	private Long shopId;
+	
+	/**
+	 * 分销渠道ID
+	 */
+	private Long distributionChannelId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -241,6 +251,22 @@ public class StoreDto implements Serializable{
 
 	public void setEndorOrgId(Long endorOrgId) {
 		this.endorOrgId = endorOrgId;
+	}
+
+	public Long getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(Long shopId) {
+		this.shopId = shopId;
+	}
+
+	public Long getDistributionChannelId() {
+		return distributionChannelId;
+	}
+
+	public void setDistributionChannelId(Long distributionChannelId) {
+		this.distributionChannelId = distributionChannelId;
 	}
 
 }

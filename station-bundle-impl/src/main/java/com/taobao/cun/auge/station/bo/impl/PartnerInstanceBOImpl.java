@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.qualification.service.CuntaoQualificationService;
+import com.taobao.cun.auge.qualification.service.Qualification;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -63,6 +66,19 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.sellerservice.core.client.domain.ShopDO;
+import com.taobao.sellerservice.core.client.shopmirror.MirrorBusiType;
+import com.taobao.sellerservice.core.client.shopmirror.MirrorRights;
+import com.taobao.sellerservice.core.client.shopmirror.MirrorSellerDO;
+import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
+import com.taobao.sellerservice.domain.ResultDO;
+import com.tmall.usc.channel.client.UscChannelRelationService;
+import com.tmall.usc.channel.client.dto.distributor.BaseUserDTO;
+import com.tmall.usc.channel.client.dto.distributor.BillingInfoDTO;
+import com.tmall.usc.channel.client.dto.distributor.BizOrgRelationDTO;
+import com.tmall.usc.channel.client.dto.distributor.ChannelUserDTO;
+import com.tmall.usc.channel.client.dto.distributor.CompanyQualificationDTO;
+import com.tmall.usc.support.common.dto.ResultDTO;
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -87,7 +103,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     PartnerStationRelExtMapper partnerStationRelExtMapper;
     @Autowired
     CriusTaskExecuteMapper criusTaskExecuteMapper;
-
+    @Autowired
+    private ShopMirrorService shopMirrorService;
+    @Autowired
+    private UscChannelRelationService uscChannelRelationService;
+    @Autowired
+    private CuntaoQualificationService cuntaoQualificationService;
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
     {
@@ -836,5 +857,130 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
         partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
 		
+	}
+
+	@Override
+	public void  createPartnerSellerInfo(Long taobaoUserId) {
+		//
+		createSellerAndShopId(taobaoUserId);
+		
+		createDistributionChannelId(taobaoUserId);
+	}
+
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void createDistributionChannelId(Long taobaoUserId) {
+		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
+		if(instance == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
+		}
+		PartnerStationRel update = new  PartnerStationRel();
+		update.setId(instance.getId());
+		if(instance.getDistributionChannelId() == null){
+			ResultDTO<Long> channelResult = createDistributionChannel(taobaoUserId);
+			if(channelResult.isSuccess()){
+				update.setDistributionChannelId(channelResult.getModule());
+			}else{
+				logger.error("createDistributionChannel error! errorMessage:"+channelResult.getErrorMessage()+" errorCode:"+channelResult.getErrorCode());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
+			}
+			partnerStationRelMapper.updateByPrimaryKeySelective(update);
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void createSellerAndShopId(Long taobaoUserId) {
+		Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
+		if(qualification == null||qualification.getStatus() != 1){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "用户营业执照未通过审核");
+		}
+		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
+		if(instance == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
+		}
+		Station station = stationBO.getStationById(instance.getStationId());
+		if(station == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务站信息不存在");
+		}
+		Partner  partner = partnerBO.getPartnerById(instance.getPartnerId());
+		if(partner == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "合伙人信息不存在");
+		}
+		 PartnerStationRel update = new  PartnerStationRel();
+		 update.setId(instance.getId());
+		if(instance.getShopId() ==null || instance.getSellerId() == null){
+			ResultDO<MirrorSellerDO> sellerResult = createShopMirror(taobaoUserId, qualification, station, partner);
+			if(sellerResult.isSuccess()){
+				MirrorSellerDO sellerDO = sellerResult.getModule();
+				update.setShopId(sellerDO.getShop().getShopId());
+				update.setSellerId(sellerDO.getSellerId());
+				partnerStationRelMapper.updateByPrimaryKeySelective(update);
+			}else{
+				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
+				//return false;
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
+			}
+		}
+	}
+
+	private ResultDTO<Long> createDistributionChannel(Long taobaoUserId) {
+		Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
+		if(qualification == null||qualification.getStatus() != 1){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "用户营业执照未通过审核");
+		}
+		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
+		if(instance == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
+		}
+		Station station = stationBO.getStationById(instance.getStationId());
+		if(station == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务站信息不存在");
+		}
+		Partner  partner = partnerBO.getPartnerById(instance.getPartnerId());
+		if(partner == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "合伙人信息不存在");
+		}
+		ChannelUserDTO channelUserDTO = new ChannelUserDTO();
+		BaseUserDTO baseUserDTO = new BaseUserDTO();
+		baseUserDTO.setDistributorCode("CT_"+station.getStationNum());
+		baseUserDTO.setDistributorName(station.getName());
+		baseUserDTO.setFullName(partner.getName());
+		baseUserDTO.setPhone(partner.getMobile());
+		if(station.getTown() != null){
+			baseUserDTO.setDivisionCode(Long.parseLong(station.getTown()));
+		}
+		baseUserDTO.setDetailAddress(station.getAddress());
+		baseUserDTO.setIso("CN/中国");
+		channelUserDTO.setDistributorUser(baseUserDTO);
+		BizOrgRelationDTO bizOrgRelationDTO = new BizOrgRelationDTO();
+		bizOrgRelationDTO.setChannel(100003);
+		channelUserDTO.setBizOrgRelation(bizOrgRelationDTO);
+		
+		CompanyQualificationDTO companyQualificationDTO = new CompanyQualificationDTO();
+		BillingInfoDTO billingInfoDTO = new BillingInfoDTO();
+		companyQualificationDTO.setBillingInfo(billingInfoDTO);
+		billingInfoDTO.setCompanyName(qualification.getCompanyName());
+		billingInfoDTO.setCompanyPhone(partner.getMobile());
+		billingInfoDTO.setLegalPerson(qualification.getLegalPerson());
+		channelUserDTO.setCompanyQualification(companyQualificationDTO);
+		ResultDTO<Long> channelResult = uscChannelRelationService.createChannelRelation(channelUserDTO);
+		return channelResult;
+	}
+
+	private ResultDO<MirrorSellerDO> createShopMirror(Long taobaoUserId, Qualification qualification, Station station,
+			Partner partner) {
+		MirrorSellerDO mirrorSellerDO = new MirrorSellerDO();
+		mirrorSellerDO.setMirrorBusiType(MirrorBusiType.tm_mirror_biz_cuntao);
+		mirrorSellerDO.setMirrorRights(EnumSet.of(MirrorRights.tm_mirror_forbid_shop_manager, MirrorRights.tm_mirror_forbid_shop_search));
+		mirrorSellerDO.setOpearatingLicense(qualification.getQualiNo());
+		mirrorSellerDO.setOpearatingLicenseNumber(qualification.getCompanyName());
+		mirrorSellerDO.setCreator(taobaoUserId);
+		mirrorSellerDO.setLegalRepMan(qualification.getLegalPerson());
+		ShopDO shop = new ShopDO();
+		shop.setName(partner.getName()+station.getName());
+		mirrorSellerDO.setShop(shop);
+		//mirrorSellerDO.set
+		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
+		return sellerResult;
 	}
 }
