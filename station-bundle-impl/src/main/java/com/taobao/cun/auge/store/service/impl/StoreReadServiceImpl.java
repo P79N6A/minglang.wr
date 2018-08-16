@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
@@ -127,12 +128,10 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Override
 	public boolean isTestStore(Long sharedStoreId) {
 		StoreDto store = this.getStoreBySharedStoreId(sharedStoreId);
-		if(store != null){
-			Station station = this.sationBO.getStationById(store.getStationId());
-			if(station.getApplyOrg() == 99999L){
+		Assert.notNull(store);
+		Station station = this.sationBO.getStationById(store.getStationId());
+		if(station.getApplyOrg() == 99999L){
 				return true;
-			}
-			return false;
 		}
 		return false;
 	}
