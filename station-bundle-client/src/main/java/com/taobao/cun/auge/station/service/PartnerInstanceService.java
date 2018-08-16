@@ -363,4 +363,17 @@ public interface PartnerInstanceService {
      */
     public Result<Boolean> createSellerInfo(Long taobaoUserId);
     
+    
+    /**
+	 * 创建卖家和店铺ID
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> createSellerAndShopId(Long taobaoUserId);
+	
+	/**
+	 * 创建分销渠道ID
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> createDistributionChannelId(Long taobaoUserId);
+    
 }
