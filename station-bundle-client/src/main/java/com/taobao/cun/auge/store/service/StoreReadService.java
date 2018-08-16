@@ -87,4 +87,11 @@ public interface StoreReadService {
 	  */
 	 List<StoreDto> getStoreBySellerShareStoreIds(List<Long> sellerShareStoreId);
 	 
+	 /**
+	  * 是否是测试门店
+	  * @param sharedStoreId
+	  * @return
+	  */
+	 boolean isTestStore(Long sharedStoreId);
+	 
 }

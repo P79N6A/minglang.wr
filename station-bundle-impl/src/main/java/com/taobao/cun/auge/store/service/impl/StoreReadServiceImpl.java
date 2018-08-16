@@ -2,6 +2,10 @@ package com.taobao.cun.auge.store.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -11,18 +15,17 @@ import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @HSFProvider(serviceInterface = StoreReadService.class)
 public class StoreReadServiceImpl implements StoreReadService {
@@ -35,6 +38,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
+	
+	@Autowired
+	private StationBO sationBO;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -116,6 +122,19 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Override
 	public List<StoreDto> getStoreBySellerShareStoreIds(List<Long> sellerShareStoreId) {
 		return storeReadBO.getStoreBySellerShareStoreIds(sellerShareStoreId);
+	}
+
+	@Override
+	public boolean isTestStore(Long sharedStoreId) {
+		StoreDto store = this.getStoreBySharedStoreId(sharedStoreId);
+		if(store != null){
+			Station station = this.sationBO.getStationById(store.getStationId());
+			if(station.getApplyOrg() == 99999L){
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 
 }
