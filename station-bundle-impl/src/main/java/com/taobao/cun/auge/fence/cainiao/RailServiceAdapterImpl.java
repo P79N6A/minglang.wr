@@ -23,7 +23,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
-import com.taobao.cun.auge.fence.FenceParamException;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.common.util.BeanCopy;
 

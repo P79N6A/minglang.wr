@@ -132,7 +132,7 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         fenceEntity.setIsDeleted("y");
         fenceEntity.setModifier(operator);
         fenceEntity.setGmtModified(new Date());
-        fenceEntity.setDeleteSource(deleteSource);
+        fenceEntity.setDeleteSource(deleteSource == null ? "system" : deleteSource);
         entityMapper.updateByExampleSelective(fenceEntity, example);
 	}
 
