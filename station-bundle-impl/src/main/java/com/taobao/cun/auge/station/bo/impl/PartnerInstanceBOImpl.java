@@ -913,7 +913,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			if(sellerResult.isSuccess()){
 				MirrorSellerDO sellerDO = sellerResult.getModule();
 				update.setShopId(sellerDO.getShop().getShopId());
-				update.setSellerId(sellerDO.getSellerId());
+				update.setSellerId(sellerDO.getUserId());
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 			}else{
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
