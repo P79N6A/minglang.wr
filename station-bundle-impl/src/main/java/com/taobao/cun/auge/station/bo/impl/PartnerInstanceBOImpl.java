@@ -977,8 +977,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		mirrorSellerDO.setCreator(taobaoUserId);
 		mirrorSellerDO.setLegalRepMan(qualification.getLegalPerson());
 		ShopDO shop = new ShopDO();
-		shop.setName(partner.getName()+station.getName());
-		shop.setDomain("tmall.com");
+		shop.setName(station.getStationNum()+"天猫影子店铺");
+		shop.setDomain(null);
 		mirrorSellerDO.setShop(shop);
 		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
 		return sellerResult;
