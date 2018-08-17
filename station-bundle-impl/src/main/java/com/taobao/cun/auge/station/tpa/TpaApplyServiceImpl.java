@@ -211,12 +211,12 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			response.setErrorMessage("该淘宝用户支付宝账号属于支付宝风险账号");
 			return response;
 		}
-
-		if (!"pass".equals(partnerApplyDto.getExamState())) {
-			response.setSuccess(false);
-			response.setErrorMessage("淘帮手未通过考试");
-			return response;
-		}
+//淘帮手入驻不再校验考试
+//		if (!"pass".equals(partnerApplyDto.getExamState())) {
+//			response.setSuccess(false);
+//			response.setErrorMessage("淘帮手未通过考试");
+//			return response;
+//		}
 		response.setSuccess(true);
 		return response;
 
