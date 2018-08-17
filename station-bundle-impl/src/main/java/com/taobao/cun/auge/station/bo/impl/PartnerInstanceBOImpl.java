@@ -979,7 +979,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		ShopDO shop = new ShopDO();
 		shop.setName(partner.getName()+station.getName());
 		shop.setDomain("tmall.com");
-		shop.setShopTypes(1);
+		shop.setShopTypes(3);
 		mirrorSellerDO.setShop(shop);
 		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
 		return sellerResult;
