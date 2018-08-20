@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CriusTaskExecute;
 import com.taobao.cun.auge.dal.domain.CriusTaskExecuteExample;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -66,12 +68,14 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.sellerservice.core.client.domain.ShopDO;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorBusiType;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorRights;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorSellerDO;
 import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
 import com.taobao.sellerservice.domain.ResultDO;
+import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import com.tmall.usc.channel.client.UscChannelRelationService;
 import com.tmall.usc.channel.client.dto.distributor.BaseUserDTO;
 import com.tmall.usc.channel.client.dto.distributor.BillingInfoDTO;
@@ -109,6 +113,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private UscChannelRelationService uscChannelRelationService;
     @Autowired
     private CuntaoQualificationService cuntaoQualificationService;
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+	@Qualifier("distributeChannelCodeSequence")
+	private GroupSequence groupSequence;
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
     {
@@ -942,10 +952,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		ChannelUserDTO channelUserDTO = new ChannelUserDTO();
 		BaseUserDTO baseUserDTO = new BaseUserDTO();
-		baseUserDTO.setDistributorCode("CT_"+station.getStationNum());
+		baseUserDTO.setDistributorCode("CT_"+DateTimeUtil.getDate2Str("yyyyMMdd", new Date())+groupSequence.nextValue());
 		baseUserDTO.setDistributorName(station.getName());
 		baseUserDTO.setFullName(partner.getName());
 		baseUserDTO.setPhone(partner.getMobile());
+		baseUserDTO.setDistributorAccountType(5);
+		baseUserDTO.setSupplierTbId(diamondConfiguredProperties.getSupplierTbId());
 		if(station.getTown() != null){
 			baseUserDTO.setDivisionCode(Long.parseLong(station.getTown()));
 		}

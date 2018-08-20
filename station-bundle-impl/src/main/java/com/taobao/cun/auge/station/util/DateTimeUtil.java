@@ -49,4 +49,12 @@ public final class DateTimeUtil {
 		return offset;
 	}
 
+	
+	public static synchronized String getDate2Str(String format, Date date) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+		simpleDateFormat.applyPattern(format);
+		return simpleDateFormat.format(date);
+	}
+	
+	
 }
