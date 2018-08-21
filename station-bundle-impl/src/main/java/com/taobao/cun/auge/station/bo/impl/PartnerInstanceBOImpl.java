@@ -992,6 +992,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		shop.setName(station.getStationNum()+"天猫影子店铺"+groupSequence.nextValue());
 		shop.setDomain(null);
 		mirrorSellerDO.setShop(shop);
+		logger.info("mirrorSellerDO:"+mirrorSellerDO.toString());
 		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
 		return sellerResult;
 	}
