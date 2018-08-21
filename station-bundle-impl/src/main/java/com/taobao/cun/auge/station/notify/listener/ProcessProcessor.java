@@ -329,7 +329,8 @@ public class ProcessProcessor {
 				}else{
 					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
 				}
-				if(diamondConfiguredProperties.getDecorateCountyAuditActivityId().equals(task.getActivityId())){
+				if(diamondConfiguredProperties.getDecorateCountyAuditActivityId().equals(task.getActivityId())
+						|| "sid-99e6059f-5497-bab9-c9bb-6ba967c98b8c".equals(task.getActivityId())){
 					stationDecorateService.auditStationDecorateCheckByCountyLeader(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
 				}else{
 					stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
