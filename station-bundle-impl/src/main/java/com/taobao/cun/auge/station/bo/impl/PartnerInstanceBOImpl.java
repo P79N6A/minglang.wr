@@ -984,8 +984,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		MirrorSellerDO mirrorSellerDO = new MirrorSellerDO();
 		mirrorSellerDO.setMirrorBusiType(MirrorBusiType.tm_mirror_biz_cuntao);
 		mirrorSellerDO.setMirrorRights(EnumSet.of(MirrorRights.tm_mirror_forbid_shop_manager, MirrorRights.tm_mirror_forbid_shop_search));
-		mirrorSellerDO.setOpearatingLicense(qualification.getQualiNo());
-		mirrorSellerDO.setOpearatingLicenseNumber(qualification.getCompanyName());
+		mirrorSellerDO.setOpearatingLicense(qualification.getCompanyName());
+		mirrorSellerDO.setOpearatingLicenseNumber(qualification.getQualiNo());
 		mirrorSellerDO.setCreator(taobaoUserId);
 		mirrorSellerDO.setLegalRepMan(qualification.getLegalPerson());
 		ShopDO shop = new ShopDO();
