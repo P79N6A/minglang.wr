@@ -6,7 +6,6 @@ import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationStateClosedFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
@@ -89,10 +88,4 @@ public interface FenceInstanceJobService {
 	 * @param stationInitFenceInstanceJob
 	 */
 	void createJob(BatchStationInitFenceInstanceJob stationInitFenceInstanceJob);
-	
-	/**
-	 * 站点停业
-	 * @param stationStateClosedFenceInstanceJob
-	 */
-	void createJob(StationStateClosedFenceInstanceJob stationStateClosedFenceInstanceJob);
 }
