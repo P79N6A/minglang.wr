@@ -17,7 +17,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.fence.service.FenceInstanceJobService;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -59,9 +58,6 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
-
-    @Autowired
-    protected FenceInstanceJobService fenceInstanceJobService;
 
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
