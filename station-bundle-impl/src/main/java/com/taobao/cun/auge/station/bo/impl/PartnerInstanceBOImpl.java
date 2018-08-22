@@ -1015,25 +1015,24 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return sellerResult;
 	}
 	
-	public boolean cancelShopMirror(Long taobaoUserId){
+	public void cancelShopMirror(Long taobaoUserId){
 		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
 		if(instance == null){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
 		}
 		if(instance.getShopId() == null || instance.getSellerId() == null){
-			return true;
+			return;
 		}
 		ResultDO<Boolean> cancelResult = shopMirrorService.cancelShopMirror(MirrorBusiType.tm_mirror_biz_cuntao, instance.getSellerId(), instance.getShopId());
 		if(cancelResult.isSuccess()){
 			instance.setShopId(null);
 			instance.setSellerId(null);
 			partnerStationRelMapper.updateByPrimaryKey(instance);
-			return true;
+			return;
 		}else{
 			logger.error("cancelShopMirror error! errorMessage:"+cancelResult.getErrMsg()+" errorCode:"+cancelResult.getErrorCode());
-			return false;
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, cancelResult.getErrMsg());
 		}
-		
 	}
 	
 }

@@ -2506,5 +2506,22 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		return result;
 	}
-	
+
+
+	@Override
+	public Result<Boolean> cancelShopMirror(Long taobaoUserId) {
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			this.partnerInstanceBO.cancelShopMirror(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
+	}
 }

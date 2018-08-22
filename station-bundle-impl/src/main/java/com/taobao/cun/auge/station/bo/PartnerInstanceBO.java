@@ -308,4 +308,11 @@ public interface PartnerInstanceBO {
 	 */
 	public void createDistributionChannelId(Long taobaoUserId);
 	
+	/**
+	 * 注销影子店铺
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public void cancelShopMirror(Long taobaoUserId);
+	
 }

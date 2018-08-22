@@ -375,5 +375,11 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 */
 	public Result<Boolean> createDistributionChannelId(Long taobaoUserId);
+	
+	/**
+	 * 注销影子店铺
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> cancelShopMirror(Long taobaoUserId);
     
 }
