@@ -906,7 +906,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			}else{
 				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId(),channelResult.getErrorCode(),channelResult.getErrorMessage());
 				logger.error("createDistributionChannel error! errorMessage:"+channelResult.getErrorMessage()+" errorCode:"+channelResult.getErrorCode());
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
+				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
 			}
 		}
 	}
@@ -943,7 +943,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId(),sellerResult.getErrorCode(),sellerResult.getErrMsg());
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
 				//return false;
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
+				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
 			}
 		}
 	}
@@ -1014,7 +1014,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		mirrorSellerDO.setCreator(taobaoUserId);
 		mirrorSellerDO.setLegalRepMan(qualification.getLegalPerson());
 		ShopDO shop = new ShopDO();
-		shop.setName(station.getName()+groupSequence.nextValue());
+		shop.setName(station.getStationNum()+groupSequence.nextValue());
 		shop.setDomain(null);
 		mirrorSellerDO.setShop(shop);
 		logger.info("mirrorSellerDO:"+mirrorSellerDO.toString());
