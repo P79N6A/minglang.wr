@@ -17,7 +17,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 	@Autowired
 	BusinessMonitorMapper businessMonitorMapper;
 	@Override
-	public void addBusinessMonitor(String businessCode, Long businessKey) {
+	public void addBusinessMonitor(String businessCode, Long businessKey,String errorCode,String errorMessage) {
 		BusinessMonitor monitor = new BusinessMonitor();
 		monitor.setIsDeleted("n");
 		monitor.setCreator("system");
@@ -27,6 +27,8 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 		monitor.setBusinessCode(businessCode);
 		monitor.setBusinessKey(businessKey);
 		monitor.setIsFixed("n");
+		monitor.setErrorCode(errorCode);
+		monitor.setErrorMessage(errorMessage);
 		businessMonitorMapper.insertSelective(monitor);
 	}
 

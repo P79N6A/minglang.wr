@@ -2,7 +2,7 @@ package com.taobao.cun.auge.monitor;
 
 public interface BusinessMonitorBO {
 
-	public void addBusinessMonitor(String businessCode, Long businessKey);
+	public void addBusinessMonitor(String businessCode, Long businessKey,String errorCode,String errorMessage);
 	
 	public void fixBusinessMonitor(String businessCode,Long businessKey);
 }
