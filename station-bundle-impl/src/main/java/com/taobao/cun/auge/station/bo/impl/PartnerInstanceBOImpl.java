@@ -44,6 +44,7 @@ import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.monitor.BusinessMonitorBO;
 import com.taobao.cun.auge.qualification.service.CuntaoQualificationService;
 import com.taobao.cun.auge.qualification.service.Qualification;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -124,6 +125,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     @Autowired
     private StoreWriteService storeWriteService;
     
+    @Autowired
+    private BusinessMonitorBO businessMonitorBO;
     @Autowired
 	@Qualifier("distributeChannelCodeSequence")
 	private GroupSequence groupSequence;
@@ -898,11 +901,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			ResultDTO<Long> channelResult = createDistributionChannel(taobaoUserId);
 			if(channelResult.isSuccess()){
 				update.setDistributionChannelId(channelResult.getModule());
+				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
+				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 			}else{
+				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId());
 				logger.error("createDistributionChannel error! errorMessage:"+channelResult.getErrorMessage()+" errorCode:"+channelResult.getErrorCode());
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
 			}
-			partnerStationRelMapper.updateByPrimaryKeySelective(update);
 		}
 	}
 
@@ -933,7 +938,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				update.setShopId(sellerDO.getShop().getShopId());
 				update.setSellerId(sellerDO.getUserId());
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
+				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
 			}else{
+				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId());
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
 				//return false;
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
