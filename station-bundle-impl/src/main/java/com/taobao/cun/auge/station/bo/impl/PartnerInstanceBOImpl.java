@@ -1023,7 +1023,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if(instance.getShopId() == null || instance.getSellerId() == null){
 			return;
 		}
-		ResultDO<Boolean> cancelResult = shopMirrorService.cancelShopMirror(MirrorBusiType.tm_mirror_biz_cuntao, instance.getSellerId(), instance.getShopId());
+		ResultDO<Boolean> cancelResult = shopMirrorService.cancelShopMirror(MirrorBusiType.tm_mirror_biz_cuntao, instance.getSellerId(), instance.getShopId(), "255.255.255.255", taobaoUserId+"", "服务站停业撤销影子店铺");
 		if(cancelResult.isSuccess()){
 			instance.setShopId(null);
 			instance.setSellerId(null);
