@@ -904,7 +904,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 			}else{
-				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId());
+				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId(),channelResult.getErrorCode(),channelResult.getErrorMessage());
 				logger.error("createDistributionChannel error! errorMessage:"+channelResult.getErrorMessage()+" errorCode:"+channelResult.getErrorCode());
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
 			}
@@ -940,7 +940,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
 			}else{
-				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId());
+				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId(),sellerResult.getErrorCode(),sellerResult.getErrMsg());
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
 				//return false;
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
