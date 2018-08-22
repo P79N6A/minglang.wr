@@ -69,6 +69,9 @@ import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.sellerservice.core.client.domain.ShopDO;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorBusiType;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorRights;
@@ -115,6 +118,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private CuntaoQualificationService cuntaoQualificationService;
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    @Autowired
+    private StoreReadBO storeReadBO;
+    
+    @Autowired
+    private StoreWriteService storeWriteService;
     
     @Autowired
 	@Qualifier("distributeChannelCodeSequence")
@@ -950,6 +958,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if(partner == null){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "合伙人信息不存在");
 		}
+		StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
+		if(store == null){
+			storeWriteService.createSupplyStore(station.getId());
+			store = storeReadBO.getStoreDtoByStationId(station.getId());
+		}
+		if(store == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "门店信息不存在");
+		}
+		
 		ChannelUserDTO channelUserDTO = new ChannelUserDTO();
 		BaseUserDTO baseUserDTO = new BaseUserDTO();
 		baseUserDTO.setDistributorCode("CT_"+DateTimeUtil.getDate2Str("yyyyMMdd", new Date())+groupSequence.nextValue());
@@ -957,6 +974,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		baseUserDTO.setFullName(partner.getName());
 		baseUserDTO.setPhone(partner.getMobile());
 		baseUserDTO.setDistributorAccountType(5);
+		baseUserDTO.setWareCode(store.getShareStoreId()+"");
 		baseUserDTO.setSupplierTbId(diamondConfiguredProperties.getSupplierTbId());
 		if(station.getTown() != null){
 			baseUserDTO.setDivisionCode(Long.parseLong(station.getTown()));
@@ -965,7 +983,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		baseUserDTO.setIso("CN/中国");
 		channelUserDTO.setDistributorUser(baseUserDTO);
 		BizOrgRelationDTO bizOrgRelationDTO = new BizOrgRelationDTO();
-		bizOrgRelationDTO.setChannel(100003);
+		bizOrgRelationDTO.setChannel(1000010);
 		channelUserDTO.setBizOrgRelation(bizOrgRelationDTO);
 		
 		CompanyQualificationDTO companyQualificationDTO = new CompanyQualificationDTO();
@@ -996,4 +1014,26 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
 		return sellerResult;
 	}
+	
+	public boolean cancelShopMirror(Long taobaoUserId){
+		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
+		if(instance == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
+		}
+		if(instance.getShopId() == null || instance.getSellerId() == null){
+			return true;
+		}
+		ResultDO<Boolean> cancelResult = shopMirrorService.cancelShopMirror(MirrorBusiType.tm_mirror_biz_cuntao, instance.getSellerId(), instance.getShopId());
+		if(cancelResult.isSuccess()){
+			instance.setShopId(null);
+			instance.setSellerId(null);
+			partnerStationRelMapper.updateByPrimaryKey(instance);
+			return true;
+		}else{
+			logger.error("cancelShopMirror error! errorMessage:"+cancelResult.getErrMsg()+" errorCode:"+cancelResult.getErrorCode());
+			return false;
+		}
+		
+	}
+	
 }

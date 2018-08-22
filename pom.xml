@@ -798,7 +798,7 @@
 			<dependency>
 				<groupId>com.taobao.sellercenter</groupId>
 				<artifactId>core-client</artifactId>
-				<version>shop-mirror-SNAPSHOT</version>
+				<version>shop-mirror-01-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>javax.servlet</groupId>
