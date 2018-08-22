@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jcabi.log.Logger;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -137,6 +138,12 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 		job.setStationId(partnerInstanceDto.getStationId());
 		job.setCreator(partnerInstanceDto.getOperator());
 		fenceInstanceJobService.createJob(job);
+		try {
+			partnerInstanceBO.cancelShopMirror(partnerInstanceDto.getTaobaoUserId());
+		} catch (Exception e) {
+			Logger.error(e,"cancelShopMirror failed["+partnerInstanceDto.getTaobaoUserId()+"]");
+		}
+		
 	}
 
 	@Override
