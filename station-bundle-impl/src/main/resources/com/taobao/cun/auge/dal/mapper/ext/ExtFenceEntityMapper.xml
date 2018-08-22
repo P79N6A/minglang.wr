@@ -6,7 +6,7 @@
   	where a.station_id=b.id 
   	and a.is_deleted='n' 
   	and b.is_deleted='n'
-  	and b.status='QUIT'
+  	and b.status in('QUIT','CLOSED','QUITING')
   </select>
   
   <select id="selectTypeChangedDefaultFenceEntities" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.FenceEntityMapper.BaseResultMap">
