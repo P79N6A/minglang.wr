@@ -938,7 +938,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				update.setShopId(sellerDO.getShop().getShopId());
 				update.setSellerId(sellerDO.getUserId());
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
-				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
+				businessMonitorBO.fixBusinessMonitor("createShopMirror", instance.getId());
 			}else{
 				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId(),sellerResult.getErrorCode(),sellerResult.getErrMsg());
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
