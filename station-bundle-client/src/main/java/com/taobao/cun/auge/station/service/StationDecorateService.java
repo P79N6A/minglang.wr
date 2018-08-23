@@ -117,6 +117,7 @@ public interface StationDecorateService {
 	 */
 	public void openAccessCbuMarket(Long taobaoUserId);
 	
+	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds);
 	/**
      * 查询装修记录
      * @param Id
