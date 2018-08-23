@@ -34,6 +34,13 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 			monitor.setErrorCode(errorCode);
 			monitor.setErrorMessage(errorMessage);
 			businessMonitorMapper.insertSelective(monitor);
+		}else{
+			BusinessMonitor monitor = new BusinessMonitor();
+			monitor.setModifier("system");
+			monitor.setGmtModified(new Date());
+			monitor.setBusinessCode(businessCode);
+			monitor.setBusinessKey(businessKey);
+			businessMonitorMapper.updateByExampleSelective(monitor, example);
 		}
 	}
 
