@@ -19,7 +19,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 	@Override
 	public void addBusinessMonitor(String businessCode, Long businessKey,String errorCode,String errorMessage) {
 		BusinessMonitorExample example = new BusinessMonitorExample();
-		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey);
+		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey).andIsDeletedEqualTo("n");
 		List<BusinessMonitor> monitors = businessMonitorMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(monitors)){
 			BusinessMonitor monitor = new BusinessMonitor();
@@ -42,7 +42,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 		BusinessMonitor monitor = new BusinessMonitor();
 		monitor.setIsFixed("y");
 		BusinessMonitorExample example = new BusinessMonitorExample();
-		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey);
+		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey).andIsDeletedEqualTo("n");
 		List<BusinessMonitor> monitors = businessMonitorMapper.selectByExample(example);
 		if(CollectionUtils.isNotEmpty(monitors)){
 			businessMonitorMapper.updateByExampleSelective(monitor, example);
