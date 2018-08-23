@@ -18,18 +18,23 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 	BusinessMonitorMapper businessMonitorMapper;
 	@Override
 	public void addBusinessMonitor(String businessCode, Long businessKey,String errorCode,String errorMessage) {
-		BusinessMonitor monitor = new BusinessMonitor();
-		monitor.setIsDeleted("n");
-		monitor.setCreator("system");
-		monitor.setModifier("system");
-		monitor.setGmtCreate(new Date());
-		monitor.setGmtModified(new Date());
-		monitor.setBusinessCode(businessCode);
-		monitor.setBusinessKey(businessKey);
-		monitor.setIsFixed("n");
-		monitor.setErrorCode(errorCode);
-		monitor.setErrorMessage(errorMessage);
-		businessMonitorMapper.insertSelective(monitor);
+		BusinessMonitorExample example = new BusinessMonitorExample();
+		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey);
+		List<BusinessMonitor> monitors = businessMonitorMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(monitors)){
+			BusinessMonitor monitor = new BusinessMonitor();
+			monitor.setIsDeleted("n");
+			monitor.setCreator("system");
+			monitor.setModifier("system");
+			monitor.setGmtCreate(new Date());
+			monitor.setGmtModified(new Date());
+			monitor.setBusinessCode(businessCode);
+			monitor.setBusinessKey(businessKey);
+			monitor.setIsFixed("n");
+			monitor.setErrorCode(errorCode);
+			monitor.setErrorMessage(errorMessage);
+			businessMonitorMapper.insertSelective(monitor);
+		}
 	}
 
 	@Override
