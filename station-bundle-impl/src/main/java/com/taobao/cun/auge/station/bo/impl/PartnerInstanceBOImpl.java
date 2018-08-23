@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -898,13 +899,34 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel update = new  PartnerStationRel();
 		update.setId(instance.getId());
 		if(instance.getDistributionChannelId() == null){
-			ResultDTO<Long> channelResult = createDistributionChannel(taobaoUserId);
+			Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
+			if(qualification == null||qualification.getStatus() != 1){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "用户营业执照未通过审核");
+			}
+			Station station = stationBO.getStationById(instance.getStationId());
+			if(station == null){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务站信息不存在");
+			}
+			Partner  partner = partnerBO.getPartnerById(instance.getPartnerId());
+			if(partner == null){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "合伙人信息不存在");
+			}
+			StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
+			if(store == null){
+				storeWriteService.createSupplyStore(station.getId());
+				store = storeReadBO.getStoreDtoByStationId(station.getId());
+			}
+			if(store == null){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "门店信息不存在");
+			}
+			ChannelUserDTO channelUserDTO = createDistributeChannelRequest(qualification, station, partner, store);
+			ResultDTO<Long> channelResult = createDistributionChannel(channelUserDTO);
 			if(channelResult.isSuccess()){
 				update.setDistributionChannelId(channelResult.getModule());
 				businessMonitorBO.fixBusinessMonitor("createDistributionChannel", instance.getId());
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 			}else{
-				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId(),channelResult.getErrorCode(),channelResult.getErrorMessage());
+				businessMonitorBO.addBusinessMonitor("createDistributionChannel", instance.getId(),JSON.toJSONString(channelUserDTO),channelResult.getErrorCode(),channelResult.getErrorMessage());
 				logger.error("createDistributionChannel error! errorMessage:"+channelResult.getErrorMessage()+" errorCode:"+channelResult.getErrorCode());
 				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, channelResult.getErrorMessage());
 			}
@@ -932,7 +954,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		 PartnerStationRel update = new  PartnerStationRel();
 		 update.setId(instance.getId());
 		if(instance.getShopId() ==null || instance.getSellerId() == null){
-			ResultDO<MirrorSellerDO> sellerResult = createShopMirror(taobaoUserId, qualification, station, partner);
+			MirrorSellerDO mirrorSellerDO = createShopMirrorRequest(taobaoUserId, qualification, station);
+			ResultDO<MirrorSellerDO> sellerResult = createShopMirror(mirrorSellerDO);
 			if(sellerResult.isSuccess()){
 				MirrorSellerDO sellerDO = sellerResult.getModule();
 				update.setShopId(sellerDO.getShop().getShopId());
@@ -940,7 +963,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 				businessMonitorBO.fixBusinessMonitor("createShopMirror", instance.getId());
 			}else{
-				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId(),sellerResult.getErrorCode(),sellerResult.getErrMsg());
+				businessMonitorBO.addBusinessMonitor("createShopMirror", instance.getId(),JSON.toJSONString(mirrorSellerDO),sellerResult.getErrorCode(),sellerResult.getErrMsg());
 				logger.error("createShopMirror error! errorMessage:"+sellerResult.getErrMsg()+" errorCode:"+sellerResult.getErrorCode());
 				//return false;
 				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, sellerResult.getErrMsg());
@@ -948,32 +971,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 	}
 
-	private ResultDTO<Long> createDistributionChannel(Long taobaoUserId) {
-		Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
-		if(qualification == null||qualification.getStatus() != 1){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "用户营业执照未通过审核");
-		}
-		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
-		if(instance == null){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
-		}
-		Station station = stationBO.getStationById(instance.getStationId());
-		if(station == null){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务站信息不存在");
-		}
-		Partner  partner = partnerBO.getPartnerById(instance.getPartnerId());
-		if(partner == null){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "合伙人信息不存在");
-		}
-		StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
-		if(store == null){
-			storeWriteService.createSupplyStore(station.getId());
-			store = storeReadBO.getStoreDtoByStationId(station.getId());
-		}
-		if(store == null){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "门店信息不存在");
-		}
-		
+	private ResultDTO<Long> createDistributionChannel(ChannelUserDTO channelUserDTO) {
+		ResultDTO<Long> channelResult = uscChannelRelationService.createChannelRelation(channelUserDTO);
+		return channelResult;
+	}
+
+	private ChannelUserDTO createDistributeChannelRequest(Qualification qualification, Station station, Partner partner,
+			StoreDto store) {
 		ChannelUserDTO channelUserDTO = new ChannelUserDTO();
 		BaseUserDTO baseUserDTO = new BaseUserDTO();
 		baseUserDTO.setDistributorCode("CT_"+DateTimeUtil.getDate2Str("yyyyMMdd", new Date())+groupSequence.nextValue());
@@ -1000,12 +1004,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		billingInfoDTO.setCompanyPhone(partner.getMobile());
 		billingInfoDTO.setLegalPerson(qualification.getLegalPerson());
 		channelUserDTO.setCompanyQualification(companyQualificationDTO);
-		ResultDTO<Long> channelResult = uscChannelRelationService.createChannelRelation(channelUserDTO);
-		return channelResult;
+		return channelUserDTO;
 	}
 
-	private ResultDO<MirrorSellerDO> createShopMirror(Long taobaoUserId, Qualification qualification, Station station,
-			Partner partner) {
+	private ResultDO<MirrorSellerDO> createShopMirror(MirrorSellerDO mirrorSellerDO) {
+		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
+		return sellerResult;
+	}
+
+	private MirrorSellerDO createShopMirrorRequest(Long taobaoUserId, Qualification qualification, Station station) {
 		MirrorSellerDO mirrorSellerDO = new MirrorSellerDO();
 		mirrorSellerDO.setMirrorBusiType(MirrorBusiType.tm_mirror_biz_cuntao);
 		mirrorSellerDO.setMirrorRights(EnumSet.of(MirrorRights.tm_mirror_forbid_shop_manager, MirrorRights.tm_mirror_forbid_shop_search));
@@ -1025,9 +1032,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		shop.setName(name);
 		shop.setDomain(null);
 		mirrorSellerDO.setShop(shop);
-		logger.info("mirrorSellerDO:"+mirrorSellerDO.toString());
-		ResultDO<MirrorSellerDO> sellerResult = shopMirrorService.createShopMirror(mirrorSellerDO);
-		return sellerResult;
+		return mirrorSellerDO;
 	}
 	
 	public void cancelShopMirror(Long taobaoUserId){

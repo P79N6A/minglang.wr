@@ -17,7 +17,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 	@Autowired
 	BusinessMonitorMapper businessMonitorMapper;
 	@Override
-	public void addBusinessMonitor(String businessCode, Long businessKey,String errorCode,String errorMessage) {
+	public void addBusinessMonitor(String businessCode, Long businessKey,String params,String errorCode,String errorMessage) {
 		BusinessMonitorExample example = new BusinessMonitorExample();
 		example.createCriteria().andBusinessCodeEqualTo(businessCode).andBusinessKeyEqualTo(businessKey).andIsDeletedEqualTo("n");
 		List<BusinessMonitor> monitors = businessMonitorMapper.selectByExample(example);
@@ -30,6 +30,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 			monitor.setGmtModified(new Date());
 			monitor.setBusinessCode(businessCode);
 			monitor.setBusinessKey(businessKey);
+			monitor.setParams(params);
 			monitor.setIsFixed("n");
 			monitor.setErrorCode(errorCode);
 			monitor.setErrorMessage(errorMessage);
@@ -40,6 +41,7 @@ public class BusinessMonitorBOImpl implements BusinessMonitorBO{
 			monitor.setGmtModified(new Date());
 			monitor.setBusinessCode(businessCode);
 			monitor.setBusinessKey(businessKey);
+			monitor.setParams(params);
 			businessMonitorMapper.updateByExampleSelective(monitor, example);
 		}
 	}
