@@ -990,7 +990,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		baseUserDTO.setIso("CN/中国");
 		channelUserDTO.setDistributorUser(baseUserDTO);
 		BizOrgRelationDTO bizOrgRelationDTO = new BizOrgRelationDTO();
-		bizOrgRelationDTO.setChannel(1000010);
+		bizOrgRelationDTO.setChannel(100010);
 		channelUserDTO.setBizOrgRelation(bizOrgRelationDTO);
 		
 		CompanyQualificationDTO companyQualificationDTO = new CompanyQualificationDTO();
