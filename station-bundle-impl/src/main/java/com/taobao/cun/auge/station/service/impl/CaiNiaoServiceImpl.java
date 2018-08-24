@@ -6,9 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
@@ -43,13 +49,6 @@ import com.taobao.cun.auge.station.enums.StationFeatureOpModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("caiNiaoService")
 @HSFProvider(serviceInterface= CaiNiaoService.class, clientTimeout = 8000)
@@ -623,4 +622,28 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"get result has error"); 
         }
     }
+
+	@Override
+	public void addCainiaoStationFeature(Long stationId, String featureKey, String value) {
+		// 查询菜鸟物流站关系表
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel != null) {// 有物流站才同步
+			LinkedHashMap<String,String> features =new LinkedHashMap<String,String>();
+			features.put(featureKey, value);
+			caiNiaoAdapter.updateStationFeatures(rel.getCainiaoStationId(), features);
+		}
+		
+	}
+
+	@Override
+	public void removeCainiaoStationFeature(Long stationId, String featureKey) {
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel != null) {
+			Set<String> key = new HashSet<String>();
+			key.add(featureKey);
+			caiNiaoAdapter.removeStationFeatures(rel.getCainiaoStationId(), key);
+		}
+	}
 }
