@@ -108,4 +108,18 @@ public interface CaiNiaoService {
 	public void updateCainiaoStationFeature(List<Long> cainiaoStationId);
 	
 	public void synNoWarehouseStationFeature(Long cainiaoStationId,StationFeatureOpModeEnum opMode);
+	/**
+	 * 菜鸟feature打标
+	 * @param stationId
+	 * @param featureKey
+	 * @param value
+	 */
+	public void addCainiaoStationFeature(Long stationId,String featureKey,String value);
+	
+	/**
+	 * 菜鸟feature去表
+	 * @param stationId
+	 * @param featureKey
+	 */
+	public void removeCainiaoStationFeature(Long stationId,String featureKey);
 }
