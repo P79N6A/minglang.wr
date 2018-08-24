@@ -569,26 +569,6 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	}
 	
 	
-	public boolean addStationFeature(Long stationId,
-			String key, String value) {
-		if (stationId == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-					"CaiNiaoAdapterBO.addStationFeature.param.error:stationId is null!");
-		}
-		if (key == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-					"CaiNiaoAdapterBO.addStationFeature.param.keys is null!");
-		}
-		Map<String, String> features = Maps.newHashMap();
-		features.put(key, value);
-		Result<Boolean> res = stationWriteService.putStationFeatures(stationId, features, Modifier.newSystem());
-		if (!res.isSuccess()) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-					res.getErrorCode() + "|" + res.getErrorMessage());
-		}
-		return res.getData();
-	}
-	
 	
 	@Override
 	public List<WarehouseDTO> queryWarehouseById(Long id) {
