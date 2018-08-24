@@ -2,6 +2,9 @@ package com.taobao.cun.auge.lifecycle.tps;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -11,7 +14,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -40,8 +42,6 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二服务中阶段组件
@@ -196,14 +196,6 @@ public class TPSServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		
 	}
 
-	@Override
-	@PhaseStepMeta
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-	}
-
-	
 	private void dispachToServiceEvent(PartnerInstanceDto partnerInstanceDto, Long instanceId) {
         PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
         PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();

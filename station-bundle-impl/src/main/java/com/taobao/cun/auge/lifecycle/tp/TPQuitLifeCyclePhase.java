@@ -10,7 +10,6 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -193,25 +192,6 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 							partnerInstanceBO.getPartnerInstanceById(partnerInstanceDto.getId()), partnerInstanceDto));
 		}
 	}
-
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Boolean fromThawTask = (Boolean)context.getExtensionWithDefault("fromThawTask",false);
-		if(fromThawTask){
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-		}
-		Boolean fromAuditflow = (Boolean)context.getExtensionWithDefault("fromAuditflow",false);
-		if(fromAuditflow){
-			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceDto.getId());
-		}
-	}
-
-	
-	
-	
-	
 
 	 private void thawMoney(OperatorDto operatorDto, Long instanceId) {
 			//解冻保证金

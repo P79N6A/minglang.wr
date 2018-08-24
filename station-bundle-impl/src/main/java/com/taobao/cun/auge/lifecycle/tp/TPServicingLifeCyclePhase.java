@@ -16,7 +16,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -208,14 +207,6 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		
 	}
 
-	@Override
-	@PhaseStepMeta
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-	}
-
-	
 	private void dispachToServiceEvent(PartnerInstanceDto partnerInstanceDto, Long instanceId) {
         PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
         PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();

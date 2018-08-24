@@ -115,6 +115,8 @@ public class DiamondConfiguredProperties {
     @Value("${checkStoreStock}")
     private boolean checkStoreStock;
     
+    @Value("${decorateCountyAuditActivityId}")
+    private String decorateCountyAuditActivityId;
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -303,5 +305,13 @@ public class DiamondConfiguredProperties {
 
 	public void setCheckStoreStock(boolean checkStoreStock) {
 		this.checkStoreStock = checkStoreStock;
+	}
+
+	public String getDecorateCountyAuditActivityId() {
+		return decorateCountyAuditActivityId;
+	}
+
+	public void setDecorateCountyAuditActivityId(String decorateCountyAuditActivityId) {
+		this.decorateCountyAuditActivityId = decorateCountyAuditActivityId;
 	}
 }

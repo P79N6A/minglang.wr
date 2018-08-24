@@ -2,6 +2,9 @@ package com.taobao.cun.auge.lifecycle.tps;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -9,7 +12,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -29,8 +31,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二已停业阶段组件
@@ -139,19 +139,6 @@ public class TPSClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.QUITTING_REFUSED, partnerInstanceDto);
-		}
-		
-	}
-
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-		}
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
-			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceDto.getId());
 		}
 		
 	}

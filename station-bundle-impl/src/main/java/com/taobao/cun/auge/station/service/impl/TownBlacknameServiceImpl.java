@@ -21,6 +21,10 @@ public class TownBlacknameServiceImpl implements TownBlacknameService {
 	
 	@Override
 	public boolean isBlackname(String countyName, String townName) {
+		//先检查是否在白名单里,如果在白名单里就无需做后续校验了
+		if(townBlacknameMapper.countWhitename(countyName, townName) > 0) {
+			return false;
+		}
 		//如果是街道，则属于黑名单之列
 		if(townName.endsWith("街道")) {
 			return true;

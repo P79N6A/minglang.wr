@@ -4,7 +4,6 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
@@ -155,13 +154,6 @@ public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());
-	}
-
 	private void validateDecorateAndPaymentType(PartnerInstanceDto partnerInstanceDto) {
 		ValidateUtils.notNull(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
@@ -173,13 +165,7 @@ public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		ValidateUtils.notNull(decorate);
 		ValidateUtils.notNull(pay);
 
-		if (decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.SELF)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_PART)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"illegal decorate_type & payment_type combination");
-		}
+		
 	}
 	
 	private boolean decoratePaymentTypeEquals(StationDecorateTypeEnum decorate, StationDecorateTypeEnum decorateExpect,

@@ -2,12 +2,14 @@ package com.taobao.cun.auge.dal.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
+import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
+import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
 
-/**
- * Created by xiao on 16/8/26.
- */
 public interface StationExtMapper {
 
     /**
@@ -19,5 +21,10 @@ public interface StationExtMapper {
     
     
     List<Station> selectByExample(StationExtExample stationExtExample);
+
+    List<FenceTemplateStation> getFenceTemplateStation(@Param("templateId") Long templateId, @Param("stationName") String stationName);
     
+    List<Station> getFenceStations(FenceStationQueryCondition fenceStationQueryCondition);
+    
+    List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition);
 }

@@ -55,9 +55,4 @@ public abstract class LifeCyclePhaseAdapter implements LifeCyclePhase {
 
 	}
 
-	@Override
-	public void syncStationApply(LifeCyclePhaseContext context) {
-
-	}
-
 }

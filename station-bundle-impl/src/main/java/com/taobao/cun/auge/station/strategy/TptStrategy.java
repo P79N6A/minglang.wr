@@ -24,7 +24,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
@@ -77,7 +76,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
@@ -201,19 +199,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		StationDecoratePaymentTypeEnum pay = partnerInstanceDto.getStationDecoratePaymentTypeEnum();
 		ValidateUtils.notNull(decorate);
 		ValidateUtils.notNull(pay);
-
-		if (decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.SELF)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_PART)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
-				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"illegal decorate_type & payment_type combination");
-		}
-	}
-
-	private boolean decoratePaymentTypeEquals(StationDecorateTypeEnum decorate, StationDecorateTypeEnum decorateExpect,
-	                                          StationDecoratePaymentTypeEnum pay, StationDecoratePaymentTypeEnum payExpect) {
-		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
 	}
 
 	@Override
@@ -373,10 +358,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 		param.setLifecycleId(items.getId());
 		partnerLifecycleBO.updateLifecycle(param);
-
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(partnerInstanceId,SyncStationApplyEnum.UPDATE_STATE);
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();

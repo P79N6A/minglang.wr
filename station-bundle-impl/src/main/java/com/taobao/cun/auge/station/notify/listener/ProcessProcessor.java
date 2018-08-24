@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -63,7 +64,8 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.crius.bpm.dto.CuntaoTask;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
@@ -100,9 +102,6 @@ public class ProcessProcessor {
 
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
-
-//	@Autowired
-//	StationApplySyncBO stationApplySyncBO;
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -148,8 +147,10 @@ public class ProcessProcessor {
 	private ServiceAbilityDecisionService serviceAbilityDecisionService;
 	@Autowired
 	private AddressInfoDecisionService addressInfoDecisionService;
-	
-
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
+	@Autowired
+	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -305,7 +306,36 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 serviceAbilityDecisionService.updateServiceAbilityMemo(sdd);
-            }
+            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
+				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String resultCode = ob.getString("result");
+				ProcessApproveResultEnum decorationDesignAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
+				String desc = ob.getString("taskRemark");
+				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
+			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
+				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String taskId = ob.getString("taskId");
+				CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
+				String resultCode = ob.getString("result");
+				String desc = ob.getString("taskRemark");
+				ProcessApproveResultEnum decorationCheckAuditResult = null;
+				if("拒绝".equals(resultCode)){
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}else{
+					decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}
+				if(diamondConfiguredProperties.getDecorateCountyAuditActivityId().equals(task.getActivityId())
+						|| "sid-99e6059f-5497-bab9-c9bb-6ba967c98b8c".equals(task.getActivityId())){
+					stationDecorateService.auditStationDecorateCheckByCountyLeader(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+				}else{
+					stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(), decorationCheckAuditResult, desc);
+				}
+			}
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				levelAuditFlowService.afterStartApproveProcessSuccess(ob);
