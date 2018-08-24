@@ -33,7 +33,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -567,6 +567,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			} 
 			return res.getData();
 	}
+	
+	
 	
 	@Override
 	public List<WarehouseDTO> queryWarehouseById(Long id) {

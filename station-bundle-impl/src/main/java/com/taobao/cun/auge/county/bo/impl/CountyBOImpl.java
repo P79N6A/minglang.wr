@@ -1191,7 +1191,6 @@ public class CountyBOImpl implements CountyBO {
 		record.setId(countyStationId);
 		record.setGmtModified(new Date());
 		record.setModifier(workNo);
-		record.setManageStatus(CountyStationManageStatusEnum.OPENING.getCode());
 		record.setGmtStartOpen(new Date());
 		countyStationMapper.updateByPrimaryKeySelective(record);
 		return true;
