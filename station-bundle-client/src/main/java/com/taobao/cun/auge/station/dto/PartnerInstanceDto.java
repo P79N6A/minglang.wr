@@ -145,6 +145,8 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	
 	private Long distributionChannelId;
 	
+	private String distributorCode;
+	
 	private PartnerInstanceTransStatusEnum transStatusEnum;
 	
 	/**
@@ -389,5 +391,13 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setDistributionChannelId(Long distributionChannelId) {
 		this.distributionChannelId = distributionChannelId;
+	}
+
+	public String getDistributorCode() {
+		return distributorCode;
+	}
+
+	public void setDistributorCode(String distributorCode) {
+		this.distributorCode = distributorCode;
 	}
 }

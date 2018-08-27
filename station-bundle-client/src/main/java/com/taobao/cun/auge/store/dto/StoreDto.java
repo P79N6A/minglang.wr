@@ -107,6 +107,10 @@ public class StoreDto implements Serializable{
 	 */
 	private Long distributionChannelId;
 	
+	/**
+	 * 分销商Code
+	 */
+	private String distributorCode;
 	public Long getId() {
 		return id;
 	}
@@ -267,6 +271,14 @@ public class StoreDto implements Serializable{
 
 	public void setDistributionChannelId(Long distributionChannelId) {
 		this.distributionChannelId = distributionChannelId;
+	}
+
+	public String getDistributorCode() {
+		return distributorCode;
+	}
+
+	public void setDistributorCode(String distributorCode) {
+		this.distributorCode = distributorCode;
 	}
 
 }
