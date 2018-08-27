@@ -28,6 +28,12 @@ public class FenceInitTemplateConfig {
 	private Long templateIdFeeVillage;
 	
 	/**
+	 * 收费围栏 - 优品体验店默认收费围栏
+	 */
+	@Value("${fence.templateid.fee.store.town}")
+	private Long templateIdFeeStoreTown;
+	
+	/**
 	 * 售卖围栏 - 优品体验店默认售卖围栏
 	 */
 	@Value("${fence.templateid.sell.store.town}")
@@ -44,6 +50,14 @@ public class FenceInitTemplateConfig {
 	 */
 	@Value("${fence.templateid.sell.village}")
 	private Long templateIdSellVillage;
+
+	public Long getTemplateIdFeeStoreTown() {
+		return templateIdFeeStoreTown;
+	}
+
+	public void setTemplateIdFeeStoreTown(Long templateIdFeeStoreTown) {
+		this.templateIdFeeStoreTown = templateIdFeeStoreTown;
+	}
 
 	public Long getTemplateIdFeeTown() {
 		return templateIdFeeTown;
@@ -74,6 +88,7 @@ public class FenceInitTemplateConfig {
 				templateIdFeeTown, 
 				//templateIdLogisticsTownAtuoselected,
 				//templateIdLogisticsTown,
+				templateIdFeeStoreTown,
 				templateIdSellStoreTown,
 				templateIdSellTown
 				);
@@ -89,7 +104,8 @@ public class FenceInitTemplateConfig {
 	
 	public List<Long> getStoreTemplates(){
 		return Lists.newArrayList(
-				templateIdSellStoreTown
+				templateIdSellStoreTown,
+				templateIdFeeStoreTown
 				);
 	}
 	
