@@ -1984,6 +1984,76 @@ public class PartnerStationRelExample {
             addCriterion("distribution_channel_id not between", value1, value2, "distributionChannelId");
             return (Criteria) this;
         }
+
+        public Criteria andDistributorCodeIsNull() {
+            addCriterion("distributor_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeIsNotNull() {
+            addCriterion("distributor_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeEqualTo(String value) {
+            addCriterion("distributor_code =", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotEqualTo(String value) {
+            addCriterion("distributor_code <>", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeGreaterThan(String value) {
+            addCriterion("distributor_code >", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("distributor_code >=", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLessThan(String value) {
+            addCriterion("distributor_code <", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLessThanOrEqualTo(String value) {
+            addCriterion("distributor_code <=", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLike(String value) {
+            addCriterion("distributor_code like", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotLike(String value) {
+            addCriterion("distributor_code not like", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeIn(List<String> values) {
+            addCriterion("distributor_code in", values, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotIn(List<String> values) {
+            addCriterion("distributor_code not in", values, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeBetween(String value1, String value2) {
+            addCriterion("distributor_code between", value1, value2, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotBetween(String value1, String value2) {
+            addCriterion("distributor_code not between", value1, value2, "distributorCode");
+            return (Criteria) this;
+        }
     }
 
     /**

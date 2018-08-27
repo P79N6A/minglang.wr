@@ -34,6 +34,7 @@
     <result column="trans_status" jdbcType="VARCHAR" property="transStatus" />
     <result column="shop_id" jdbcType="BIGINT" property="shopId" />
     <result column="distribution_channel_id" jdbcType="BIGINT" property="distributionChannelId" />
+    <result column="distributor_code" jdbcType="VARCHAR" property="distributorCode" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -109,7 +110,8 @@
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, station_id, apply_time, 
     service_begin_time, service_end_time, partner_id, parent_station_id, state, applier_id, 
     bit, type, open_date, is_current, applier_type, close_type, station_apply_id, version, 
-    taobao_user_id, mode, seller_id, trans_status, shop_id, distribution_channel_id
+    taobao_user_id, mode, seller_id, trans_status, shop_id, distribution_channel_id, 
+    distributor_code
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRelExample" resultMap="BaseResultMap">
     <!--
@@ -174,8 +176,8 @@
       open_date, is_current, applier_type, 
       close_type, station_apply_id, version, 
       taobao_user_id, mode, seller_id, 
-      trans_status, shop_id, distribution_channel_id
-      )
+      trans_status, shop_id, distribution_channel_id, 
+      distributor_code)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{stationId,jdbcType=BIGINT}, 
       #{applyTime,jdbcType=TIMESTAMP}, #{serviceBeginTime,jdbcType=TIMESTAMP}, #{serviceEndTime,jdbcType=TIMESTAMP}, 
@@ -184,8 +186,8 @@
       #{openDate,jdbcType=TIMESTAMP}, #{isCurrent,jdbcType=CHAR}, #{applierType,jdbcType=VARCHAR}, 
       #{closeType,jdbcType=VARCHAR}, #{stationApplyId,jdbcType=BIGINT}, #{version,jdbcType=BIGINT}, 
       #{taobaoUserId,jdbcType=BIGINT}, #{mode,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}, 
-      #{transStatus,jdbcType=VARCHAR}, #{shopId,jdbcType=BIGINT}, #{distributionChannelId,jdbcType=BIGINT}
-      )
+      #{transStatus,jdbcType=VARCHAR}, #{shopId,jdbcType=BIGINT}, #{distributionChannelId,jdbcType=BIGINT}, 
+      #{distributorCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRel">
     <!--
@@ -278,6 +280,9 @@
       <if test="distributionChannelId != null">
         distribution_channel_id,
       </if>
+      <if test="distributorCode != null">
+        distributor_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -360,6 +365,9 @@
       </if>
       <if test="distributionChannelId != null">
         #{distributionChannelId,jdbcType=BIGINT},
+      </if>
+      <if test="distributorCode != null">
+        #{distributorCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -464,6 +472,9 @@
       <if test="record.distributionChannelId != null">
         distribution_channel_id = #{record.distributionChannelId,jdbcType=BIGINT},
       </if>
+      <if test="record.distributorCode != null">
+        distributor_code = #{record.distributorCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -502,7 +513,8 @@
       seller_id = #{record.sellerId,jdbcType=BIGINT},
       trans_status = #{record.transStatus,jdbcType=VARCHAR},
       shop_id = #{record.shopId,jdbcType=BIGINT},
-      distribution_channel_id = #{record.distributionChannelId,jdbcType=BIGINT}
+      distribution_channel_id = #{record.distributionChannelId,jdbcType=BIGINT},
+      distributor_code = #{record.distributorCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -595,6 +607,9 @@
       <if test="distributionChannelId != null">
         distribution_channel_id = #{distributionChannelId,jdbcType=BIGINT},
       </if>
+      <if test="distributorCode != null">
+        distributor_code = #{distributorCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -630,7 +645,8 @@
       seller_id = #{sellerId,jdbcType=BIGINT},
       trans_status = #{transStatus,jdbcType=VARCHAR},
       shop_id = #{shopId,jdbcType=BIGINT},
-      distribution_channel_id = #{distributionChannelId,jdbcType=BIGINT}
+      distribution_channel_id = #{distributionChannelId,jdbcType=BIGINT},
+      distributor_code = #{distributorCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

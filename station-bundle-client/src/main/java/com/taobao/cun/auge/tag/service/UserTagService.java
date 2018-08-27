@@ -13,4 +13,7 @@ public interface UserTagService {
 	 boolean initTPTag();
 	 
 	 boolean batchAddTag(List<Long> taobaoUserId,String userTag);
+	 
+	 public boolean addTagToUserData(Long userId, Integer tagId);
+	 
 }

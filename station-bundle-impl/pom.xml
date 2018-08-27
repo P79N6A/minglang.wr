@@ -509,6 +509,10 @@
 			<groupId>com.tmall.usc.channel</groupId>
 			<artifactId>usc-channel-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.tagcenter</groupId>
+			<artifactId>tagcenter-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

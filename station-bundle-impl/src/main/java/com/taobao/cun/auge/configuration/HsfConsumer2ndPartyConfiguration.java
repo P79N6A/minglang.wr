@@ -66,6 +66,9 @@ import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
+import com.taobao.taglib.client.TagWriteServiceClient;
+import com.taobao.taglib.service.UserDataWrapperService;
+import com.taobao.taglib.service.impl.UserDataWrapperServiceImpl;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
 import com.taobao.uic.common.cache.UICCacheService;
@@ -206,6 +209,24 @@ public class HsfConsumer2ndPartyConfiguration  {
 		uicTagServiceClient.setUicExtraReadServiceClient(uicExtraReadServiceClient);
 		uicTagServiceClient.setUicTagWriteServiceClient(uicTagWriteServiceClient);
 		uicTagServiceClient.setTagRecordServiceClient(tagRecordServiceClient);
+		return uicTagServiceClient;
+	}
+	
+	@Bean
+	public UserDataWrapperService userDataWrapperService(UicDataServiceClient uicDataServiceClient,UicExtraReadServiceClient uicExtraReadServiceClient){
+		UserDataWrapperServiceImpl	userDataWrapperService = new UserDataWrapperServiceImpl();
+		userDataWrapperService.setUicDataServiceClient(uicDataServiceClient);
+		userDataWrapperService.setUicExtraReadServiceClient(uicExtraReadServiceClient);
+		return userDataWrapperService;
+	}
+	
+	@Bean
+	public TagWriteServiceClient tagWriteServiceClient(UicDataServiceClient uicDataServiceClient,
+			UicTagWriteServiceClient uicTagWriteServiceClient,UserDataWrapperService userDataWrapperService) {
+		TagWriteServiceClient uicTagServiceClient = new TagWriteServiceClient();
+		uicTagServiceClient.setUicDataServiceClient(uicDataServiceClient);
+		uicTagServiceClient.setUicTagWriteServiceClient(uicTagWriteServiceClient);
+		uicTagServiceClient.setUserDataWrapperService(userDataWrapperService);
 		return uicTagServiceClient;
 	}
 	
