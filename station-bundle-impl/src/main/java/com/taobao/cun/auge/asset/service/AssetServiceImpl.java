@@ -274,8 +274,8 @@ public class AssetServiceImpl implements AssetService{
 
 	@Override
 	public Boolean changeOwner(Long orgId, String ownerWorkNo,
-			String ownerName, List<Long> assetId) {
-		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, assetId);
+			String ownerName, List<String> aliNos) {
+		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, aliNos);
 	}
 
 	@Override
@@ -295,6 +295,11 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public Boolean changeOwner(List<Long> assetId) {
 		return assetSynBO.changeOwner(assetId);
+	}
+
+	@Override
+	public Boolean disAsset(String aliNo, Long userAreaId, String userName, String userId) {
+		return assetSynBO.disAsset(aliNo, userAreaId, userName, userId);
 	}
 
 }
