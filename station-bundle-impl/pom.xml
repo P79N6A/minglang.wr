@@ -497,6 +497,22 @@
 			<groupId>com.taobao.top</groupId>
 			<artifactId>top-api-sdk-dev</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.sellercenter</groupId>
+			<artifactId>core-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.sellercenter</groupId>
+			<artifactId>sellercenter-brands-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.tmall.usc.channel</groupId>
+			<artifactId>usc-channel-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.tagcenter</groupId>
+			<artifactId>tagcenter-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

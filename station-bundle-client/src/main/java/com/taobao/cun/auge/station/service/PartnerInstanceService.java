@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
@@ -355,5 +356,30 @@ public interface PartnerInstanceService {
      * @param taobaoUserId
      */
     public void signProjectNoticeProtocol(Long taobaoUserId);
+    
+    /**
+     * 创建卖家信息，包含卖家分销渠道ID，卖家UIC,卖家shopId
+     * @param taobaoUserId
+     */
+    public Result<Boolean> createSellerInfo(Long taobaoUserId);
+    
+    
+    /**
+	 * 创建卖家和店铺ID
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> createSellerAndShopId(Long taobaoUserId);
+	
+	/**
+	 * 创建分销渠道ID
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> createDistributionChannelId(Long taobaoUserId);
+	
+	/**
+	 * 注销影子店铺
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> cancelShopMirror(Long taobaoUserId);
     
 }

@@ -661,4 +661,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			String auditOpinion) {
 		stationDecorateBO.auditStationDecorateCheckByCountyLeader(stationId, approveResultEnum, auditOpinion);
 	}
+
+	@Override
+	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds) {
+		for(Long taobaoUserId :taobaoUserIds){
+			try {
+				this.openAccessCbuMarket(taobaoUserId);
+			} catch (Exception e) {
+				//ingore
+			}
+		}
+		
+	}
 }

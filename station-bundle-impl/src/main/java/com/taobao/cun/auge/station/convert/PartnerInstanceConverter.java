@@ -187,6 +187,9 @@ public final class PartnerInstanceConverter {
 		instanceDto.setSellerId(psRel.getSellerId());
 		instanceDto.setMode(psRel.getMode());
 		instanceDto.setTransStatusEnum(PartnerInstanceTransStatusEnum.valueof(psRel.getTransStatus()));
+		instanceDto.setShopId(psRel.getShopId());
+		instanceDto.setDistributionChannelId(psRel.getDistributionChannelId());
+		instanceDto.setDistributorCode(psRel.getDistributorCode());
 		return instanceDto;
 	}
 

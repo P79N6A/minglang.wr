@@ -141,6 +141,12 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	
 	private Long sellerId;
 	
+	private Long shopId;
+	
+	private Long distributionChannelId;
+	
+	private String distributorCode;
+	
 	private PartnerInstanceTransStatusEnum transStatusEnum;
 	
 	/**
@@ -369,5 +375,29 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setHasInspectionRecord(boolean hasInspectionRecord) {
 		this.hasInspectionRecord = hasInspectionRecord;
+	}
+
+	public Long getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(Long shopId) {
+		this.shopId = shopId;
+	}
+
+	public Long getDistributionChannelId() {
+		return distributionChannelId;
+	}
+
+	public void setDistributionChannelId(Long distributionChannelId) {
+		this.distributionChannelId = distributionChannelId;
+	}
+
+	public String getDistributorCode() {
+		return distributorCode;
+	}
+
+	public void setDistributorCode(String distributorCode) {
+		this.distributorCode = distributorCode;
 	}
 }
