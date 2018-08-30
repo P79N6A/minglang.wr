@@ -1,15 +1,21 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
@@ -31,12 +37,8 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.validate.StationValidator;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二入驻中阶段组件
@@ -45,6 +47,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中服务节点")
 public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+
+    private static final Logger logger = LoggerFactory.getLogger(TPSettlingLifeCyclePhase.class);
 
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
@@ -58,6 +62,8 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private StationNumConfigBO stationNumConfigBO;
 	
+	@Autowired
+	private StationDecorateService stationDecorateService;
 	@Override
 	@PhaseStepMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -143,6 +149,14 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
 		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
+		
+		try {
+			//开通1688授权
+			stationDecorateService.openAccessCbuMarket(partnerInstanceDto.getTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("openAccessCbuMarket error,taobaoUserId"+partnerInstanceDto.getTaobaoUserId(),e);
+		}
+		
 	}
 
 	@Override

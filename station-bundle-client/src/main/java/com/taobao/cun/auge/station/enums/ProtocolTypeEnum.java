@@ -48,6 +48,12 @@ public class ProtocolTypeEnum implements Serializable {
     
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE", "招募项目告知协议");
 
+    public static final ProtocolTypeEnum EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT = new ProtocolTypeEnum("EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT", "体验货品补货协议");
+
+    public static final ProtocolTypeEnum YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT = new ProtocolTypeEnum("YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT", "优品快消货品进货协议");
+
+    public static final ProtocolTypeEnum YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT = new ProtocolTypeEnum("YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT", "优品小家电货品进货协议");
+
     static {
         mappings.put("SETTLE_PRO", SETTLE_PRO);
         mappings.put("MANAGE_PRO", MANAGE_PRO);
@@ -65,9 +71,10 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("VENDOR_INSTALLMENT_AGREEMENT", VENDOR_INSTALLMENT_AGREEMENT);
         mappings.put("RUBBING_SUPPLEMENT_AGREEMENT", RUBBING_SUPPLEMENT_AGREEMENT);
         mappings.put("DELIVERY_GOODS_AGREEMENT", DELIVERY_GOODS_AGREEMENT);
-        
         mappings.put("PARTNER_APPLY_PROJECT_NOTICE", PARTNER_APPLY_PROJECT_NOTICE);
-
+        mappings.put("EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT",EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT);
+        mappings.put("YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT", YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT);
+        mappings.put("YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT", YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT);
     }
 
     public ProtocolTypeEnum(String code, String desc) {

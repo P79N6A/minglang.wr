@@ -1485,6 +1485,66 @@ public class PartnerStationRelExample {
             return (Criteria) this;
         }
 
+        public Criteria andStationApplyIdIsNull() {
+            addCriterion("station_apply_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdIsNotNull() {
+            addCriterion("station_apply_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdEqualTo(Long value) {
+            addCriterion("station_apply_id =", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdNotEqualTo(Long value) {
+            addCriterion("station_apply_id <>", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdGreaterThan(Long value) {
+            addCriterion("station_apply_id >", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("station_apply_id >=", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdLessThan(Long value) {
+            addCriterion("station_apply_id <", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdLessThanOrEqualTo(Long value) {
+            addCriterion("station_apply_id <=", value, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdIn(List<Long> values) {
+            addCriterion("station_apply_id in", values, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdNotIn(List<Long> values) {
+            addCriterion("station_apply_id not in", values, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdBetween(Long value1, Long value2) {
+            addCriterion("station_apply_id between", value1, value2, "stationApplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStationApplyIdNotBetween(Long value1, Long value2) {
+            addCriterion("station_apply_id not between", value1, value2, "stationApplyId");
+            return (Criteria) this;
+        }
+
         public Criteria andVersionIsNull() {
             addCriterion("version is null");
             return (Criteria) this;
@@ -1802,6 +1862,196 @@ public class PartnerStationRelExample {
 
         public Criteria andTransStatusNotBetween(String value1, String value2) {
             addCriterion("trans_status not between", value1, value2, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdIsNull() {
+            addCriterion("shop_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdIsNotNull() {
+            addCriterion("shop_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdEqualTo(Long value) {
+            addCriterion("shop_id =", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdNotEqualTo(Long value) {
+            addCriterion("shop_id <>", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdGreaterThan(Long value) {
+            addCriterion("shop_id >", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("shop_id >=", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdLessThan(Long value) {
+            addCriterion("shop_id <", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdLessThanOrEqualTo(Long value) {
+            addCriterion("shop_id <=", value, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdIn(List<Long> values) {
+            addCriterion("shop_id in", values, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdNotIn(List<Long> values) {
+            addCriterion("shop_id not in", values, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdBetween(Long value1, Long value2) {
+            addCriterion("shop_id between", value1, value2, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShopIdNotBetween(Long value1, Long value2) {
+            addCriterion("shop_id not between", value1, value2, "shopId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdIsNull() {
+            addCriterion("distribution_channel_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdIsNotNull() {
+            addCriterion("distribution_channel_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdEqualTo(Long value) {
+            addCriterion("distribution_channel_id =", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdNotEqualTo(Long value) {
+            addCriterion("distribution_channel_id <>", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdGreaterThan(Long value) {
+            addCriterion("distribution_channel_id >", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("distribution_channel_id >=", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdLessThan(Long value) {
+            addCriterion("distribution_channel_id <", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdLessThanOrEqualTo(Long value) {
+            addCriterion("distribution_channel_id <=", value, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdIn(List<Long> values) {
+            addCriterion("distribution_channel_id in", values, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdNotIn(List<Long> values) {
+            addCriterion("distribution_channel_id not in", values, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdBetween(Long value1, Long value2) {
+            addCriterion("distribution_channel_id between", value1, value2, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributionChannelIdNotBetween(Long value1, Long value2) {
+            addCriterion("distribution_channel_id not between", value1, value2, "distributionChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeIsNull() {
+            addCriterion("distributor_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeIsNotNull() {
+            addCriterion("distributor_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeEqualTo(String value) {
+            addCriterion("distributor_code =", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotEqualTo(String value) {
+            addCriterion("distributor_code <>", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeGreaterThan(String value) {
+            addCriterion("distributor_code >", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("distributor_code >=", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLessThan(String value) {
+            addCriterion("distributor_code <", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLessThanOrEqualTo(String value) {
+            addCriterion("distributor_code <=", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeLike(String value) {
+            addCriterion("distributor_code like", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotLike(String value) {
+            addCriterion("distributor_code not like", value, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeIn(List<String> values) {
+            addCriterion("distributor_code in", values, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotIn(List<String> values) {
+            addCriterion("distributor_code not in", values, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeBetween(String value1, String value2) {
+            addCriterion("distributor_code between", value1, value2, "distributorCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andDistributorCodeNotBetween(String value1, String value2) {
+            addCriterion("distributor_code not between", value1, value2, "distributorCode");
             return (Criteria) this;
         }
     }

@@ -34,4 +34,12 @@ public class TddlConfiguration {
 		sequence.setName("store_endor_org_id");
 		return sequence;
 	}
+	
+	@Bean
+	public GroupSequence distributeChannelCodeSequence(SequenceDao sequenceDao){
+		GroupSequence sequence = new GroupSequence();
+		sequence.setSequenceDao(sequenceDao);
+		sequence.setName("distribute_channel_code");
+		return sequence;
+	}
 }

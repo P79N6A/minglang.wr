@@ -31,6 +31,8 @@ import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.ErrorInfo;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -2448,5 +2450,78 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      			String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
 		
 	}
-	
+
+
+	@Override
+	public Result<Boolean> createSellerInfo(Long taobaoUserId) {
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			this.partnerInstanceBO.createPartnerSellerInfo(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
+		
+	}
+
+
+	@Override
+	public Result<Boolean> createSellerAndShopId(Long taobaoUserId) {
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			this.partnerInstanceBO.createSellerAndShopId(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
+		
+	}
+
+
+	@Override
+	public Result<Boolean> createDistributionChannelId(Long taobaoUserId) {
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			this.partnerInstanceBO.createDistributionChannelId(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
+	}
+
+
+	@Override
+	public Result<Boolean> cancelShopMirror(Long taobaoUserId) {
+		Result<Boolean> result = new Result<Boolean>();
+		try {
+			this.partnerInstanceBO.cancelShopMirror(taobaoUserId);
+			result.setSuccess(true);
+			result.setModule(Boolean.TRUE);
+		} catch (AugeBusinessException e) {
+			ErrorInfo errorInfo = ErrorInfo.of(e.getExceptionCode(), null, e.getMessage());
+			result.addErrorInfo(errorInfo);
+		} catch(Exception e){
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			result.addErrorInfo(errorInfo);
+		}
+		return result;
+	}
 }

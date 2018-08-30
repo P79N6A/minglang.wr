@@ -2,17 +2,22 @@ package com.taobao.cun.auge.tag.service;
 
 import java.util.List;
 
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
-import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
-import com.taobao.cun.auge.tag.UserTag;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.uic.common.domain.ResultDO;
-import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.tag.UserTag;
+import com.taobao.eagleeye.EagleEye;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.taglib.client.TagWriteServiceClient;
+import com.taobao.taglib.domain.TagParamOfUserData;
+import com.taobao.uic.common.domain.ResultDO;
+import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 
 @Service("userTagService")
 @HSFProvider(serviceInterface = UserTagService.class)
@@ -25,6 +30,9 @@ public class UserTagServiceImpl implements UserTagService {
 	
 	@Autowired
 	private PartnerStationRelMapper partnerStationRelMapper;
+	
+	@Autowired
+	private TagWriteServiceClient tagWriteServiceClient;
 	@Override
 	public boolean addTag(Long taobaoUserId, String tag) {
 		assertTag(tag);
@@ -94,5 +102,26 @@ public class UserTagServiceImpl implements UserTagService {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean addTagToUserData(Long userId, Integer tagId) {
+		boolean success = true;
+		if (userId == null || tagId == null) {
+			success = false;
+			return success;
+		}
+		try {
+			TagParamOfUserData tp = new TagParamOfUserData(userId, tagId);
+			tp.setNoCatLimit(true);
+			com.taobao.taglib.domain.ResultDO<String> rdo = tagWriteServiceClient.addTagToUserData(tp);
+			if (!rdo.isSuccess()) {
+				success = false;
+			}
+		} catch (Exception ex) {
+			logger.error("addTagToUserData userId: " + userId, ex);
+			success = false;
+		}
+		return success;
 	}
 }

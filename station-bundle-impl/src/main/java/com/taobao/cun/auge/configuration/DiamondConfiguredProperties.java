@@ -117,6 +117,11 @@ public class DiamondConfiguredProperties {
     
     @Value("${decorateCountyAuditActivityId}")
     private String decorateCountyAuditActivityId;
+    
+    //供应商Id,村淘自营门店对应uic的userId为3405569954
+    @Value("${supplierTbId}")
+    private Long supplierTbId;
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -313,5 +318,13 @@ public class DiamondConfiguredProperties {
 
 	public void setDecorateCountyAuditActivityId(String decorateCountyAuditActivityId) {
 		this.decorateCountyAuditActivityId = decorateCountyAuditActivityId;
+	}
+
+	public Long getSupplierTbId() {
+		return supplierTbId;
+	}
+
+	public void setSupplierTbId(Long supplierTbId) {
+		this.supplierTbId = supplierTbId;
 	}
 }
