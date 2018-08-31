@@ -21,7 +21,8 @@ public class TownStoreInitingStationFetcher extends AbstractInitingStationFetche
 	protected List<Long> getTemplateIds() {
 		return Lists.newArrayList(
 			fenceInitTemplateConfig.getTemplateIdSellStoreTown(),
-			fenceInitTemplateConfig.getTemplateIdFeeStoreTown()
+			fenceInitTemplateConfig.getTemplateIdFeeStoreTown(),
+			fenceInitTemplateConfig.getTemplateIdSellClothing()
 		);
 	}
 
