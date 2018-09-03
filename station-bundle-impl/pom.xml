@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -24,16 +25,20 @@
 	</properties>
 	<dependencies>
 		<dependency>
-		  <groupId>com.taobao.crius</groupId>
-		  <artifactId>oss-client</artifactId>
+			<groupId>com.alibaba.rocketmq</groupId>
+			<artifactId>rocketmq-common</artifactId>
 		</dependency>
 		<dependency>
-		  <artifactId>dms-sorting.common</artifactId>  
-		  <groupId>dms-sorting</groupId>  
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>oss-client</artifactId>
 		</dependency>
 		<dependency>
-		  <groupId>dms-sorting</groupId>
-		  <artifactId>dms-sorting.api</artifactId>
+			<artifactId>dms-sorting.common</artifactId>
+			<groupId>dms-sorting</groupId>
+		</dependency>
+		<dependency>
+			<groupId>dms-sorting</groupId>
+			<artifactId>dms-sorting.api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.cun.endor</groupId>
@@ -150,10 +155,10 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 		</dependency>
-				<dependency>
-    <groupId>com.taobao.mmp</groupId>
-    <artifactId>mmp-client-core</artifactId>
-</dependency>
+		<dependency>
+			<groupId>com.taobao.mmp</groupId>
+			<artifactId>mmp-client-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>
 			<artifactId>event-client</artifactId>
@@ -369,17 +374,17 @@
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>ch.qos.logback</groupId>-->
-			<!--<artifactId>logback-classic</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>ch.qos.logback</groupId>-->
-			<!--<artifactId>logback-core</artifactId>-->
-		<!--</dependency>-->
+		<!--<dependency> -->
+		<!--<groupId>ch.qos.logback</groupId> -->
+		<!--<artifactId>logback-classic</artifactId> -->
+		<!--</dependency> -->
+		<!--<dependency> -->
+		<!--<groupId>ch.qos.logback</groupId> -->
+		<!--<artifactId>logback-core</artifactId> -->
+		<!--</dependency> -->
 		<dependency>
-			  <groupId>com.alibaba.crm</groupId>
-			  <artifactId>pacific-service-api</artifactId>
+			<groupId>com.alibaba.crm</groupId>
+			<artifactId>pacific-service-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.crm</groupId>
@@ -402,9 +407,9 @@
 			<artifactId>asset-interface</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.openSearch</groupId>
-				<artifactId>openSearch</artifactId>
-		</dependency>		
+			<groupId>com.taobao.openSearch</groupId>
+			<artifactId>openSearch</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.namelist</groupId>
 			<artifactId>namelist-common</artifactId>
@@ -430,68 +435,66 @@
 			<artifactId>sic-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.search.engine</groupId>
-				<artifactId>search-engine</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.taobao.common.searchengine</groupId>
-				<artifactId>common-searchengine</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.taobao.search.client.config.helper</groupId>
-				<artifactId>search-client-config-helper</artifactId>
-			</dependency>
-			<dependency>
-					<groupId>com.alibaba.china.shared</groupId>
-					<artifactId>orgstruct.api</artifactId>
-			</dependency>
-			<dependency>
-					<groupId>com.alibaba.china.shared</groupId>
-					<artifactId>member.service.api</artifactId>
-			</dependency>
-			<dependency>
-				   <groupId>com.taobao.payment</groupId>
-				   <artifactId>pmt-client</artifactId>
-			</dependency>
-			<dependency>
-				 <groupId>com.taobao.cun.endor</groupId>
-				 <artifactId>endor-base</artifactId>
-			</dependency>
-			<dependency>
-      			<groupId>com.taobao.cun</groupId>
-      			<artifactId>ct-mdjxc-api.api</artifactId>
-    		</dependency>
-    		<dependency>
-				<groupId>com.taobao.common.division</groupId>
-				<artifactId>common-division</artifactId>
-			</dependency>
-<!-- 			<dependency>
-			  <groupId>com.taobao.kfc</groupId>
-			  <artifactId>core</artifactId>
-			</dependency> -->
-			<dependency>
-			    <groupId>com.taobao.kfc</groupId>
-			    <artifactId>kfc-client</artifactId>
-			</dependency>
-			<dependency> 
-		      <groupId>com.taobao.mmp</groupId>  
-		      <artifactId>mmp-common</artifactId>  
-			</dependency>
-			<dependency> 
-      			<groupId>com.taobao.mmp</groupId>  
-      			<artifactId>mmp-box</artifactId>  
-    	</dependency> 
-    	<dependency>
-			    <groupId>com.taobao.cun</groupId>
-			    <artifactId>order-fulfillment-client</artifactId>
+			<groupId>com.taobao.search.engine</groupId>
+			<artifactId>search-engine</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.taobao.union</groupId>
-            <artifactId>union-api-client</artifactId>
-        </dependency>
-        <dependency>
-		    <groupId>com.alibaba.dw.shared</groupId>
-		    <artifactId>openapi-lib</artifactId>
+		<dependency>
+			<groupId>com.taobao.common.searchengine</groupId>
+			<artifactId>common-searchengine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.search.client.config.helper</groupId>
+			<artifactId>search-client-config-helper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.china.shared</groupId>
+			<artifactId>orgstruct.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.china.shared</groupId>
+			<artifactId>member.service.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.payment</groupId>
+			<artifactId>pmt-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.endor</groupId>
+			<artifactId>endor-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>ct-mdjxc-api.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.common.division</groupId>
+			<artifactId>common-division</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>com.taobao.kfc</groupId>
+			<artifactId>kfc-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.mmp</groupId>
+			<artifactId>mmp-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.mmp</groupId>
+			<artifactId>mmp-box</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>order-fulfillment-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.union</groupId>
+			<artifactId>union-api-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.dw.shared</groupId>
+			<artifactId>openapi-lib</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.top</groupId>
