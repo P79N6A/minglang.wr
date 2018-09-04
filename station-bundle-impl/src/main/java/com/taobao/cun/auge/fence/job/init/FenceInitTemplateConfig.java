@@ -50,6 +50,20 @@ public class FenceInitTemplateConfig {
 	 */
 	@Value("${fence.templateid.sell.village}")
 	private Long templateIdSellVillage;
+	
+	/**
+	 * 售卖围栏 - 服饰行业全县售卖
+	 */
+	@Value("${fence.templateid.sell.clothing}")
+	private Long templateIdSellClothing;
+
+	public Long getTemplateIdSellClothing() {
+		return templateIdSellClothing;
+	}
+
+	public void setTemplateIdSellClothing(Long templateIdSellClothing) {
+		this.templateIdSellClothing = templateIdSellClothing;
+	}
 
 	public Long getTemplateIdFeeStoreTown() {
 		return templateIdFeeStoreTown;
