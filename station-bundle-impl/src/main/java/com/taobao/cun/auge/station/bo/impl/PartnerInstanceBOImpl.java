@@ -74,6 +74,7 @@ import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.service.StoreWriteService;
+import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.sellerservice.core.client.domain.ShopDO;
 import com.taobao.sellerservice.core.client.shopmirror.MirrorBusiType;
@@ -963,7 +964,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				MirrorSellerDO sellerDO = sellerResult.getModule();
 				update.setShopId(sellerDO.getShop().getShopId());
 				update.setSellerId(sellerDO.getUserId());
+				userTagService.addTag(taobaoUserId, UserTag.SAMPLE_SELLER_TAG.getTag());
 				userTagService.addTagToUserData(sellerDO.getUserId(), 102209);
+				userTagService.addTagToUserData(sellerDO.getUserId(), 76481);
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
 				businessMonitorBO.fixBusinessMonitor("createShopMirror", instance.getId());
 			}else{
