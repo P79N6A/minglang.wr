@@ -16,7 +16,7 @@ public class StationDeleteFenceInstanceJobExecutor extends AbstractFenceInstance
 	@Override
 	protected int doExecute(StationDeleteFenceInstanceJob fenceInstanceJob) {
 		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
-			deleteFenceEntity(fenceInstanceJob.getStationId(), templateId);
+			deleteFenceEntity(fenceInstanceJob.getStationId(), templateId, fenceInstanceJob.getCreator());
 		}
 		return fenceInstanceJob.getTemplateIds().size();
 	}
