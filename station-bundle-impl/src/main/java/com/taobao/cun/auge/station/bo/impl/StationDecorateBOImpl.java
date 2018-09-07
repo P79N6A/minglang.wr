@@ -454,7 +454,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(record == null){
 			return null;
 		}
-		if(!StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode().equals(record.getStatus())){
+		if(!StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode().equals(record.getStatus())||!StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode().equals(record.getStatus())){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修设计图纸未审核完成");
 		}
 		StationDecorate updateRecord = new StationDecorate();
