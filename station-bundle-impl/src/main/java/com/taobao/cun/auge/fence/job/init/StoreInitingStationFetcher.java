@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
  *
  */
 @Component
-public class TownStoreInitingStationFetcher extends AbstractInitingStationFetcher {
+public class StoreInitingStationFetcher extends AbstractInitingStationFetcher {
 
 	@Override
 	protected List<Long> getTemplateIds() {
@@ -30,7 +30,6 @@ public class TownStoreInitingStationFetcher extends AbstractInitingStationFetche
 	protected List<Station> getFenceInitingStations(Long templateId) {
 		FenceInitingStationQueryCondition condition = new FenceInitingStationQueryCondition();
 		condition.setStationLocations(Lists.newArrayList("town"));
-		condition.setStationTypes(Lists.newArrayList("TPS"));
 		condition.setTemplateId(templateId);
 		return stationBO.getFenceInitingStations(condition);
 	}
