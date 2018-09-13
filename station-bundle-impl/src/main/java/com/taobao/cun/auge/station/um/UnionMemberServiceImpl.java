@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.response.UnionMemberCheckResult;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Long addUnionMember(UnionMemberAddDto addDto) {
+        PartnerInstanceDto piDto = createUnionMember(addDto);
+        return piDto.getStationDto().getId();
+    }
+
+    @NotNull
+    private PartnerInstanceDto createUnionMember(UnionMemberAddDto addDto) {
         BeanValidator.validateWithThrowable(addDto);
 
         String taobaoNick = addDto.getTaobaoNick();
@@ -154,7 +161,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
         LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(piDto, StateMachineEvent.SETTLING_EVENT);
         stateMachineService.executePhase(phaseEvent);
-        return piDto.getStationDto().getId();
+        return piDto;
+    }
+
+    @Override
+    public Long addAndOpenUnionMember(UnionMemberAddDto addDto) {
+        PartnerInstanceDto instanceDto = createUnionMember(addDto);
+        LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(instanceDto,
+            StateMachineEvent.SERVICING_EVENT);
+        stateMachineService.executePhase(phaseEvent);
+        return null;
     }
 
     @Override

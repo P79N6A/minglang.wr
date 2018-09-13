@@ -30,6 +30,14 @@ public interface UnionMemberService {
     Long addUnionMember(UnionMemberAddDto addDto);
 
     /**
+     * 新增优盟，并开通
+     *
+     * @param addDto
+     * @return
+     */
+    Long addAndOpenUnionMember(UnionMemberAddDto addDto);
+
+    /**
      * 修改优盟
      *
      * @param updateDto
