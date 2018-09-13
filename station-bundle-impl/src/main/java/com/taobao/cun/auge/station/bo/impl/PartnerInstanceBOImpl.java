@@ -964,7 +964,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				MirrorSellerDO sellerDO = sellerResult.getModule();
 				update.setShopId(sellerDO.getShop().getShopId());
 				update.setSellerId(sellerDO.getUserId());
-				userTagService.addTag(taobaoUserId, UserTag.SAMPLE_SELLER_TAG.getTag());
+				userTagService.addTag(taobaoUserId, UserTag.SELLER_HQZY_TAG.getTag());
 				userTagService.addTagToUserData(sellerDO.getUserId(), 102209);
 				userTagService.addTagToUserData(sellerDO.getUserId(), 76481);
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
