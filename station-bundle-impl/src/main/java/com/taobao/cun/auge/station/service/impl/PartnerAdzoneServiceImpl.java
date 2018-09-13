@@ -138,7 +138,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         //req.setStartTime();
         //req.setEndTime();
         if (null == request.getUpdateDate()) {
-            String updateDate = DateFormatUtils.format(new Date().getTime(), "yyyyMMdd");
+            String updateDate = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd");
             request.setUpdateDate(updateDate);
         }
         try {

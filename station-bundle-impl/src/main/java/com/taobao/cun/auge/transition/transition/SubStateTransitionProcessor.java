@@ -56,8 +56,7 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 		transition.setVersion("1");
 	}
 	
-	
-	
+	@Override
 	public List<StateTransitionTuple> mapTuple(EventMessage event) {
 		List<StateTransitionTuple> tuples = Lists.newArrayList();
 		if (!isMatched(event.getAction().name(), event.getTableName())) {
@@ -186,16 +185,16 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 	public void calcSpendTime(StateTransitionTuple tuple,CuntaoLifecycleTransition transition){
 		//如果是插入说明是初始状态返回耗时0
 		if(tuple.isInsert()){
-			transition.setSpendTime(0l);
+			transition.setSpendTime(0L);
 			return;
 		}else if(tuple.isUpdate()){
 			String oldState = transition.getOldState();
 			if(StringUtils.isEmpty(oldState)){
-				transition.setSpendTime(0l);
+				transition.setSpendTime(0L);
 				return;
 			}
 			if(transition.getBizPrimaryKey() == null){
-				transition.setSpendTime(0l);
+				transition.setSpendTime(0L);
 				return;
 			}
 			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
@@ -209,7 +208,7 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 				transition.setSpendTime(spendTime/1000);
 				return;
 			}
-			transition.setSpendTime(0l);
+			transition.setSpendTime(0L);
 		}
 	}
 	

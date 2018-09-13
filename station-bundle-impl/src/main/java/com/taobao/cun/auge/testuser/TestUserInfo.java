@@ -35,7 +35,7 @@ public class TestUserInfo {
 		Map<String,String> config = Maps.newHashMap();
 		config.put("date", "xxxxx");
 		info.setConfig(config);
-		info.setTaobaoUserIds(Lists.newArrayList(1234l));
+		info.setTaobaoUserIds(Lists.newArrayList(1234L));
 		System.out.println(JSON.toJSONString(info));
 	}
 }

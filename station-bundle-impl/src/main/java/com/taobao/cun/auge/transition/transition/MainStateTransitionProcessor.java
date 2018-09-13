@@ -42,8 +42,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 	
 	/**
 	 * 设置子状态变更
-	 * @param oldSubState
-	 * @param newSubState
+	 * @param tuple
 	 * @param transition
 	 */
 	public  void setStateTransition(StateTransitionTuple tuple, CuntaoLifecycleTransition transition){
@@ -52,7 +51,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 	
 	/**
 	 * 设置基本信息
-	 * @param partnerInstanceDto
+	 * @param baseTransitionInfo
 	 * @param transition
 	 */
 	protected void setTransitionInfo(BaseTransitionInfo baseTransitionInfo,CuntaoLifecycleTransition transition){
@@ -69,9 +68,9 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 	
 	/**
 	 * 采集更新更新Tuple
-	 * @param event
+	 * @param updateEvent
 	 * @param tuples
-	 * @param state
+	 * @param predicate
 	 */
 	protected void collectUpdateEventTuple(UpdateEvent updateEvent, List<StateTransitionTuple> tuples,BiPredicate<Map<String, Serializable>,Map<String, Serializable>> predicate) {
 		List<Map<String, Serializable>> modifiedRows = updateEvent.getModifyRowDataMaps();
@@ -88,9 +87,8 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 	
 	/**
 	 * 采集插入事件Tuple
-	 * @param event
+	 * @param insertEvent
 	 * @param tuples
-	 * @param state
 	 */
 	protected void collectInsertEventTuple(InsertEvent insertEvent, List<StateTransitionTuple> tuples,BiPredicate<Map<String, Serializable>,Map<String, Serializable>> predicate) {
 		List<Map<String, Serializable>> rows = insertEvent.getRowDataMaps();
@@ -124,11 +122,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 		return transitions;
 	}
 	
-	
-	
-	
-	
-	
+	@Override
 	public abstract Function<StateTransitionTuple,BaseTransitionInfo> getBaseTransitionInfoProvider();
 
 	@Override
@@ -182,12 +176,12 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 	public void calcSpendTime(StateTransitionTuple tuple,CuntaoLifecycleTransition transition){
 		//如果是插入说明是初始状态返回耗时0
 		if(tuple.isInsert()){
-			transition.setSpendTime(0l);
+			transition.setSpendTime(0L);
 			return;
 		}else if(tuple.isUpdate()){
 			String oldState = transition.getOldState();
 			if(StringUtils.isEmpty(oldState)){
-				transition.setSpendTime(0l);
+				transition.setSpendTime(0L);
 				return;
 			}
 			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
@@ -201,7 +195,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 				transition.setSpendTime(spendTime/1000);
 				return;
 			}
-			transition.setSpendTime(0l);
+			transition.setSpendTime(0L);
 		}
 	}
 	

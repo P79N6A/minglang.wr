@@ -640,6 +640,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 	}
 
+	@Override
 	public boolean scrapAssetByOrg(List<String> aliNoList) {
 		AssetExample cuntaoAssetExample = new AssetExample();
 		List<Asset> assetList = new ArrayList<Asset>();

@@ -867,6 +867,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
     //获取升级4.0村站待补交基础保证金金额
+    @Override
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId) {
         BondFreezingInfoDto info = new BondFreezingInfoDto();
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);

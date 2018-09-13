@@ -894,6 +894,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
 	public void createDistributionChannelId(Long taobaoUserId) {
 		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
 		if(instance == null){
@@ -938,6 +939,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
 	public void createSellerAndShopId(Long taobaoUserId) {
 		Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
 		if(qualification == null||qualification.getStatus() != 1){
@@ -1042,6 +1044,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return mirrorSellerDO;
 	}
 	
+	@Override
 	public void cancelShopMirror(Long taobaoUserId){
 		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
 		if(instance == null){
