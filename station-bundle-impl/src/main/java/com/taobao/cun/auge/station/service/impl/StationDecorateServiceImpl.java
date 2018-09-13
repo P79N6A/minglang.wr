@@ -4,6 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.fastjson.JSONObject;
@@ -14,7 +24,7 @@ import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
 import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
 import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
-
+import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -26,8 +36,10 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.DecorationInfoDecisionBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -45,11 +57,9 @@ import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
@@ -58,24 +68,19 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
-import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @Service("stationDecorateService")
 @HSFProvider(serviceInterface = StationDecorateService.class, clientTimeout = 8000)
 public class StationDecorateServiceImpl implements StationDecorateService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StationDecorateServiceImpl.class);
+
+    
 	@Autowired
 	StationDecorateBO stationDecorateBO;
 
@@ -135,6 +140,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private Long parentId;
 	@Autowired
 	OrgStructReadService orgStructReadService;
+	
+	@Autowired
+	private PartnerStationRelMapper partnerStationRelMapper;
 
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) {
@@ -664,13 +672,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 
 	@Override
 	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds) {
-		for(Long taobaoUserId :taobaoUserIds){
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andTypeEqualTo("TP").andStateIn(Lists.newArrayList("SERVICING","DECORATING"));
+		 List<PartnerStationRel> rels = partnerStationRelMapper.selectByExample(example);
+		for(PartnerStationRel rel :rels){
 			try {
-				this.openAccessCbuMarket(taobaoUserId);
+				this.openAccessCbuMarket(rel.getTaobaoUserId());
+				logger.info("OpenAccessCbuMarket success:"+rel.getTaobaoUserId());
 			} catch (Exception e) {
-				//ingore
+				logger.info("OpenAccessCbuMarket error:["+e.getMessage()+"]"+rel.getTaobaoUserId());
 			}
 		}
-		
 	}
 }
