@@ -69,6 +69,7 @@ JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.port=1090"
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.ssl=false"
 JAVA_OPTS="${JAVA_OPTS} -Dcom.sun.management.jmxremote.authenticate=false"
 JAVA_OPTS="${JAVA_OPTS} -Djava.rmi.server.hostname=$HOSTNAME"
+JAVA_OPTS="${JAVA_OPTS} -DdelayEagleEye=true"
 JAVA_OPTS="${JAVA_OPTS} -XX:+UsePerfData"
 
 SPRINGBOOT_OPTS="--server.port=7001 --management.port=7002"
