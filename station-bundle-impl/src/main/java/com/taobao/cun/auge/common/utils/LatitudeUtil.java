@@ -2,10 +2,13 @@ package com.taobao.cun.auge.common.utils;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.common.Address;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,5 +40,26 @@ public final class LatitudeUtil {
 			logger.error("获取经纬度坐标失败，lastDivisionId = " + lastDivisionId + " ,addressDetail = " + addressDetail, e);
 			return Collections.<String, String> emptyMap();
 		}
+	}
+
+	public static void buildPOI(Address address) {
+		String villageDetail = address.getVillageDetail();
+		String lastDivisionId = getLastDivisionId(address);
+		String addressDetail = StringUtils.isNotEmpty(villageDetail) ? villageDetail : address.getAddressDetail();
+		Map<String, String> map = LatitudeUtil.findLatitude(lastDivisionId, addressDetail);
+		address.setLat(PositionUtil.converUp(map.get("lat")));
+		address.setLng(PositionUtil.converUp(map.get("lng")));
+	}
+
+	private static String getLastDivisionId(Address address) {
+		String lastDivisionId = null;
+		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(address.getTown()))
+			.orElse(StringUtils.trimToNull(address.getCounty()));
+		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId))
+			.orElse(StringUtils.trimToNull(address.getCity()));
+		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId))
+			.orElse(StringUtils.trimToNull(address.getProvince()));
+		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId)).orElse("");
+		return lastDivisionId;
 	}
 }
