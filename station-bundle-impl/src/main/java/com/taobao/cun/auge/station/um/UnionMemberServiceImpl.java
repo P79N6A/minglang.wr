@@ -13,7 +13,6 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
-import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
