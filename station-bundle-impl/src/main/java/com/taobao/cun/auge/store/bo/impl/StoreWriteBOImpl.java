@@ -138,6 +138,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	 @Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+	 
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException {
