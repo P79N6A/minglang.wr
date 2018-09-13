@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.um;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
@@ -10,15 +12,13 @@ import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.request.UnionMemberAddDto;
 import com.taobao.cun.auge.station.request.UnionMemberCheckDto;
 import com.taobao.cun.auge.station.request.UnionMemberUpdateDto;
@@ -59,9 +59,6 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private StateMachineService stateMachineService;
-
-    @Autowired
-    private StationNumConfigBO stationNumConfigBO;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -182,7 +179,24 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void closeUnionMember(Long stationId, OperatorDto operatorDto) {
+        ValidateUtils.notNull(stationId);
+        ValidateUtils.validateParam(operatorDto);
 
+        String operator = operatorDto.getOperator();
+        Long parentTaobaoUserId = Long.valueOf(operator);
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+            parentTaobaoUserId);
+
+        PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+        Long parentStationId = umInstanceDto.getParentStationId();
+
+        if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            throw new AugeServiceException("不能关闭非自己名下的优盟");
+        }
+
+        LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
+            StateMachineEvent.CLOSED_EVENT);
+        stateMachineService.executePhase(phaseEvent);
     }
 
 }
