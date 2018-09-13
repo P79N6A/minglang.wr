@@ -632,7 +632,7 @@
 			<dependency>
 				<groupId>com.taobao.place</groupId>
 				<artifactId>place-client</artifactId>
-				<version>1.3.92-health-SNAPSHOT</version>
+				<version>1.4.23</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tmall.sic</groupId>
@@ -728,7 +728,7 @@
 			<dependency>
 				<groupId>com.alibaba.boot</groupId>
 				<artifactId>alimetrics-spring-boot-starter</artifactId>
-				<version>1.6.3-4</version>
+				<version>1.6.3-1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.cun.endor</groupId>

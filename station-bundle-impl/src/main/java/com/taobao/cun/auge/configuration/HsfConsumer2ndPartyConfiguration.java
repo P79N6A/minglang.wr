@@ -62,6 +62,7 @@ import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
+import com.taobao.place.client.PlaceServiceContext;
 import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
@@ -449,5 +450,22 @@ public class HsfConsumer2ndPartyConfiguration  {
            return context.hsfConsumerBuilder(IRailService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
+    
+    /**
+     * <bean id="placeServiceContext" class="com.taobao.place.client.PlaceServiceContext">
+    <property name="hsfConsumerVersion" value="1.0.0.daily" /> <!-- 线上预发1.0.0 -->
+    <property name="appName" value="place"/>
+		</bean>
+
+     * @return
+     */
+    @Bean
+    public PlaceServiceContext placeServiceContext(@Value("${storeService.version}") String version){
+    	PlaceServiceContext placeServiceContext = new PlaceServiceContext();
+    	placeServiceContext.setHsfConsumerVersion(version);
+    	placeServiceContext.setAppName("place");
+    	return placeServiceContext;
+    }
+    
     
 }
