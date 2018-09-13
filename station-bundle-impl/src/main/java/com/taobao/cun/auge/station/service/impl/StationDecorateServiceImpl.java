@@ -677,6 +677,5 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				logger.info("OpenAccessCbuMarket error:"+taobaoUserId);
 			}
 		}
-		
 	}
 }
