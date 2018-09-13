@@ -282,7 +282,8 @@ public class AssetServiceImpl implements AssetService{
 	public void checkAssetInfo(List<Long> assetIds) {
 		assetSynBO.checkAssetInfo(assetIds);
 	}
-	
+
+	@Override
 	public boolean scrapAssetByOrg(List<String> aliNoList){
 		return assetSynBO.scrapAssetByOrg(aliNoList);
 	}

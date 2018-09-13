@@ -77,7 +77,7 @@ public class PartnerInstanceStateTransition extends MainStateTransitionProcessor
 				transition.setSpendTime(spendTime/1000);
 				return;
 			}
-			transition.setSpendTime(0l);
+			transition.setSpendTime(0L);
 		}else{
 			super.calcSpendTime(tuple, transition);
 		}

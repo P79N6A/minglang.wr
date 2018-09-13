@@ -20,7 +20,8 @@ import com.taobao.cun.auge.transition.transition.SubStateTransitionProcessor;
  */
 @Component
 public class BondFrozenStateTransition extends SubStateTransitionProcessor{
-	
+
+	@Override
 	public Boolean isMatched(String action,String tableName) {
 		return ("INSERT".equals(action)||"UPDATE".equals(action)) && "partner_lifecycle_items".equals(tableName);
 	}

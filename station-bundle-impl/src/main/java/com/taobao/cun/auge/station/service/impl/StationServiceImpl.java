@@ -171,6 +171,7 @@ public class StationServiceImpl implements StationService {
      * @param feature key:stMaxStorage,stMaxDoStorage,stStorageArea,stStaffNum
      */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
     public void applyLogisticAbility(StationDto stationDto) {
 	    if(stationDto != null && stationDto.getFeature() != null){
 	       stationBO.updateStation(stationDto);
@@ -190,6 +191,7 @@ public class StationServiceImpl implements StationService {
     }
 
 	//根据站点模式获取站点名称后缀
+	@Override
     public String getStationNameSuffix(Long stationId,String key) {
         //stationId为空代表新增的场景，由外围参数决定返回类型MOMBABY|ELEC|FMCG:门店   v4:优品服务站  v3:农村淘宝服务站
         if(stationId == null || stationId == 0L){
@@ -213,6 +215,7 @@ public class StationServiceImpl implements StationService {
         }
     }
 
+    @Override
     public boolean getStationInfoValidateRule(Long instanceId, StationDto station) {
         Assert.notNull(instanceId);
         BeanValidator.validateWithThrowable(station);

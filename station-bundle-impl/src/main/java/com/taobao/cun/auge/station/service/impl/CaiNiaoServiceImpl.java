@@ -609,6 +609,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	//无县仓的村点feature同步菜鸟服务,opMode:y新增 n删除
+	@Override
     public void synNoWarehouseStationFeature(Long cainiaoStationId,StationFeatureOpModeEnum opMode) {
         if(cainiaoStationId == null || opMode == null){
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check is null"); 

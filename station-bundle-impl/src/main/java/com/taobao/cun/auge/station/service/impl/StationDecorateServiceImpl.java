@@ -230,6 +230,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
 	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) {
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateReflectDto);
@@ -451,6 +452,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		}
 	}
 
+	@Override
 	public StationDecorateDto getInfoById(Long Id) {
 		ValidateUtils.notNull(Id);
 		StationDecorate sd = stationDecorateBO.getStationDecorateById(Id);
@@ -498,6 +500,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				.collect(Collectors.toList());
 	}
 
+	@Override
 	public DecorationInfoDecisionDto getDecorationDecisionById(Long id) {
 		ValidateUtils.notNull(id);
 		DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
@@ -513,6 +516,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		return dto;
 	}
 
+	@Override
 	public void auditDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
 		// 参数校验
 		BeanValidator.validateWithThrowable(decorationInfoDecisionDto);
@@ -535,10 +539,12 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		decorationInfoDecisionBO.updateDecorationInfo(dto);
 	}
 
+	@Override
 	public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
 		decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
 		ValidateUtils.notNull(decorationInfoDecisionDto.getStationId());
@@ -565,6 +571,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		processService.startApproveProcess(startProcessDto);
 	}
 
+	@Override
 	public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId) {
 		ValidateUtils.notNull(stationId);
 		DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoByStationId(stationId);
@@ -580,6 +587,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		return dto;
 	}
 
+	@Override
 	public void fixStationDecorate(List<Long> stationIds) {
 		for (Long stationId : stationIds) {
 			Station station = stationBO.getStationById(stationId);

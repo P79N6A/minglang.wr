@@ -55,7 +55,8 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	private static final ThreadLocal<List<ExecuteError>> threadLocal = new ThreadLocal<List<ExecuteError>>();
 	
 	private static final ThreadLocal<FenceInstanceJob> fenceInstanceJobThreadLocal = new ThreadLocal<FenceInstanceJob>();
-	
+
+	@Override
 	public void execute(F fenceInstanceJob) {
 		if(!fenceInstanceJobBo.lockJob(fenceInstanceJob.getId())) {
 			return;

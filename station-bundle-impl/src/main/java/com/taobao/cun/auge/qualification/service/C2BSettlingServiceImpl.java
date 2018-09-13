@@ -180,6 +180,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
      * @param taobaoUserId
      * @return
      */
+	@Override
     public boolean hasNewSignProcotol(Long taobaoUserId){
         PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
@@ -230,6 +231,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	}
 
 	//签订4.0新的入驻协议
+	@Override
     public C2BSignSettleProtocolResponse signNewSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
         C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
         try {

@@ -109,7 +109,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
 	}
 	
-	
+	@Override
 	public void invalidQualification(Long taobaoUserId){
 		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification == null) {
@@ -138,7 +138,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			 }
 		 }
 	}
-	
+
+	@Override
 	public void recoverQualification(Long taobaoUserId){
 		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification == null) {
@@ -198,7 +199,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
 				String errorMsg = c2BErrorMessageConverter.convertErrorMsg(cuntaoQualification.getErrorCode(), cuntaoQualification.getErrorMessage());
 				qualification.setErrorMessage(errorMsg);
-				if(StringUtils.isNotEmpty(qualification.getQualiOss()) && QualificationStatus.VALID==qualification.getStatus()){
+				if(StringUtils.isNotEmpty(qualification.getQualiOss()) && QualificationStatus.VALID.equals(qualification.getStatus())){
 					try {
 						Result<String> result = scPortalService.getMaskScImage(qualification.getQualiOss());
 						if(result.isSuccessful()){
@@ -313,7 +314,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		return list;
 	}
 
-
+	@Override
 	 public void syncInvalidQuali(int pageSize){
 		 CuntaoQualificationPageCondition condition = new CuntaoQualificationPageCondition();
 		 condition.setPageSize(pageSize);
@@ -323,7 +324,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		 for(CuntaoQualification quali: qualis){
 			 Qualification havanaQuali = this.queryHavanaC2BQualification(quali.getTaobaoUserId());
 			 if(havanaQuali != null && !QualificationStatus.VALID.equals(havanaQuali.getStatus())){
-				 if(havanaQuali.getStatus() == QualificationStatus.IN_VALID && !"1".equals(quali.getUpdateFlag())){
+				 if(havanaQuali.getStatus().equals(QualificationStatus.IN_VALID) && !"1".equals(quali.getUpdateFlag())){
 					 logger.info("invalid quali taobaoUserId["+quali.getTaobaoUserId()+"] havanaStatus["+havanaQuali.getStatus()+"]");
 					 QLCAbnormalRequest request = new QLCAbnormalRequest();
 					 request.setUserId(quali.getTaobaoUserId());
@@ -362,7 +363,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	}
 
 	@Override
-
 	public Qualification queryLocalQualification(Long taobaoUserId) {
 		CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQulification == null){
@@ -373,6 +373,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		
 		return qualification;
 	}
+
+	@Override
 	public List<Qualification> queryHistoryQualification(Long taobaoUserId) {
 		List<CuntaoQualification> qualis = cuntaoQualificationBO.queryHistoriesByTaobaoUserId(taobaoUserId);
 		return qualis.stream().map(q -> buildQulification(q)).collect(Collectors.toList());

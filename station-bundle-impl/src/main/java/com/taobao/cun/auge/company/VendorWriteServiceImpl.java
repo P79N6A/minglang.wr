@@ -90,7 +90,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			}
 		}
 		try {
-			result = result.of(vendorWriteBO.addVendor(cuntaoServiceVendorDto));
+			result = Result.of(vendorWriteBO.addVendor(cuntaoServiceVendorDto));
 			return result;
 		} catch (Exception e) {
 			logger.error("addVendor error!",e);
