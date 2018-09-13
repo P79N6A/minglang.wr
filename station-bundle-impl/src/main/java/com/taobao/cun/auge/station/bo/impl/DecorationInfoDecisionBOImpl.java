@@ -36,6 +36,7 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
     AttachmentService criusAttachmentService;
     
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
     public Long addDecorationInfoDecision(DecorationInfoDecisionDto decorationInfoDto) {
         validateDecorationInfo(decorationInfoDto);
         DecorationInfoDecision record = StationDecorateConverter.toDecorationInfoDecision(decorationInfoDto);
@@ -48,6 +49,7 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
     public void updateDecorationInfo(DecorationInfoDecisionDto decorationInfoDto) {
         ValidateUtils.validateParam(decorationInfoDto);
         ValidateUtils.notNull(decorationInfoDto.getId());
@@ -80,6 +82,7 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
         ValidateUtils.notNull(decorateInfoDto.getStatus());
     }
 
+    @Override
     public DecorationInfoDecision queryDecorationInfoByStationId(Long stationId) {
         ValidateUtils.notNull(stationId);
         DecorationInfoDecisionExample example = new DecorationInfoDecisionExample();

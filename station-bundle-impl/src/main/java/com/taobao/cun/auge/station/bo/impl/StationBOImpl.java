@@ -193,6 +193,7 @@ public class StationBOImpl implements StationBO {
 		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
 	}
 
+	@Override
     public int getSameNameInProvinceCnt(String stationName, String province) {
         ValidateUtils.notNull(stationName);
         ValidateUtils.notNull(province);

@@ -88,7 +88,8 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Boolean initEndorOrg(Long stationId) {
 		return storeWriteBO.initStoreEndorOrg(stationId);
 	}
-	
+
+	@Override
 	public void batchInitStoreEndorOrg(){
 		storeWriteBO.batchInitStoreEndorOrg();
 	}

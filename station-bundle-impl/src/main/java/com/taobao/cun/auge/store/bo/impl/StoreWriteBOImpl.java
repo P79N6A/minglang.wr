@@ -301,6 +301,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return result.getResult();
 	}
 
+	@Override
 	public void initStoreEmployees(Long stationId) {
 		OperatorDto operator = new OperatorDto();
 		operator.setOperator("system");
@@ -383,6 +384,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return updateResult.isSuccess();
 	}
 
+	@Override
 	public Boolean batchUpdateStore(List<Long> sharedStoreIds) {
 		for (Long shareStoreId : sharedStoreIds) {
 			this.updateStoreTag(shareStoreId, null);
@@ -664,6 +666,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 
+	@Override
 	public Boolean initSampleWarehouse(Long stationId) {
 		try {
 			StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
@@ -686,6 +689,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 
+	@Override
 	public Boolean initStoreWarehouse(Long stationId) {
 		try {
 			StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
@@ -701,18 +705,19 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 
+	@Override
 	public Long tb2gbCode(Long taobaocode) {
 		if (taobaocode == null) {
 			return null;
 		}
 		// 地址库接口转不出来，人工转一下
 		// 江苏淮安清江浦
-		if (taobaocode == 320802l) {
-			return 320812l;
+		if (taobaocode == 320802L) {
+			return 320812L;
 		}
 		// 江西九江庐山
-		if (taobaocode == 360427l) {
-			return 360483l;
+		if (taobaocode == 360427L) {
+			return 360483L;
 		}
 		if (taobaocode != null) {
 			return defaultDivisionAdapterManager.tbCodeToGbCode(taobaocode);
@@ -789,6 +794,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return false;
 	}
 
+	@Override
 	public void batchInitStoreEndorOrg() {
 		CuntaoStoreExample example = new CuntaoStoreExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andStoreCategoryEqualTo("FMCG");
@@ -808,6 +814,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 	
+	@Override
 	public Integer getCountyCode(String countyCode,String countyDetail,String cityCode){
 		Long gbCode = tb2gbCode(Long.parseLong(countyCode));
 		if (gbCode == null) {
@@ -944,6 +951,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 	}
 	
+	@Override
 	public void syncStore(){
 		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
 		  for(Long storeId :storeIds){

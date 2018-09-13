@@ -13,7 +13,7 @@ public abstract class AbstractLifecycleTransitionRecorder implements LifecycleTr
 	@Autowired
 	private CuntaoLifecycleTransitionMapper lifeCycleTransitionMapper;
 
-	 
+	@Override
 	public void record(EventMessage message) {
 			List<CuntaoLifecycleTransition> transitions = buildTransition(message);
 			if(transitions != null){
