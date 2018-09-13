@@ -65,6 +65,8 @@ import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -76,6 +78,9 @@ import org.springframework.util.Assert;
 @HSFProvider(serviceInterface = StationDecorateService.class, clientTimeout = 8000)
 public class StationDecorateServiceImpl implements StationDecorateService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StationDecorateServiceImpl.class);
+
+    
 	@Autowired
 	StationDecorateBO stationDecorateBO;
 
@@ -667,8 +672,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		for(Long taobaoUserId :taobaoUserIds){
 			try {
 				this.openAccessCbuMarket(taobaoUserId);
+				logger.info("OpenAccessCbuMarket success:"+taobaoUserId);
 			} catch (Exception e) {
-				//ingore
+				logger.info("OpenAccessCbuMarket error:"+taobaoUserId);
 			}
 		}
 		
