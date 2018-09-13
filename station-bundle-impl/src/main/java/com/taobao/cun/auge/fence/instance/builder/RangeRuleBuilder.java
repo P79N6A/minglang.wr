@@ -31,24 +31,19 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 		}
 		//文本过滤
 		if(CollectionUtils.isNotEmpty(fenceRule.getMatch()) && !Strings.isNullOrEmpty(station.getTown())){
-			Map<String, String> textFilters = Maps.newHashMap();
-			for(String text : fenceRule.getMatch()) {
-				if(text.equals("belongVillage")) {
-					if(!Strings.isNullOrEmpty(station.getVillageDetail())) {
-						textFilters.put("belongVillage", station.getVillageDetail());
+			Long townId = Long.parseLong(station.getTown());
+			if(townId > 0) {
+				Map<String, String> textFilters = Maps.newHashMap();
+				for(String text : fenceRule.getMatch()) {
+					if(text.equals("belongVillage")) {
+						if(!Strings.isNullOrEmpty(station.getVillageDetail())) {
+							textFilters.put("belongVillage", station.getVillageDetail());
+						}
 					}
 				}
-				
-				/*if(text.equals("landmark")) {
-					textFilters.put("landmark", text);
+				if(!textFilters.isEmpty()) {
+					result.put(FenceConstants.RANGE_MATCH, textFilters);
 				}
-				
-				if(text.equals("receiveVillage")) {
-					textFilters.put("receiveVillage", text);
-				}*/
-			}
-			if(!textFilters.isEmpty()) {
-				result.put(FenceConstants.RANGE_MATCH, textFilters);
 			}
 		}
 		//行政区划
@@ -70,8 +65,11 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				}
 			}else {
 				if(!Strings.isNullOrEmpty(station.getTown())) {
-					division.put("code", station.getTown());
-					division.put("name", station.getTownDetail());
+					Long townId = Long.parseLong(station.getTown());
+					if(townId > 0) {
+						division.put("code", station.getTown());
+						division.put("name", station.getTownDetail());
+					}
 				}
 			}
 			if(!division.isEmpty()) {

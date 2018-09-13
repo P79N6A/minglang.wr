@@ -454,7 +454,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(record == null){
 			return null;
 		}
-		if(!StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode().equals(record.getStatus())){
+		if(!"APPROVE_PASS".equals(record.getDesignAuditStatus())){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修设计图纸未审核完成");
 		}
 		StationDecorate updateRecord = new StationDecorate();
@@ -463,7 +463,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		com.taobao.cun.common.operator.OperatorDto  operatorDto = new com.taobao.cun.common.operator.OperatorDto();
 		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		operatorDto.setOperator(stationDecorateCheckDto.getOperator());
-		record.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
+		updateRecord.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
 		updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
 		if(stationDecorateCheckDto.getCheckDoorAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckDoorAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR, operatorDto);
