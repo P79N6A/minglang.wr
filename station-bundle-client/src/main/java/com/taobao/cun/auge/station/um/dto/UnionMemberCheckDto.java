@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.request;
+package com.taobao.cun.auge.station.um.dto;
 
 import javax.validation.constraints.NotNull;
 

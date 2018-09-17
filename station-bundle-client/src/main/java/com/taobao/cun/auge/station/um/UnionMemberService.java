@@ -1,11 +1,10 @@
 package com.taobao.cun.auge.station.um;
 
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
-import com.taobao.cun.auge.station.request.UnionMemberAddDto;
-import com.taobao.cun.auge.station.request.UnionMemberCheckDto;
-import com.taobao.cun.auge.station.request.UnionMemberUpdateDto;
-import com.taobao.cun.auge.station.response.UnionMemberCheckResult;
+import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
 
 /**
  * 优盟管理服务
@@ -38,11 +37,10 @@ public interface UnionMemberService {
     void updateUnionMember(UnionMemberUpdateDto updateDto);
 
     /**
-     * 关闭优盟
+     * 开通或关闭优盟
      *
-     * @param stationId
-     * @param operatorDto
+     * @param stateChangeDto
      */
-    void closeUnionMember(Long stationId, OperatorDto operatorDto);
+    void openOrCloseUnionMember(UnionMemberStateChangeDto stateChangeDto);
 
 }

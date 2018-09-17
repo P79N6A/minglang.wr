@@ -20,9 +20,10 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.request.UnionMemberAddDto;
-import com.taobao.cun.auge.station.request.UnionMemberCheckDto;
-import com.taobao.cun.auge.station.request.UnionMemberUpdateDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
+import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -149,12 +150,13 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void closeUnionMember(Long stationId, OperatorDto operatorDto) {
-        ValidateUtils.notNull(stationId);
-        ValidateUtils.validateParam(operatorDto);
+    public void openOrCloseUnionMember(UnionMemberStateChangeDto stateChangeDto) {
+        BeanValidator.validateWithThrowable(stateChangeDto);
 
-        String operator = operatorDto.getOperator();
+        String operator = stateChangeDto.getOperator();
         Long parentTaobaoUserId = Long.valueOf(operator);
+        Long stationId = stateChangeDto.getStationId();
+
         PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
             parentTaobaoUserId);
 

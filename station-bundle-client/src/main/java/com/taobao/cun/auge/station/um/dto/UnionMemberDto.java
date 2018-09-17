@@ -1,8 +1,9 @@
-package com.taobao.cun.auge.station.dto;
+package com.taobao.cun.auge.station.um.dto;
 
 import java.io.Serializable;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.station.dto.StationDto;
 
 /**
  * 优盟实体dto

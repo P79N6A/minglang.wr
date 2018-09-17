@@ -13,24 +13,14 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.validate.StationValidator;
-import com.taobao.cun.auge.store.dto.StoreCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 /**
  * 优盟入驻中阶段组件
