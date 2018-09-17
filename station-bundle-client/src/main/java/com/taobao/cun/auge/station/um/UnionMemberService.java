@@ -22,7 +22,7 @@ public interface UnionMemberService {
     UnionMemberCheckResult checkUnionMember(UnionMemberCheckDto checkDto);
 
     /**
-     * 新增优盟
+     * 新增优盟,但不开通
      *
      * @param addDto
      * @return
