@@ -437,6 +437,16 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setTaobaoUserId(userId);
 		result.setCourseCode(code);
 		result.setExamUrl(examUrl+examId);
+		
+		// 查询考试成绩
+		ResultModel<ExamInstanceDto> er = examInstanceService
+				.queryValidInstance(userId, new Long(examId));
+		if (er.isSuccess() && er.getResult() != null
+				&& ExamInstanceStatusEnum.PASS.getCode().equals(er.getResult().getStatus().getCode())) {
+			result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
+			return result;
+		}
+					
 		PartnerCourseRecord dto = partnerPeixunBO.queryOfflinePeixunRecord(userId, courseType, code);
 		if (dto == null) {//未培训
 			result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN);
