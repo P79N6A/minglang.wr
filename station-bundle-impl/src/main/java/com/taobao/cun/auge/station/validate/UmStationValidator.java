@@ -75,7 +75,7 @@ public final class UmStationValidator {
         addressInvalidWord.addAll(generalInvalidWord);
     }
 
-    private StationValidator() {
+    private UmStationValidator() {
 
     }
 
@@ -114,20 +114,6 @@ public final class UmStationValidator {
         Address address = stationDto.getAddress();
         //村地址基础校验
         addressFormatCheck(address);
-
-        String stationNum = stationDto.getStationNum();
-        if (StringUtils.isEmpty(stationNum)) {
-
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "服务站编号不能为空");
-        }
-        stationNum = stationNum.toUpperCase();
-        if (stationNum.length() > 16) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村服务站编号长度0-16位");
-        }
-
-        if (isSpecialStr(stationNum, RULE_REGEX_STATIONMUN)) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村服务站编号不能含有特殊字符");
-        }
     }
 
     private static boolean isSpecialStr(String str, String rule) {
