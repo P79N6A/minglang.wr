@@ -8,7 +8,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
-import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.station.validate.UmStationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public  class UmLifeCycleValidator {
         ValidateUtils.notNull(partnerInstanceDto.getType());
         StationDto stationDto = partnerInstanceDto.getStationDto();
         PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-        StationValidator.validateStationInfo(stationDto);
+        UmStationValidator.validateStationInfo(stationDto);
         PartnerValidator.validatePartnerInfo(partnerDto);
         //校验合作店名称是否合法
         lifeCycleValidator.stationModelBusCheck(partnerInstanceDto);
