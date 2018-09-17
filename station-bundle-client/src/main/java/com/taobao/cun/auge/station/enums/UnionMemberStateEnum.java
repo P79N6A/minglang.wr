@@ -12,10 +12,14 @@ import java.util.Map;
 public class UnionMemberStateEnum implements Serializable {
 
     private static final long serialVersionUID = 4887324018125491747L;
-    // 已开通
+    /**
+     * 已开通
+     */
     public static final UnionMemberStateEnum SERVICING = new UnionMemberStateEnum("SERVICING", "已开通");
 
-    // 未开通
+    /**
+     * 未开通
+     */
     public static final UnionMemberStateEnum CLOSED = new UnionMemberStateEnum("CLOSED", "未开通");
 
     private static final Map<String, UnionMemberStateEnum> MAPPINGS = new HashMap<String, UnionMemberStateEnum>();

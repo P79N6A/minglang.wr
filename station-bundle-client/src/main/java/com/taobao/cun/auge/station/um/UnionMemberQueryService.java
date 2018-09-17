@@ -16,6 +16,7 @@ public interface UnionMemberQueryService {
      * 根据stationId，查询优盟信息
      *
      * @param stationId
+     * @param operatorDto
      * @return
      */
     UnionMemberDto getUnionMember(Long stationId, OperatorDto operatorDto);
