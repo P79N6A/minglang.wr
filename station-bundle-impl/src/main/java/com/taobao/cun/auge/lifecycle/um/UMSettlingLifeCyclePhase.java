@@ -55,7 +55,7 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     private UmLifeCycleValidator umLifeCycleValidator;
 
     @Override
-    @PhaseStepMeta(descr = "创建村小二站点")
+    @PhaseStepMeta(descr = "创建或更新优盟站点")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         //前置校验
@@ -91,7 +91,7 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "创建村小二")
+    @PhaseStepMeta(descr = "创建优盟")
     public void createOrUpdatePartner(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         addPartner(partnerInstanceDto);
