@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.um.dto;
 import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.station.um.enums.UnionMemberStateChangeEnum;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 
 /**
  * 优盟状态变更dto
@@ -17,8 +17,8 @@ public class UnionMemberStateChangeDto extends OperatorDto {
     @NotNull(message = "stationId not null")
     private Long stationId;
 
-    @NotNull(message = "stateChange not null")
-    private UnionMemberStateChangeEnum stateChange;
+    @NotNull(message = "state not null")
+    private UnionMemberStateEnum state;
 
     public Long getStationId() {
         return stationId;
@@ -28,11 +28,11 @@ public class UnionMemberStateChangeDto extends OperatorDto {
         this.stationId = stationId;
     }
 
-    public UnionMemberStateChangeEnum getStateChange() {
-        return stateChange;
+    public UnionMemberStateEnum getState() {
+        return state;
     }
 
-    public void setStateChange(UnionMemberStateChangeEnum stateChange) {
-        this.stateChange = stateChange;
+    public void setState(UnionMemberStateEnum state) {
+        this.state = state;
     }
 }

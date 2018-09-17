@@ -1,9 +1,7 @@
 package com.taobao.cun.auge.station.um;
 
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
-import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
@@ -18,13 +16,16 @@ import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
-import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateChangeEnum;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.slf4j.Logger;
@@ -164,16 +165,27 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentStationId = umInstanceDto.getParentStationId();
 
         if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-            throw new AugeServiceException("不能关闭非自己名下的优盟");
+            throw new AugeServiceException("不能关闭非自己名下的优盟合作店");
         }
 
-        LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
-            StateMachineEvent.CLOSED_EVENT);
-        stateMachineService.executePhase(phaseEvent);
-        //
-        //LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(instanceDto,
-        //    StateMachineEvent.SERVICING_EVENT);
-        //stateMachineService.executePhase(phaseEvent);
+        PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
+        UnionMemberStateEnum targetStateEnum = stateChangeDto.getState();
+
+        //开通
+        if(UnionMemberStateEnum.SERVICING.equals(targetStateEnum)){
+            //当前状态必须为未开通和已关闭
+            if(PartnerInstanceStateEnum.SETTLING.equals(nowStateEnum) || PartnerInstanceStateEnum.CLOSED.equals(nowStateEnum)){
+                LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
+                    StateMachineEvent.SERVICING_EVENT);
+                stateMachineService.executePhase(phaseEvent);
+            }
+            //关闭
+        } else if(UnionMemberStateEnum.CLOSED.equals(targetStateEnum)){
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
+                StateMachineEvent.CLOSED_EVENT);
+            stateMachineService.executePhase(phaseEvent);
+        }
+
     }
 
 }

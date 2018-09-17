@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.enums;
+package com.taobao.cun.auge.station.um.enums;
 
 import java.io.Serializable;
 import java.util.HashMap;

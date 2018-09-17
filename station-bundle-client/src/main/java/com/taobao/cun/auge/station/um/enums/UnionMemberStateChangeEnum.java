@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.taobao.cun.auge.station.enums.UnionMemberStateEnum;
-
 public class UnionMemberStateChangeEnum implements Serializable {
 
     private static final long serialVersionUID = -722700951409528045L;
