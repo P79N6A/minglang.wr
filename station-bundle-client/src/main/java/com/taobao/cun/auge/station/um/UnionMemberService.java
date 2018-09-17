@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.um;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.station.request.UnionMemberAddDto;
 import com.taobao.cun.auge.station.request.UnionMemberCheckDto;
 import com.taobao.cun.auge.station.request.UnionMemberUpdateDto;
@@ -19,7 +20,7 @@ public interface UnionMemberService {
      * @param checkDto
      * @return
      */
-    UnionMemberCheckResult checkUnionMember(UnionMemberCheckDto checkDto);
+    AliPaymentAccountDto checkUnionMember(UnionMemberCheckDto checkDto);
 
     /**
      * 新增优盟,但不开通
@@ -28,14 +29,6 @@ public interface UnionMemberService {
      * @return
      */
     Long addUnionMember(UnionMemberAddDto addDto);
-
-    /**
-     * 新增优盟，并开通
-     *
-     * @param addDto
-     * @return
-     */
-    Long addAndOpenUnionMember(UnionMemberAddDto addDto);
 
     /**
      * 修改优盟
