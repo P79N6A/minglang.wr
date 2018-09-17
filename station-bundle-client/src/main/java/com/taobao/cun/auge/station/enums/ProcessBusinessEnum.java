@@ -34,6 +34,8 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum serviceAbilityDecision = new ProcessBusinessEnum("serviceAbilityDecision", "服务能力审批");
 	public static final ProcessBusinessEnum decorationDesignAudit = new ProcessBusinessEnum("decorationDesignAudit", "装修设计图纸审批");
 	public static final ProcessBusinessEnum decorationCheckAudit = new ProcessBusinessEnum("decorationCheckAudit", "装修完工图纸审批");
+	public static final ProcessBusinessEnum serviceAbilitySHRHDecision = new ProcessBusinessEnum("serviceAbilitySHRHDecision", "送货入户服务审批");
+
 
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
@@ -55,6 +57,8 @@ public class ProcessBusinessEnum implements Serializable {
 		mappings.put("serviceAbilityDecision", serviceAbilityDecision);
 		mappings.put("decorationDesignAudit", decorationDesignAudit);
 		mappings.put("decorationCheckAudit", decorationCheckAudit);
+		mappings.put("serviceAbilitySHRHDecision", serviceAbilitySHRHDecision);
+
 	}
 
 	public ProcessBusinessEnum(String code, String desc) {
