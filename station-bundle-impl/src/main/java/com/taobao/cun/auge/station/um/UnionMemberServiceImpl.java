@@ -25,6 +25,13 @@ import com.taobao.cun.auge.station.response.UnionMemberCheckResult;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.security.util.SensitiveDataUtil;
+import com.taobao.uic.common.domain.BasePaymentAccountDO;
+import com.taobao.uic.common.domain.BaseUserDO;
+import com.taobao.uic.common.domain.ResultDO;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +66,18 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Autowired
     private StateMachineService stateMachineService;
 
+    @Autowired
+    private UicReadServiceClient uicReadServiceClient;
+
+    @Autowired
+    private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
+
+    private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
+
+    private static final int PAYMENT_ACCOUNT_TYPE_PSERSON = 2;
+
+    private static final int ALIPAY_COMPANY_PROMOTED_TYPE = 4;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public UnionMemberCheckResult checkUnionMember(UnionMemberCheckDto checkDto) {
@@ -69,10 +88,45 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
         UnionMemberCheckResult result = new UnionMemberCheckResult();
 
-        //查询支付宝信息，该接口，已经做了账号绑定等校验
-        AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
-            .queryStationMemberPaymentAccountHideByNick(taobaoNick);
-        Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
+        ResultDO<BaseUserDO> baseUserDOresult = uicReadServiceClient.getBaseUserByNick(taobaoNick);
+        if (baseUserDOresult == null || !baseUserDOresult.isSuccess() || baseUserDOresult.getModule() == null) {
+            result.setSuccess(false);
+            result.setErrorMessage("该淘宝账号不存在或状态异常，请与申请人核实!");
+            return result;
+        }
+        BaseUserDO baseUserDO = baseUserDOresult.getModule();
+        if (baseUserDO.getUserId() == null || baseUserDO.getUserId() == 0) {
+            result.setSuccess(false);
+            result.setErrorMessage("该淘宝账号不存在或状态异常，请与申请人核实!");
+            return result;
+        }
+
+        ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient
+            .getAccountByUserId(baseUserDO.getUserId());
+        if (basePaymentAccountDOResult == null || !basePaymentAccountDOResult.isSuccess()
+            || basePaymentAccountDOResult.getModule() == null) {
+            result.setSuccess(false);
+            result.setErrorMessage("该淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
+            return result;
+        }
+        BasePaymentAccountDO basePaymentAccountDO = basePaymentAccountDOResult.getModule();
+        // 校验是不是个人买家
+        int accountType = basePaymentAccountDO.getAccountType();
+        if (accountType != PAYMENT_ACCOUNT_TYPE_PSERSON) {
+            result.setSuccess(false);
+            result.setErrorMessage("申请人的支付宝账号并非个人实名认证的支付宝账号（暂不支持企业支付宝等其他形式的账号），请联系申请人做核实!");
+            return result;
+        }
+
+        // 校验有没有实名认证
+        int promotedType = baseUserDO.getPromotedType();
+        if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE) || StringUtils.isBlank(
+            baseUserDO.getFullname()) || StringUtils.isBlank(baseUserDO.getIdCardNumber())) {
+            result.setSuccess(false);
+            result.setErrorMessage("该淘宝账号绑定的支付宝账号未做个人实名认证;请联系申请人,在支付宝平台完成个人实名认证操作!");
+            return result;
+        }
+        Long taobaoUserId = new Long(baseUserDO.getUserId());
 
         if (taobaoAccountBo.isTaobaoBuyerOrSellerBlack(taobaoUserId)) {
             result.setSuccess(false);
@@ -100,8 +154,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             result.setErrorMessage("合伙人站点不存在");
             return result;
         }
+
+        AliPaymentAccountDto paymentAccountDto = new AliPaymentAccountDto();
+        paymentAccountDto.setAccountNo(basePaymentAccountDO.getAccountNo());
+        paymentAccountDto.setTaobaoUserId(taobaoUserId);
+        paymentAccountDto.setAlipayId(SensitiveDataUtil.alipayLogonIdHide(basePaymentAccountDO.getOutUser()));
+        paymentAccountDto.setIdCardNumber(SensitiveDataUtil.idCardNoHide(baseUserDO.getIdCardNumber()));
+        paymentAccountDto.setFullName(SensitiveDataUtil.customizeHide(baseUserDO.getFullname(), 0, baseUserDO.getFullname().length() - 1, 1));
+
         result.setSuccess(true);
-        result.setAliPaymentAccountDto(aliPaymentAccountDto);
+        result.setAliPaymentAccountDto(paymentAccountDto);
         return result;
     }
 
