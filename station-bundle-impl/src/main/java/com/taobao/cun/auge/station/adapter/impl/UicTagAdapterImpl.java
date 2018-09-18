@@ -43,6 +43,8 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 
     private Long TPT_TAG = new Double(Math.pow(2, 55)).longValue();
 
+    private Long UM_TAG = new Double(Math.pow(2, 55)).longValue();
+
 
     @Override
     public void addUserTag(UserTagDto userTagDto) {
@@ -70,11 +72,34 @@ public class UicTagAdapterImpl implements UicTagAdapter {
                     addTpUserTag(taobaoUserId);
                     addTptUserTag(taobaoUserId);
                     break;
+                case UM:
+                    addUmUserTag(taobaoUserId);
+                    break;
             }
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [addUserTag]  parameter = {}, {}", JSON.toJSONString(userTagDto), e);
             throw new AugeUicTagException("addUserTag  error!", e);
         }
+    }
+
+    private void addUmUserTag(Long taobaoUserId) {
+        if (getUmTag(taobaoUserId) != UM_TAG.longValue()) {
+            ResultDO<Integer> result = uicTagWriteServiceClient.addUserTag17(taobaoUserId, UM_TAG);
+            logger.info("uicTagWriteServiceClient.addUserTag17 , result : {}", JSON.toJSON(result));
+            if (result == null || !result.isSuccess()) {
+                logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "uicTagWriteServiceClient.addUserTag error");
+            }
+        }
+    }
+
+    private long getUmTag(Long taobaoUserId) {
+        ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
+        if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
+            logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "uicExtraReadServiceClient.getExtraUserByUserId result null");
+        }
+        return extraUserDOResultDO.getModule().getUserTag17() & UM_TAG;
     }
 
     private void addTptUserTag(Long taobaoUserId) {
