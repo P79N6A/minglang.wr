@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.apache.commons.collections.CollectionUtils;
@@ -77,6 +78,7 @@ public final class UnionMemberConverter {
         instancePageCondition.setOrgIdPath(pageCondition.getOrgIdPath());
         instancePageCondition.setTaobaoNick(pageCondition.getTaobaoNick());
 
+        instancePageCondition.setPartnerType(PartnerInstanceTypeEnum.UM);
         instancePageCondition.copyOperatorDto(pageCondition);
         return instancePageCondition;
     }
