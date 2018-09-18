@@ -56,7 +56,7 @@
 		AND <![CDATA[concat(o.temp_full_id_path,'/') like concat('#{fullIdPath}','/%')]]>
 	 </if>
     <if test="orderByClause != null" >
-      order by #{orderByClause}
+      order by ${orderByClause}
     </if>
   </select>
   
