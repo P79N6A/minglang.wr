@@ -507,6 +507,12 @@
 		<dependency>
 			<groupId>com.taobao.sellercenter</groupId>
 			<artifactId>sellercenter-brands-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.tmall.usc.channel</groupId>
@@ -516,6 +522,10 @@
 			<groupId>com.taobao.tagcenter</groupId>
 			<artifactId>tagcenter-client</artifactId>
 		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.taobao.configserver</groupId>-->
+			<!--<artifactId>config-client</artifactId>-->
+		<!--</dependency>-->
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
