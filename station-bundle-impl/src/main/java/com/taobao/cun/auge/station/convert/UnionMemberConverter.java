@@ -79,6 +79,7 @@ public final class UnionMemberConverter {
         instancePageCondition.setTaobaoNick(pageCondition.getTaobaoNick());
 
         instancePageCondition.setPartnerType(PartnerInstanceTypeEnum.UM);
+        instancePageCondition.setIsCurrent(Boolean.TRUE);
         instancePageCondition.copyOperatorDto(pageCondition);
         return instancePageCondition;
     }
