@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 
 /**
  * 优盟实体dto
@@ -92,6 +93,11 @@ public class UnionMemberDto implements Serializable {
      * 手机号码
      */
     private String mobile;
+
+    /**
+     * 状态
+     */
+    private UnionMemberStateEnum state;
 
     public Long getStationId() {
         return stationId;
@@ -219,5 +225,13 @@ public class UnionMemberDto implements Serializable {
 
     public void setParentStationDto(StationDto parentStationDto) {
         this.parentStationDto = parentStationDto;
+    }
+
+    public UnionMemberStateEnum getState() {
+        return state;
+    }
+
+    public void setState(UnionMemberStateEnum state) {
+        this.state = state;
     }
 }
