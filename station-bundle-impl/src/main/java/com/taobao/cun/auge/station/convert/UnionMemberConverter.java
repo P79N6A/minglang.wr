@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
-import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
@@ -25,31 +23,14 @@ public final class UnionMemberConverter {
             return null;
         }
 
-        StationDto stationDto = instanceDto.getStationDto();
-        PartnerDto partnerDto = instanceDto.getPartnerDto();
         UnionMemberDto unionMemberDto = new UnionMemberDto();
-        if (null != stationDto) {
-            unionMemberDto.setStationId(stationDto.getId());
-            unionMemberDto.setStationNum(stationDto.getStationNum());
-            unionMemberDto.setStationName(stationDto.getName());
-            unionMemberDto.setAddress(stationDto.getAddress());
-            unionMemberDto.setFormat(stationDto.getFormat());
-            unionMemberDto.setCovered(stationDto.getCovered());
-            unionMemberDto.setDescription(stationDto.getDescription());
-            unionMemberDto.setOrgId(stationDto.getApplyOrg());
-        }
 
-        if (null != partnerDto) {
-            unionMemberDto.setAlipayAccount(partnerDto.getAlipayAccount());
-            unionMemberDto.setTaobaoNick(partnerDto.getTaobaoNick());
-            unionMemberDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
-            unionMemberDto.setName(partnerDto.getName());
-            unionMemberDto.setIdenNum(partnerDto.getIdenNum());
-            unionMemberDto.setMobile(partnerDto.getMobile());
-        }
+        unionMemberDto.setStationDto(instanceDto.getStationDto());
+        unionMemberDto.setPartnerDto(instanceDto.getPartnerDto());
+
         unionMemberDto.setParentStationId(instanceDto.getParentStationId());
         //unionMemberDto.setParentStationDto();
-
+        unionMemberDto.setInstanceId(instanceDto.getId());
         unionMemberDto.setState(UnionMemberStateEnum.valueof(instanceDto.getState().getCode()));
 
         return unionMemberDto;
