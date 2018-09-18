@@ -67,5 +67,9 @@
     <logger name="com.taobao.cun.auge.qualification.service.CuntaoQualificationServiceImpl" level="INFO" additivity="false">
         <appender-ref ref="QUALIINFO"/>
     </logger>
+
+    <!--中间件com.taobao.config.common.protocol.UserDataGroupElement出错,先禁用,待新版本出现后升级-->
+    <logger name="com.taobao.config.common.protocol" level="ERROR" additivity="false">
+    </logger>
     
 </configuration>
