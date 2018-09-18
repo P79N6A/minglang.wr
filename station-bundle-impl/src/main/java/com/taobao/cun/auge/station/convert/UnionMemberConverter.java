@@ -97,6 +97,7 @@ public final class UnionMemberConverter {
         instancePageCondition.setOrgIdPath(pageCondition.getOrgIdPath());
         instancePageCondition.setTaobaoNick(pageCondition.getTaobaoNick());
 
+        instancePageCondition.copyOperatorDto(pageCondition);
         return instancePageCondition;
     }
 }
