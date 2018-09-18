@@ -29,7 +29,6 @@ public final class UnionMemberConverter {
         unionMemberDto.setPartnerDto(instanceDto.getPartnerDto());
 
         unionMemberDto.setParentStationId(instanceDto.getParentStationId());
-        //unionMemberDto.setParentStationDto();
         unionMemberDto.setInstanceId(instanceDto.getId());
         unionMemberDto.setState(UnionMemberStateEnum.valueof(instanceDto.getState().getCode()));
 
