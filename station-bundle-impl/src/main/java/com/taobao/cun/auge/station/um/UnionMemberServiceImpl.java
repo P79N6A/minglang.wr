@@ -159,8 +159,6 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long stationId = updateDto.getStationId();
 
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-        Assert.notNull(rel, "partner instance not exists");
-        Assert.notNull(rel.getType(), "partner instance type is null");
 
         Long partnerId = rel.getPartnerId();
 
@@ -171,7 +169,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         stationDto.setFormat(updateDto.getFormat());
         stationDto.setCovered(updateDto.getCovered());
         stationDto.setDescription(updateDto.getDescription());
-
+        stationDto.copyOperatorDto(updateDto);
         stationBO.updateStation(stationDto);
 
         //验证手机号唯一性
@@ -185,7 +183,6 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         partnerDto.setId(partnerId);
         partnerDto.setMobile(updateDto.getMobile());
         partnerBO.updatePartner(partnerDto);
-
     }
 
     @Override
