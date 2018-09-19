@@ -542,7 +542,7 @@
 			<dependency>
 			  <groupId>com.taobao.cun.module</groupId>
 			  <artifactId>recruit-bundle-client</artifactId>
-			  <version>2.3.5-SNAPSHOT</version>
+			  <version>2.3.5</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.crm</groupId>
