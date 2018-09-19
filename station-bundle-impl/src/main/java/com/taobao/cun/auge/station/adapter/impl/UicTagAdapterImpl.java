@@ -43,6 +43,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 
     private Long TPT_TAG = new Double(Math.pow(2, 55)).longValue();
 
+    //FIXME FHH 优盟标找PD确认
     private Long UM_TAG = new Double(Math.pow(2, 55)).longValue();
 
 

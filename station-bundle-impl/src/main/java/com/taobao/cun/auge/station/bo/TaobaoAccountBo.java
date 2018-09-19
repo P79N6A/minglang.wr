@@ -1,5 +1,10 @@
 package com.taobao.cun.auge.station.bo;
 
+/**
+ * 淘宝账号bo
+ *
+ * @author haihu.fhh
+ */
 public interface TaobaoAccountBo {
 
     /**

@@ -13,6 +13,11 @@ import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ * 优盟dto转换器
+ *
+ * @author haihu.fhh
+ */
 public final class UnionMemberConverter {
 
     private UnionMemberConverter() {
