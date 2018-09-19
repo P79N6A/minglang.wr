@@ -43,9 +43,11 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     @PhaseStepMeta(descr = "更新村小二站点信息到服务中")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-        Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
-        stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getStatus()),
-            StationStatusEnum.SERVICING, partnerInstanceDto.getOperator());
+        Long stationId = partnerInstanceDto.getStationId();
+        Station station = stationBO.getStationById(stationId);
+        String operator = partnerInstanceDto.getOperator();
+        stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()),
+            StationStatusEnum.SERVICING, operator);
     }
 
     @Override
@@ -59,13 +61,15 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         //已停业恢复到服务中
+        Long instanceId = partnerInstanceDto.getId();
+        String operator = partnerInstanceDto.getOperator();
         if (PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())) {
-            partnerInstanceBO.reService(partnerInstanceDto.getId(), PartnerInstanceStateEnum.CLOSED,
-                PartnerInstanceStateEnum.SERVICING, partnerInstanceDto.getOperator());
+            partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED,
+                PartnerInstanceStateEnum.SERVICING, operator);
         } else {
-            partnerInstanceBO.changeState(partnerInstanceDto.getId(), partnerInstanceDto.getState(),
+            partnerInstanceBO.changeState(instanceId, partnerInstanceDto.getState(),
                 PartnerInstanceStateEnum.SERVICING,
-                partnerInstanceDto.getOperator());
+                operator);
         }
     }
 
@@ -79,7 +83,8 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     @PhaseStepMeta(descr = "更新村小二扩展业务")
     public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-        generalTaskSubmitService.submitAddUserTagTasks(partnerInstanceDto.getId(), OperatorDto.DEFAULT_OPERATOR);
+        String operatorId = partnerInstanceDto.getOperator();
+        generalTaskSubmitService.submitAddUserTagTasks(partnerInstanceDto.getId(), operatorId);
     }
 
     @Override
@@ -89,35 +94,13 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
         Long instanceId = partnerInstanceDto.getId();
         //未开通  -》 已开通
         if (PartnerInstanceStateEnum.SETTLING.getCode().equals(context.getSourceState())) {
-            //记录村点状态变化
             sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING,
                 partnerInstanceDto);
             //已关闭 -》 已开通
         } else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())) {
-            PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(partnerInstanceDto,
-                partnerInstanceDto.getOperator());
-            EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+            sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE,
+                partnerInstanceDto);
         }
 
-    }
-
-    /**
-     * 从停业到服务中事件
-     *
-     * @param partnerInstanceDto
-     * @param operator
-     * @return
-     */
-    private PartnerInstanceStateChangeEvent buildCloseToServiceEvent(PartnerInstanceDto partnerInstanceDto,
-                                                                     String operator) {
-        PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
-        event.setPartnerType(partnerInstanceDto.getType());
-        event.setTaobaoUserId(partnerInstanceDto.getTaobaoUserId());
-        event.setStationId(partnerInstanceDto.getStationId());
-        event.setPartnerInstanceId(partnerInstanceDto.getId());
-        event.setStateChangeEnum(PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE);
-        event.setOperator(operator);
-        event.setOperatorType(OperatorTypeEnum.SYSTEM);
-        return event;
     }
 }

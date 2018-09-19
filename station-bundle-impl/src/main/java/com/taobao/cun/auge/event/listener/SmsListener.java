@@ -174,7 +174,7 @@ public class SmsListener implements EventListener {
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum,PartnerInstanceTypeEnum partnerType) {
 		if(PartnerInstanceTypeEnum.UM.equals(partnerType)){
-			if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
+			if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum) || PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)) {
 				return DingtalkTemplateEnum.UM_START_SERVICING;
 			}
 		}else {
