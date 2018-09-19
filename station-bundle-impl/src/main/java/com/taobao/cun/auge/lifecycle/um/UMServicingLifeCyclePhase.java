@@ -1,10 +1,6 @@
 package com.taobao.cun.auge.lifecycle.um;
 
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.event.EventDispatcherUtil;
-import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
@@ -14,7 +10,6 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
