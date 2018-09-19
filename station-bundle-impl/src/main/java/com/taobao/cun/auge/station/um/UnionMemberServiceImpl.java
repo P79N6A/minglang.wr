@@ -171,6 +171,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
         UnionMemberStateEnum targetStateEnum = stateChangeDto.getState();
 
+        //组装操作人
+        umInstanceDto.copyOperatorDto(stateChangeDto);
+
         //开通
         if(UnionMemberStateEnum.SERVICING.equals(targetStateEnum)){
             //当前状态必须为未开通和已关闭
