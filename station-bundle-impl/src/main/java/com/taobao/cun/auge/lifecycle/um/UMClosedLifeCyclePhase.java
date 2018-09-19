@@ -48,13 +48,13 @@ public class UMClosedLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二信息（无操作）")
+    @PhaseStepMeta(descr = "更新优盟信息")
     public void createOrUpdatePartner(LifeCyclePhaseContext context) {
         //do nothing
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二实例状态到已停业")
+    @PhaseStepMeta(descr = "更新优盟实例状态到已停业")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState())) {

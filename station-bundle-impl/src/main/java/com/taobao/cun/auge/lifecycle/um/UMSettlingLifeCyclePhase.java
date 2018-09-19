@@ -44,16 +44,16 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
         umLifeCycleValidator.validateSettling(partnerInstanceDto);
         Long stationId = partnerInstanceDto.getStationId();
         if (stationId == null) {
-            //合作店名称校验
+            //优盟门店名称校验
             StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
 
-            //创建合作店编号
+            //创建优盟编号
             StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
             String stationNum = stationNumConfigBO.createStationNum(
                 partnerInstanceDto.getStationDto().getAddress().getProvince(), typeEnum, 0);
             partnerInstanceDto.getStationDto().setStationNum(stationNum);
 
-            //创建合作店
+            //创建优盟门店
             stationId = addStation(partnerInstanceDto, StationType.STATION.getType());
             stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
                 typeEnum, stationNum);
@@ -101,7 +101,8 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     @PhaseStepMeta(descr = "触发入驻中事件")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-        sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(),
+        Long partnerInstanceDtoId = partnerInstanceDto.getId();
+        sendPartnerInstanceStateChangeEvent(partnerInstanceDtoId,
             PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
     }
 }

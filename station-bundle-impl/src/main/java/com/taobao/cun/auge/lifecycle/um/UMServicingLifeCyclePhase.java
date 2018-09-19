@@ -35,7 +35,7 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二站点信息到服务中")
+    @PhaseStepMeta(descr = "更新优盟站点信息到服务中")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long stationId = partnerInstanceDto.getStationId();
@@ -46,7 +46,7 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二信息(无操作)")
+    @PhaseStepMeta(descr = "更新优盟信息(无操作)")
     public void createOrUpdatePartner(LifeCyclePhaseContext context) {
         //do nothing
     }
@@ -69,13 +69,13 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二LifeCycleItems")
+    @PhaseStepMeta(descr = "更新优盟LifeCycleItems")
     public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
         //do nothing
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新村小二扩展业务")
+    @PhaseStepMeta(descr = "更新优盟扩展业务")
     public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
