@@ -6,10 +6,8 @@ import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
-import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -28,12 +26,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中服务节点")
 public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
-
-    @Autowired
-    private PartnerLifecycleBO partnerLifecycleBO;
-
-    @Autowired
-    private LifeCycleValidator lifeCycleValidator;
 
     @Autowired
     private StationNumConfigBO stationNumConfigBO;
@@ -109,7 +101,7 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     @PhaseStepMeta(descr = "触发入驻中事件")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-        this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(),
+        sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(),
             PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
     }
 }
