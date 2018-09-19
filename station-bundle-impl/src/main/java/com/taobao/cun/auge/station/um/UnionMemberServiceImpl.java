@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.um;
 
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -183,7 +184,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
         stationDto.setId(stationId);
         stationDto.setName(updateDto.getStationName());
-        stationDto.setAddress(updateDto.getAddress());
+        Address address = updateDto.getAddress();
+        if (null != address) {
+            stationDto.setAddress(address);
+            LatitudeUtil.buildPOI(address);
+        }
+
         stationDto.setFormat(updateDto.getFormat());
         if (null != updateDto.getCovered()) {
             stationDto.setCovered(String.valueOf(updateDto.getCovered()));
