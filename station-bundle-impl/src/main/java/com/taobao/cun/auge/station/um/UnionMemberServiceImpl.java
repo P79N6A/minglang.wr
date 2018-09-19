@@ -7,6 +7,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
+import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
@@ -28,15 +29,16 @@ import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
+import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 /**
  * 优盟增删改服务
@@ -69,6 +71,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private StateMachineService stateMachineService;
+
+    @Autowired
+    private UmLifeCycleValidator umLifeCycleValidator;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -132,7 +137,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         sDto.setName(addDto.getStationName());
         sDto.setAddress(addDto.getAddress());
         sDto.setFormat(addDto.getFormat());
-        sDto.setCovered(addDto.getCovered());
+        sDto.setCovered(String.valueOf(addDto.getCovered()));
         sDto.setDescription(addDto.getDescription());
         LatitudeUtil.buildPOI(addDto.getAddress());
 
@@ -156,33 +161,52 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateUnionMember(UnionMemberUpdateDto updateDto) {
         BeanValidator.validateWithThrowable(updateDto);
-        Long stationId = updateDto.getStationId();
-
-        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-
-        Long partnerId = rel.getPartnerId();
+        //前置条件校验
+        umLifeCycleValidator.validateUpdate(updateDto);
 
         StationDto stationDto = new StationDto();
-        stationDto.setId(stationId);
+
+        stationDto.setId(updateDto.getStationId());
         stationDto.setName(updateDto.getStationName());
         stationDto.setAddress(updateDto.getAddress());
         stationDto.setFormat(updateDto.getFormat());
         stationDto.setCovered(updateDto.getCovered());
         stationDto.setDescription(updateDto.getDescription());
         stationDto.copyOperatorDto(updateDto);
+
         stationBO.updateStation(stationDto);
 
-        //验证手机号唯一性
-        if (!partnerInstanceBO.judgeMobileUseble(null, partnerId, updateDto.getMobile())) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
-        }
+        //更新优盟手机号
+        updateUnionMemberMobile(updateDto);
+    }
 
-        //更换人的信息
-        PartnerDto partnerDto = new PartnerDto();
-        partnerDto.copyOperatorDto(updateDto);
-        partnerDto.setId(partnerId);
-        partnerDto.setMobile(updateDto.getMobile());
-        partnerBO.updatePartner(partnerDto);
+    /**
+     * 更新优盟手机号
+     *
+     * @param updateDto
+     */
+    private void updateUnionMemberMobile(UnionMemberUpdateDto updateDto) {
+        String mobile = updateDto.getMobile();
+        //当前优盟只能修改手机号
+        if (StringUtils.isNotBlank(mobile)) {
+            //校验手机号格式
+            PartnerValidator.validatePartnerMobile(mobile);
+
+            Long stationId = updateDto.getStationId();
+            PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+
+            Long partnerId = rel.getPartnerId();
+            //验证手机号唯一性
+            if (!partnerInstanceBO.judgeMobileUseble(null, partnerId, mobile)) {
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
+            }
+            //更换优盟手机号
+            PartnerDto partnerDto = new PartnerDto();
+            partnerDto.copyOperatorDto(updateDto);
+            partnerDto.setId(partnerId);
+            partnerDto.setMobile(mobile);
+            partnerBO.updatePartner(partnerDto);
+        }
     }
 
     @Override

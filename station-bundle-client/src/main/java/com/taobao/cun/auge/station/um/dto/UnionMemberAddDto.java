@@ -36,7 +36,7 @@ public class UnionMemberAddDto extends OperatorDto {
      * 日均人流
      */
     @NotNull(message = "covered not null")
-    private String covered;
+    private Integer covered;
 
     /**
      * 合作店简介
@@ -85,11 +85,11 @@ public class UnionMemberAddDto extends OperatorDto {
         this.format = format;
     }
 
-    public String getCovered() {
+    public Integer getCovered() {
         return covered;
     }
 
-    public void setCovered(String covered) {
+    public void setCovered(Integer covered) {
         this.covered = covered;
     }
 

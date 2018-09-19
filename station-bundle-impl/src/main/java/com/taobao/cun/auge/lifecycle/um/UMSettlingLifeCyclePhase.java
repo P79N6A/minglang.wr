@@ -16,7 +16,6 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
-import com.taobao.cun.auge.station.validate.StationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,9 +43,6 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
         umLifeCycleValidator.validateSettling(partnerInstanceDto);
         Long stationId = partnerInstanceDto.getStationId();
         if (stationId == null) {
-            //优盟门店名称校验
-            StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
-
             //创建优盟编号
             StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
             String stationNum = stationNumConfigBO.createStationNum(
