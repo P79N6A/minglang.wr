@@ -24,6 +24,11 @@ public class UmLifeCycleValidator {
     @Autowired
     private LifeCycleValidator lifeCycleValidator;
 
+    /**
+     * 优盟入驻前置校验
+     *
+     * @param partnerInstanceDto
+     */
     public void validateSettling(PartnerInstanceDto partnerInstanceDto) {
         ValidateUtils.validateParam(partnerInstanceDto);
         ValidateUtils.notNull(partnerInstanceDto.getStationDto());
@@ -47,9 +52,17 @@ public class UmLifeCycleValidator {
         if (!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null, partnerDto.getMobile())) {
             throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
         }
+
+        //校验描述
+        validateDescription(stationDto.getDescription());
     }
 
-    public void validateUpdate(UnionMemberUpdateDto updateDto){
+    /**
+     * 优盟变更前置校验
+     *
+     * @param updateDto
+     */
+    public void validateUpdate(UnionMemberUpdateDto updateDto) {
         String stationName = updateDto.getStationName();
         if (StringUtils.isNotBlank(stationName)) {
             //校验优盟门店名称字符和长度
@@ -63,6 +76,19 @@ public class UmLifeCycleValidator {
             StationValidator.addressFormatCheck(address);
             //校验合作店名称、地址是否包含违禁词
             lifeCycleValidator.checkAdressKfc(address.getAddressDetail());
+        }
+        //校验描述
+        validateDescription(updateDto.getDescription());
+    }
+
+    /**
+     * 校验描述
+     *
+     * @param desc
+     */
+    private void validateDescription(String desc) {
+        if (StringUtils.isNotBlank(desc) && desc.length() > 50) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟描述不能超过50位");
         }
     }
 }

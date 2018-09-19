@@ -22,22 +22,22 @@ public interface UnionMemberService {
     AliPaymentAccountDto checkUnionMember(UnionMemberCheckDto checkDto);
 
     /**
-     * 新增优盟,但不开通
+     * 新增优盟
      *
      * @param addDto
-     * @return
+     * @return 返回优盟门店id
      */
     Long addUnionMember(UnionMemberAddDto addDto);
 
     /**
-     * 修改优盟
+     * 修改优盟，只有所属村小二可以操作
      *
      * @param updateDto
      */
     void updateUnionMember(UnionMemberUpdateDto updateDto);
 
     /**
-     * 开通或关闭优盟
+     * 开通或关闭优盟，只有所属村小二可以操作
      *
      * @param stateChangeDto
      */

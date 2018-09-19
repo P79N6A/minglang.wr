@@ -20,7 +20,7 @@ public class UnionMemberCheckDto extends OperatorDto {
     private String taobaoNick;
 
     /**
-     * 优盟合作店所属村站id
+     * 优盟所属村站id
      */
     @NotNull(message = "parentStationId not null")
     private Long parentStationId;

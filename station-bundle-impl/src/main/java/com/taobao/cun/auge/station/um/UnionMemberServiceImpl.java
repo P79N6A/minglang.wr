@@ -161,16 +161,33 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateUnionMember(UnionMemberUpdateDto updateDto) {
         BeanValidator.validateWithThrowable(updateDto);
+        String operator = updateDto.getOperator();
+        Long parentTaobaoUserId = Long.valueOf(operator);
+        //所属村小二实例
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+            parentTaobaoUserId);
+
+        //优盟实例
+        Long stationId = updateDto.getStationId();
+        PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+        Long parentStationId = umInstanceDto.getParentStationId();
+
+        if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            throw new AugeServiceException("不能管理非自己名下的优盟合作店");
+        }
+
         //前置条件校验
         umLifeCycleValidator.validateUpdate(updateDto);
 
         StationDto stationDto = new StationDto();
 
-        stationDto.setId(updateDto.getStationId());
+        stationDto.setId(stationId);
         stationDto.setName(updateDto.getStationName());
         stationDto.setAddress(updateDto.getAddress());
         stationDto.setFormat(updateDto.getFormat());
-        stationDto.setCovered(updateDto.getCovered());
+        if (null != updateDto.getCovered()) {
+            stationDto.setCovered(String.valueOf(updateDto.getCovered()));
+        }
         stationDto.setDescription(updateDto.getDescription());
         stationDto.copyOperatorDto(updateDto);
 
@@ -218,9 +235,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentTaobaoUserId = Long.valueOf(operator);
         Long stationId = stateChangeDto.getStationId();
 
+        //所属村小二实例
         PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
             parentTaobaoUserId);
 
+        //优盟实例
         PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
         Long parentStationId = umInstanceDto.getParentStationId();
 
@@ -243,13 +262,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                     StateMachineEvent.SERVICING_EVENT);
                 stateMachineService.executePhase(phaseEvent);
             }
+            throw new AugeServiceException("优盟当前状态不可开通");
             //关闭
         } else if (UnionMemberStateEnum.CLOSED.equals(targetStateEnum)) {
-            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
-                StateMachineEvent.CLOSED_EVENT);
-            stateMachineService.executePhase(phaseEvent);
+            //只有已开通，可以关闭
+            if (PartnerInstanceStateEnum.SERVICING.equals(nowStateEnum)) {
+                LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
+                    StateMachineEvent.CLOSED_EVENT);
+                stateMachineService.executePhase(phaseEvent);
+            }
+            throw new AugeServiceException("优盟当前状态不可关闭");
         }
-
     }
-
 }
