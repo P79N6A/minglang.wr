@@ -165,7 +165,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentStationId = umInstanceDto.getParentStationId();
 
         if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-            throw new AugeServiceException("不能关闭非自己名下的优盟合作店");
+            throw new AugeServiceException("不能管理非自己名下的优盟合作店");
         }
 
         PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
