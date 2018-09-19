@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.um;
 
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
@@ -10,6 +11,8 @@ import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
+import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -24,7 +27,6 @@ import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
 import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
-import com.taobao.cun.auge.station.um.enums.UnionMemberStateChangeEnum;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 /**
  * 优盟增删改服务
@@ -57,6 +60,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private StationBO stationBO;
+
+    @Autowired
+    private PartnerBO partnerBO;
+
+    @Autowired
+    private PartnerInstanceBO partnerInstanceBO;
 
     @Autowired
     private StateMachineService stateMachineService;
@@ -146,6 +155,36 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateUnionMember(UnionMemberUpdateDto updateDto) {
+        BeanValidator.validateWithThrowable(updateDto);
+        Long stationId = updateDto.getStationId();
+
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+        Assert.notNull(rel, "partner instance not exists");
+        Assert.notNull(rel.getType(), "partner instance type is null");
+
+        Long partnerId = rel.getPartnerId();
+
+        StationDto stationDto = new StationDto();
+        stationDto.setId(stationId);
+        stationDto.setName(updateDto.getStationName());
+        stationDto.setAddress(updateDto.getAddress());
+        stationDto.setFormat(updateDto.getFormat());
+        stationDto.setCovered(updateDto.getCovered());
+        stationDto.setDescription(updateDto.getDescription());
+
+        stationBO.updateStation(stationDto);
+
+        //验证手机号唯一性
+        if (!partnerInstanceBO.judgeMobileUseble(null, partnerId, updateDto.getMobile())) {
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
+        }
+
+        //更换人的信息
+        PartnerDto partnerDto = new PartnerDto();
+        partnerDto.copyOperatorDto(updateDto);
+        partnerDto.setId(partnerId);
+        partnerDto.setMobile(updateDto.getMobile());
+        partnerBO.updatePartner(partnerDto);
 
     }
 
@@ -175,15 +214,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         umInstanceDto.copyOperatorDto(stateChangeDto);
 
         //开通
-        if(UnionMemberStateEnum.SERVICING.equals(targetStateEnum)){
+        if (UnionMemberStateEnum.SERVICING.equals(targetStateEnum)) {
             //当前状态必须为未开通和已关闭
-            if(PartnerInstanceStateEnum.SETTLING.equals(nowStateEnum) || PartnerInstanceStateEnum.CLOSED.equals(nowStateEnum)){
+            if (PartnerInstanceStateEnum.SETTLING.equals(nowStateEnum) || PartnerInstanceStateEnum.CLOSED.equals(
+                nowStateEnum)) {
                 LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
                     StateMachineEvent.SERVICING_EVENT);
                 stateMachineService.executePhase(phaseEvent);
             }
             //关闭
-        } else if(UnionMemberStateEnum.CLOSED.equals(targetStateEnum)){
+        } else if (UnionMemberStateEnum.CLOSED.equals(targetStateEnum)) {
             LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
                 StateMachineEvent.CLOSED_EVENT);
             stateMachineService.executePhase(phaseEvent);
