@@ -88,6 +88,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             taobaoNick);
         Long taobaoUserId = paymentAccountDto.getTaobaoUserId();
 
+        //FIXME FHH 黑名单校验文案需要找PD确认
         if (taobaoAccountBo.isTaobaoBuyerOrSellerBlack(taobaoUserId)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该淘宝账号属于淘宝黑名单");
         }

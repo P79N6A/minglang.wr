@@ -174,6 +174,8 @@ public class SmsListener implements EventListener {
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum,PartnerInstanceTypeEnum partnerType) {
 		if(PartnerInstanceTypeEnum.UM.equals(partnerType)){
+			//FIXME FHH 优盟开通、关闭后再开通是否都发短信，需要找PD确认
+			//FIXME FHH 短信内容找PD确认
 			if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum) || PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)) {
 				return DingtalkTemplateEnum.UM_START_SERVICING;
 			}
