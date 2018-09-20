@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author haihu.fhh
  */
 @Service("unionMemberService")
-@HSFProvider(serviceInterface = UnionMemberService.class, clientTimeout = 7000)
+@HSFProvider(serviceInterface = UnionMemberService.class, clientTimeout = 10000)
 public class UnionMemberServiceImpl implements UnionMemberService {
 
     private static final Logger logger = LoggerFactory.getLogger(UnionMemberService.class);

@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
@@ -27,6 +28,9 @@ public class UmLifeCycleValidator {
     @Autowired
     private LifeCycleValidator lifeCycleValidator;
 
+    @Autowired
+    private PartnerInstanceQueryService partnerInstanceQueryService;
+
     /**
      * 优盟入驻前置校验
      *
@@ -39,6 +43,12 @@ public class UmLifeCycleValidator {
         ValidateUtils.notNull(partnerInstanceDto.getType());
         StationDto stationDto = partnerInstanceDto.getStationDto();
         PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+        Long taobaoUserId = partnerDto.getTaobaoUserId();
+        //不可重复入驻
+        PartnerInstanceDto piDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+        if (piDto != null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复添加");
+        }
         //优盟门店名称校验
         StationValidator.nameFormatCheck(stationDto.getName());
         //校验地址字符长度等
@@ -52,7 +62,7 @@ public class UmLifeCycleValidator {
 
         // 判断手机号是否已经被使用
         // 逻辑变更只判断入驻中、装修中、服务中，退出中用户
-        if (!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null, partnerDto.getMobile())) {
+        if (!partnerInstanceBO.judgeMobileUseble(taobaoUserId, null, partnerDto.getMobile())) {
             throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
         }
 
