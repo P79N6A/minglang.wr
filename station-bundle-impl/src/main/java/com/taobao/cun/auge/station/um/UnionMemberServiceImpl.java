@@ -116,6 +116,29 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     public Long addUnionMember(UnionMemberAddDto addDto) {
         BeanValidator.validateWithThrowable(addDto);
 
+        Station parentStationDto = stationBO.getStationById(addDto.getParentStationId());
+        String parentCountyCode = parentStationDto.getCounty();
+        Address address = addDto.getAddress();
+        //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
+        if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店铺地址必须和当前村小二在同一个行政县域内");
+        }
+
+        StationDto sDto = new StationDto();
+        //和村小二一个组织
+        sDto.setApplyOrg(parentStationDto.getApplyOrg());
+        sDto.setAddress(address);
+        sDto.setName(addDto.getStationName());
+        sDto.setFormat(addDto.getFormat());
+        sDto.setCovered(String.valueOf(addDto.getCovered()));
+        sDto.setDescription(addDto.getDescription());
+        LatitudeUtil.buildPOI(address);
+
+        PartnerInstanceDto piDto = new PartnerInstanceDto();
+        piDto.setOperator(addDto.getOperator());
+        piDto.setOperatorOrgId(addDto.getOperatorOrgId());
+        piDto.setOperatorType(addDto.getOperatorType());
+
         String taobaoNick = addDto.getTaobaoNick();
 
         PartnerDto pDto = new PartnerDto();
@@ -131,23 +154,6 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         pDto.setIdenNum(aliPaymentAccountDto.getIdCardNumber());
         pDto.setMobile(addDto.getMobile());
         pDto.setBusinessType(PartnerBusinessTypeEnum.PARTTIME);
-
-        Station parentStationDto = stationBO.getStationById(addDto.getParentStationId());
-
-        StationDto sDto = new StationDto();
-        //和村小二一个组织
-        sDto.setApplyOrg(parentStationDto.getApplyOrg());
-        sDto.setName(addDto.getStationName());
-        sDto.setAddress(addDto.getAddress());
-        sDto.setFormat(addDto.getFormat());
-        sDto.setCovered(String.valueOf(addDto.getCovered()));
-        sDto.setDescription(addDto.getDescription());
-        LatitudeUtil.buildPOI(addDto.getAddress());
-
-        PartnerInstanceDto piDto = new PartnerInstanceDto();
-        piDto.setOperator(addDto.getOperator());
-        piDto.setOperatorOrgId(addDto.getOperatorOrgId());
-        piDto.setOperatorType(addDto.getOperatorType());
 
         piDto.setType(PartnerInstanceTypeEnum.UM);
         piDto.setTaobaoUserId(taobaoUserId);
@@ -304,6 +310,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
         if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
             throw new AugeServiceException("不能删除非自己名下的优盟合作店");
+        }
+
+        PartnerInstanceStateEnum umState = umInstanceDto.getState();
+        if (PartnerInstanceStateEnum.SERVICING.equals(umState)) {
+            throw new AugeServiceException("优盟合作店已开通，不能删除");
         }
 
         Long umInstanceId = umInstanceDto.getId();
