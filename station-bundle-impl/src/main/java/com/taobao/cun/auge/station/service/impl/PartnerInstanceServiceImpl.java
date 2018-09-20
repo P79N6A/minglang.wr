@@ -2451,8 +2451,22 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		
 	}
 
+    @Override
+    public void signUmProtocol(Long taobaoUserId) {
+        ValidateUtils.notNull(taobaoUserId);
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        Assert.notNull(instance, "partner not exists");
 
-	@Override
+        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.UM_SETTLING, taobaoUserId, PartnerProtocolRelTargetTypeEnum.PARTNER);
+        if (pprDto != null) {
+            return;
+        }
+        Date date =new Date();
+        partnerProtocolRelBO.signProtocol(instance.getId(), taobaoUserId, ProtocolTypeEnum.UM_SETTLING, date, date, date,
+            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+    }
+
+    @Override
 	public Result<Boolean> createSellerInfo(Long taobaoUserId) {
 		Result<Boolean> result = new Result<Boolean>();
 		try {
