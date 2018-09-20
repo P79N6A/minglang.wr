@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.um;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -175,7 +176,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentStationId = umInstanceDto.getParentStationId();
 
         if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-            throw new AugeServiceException("不能管理非自己名下的优盟合作店");
+            throw new AugeServiceException("不能更新非自己名下的优盟合作店");
         }
 
         //前置条件校验
@@ -280,5 +281,34 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             }
             throw new AugeServiceException("优盟当前状态不可关闭");
         }
+    }
+
+    @Override
+    public void deleteUnionMember(Long stationId, OperatorDto operatorDto) {
+        BeanValidator.validateWithThrowable(operatorDto);
+        if (null == stationId || 0 == stationId) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "stationId is null");
+        }
+
+        //村小二账号
+        String operator = operatorDto.getOperator();
+        Long parentTaobaoUserId = Long.valueOf(operator);
+
+        //所属村小二实例
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+            parentTaobaoUserId);
+
+        //优盟实例
+        PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+        Long parentStationId = umInstanceDto.getParentStationId();
+
+        if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            throw new AugeServiceException("不能删除非自己名下的优盟合作店");
+        }
+
+        Long umInstanceId = umInstanceDto.getId();
+
+        partnerInstanceBO.deletePartnerStationRel(umInstanceId, operator);
+        stationBO.deleteStation(stationId, operator);
     }
 }
