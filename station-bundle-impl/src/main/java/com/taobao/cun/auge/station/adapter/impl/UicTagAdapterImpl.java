@@ -130,7 +130,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
             }
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [removeUserTag] parameter = {}, {}", JSON.toJSONString(userTagDto), e);
-            throw new AugeUicTagException("addUserTag  error!", e);
+            throw new AugeUicTagException("removeUserTag  error!", e);
         }
     }
 
