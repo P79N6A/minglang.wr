@@ -61,6 +61,7 @@ import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
+import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.mdjxc.common.result.DataResult;
 import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
@@ -353,6 +354,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		orgAddDto.setOrgName(cuntaoStore.getName());
 		orgAddDto.setCreator(cuntaoStore.getCreator());
 		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(cuntaoStore.getCreator());
+		userRoleAddDto.setOrgId(2L);
+		userRoleAddDto.setRoleName("STORE_SERVICE_MANAGER");
+		userRoleAddDto.setUserId(cuntaoStore.getTaobaoUserId()+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		
 	}
 
 	private void updateOrg(CuntaoStore cuntaoStore) {
