@@ -354,13 +354,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		orgAddDto.setOrgName(cuntaoStore.getName());
 		orgAddDto.setCreator(cuntaoStore.getCreator());
 		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
-		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
-		userRoleAddDto.setCreator(cuntaoStore.getCreator());
-		userRoleAddDto.setOrgId(2L);
-		userRoleAddDto.setRoleName("STORE_SERVICE_MANAGER");
-		userRoleAddDto.setUserId(cuntaoStore.getTaobaoUserId()+"");
-		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
-		
 	}
 
 	private void updateOrg(CuntaoStore cuntaoStore) {
