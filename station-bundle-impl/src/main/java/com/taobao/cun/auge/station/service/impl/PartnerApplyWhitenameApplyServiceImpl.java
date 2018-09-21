@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.google.common.collect.Maps;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.station.dto.UserFilterRuleDto;
 import com.taobao.cun.auge.station.service.PartnerApplyWhitenameApplyService;
 import com.taobao.cun.auge.station.service.UserFilterService;
@@ -18,6 +19,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = PartnerApplyWhitenameApplyService.class)
 public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhitenameApplyService {
 	@Resource
+	private TairCache tairCache;
+	@Resource
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Resource
 	private UserFilterService userFilterService;
@@ -26,6 +29,9 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 	
 	@Override
 	public boolean apply(Long partnerApplyId, String taobaoUserId, String applierId) {
+		if(tairCache.get("process:" + partnerApplyId) != null) {
+			return false;
+		}
 		ResultModel<CuntaoProcessInstance> result = cuntaoWorkFlowService.findRunningProcessInstance(TASK_CODE, String.valueOf(partnerApplyId));
 		if(result.isSuccess()) {
 			if(result.getResult() != null) {
@@ -46,6 +52,7 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 		if(!resultModel.isSuccess()) {
 			throw new RuntimeException(result.getException());
 		}
+		tairCache.put("process:" + partnerApplyId, partnerApplyId);
 		return true;
 	}
 
