@@ -18,6 +18,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
+import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -254,7 +255,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             parentTaobaoUserId);
 
         //优盟实例
-        PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+        PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(stateChangeDto, stationId);
         Long parentStationId = umInstanceDto.getParentStationId();
 
         if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
@@ -289,6 +290,20 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeServiceException("优盟当前状态不可关闭");
             }
         }
+    }
+
+    private PartnerInstanceDto getUmPartnerInstanceDto(UnionMemberStateChangeDto stateChangeDto, Long stationId) {
+        Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+
+        PartnerInstanceCondition condition = new PartnerInstanceCondition();
+        condition.setInstanceId(instanceId);
+        condition.setNeedPartnerInfo(Boolean.TRUE);
+        condition.setNeedStationInfo(Boolean.TRUE);
+        condition.setNeedDesensitization(Boolean.FALSE);
+        condition.setNeedPartnerLevelInfo(Boolean.FALSE);
+        condition.copyOperatorDto(stateChangeDto);
+
+        return partnerInstanceQueryService.queryInfo(condition);
     }
 
     @Override

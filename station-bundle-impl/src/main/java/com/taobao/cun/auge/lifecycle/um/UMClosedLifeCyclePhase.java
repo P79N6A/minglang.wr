@@ -77,11 +77,9 @@ public class UMClosedLifeCyclePhase extends AbstractLifeCyclePhase {
 
         Long instanceId = partnerInstanceDto.getId();
         String operatorId = partnerInstanceDto.getOperator();
-        //因为上面的partnerInstanceDto 里taobaoNick被脱敏了，所以重新查一遍
-        PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
-        Long taobaoUserId = instance.getTaobaoUserId();
-        String taobaoNick = instance.getPartnerDto().getTaobaoNick();
-        PartnerInstanceTypeEnum partnerType = instance.getType();
+        Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
+        String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
+        PartnerInstanceTypeEnum partnerType = partnerInstanceDto.getType();
         generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId,
             instanceId);
     }
