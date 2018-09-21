@@ -56,7 +56,7 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 		if(!resultModel.isSuccess()) {
 			throw new RuntimeException(result.getException());
 		}
-		tairCache.put("process:" + partnerApplyId, partnerApplyId);
+		tairCache.put("process:" + partnerApplyId, partnerApplyId, 60);
 		return true;
 	}
 
