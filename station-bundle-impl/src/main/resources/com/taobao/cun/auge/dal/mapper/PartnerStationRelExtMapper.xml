@@ -144,7 +144,7 @@
 		level.expected_level
 		</if>
 		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING' and partnerType !='UM'" >
 			,
 			life.business_type as lifecycle_business_type,
 			life.settled_protocol,
@@ -172,7 +172,7 @@
 		</if>
 		
 		,partner p,station s,cuntao_org org
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING' and partnerType !='UM'" >
 			, partner_lifecycle_items life
 		</if>
 		
@@ -188,7 +188,7 @@
 			</if>
 		</if>
 		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING' and partnerType !='UM'" >
 			and instance.id = life.partner_instance_id
 		</if>
 		
@@ -202,7 +202,7 @@
 		
 		<include refid="partner_station_query_condition" />
 		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING' and partnerType !='UM'" >
 			<include refid="partner_lifecycle_items_condition" />
 		</if>
 		order by instance.gmt_modified desc
