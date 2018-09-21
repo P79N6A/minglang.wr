@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.lifecycle.um;
 
+import java.util.Date;
+
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -62,10 +64,26 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
             partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED,
                 PartnerInstanceStateEnum.SERVICING, operator);
         } else {
-            partnerInstanceBO.changeState(instanceId, partnerInstanceDto.getState(),
-                PartnerInstanceStateEnum.SERVICING,
-                operator);
+            setPartnerInstanceToServicing(partnerInstanceDto);
         }
+    }
+
+    /**
+     * 第一次进入服务中
+     *
+     * @param rel
+     */
+    private void setPartnerInstanceToServicing(PartnerInstanceDto rel) {
+        PartnerInstanceDto piDto = new PartnerInstanceDto();
+        Date serviceBeginTime = new Date();
+        piDto.setServiceBeginTime(serviceBeginTime);
+        piDto.setOpenDate(serviceBeginTime);
+        piDto.setId(rel.getId());
+        piDto.setState(PartnerInstanceStateEnum.SERVICING);
+        piDto.setVersion(rel.getVersion());
+        piDto.copyOperatorDto(rel);
+
+        partnerInstanceBO.updatePartnerStationRel(piDto);
     }
 
     @Override
