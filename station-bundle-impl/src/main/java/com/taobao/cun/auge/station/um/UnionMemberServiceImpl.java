@@ -275,8 +275,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
                     StateMachineEvent.SERVICING_EVENT);
                 stateMachineService.executePhase(phaseEvent);
+            } else {
+                throw new AugeServiceException("优盟当前状态不可开通");
             }
-            throw new AugeServiceException("优盟当前状态不可开通");
             //关闭
         } else if (UnionMemberStateEnum.CLOSED.equals(targetStateEnum)) {
             //只有已开通，可以关闭
@@ -284,8 +285,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
                     StateMachineEvent.CLOSED_EVENT);
                 stateMachineService.executePhase(phaseEvent);
+            } else {
+                throw new AugeServiceException("优盟当前状态不可关闭");
             }
-            throw new AugeServiceException("优盟当前状态不可关闭");
         }
     }
 
