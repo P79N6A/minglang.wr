@@ -74,11 +74,14 @@ public class UMClosedLifeCyclePhase extends AbstractLifeCyclePhase {
     @PhaseStepMeta(descr = "扩展业务")
     public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-        Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
-        String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
-        PartnerInstanceTypeEnum partnerType = partnerInstanceDto.getType();
-        String operatorId = partnerInstanceDto.getOperator();
+
         Long instanceId = partnerInstanceDto.getId();
+        String operatorId = partnerInstanceDto.getOperator();
+        //因为上面的partnerInstanceDto 里taobaoNick被脱敏了，所以重新查一遍
+        PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        Long taobaoUserId = instance.getTaobaoUserId();
+        String taobaoNick = instance.getPartnerDto().getTaobaoNick();
+        PartnerInstanceTypeEnum partnerType = instance.getType();
         generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId,
             instanceId);
     }

@@ -41,10 +41,9 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long stationId = partnerInstanceDto.getStationId();
-        Station station = stationBO.getStationById(stationId);
+        StationStatusEnum curStatus = partnerInstanceDto.getStationDto().getStatus();
         String operator = partnerInstanceDto.getOperator();
-        stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()),
-            StationStatusEnum.SERVICING, operator);
+        stationBO.changeState(stationId, curStatus, StationStatusEnum.SERVICING, operator);
     }
 
     @Override
