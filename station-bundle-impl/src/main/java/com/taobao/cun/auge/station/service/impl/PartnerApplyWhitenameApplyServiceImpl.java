@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.service.PartnerApplyWhitenameApplyService;
 import com.taobao.cun.auge.station.service.UserFilterService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.CuntaoProcessInstanceStatus;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -34,8 +35,11 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 		}
 		ResultModel<CuntaoProcessInstance> result = cuntaoWorkFlowService.findRunningProcessInstance(TASK_CODE, String.valueOf(partnerApplyId));
 		if(result.isSuccess()) {
+			CuntaoProcessInstance instance = result.getResult();
 			if(result.getResult() != null) {
-				return false;
+				if(CuntaoProcessInstanceStatus.RUNNING.getCode().equals(instance.getStatus().getCode())){
+					return false;
+				}
 			}
 		}
 		
