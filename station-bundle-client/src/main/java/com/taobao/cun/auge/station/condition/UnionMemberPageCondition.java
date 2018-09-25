@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.condition;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 
 /**
@@ -8,7 +9,7 @@ import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
  *
  * @author haihu.fhh
  */
-public class UnionMemberPageCondition extends OperatorDto {
+public class UnionMemberPageCondition extends PageQuery {
 
     private static final long serialVersionUID = 5885214194585033618L;
 
