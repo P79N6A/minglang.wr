@@ -292,6 +292,15 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
+	public void addEndorUserRole(Long taobaoUserId,String roleName,Long orgId){
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(taobaoUserId+"");
+		userRoleAddDto.setOrgId(orgId);
+		userRoleAddDto.setRoleName(roleName);
+		userRoleAddDto.setUserId(taobaoUserId+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+	}
+	
 	@Override
 	public Long addVendorEmployeeByEmployeeId(Long vendorId, Long employeeId, CuntaoEmployeeIdentifier identifier) {
 		CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
