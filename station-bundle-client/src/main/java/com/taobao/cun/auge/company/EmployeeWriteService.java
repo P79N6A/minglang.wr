@@ -79,5 +79,13 @@ public interface EmployeeWriteService{
 	 * @return
 	 */
 	Result<Boolean> removeStoreEmployeeRole(Long employeeId,Long taobaoUserId,String operator,CuntaoEmployeeIdentifier type);
+	
+	/**
+	 * 
+	 * @param taobaoUserId
+	 * @param roleName
+	 * @param orgId
+	 */
+	public void addEndorUserRole(Long taobaoUserId,String roleName,Long orgId);
 
 }
