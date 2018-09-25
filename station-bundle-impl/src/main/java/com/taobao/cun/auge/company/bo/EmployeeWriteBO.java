@@ -62,4 +62,12 @@ public interface EmployeeWriteBO {
 	 * @return
 	 */
 	Boolean removeStoreEmployeeRole(Long employeeId, String operator, CuntaoEmployeeIdentifier cuntaoEmployeeIdentifier);
+	
+	/**
+	 * 新增人员角色
+	 * @param taobaoUserId
+	 * @param roleName
+	 * @param orgId
+	 */
+	public void addEndorUserRole(Long taobaoUserId,String roleName,Long orgId);
 }
