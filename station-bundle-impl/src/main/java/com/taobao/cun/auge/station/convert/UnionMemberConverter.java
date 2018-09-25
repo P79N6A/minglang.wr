@@ -86,6 +86,8 @@ public final class UnionMemberConverter {
         instancePageCondition.setPartnerType(PartnerInstanceTypeEnum.UM);
         instancePageCondition.setIsCurrent(Boolean.TRUE);
         instancePageCondition.copyOperatorDto(pageCondition);
+        instancePageCondition.setPageNum(pageCondition.getPageNum());
+        instancePageCondition.setPageSize(pageCondition.getPageSize());
         return instancePageCondition;
     }
 }
