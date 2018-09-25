@@ -23,6 +23,19 @@ public class UserMatchInfo implements Serializable{
 	 * 小家电用户
 	 */
 	private boolean smallElecUser;
+	
+	/**
+	 * 服饰
+	 */
+	private boolean clothes;
+	
+	public boolean isClothes() {
+		return clothes;
+	}
+
+	public void setClothes(boolean clothes) {
+		this.clothes = clothes;
+	}
 
 	public boolean isBigElecUser() {
 		return bigElecUser;

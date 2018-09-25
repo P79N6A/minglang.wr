@@ -44,9 +44,11 @@ public class TestUserServiceImpl implements TestUserService{
 			boolean bigElec = this.isTestUser(taobaoUserId, "bigElec", true);
 			boolean smallElec = this.isTestUser(taobaoUserId, "smallElec", true);
 			boolean fmcg = this.isTestUser(taobaoUserId, "fmcg", true);
+			boolean clothes =this.isTestUser(taobaoUserId, "clothes", true);
 			userMatchInfo.setBigElecUser(bigElec);
 			userMatchInfo.setSmallElecUser(smallElec);
 			userMatchInfo.setFmcgUser(fmcg);
+			userMatchInfo.setClothes(clothes);
 			result.setModule(userMatchInfo);
 			return result;
 		} catch (Exception e) {
