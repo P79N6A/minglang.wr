@@ -122,6 +122,9 @@ public class DiamondConfiguredProperties {
     @Value("${supplierTbId}")
     private Long supplierTbId;
     
+    @Value("${serviceAbilitySHRHCountyAuditActivityId}")
+    private String serviceAbilitySHRHCountyAuditActivityId;
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -326,5 +329,13 @@ public class DiamondConfiguredProperties {
 
 	public void setSupplierTbId(Long supplierTbId) {
 		this.supplierTbId = supplierTbId;
+	}
+
+	public String getServiceAbilitySHRHCountyAuditActivityId() {
+		return serviceAbilitySHRHCountyAuditActivityId;
+	}
+
+	public void setServiceAbilitySHRHCountyAuditActivityId(String serviceAbilitySHRHCountyAuditActivityId) {
+		this.serviceAbilitySHRHCountyAuditActivityId = serviceAbilitySHRHCountyAuditActivityId;
 	}
 }

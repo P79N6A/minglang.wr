@@ -306,6 +306,40 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 serviceAbilityDecisionService.updateServiceAbilityMemo(sdd);
+            }else if(ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)){
+            	String resultCode = ob.getString("result");
+            	String desc = ob.getString("taskRemark");
+            	String taskId = ob.getString("taskId");
+            	CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
+				if("拒绝".equals(resultCode)){
+					resultCode = ProcessApproveResultEnum.APPROVE_REFUSE.getCode();
+				}else{
+					resultCode = ProcessApproveResultEnum.APPROVE_PASS.getCode();
+				}
+				
+				if(diamondConfiguredProperties.getServiceAbilitySHRHCountyAuditActivityId().equals(task.getActivityId())){
+					ServiceAbilityDecisionAuditDto sddDto =new ServiceAbilityDecisionAuditDto();
+					if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+						sddDto.setStatus(ServiceAbilityDecisionStatusEnum.COUNTY_AUDIT_PASS);
+					}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+						sddDto.setStatus(ServiceAbilityDecisionStatusEnum.COUNTY_AUDIT_NOT_PASS);
+					}
+					sddDto.setId(businessId);
+					sddDto.setMemo(desc);
+					sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+					serviceAbilityDecisionService.auditSHRHByCountyLeader(sddDto);
+				}else{
+					ServiceAbilityDecisionAuditDto sddDto =new ServiceAbilityDecisionAuditDto();
+					if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+						sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_PASS);
+					}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+						sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_NOT_PASS);
+					}
+					sddDto.setId(businessId);
+					sddDto.setMemo(desc);
+					sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+					serviceAbilityDecisionService.auditSHRH(sddDto);
+				}
             }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
 				String resultCode = ob.getString("result");

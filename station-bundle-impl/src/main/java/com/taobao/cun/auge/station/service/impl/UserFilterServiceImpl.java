@@ -93,6 +93,7 @@ interface Rule{
 
 class TrueRule implements Rule{
 
+	@Override
 	public boolean isMatch(String userId) {
 		return true;
 	}

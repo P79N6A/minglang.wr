@@ -895,6 +895,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
 	public void createDistributionChannelId(Long taobaoUserId) {
 		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
 		if(instance == null){
@@ -939,6 +940,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
 	public void createSellerAndShopId(Long taobaoUserId) {
 		Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
 		if(qualification == null||qualification.getStatus() != 1){
@@ -965,7 +967,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				MirrorSellerDO sellerDO = sellerResult.getModule();
 				update.setShopId(sellerDO.getShop().getShopId());
 				update.setSellerId(sellerDO.getUserId());
-				userTagService.addTag(taobaoUserId, UserTag.SAMPLE_SELLER_TAG.getTag());
+				userTagService.addTag(taobaoUserId, UserTag.SELLER_HQZY_TAG.getTag());
 				userTagService.addTagToUserData(sellerDO.getUserId(), 102209);
 				userTagService.addTagToUserData(sellerDO.getUserId(), 76481);
 				partnerStationRelMapper.updateByPrimaryKeySelective(update);
@@ -1043,6 +1045,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return mirrorSellerDO;
 	}
 	
+	@Override
 	public void cancelShopMirror(Long taobaoUserId){
 		PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
 		if(instance == null){

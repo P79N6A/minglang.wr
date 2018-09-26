@@ -526,8 +526,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return store;
 	}
 
-
-
+	@Override
+	public void addEndorUserRole(Long taobaoUserId, String roleName, Long orgId) {
+		employeeWriteBO.addEndorUserRole(taobaoUserId, roleName, orgId);
+	}
 
 	
 }

@@ -81,7 +81,7 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 		orgAddDto.setCreator(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCreator());
 		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getEndorOrgId());
 		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
-		orgAddDto.setParentId(5l);
+		orgAddDto.setParentId(5L);
 		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 		
 		UserAddDto userAddDto = new UserAddDto();

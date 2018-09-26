@@ -635,6 +635,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	 *  @param key:youpinSta 优品售卖范围业务   noWarehouseSta 无县仓业务
 	 *  @param value:y 或 n
 	 */
+	@Override
     public boolean initStationFeatureToCainiao(String key,String value) {
         try {
             if(StringUtils.isEmpty(value) || StringUtils.isEmpty(key)){

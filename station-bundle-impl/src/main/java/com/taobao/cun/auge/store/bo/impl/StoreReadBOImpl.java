@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
@@ -35,6 +36,7 @@ import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.place.client.domain.dataobject.StoreDO;
 import com.taobao.place.client.service.StoreService;
+import com.taobao.place.client.service.client.StoreServiceClient;
 import com.taobao.place.util.DistanceUtil;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
@@ -55,6 +57,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 	
 	@Resource
 	private DiamondConfiguredProperties diamondConfiguredProperties;
+	
+	@Autowired
+	private StoreServiceClient storeServiceClient;
 	@Override
 	public StoreDto getStoreDtoByStationId(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
@@ -106,10 +111,15 @@ public class StoreReadBOImpl implements StoreReadBO {
 			storeDto.setDistributionChannelId(partnerStationRel.getDistributionChannelId());
 			storeDto.setDistributorCode(partnerStationRel.getDistributorCode());
 		}
-		StoreDO storeDO = StoreService.getStoreByIdWithCache(cuntaoStore.getShareStoreId());
-		if(storeDO != null){
-			storeDto.setImage(diamondConfiguredProperties.getStoreImagePerfix()+storeDO.getPic());
+		try {
+			StoreDO storeDO = storeServiceClient.getStoreByIdWithCache(cuntaoStore.getShareStoreId());
+			if(storeDO != null){
+				storeDto.setImage(diamondConfiguredProperties.getStoreImagePerfix()+storeDO.getPic());
+			}
+		} catch (Exception e) {
+			
 		}
+		
 		return storeDto;
 	}
 

@@ -138,7 +138,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 		return accountQueryResult;
 	}
 	
-	
+	@Override
 	public Result<Boolean> alipayAgreementCallBack(Long taobaoUserId){
 		Result<Boolean> result = null;
 		try {

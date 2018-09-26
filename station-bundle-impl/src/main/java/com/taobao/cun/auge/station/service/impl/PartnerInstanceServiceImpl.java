@@ -2247,6 +2247,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      * @param taobaoUserId
      */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
     public void applySellerAccount(Long taobaoUserId) {
         // TODO 调用UIC生成卖家账号
         Long sellerId = 0L;
@@ -2280,6 +2281,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      * @param freezeBondDto
      * @return boolean
      */
+	@Override
     public boolean freezeRePublishBond(FreezeBondDto freezeBondDto) {
         ValidateUtils.validateParam(freezeBondDto);
         Long taobaoUserId = freezeBondDto.getTaobaoUserId();
