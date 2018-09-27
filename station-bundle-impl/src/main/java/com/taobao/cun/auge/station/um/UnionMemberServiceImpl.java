@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.um;
 
+import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
@@ -112,8 +114,10 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             }
             return paymentAccountDto;
         } catch (AugeBusinessException e) {
+            logger.warn(JSON.toJSONString(checkDto), e);
             throw e;
         } catch (Exception e) {
+            logger.error(JSON.toJSONString(checkDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
     }
@@ -173,8 +177,10 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             stateMachineService.executePhase(phaseEvent);
             return piDto.getStationDto().getId();
         } catch (AugeBusinessException e) {
+            logger.warn(JSON.toJSONString(addDto), e);
             throw e;
         } catch (Exception e) {
+            logger.error(JSON.toJSONString(addDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
     }
@@ -182,8 +188,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateUnionMember(UnionMemberUpdateDto updateDto) {
+        BeanValidator.validateWithThrowable(updateDto);
         try {
-            BeanValidator.validateWithThrowable(updateDto);
             String operator = updateDto.getOperator();
             Long parentTaobaoUserId = Long.valueOf(operator);
             //所属村小二实例
@@ -197,7 +203,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "不能更新非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟合作店");
             }
 
             //前置条件校验
@@ -225,8 +231,10 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //更新优盟手机号
             updateUnionMemberMobile(updateDto);
         } catch (AugeBusinessException e) {
+            logger.warn(JSON.toJSONString(updateDto), e);
             throw e;
         } catch (Exception e) {
+            logger.error(JSON.toJSONString(updateDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
     }
@@ -278,7 +286,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"不能管理非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟合作店");
             }
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
@@ -296,7 +304,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                         StateMachineEvent.SERVICING_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"优盟当前状态不可开通");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟当前状态不可开通");
                 }
                 //关闭
             } else if (UnionMemberStateEnum.CLOSED.equals(targetStateEnum)) {
@@ -306,12 +314,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                         StateMachineEvent.CLOSED_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"优盟当前状态不可关闭");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟当前状态不可关闭");
                 }
             }
         } catch (AugeBusinessException e) {
+            logger.warn(JSON.toJSONString(stateChangeDto), e);
             throw e;
         } catch (Exception e) {
+            logger.error(JSON.toJSONString(stateChangeDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
     }
@@ -352,12 +362,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"不能删除非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能删除非自己名下的优盟合作店");
             }
 
             PartnerInstanceStateEnum umState = umInstanceDto.getState();
             if (PartnerInstanceStateEnum.SERVICING.equals(umState)) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"优盟合作店已开通，不能删除");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟合作店已开通，不能删除");
             }
 
             Long umInstanceId = umInstanceDto.getId();
@@ -365,8 +375,10 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             partnerInstanceBO.deletePartnerStationRel(umInstanceId, operator);
             stationBO.deleteStation(stationId, operator);
         } catch (AugeBusinessException e) {
+            logger.warn("stationId=" + stationId + ",operator = " + JSON.toJSONString(operatorDto), e);
             throw e;
         } catch (Exception e) {
+            logger.error("stationId=" + stationId + ",operator = " + JSON.toJSONString(operatorDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
     }
