@@ -106,7 +106,7 @@ public class LifeCycleValidator {
 	public void checkStationNameKfc(String stationName) {
 		if (kfcServiceConfig.isProhibitedWord(stationName)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-				"村站名称或地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(stationName).get("word"));
+				"村站名称包含违禁词汇：" + kfcServiceConfig.kfcCheck(stationName).get("word"));
 		}
 	}
 
@@ -117,7 +117,7 @@ public class LifeCycleValidator {
 	public void checkAdressKfc(String addressDetail) {
 		if (kfcServiceConfig.isProhibitedWord(addressDetail)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-				"村站名称或地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(addressDetail).get("word"));
+				"地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(addressDetail).get("word"));
 		}
 	}
 

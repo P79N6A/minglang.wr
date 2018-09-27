@@ -77,7 +77,6 @@ public class UmLifeCycleValidator {
      */
     public void validateUpdate(UnionMemberUpdateDto updateDto) {
         String stationName = updateDto.getStationName();
-        //FIXME FHH 这些安全校验，找PD确认
         if (StringUtils.isNotBlank(stationName)) {
             //校验优盟门店名称字符和长度
             StationValidator.nameFormatCheck(stationName);
