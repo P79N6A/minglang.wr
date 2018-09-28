@@ -193,18 +193,19 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             String operator = updateDto.getOperator();
             Long parentTaobaoUserId = Long.valueOf(operator);
             //所属村小二
-            Station parentStationDto = stationBO.getStationById(parentTaobaoUserId);
+            PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+                parentTaobaoUserId);
 
             //优盟实例
             Long stationId = updateDto.getStationId();
             PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(updateDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
-            if (null != parentStationId && !parentStationId.equals(parentStationDto.getId())) {
+            if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟合作店");
             }
 
-            String parentCountyCode = parentStationDto.getCounty();
+            String parentCountyCode = partnerInstanceDto.getStationDto().getAddress().getCounty();
             Address address = updateDto.getAddress();
             //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
             if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
