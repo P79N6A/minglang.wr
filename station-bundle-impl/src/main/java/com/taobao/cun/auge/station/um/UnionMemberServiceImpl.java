@@ -109,7 +109,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
                 parentStationId);
             if (partnerInstance == null || partnerInstance.getStationDto() == null) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "合伙人站点不存在");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二站点不存在");
             }
             return paymentAccountDto;
         } catch (AugeBusinessException e) {
@@ -132,7 +132,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
             if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-                    "优盟店铺地址必须和当前村小二在同一个行政县域内");
+                    "优盟店地址必须和当前村小二在同一个行政县域内");
             }
 
             StationDto sDto = new StationDto();
@@ -201,7 +201,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能修改非自己名下的优盟店");
             }
 
             String parentCountyCode = partnerInstanceDto.getStationDto().getAddress().getCounty();
@@ -209,7 +209,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
             if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-                    "优盟店铺地址必须和当前村小二在同一个行政县域内");
+                    "优盟店地址必须和当前村小二在同一个行政县域内");
             }
 
             //前置条件校验
@@ -289,7 +289,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
             }
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
@@ -307,7 +307,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                         StateMachineEvent.SERVICING_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟当前状态不可开通");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可开通");
                 }
                 //关闭
             } else if (UnionMemberStateEnum.CLOSED.equals(targetStateEnum)) {
@@ -317,7 +317,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                         StateMachineEvent.CLOSED_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟当前状态不可关闭");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可关闭");
                 }
             }
         } catch (AugeBusinessException e) {
@@ -365,12 +365,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能删除非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能删除非自己名下的优盟店");
             }
 
             PartnerInstanceStateEnum umState = umInstanceDto.getState();
             if (PartnerInstanceStateEnum.SERVICING.equals(umState)) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟合作店已开通，不能删除");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店已开通，不能删除");
             }
 
             Long umInstanceId = umInstanceDto.getId();
