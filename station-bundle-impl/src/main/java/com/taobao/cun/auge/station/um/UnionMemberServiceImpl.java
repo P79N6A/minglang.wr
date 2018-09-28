@@ -201,7 +201,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟合作店");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟店");
             }
 
             String parentCountyCode = partnerInstanceDto.getStationDto().getAddress().getCounty();
