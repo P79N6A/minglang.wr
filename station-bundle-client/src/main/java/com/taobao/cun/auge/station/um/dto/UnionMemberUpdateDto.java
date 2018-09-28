@@ -27,6 +27,7 @@ public class UnionMemberUpdateDto extends OperatorDto {
     /**
      * 地址相关信息
      */
+    @NotNull(message = "address not null")
     private Address address;
 
     /**

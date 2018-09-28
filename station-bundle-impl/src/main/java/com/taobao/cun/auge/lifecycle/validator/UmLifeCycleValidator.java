@@ -84,12 +84,10 @@ public class UmLifeCycleValidator {
             lifeCycleValidator.checkStationNameKfc(stationName);
         }
         Address address = updateDto.getAddress();
-        if (null != address) {
-            //地址变更后，校验新的地址，字符长度校验
-            StationValidator.addressFormatCheck(address);
-            //校验合作店名称、地址是否包含违禁词
-            lifeCycleValidator.checkAdressKfc(address.getAddressDetail());
-        }
+        //地址变更后，校验新的地址，字符长度校验
+        StationValidator.addressFormatCheck(address);
+        //校验合作店名称、地址是否包含违禁词
+        lifeCycleValidator.checkAdressKfc(address.getAddressDetail());
         //校验描述
         validateDescription(updateDto.getDescription());
     }

@@ -192,9 +192,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         try {
             String operator = updateDto.getOperator();
             Long parentTaobaoUserId = Long.valueOf(operator);
-            //所属村小二实例
-            PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                parentTaobaoUserId);
+            //所属村小二
+            Station parentStationDto = stationBO.getStationById(parentTaobaoUserId);
 
             //优盟实例
             Long stationId = updateDto.getStationId();
@@ -202,8 +201,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
-            if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            if (null != parentStationId && !parentStationId.equals(parentStationDto.getId())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能更新非自己名下的优盟合作店");
+            }
+
+            String parentCountyCode = parentStationDto.getCounty();
+            Address address = updateDto.getAddress();
+            //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
+            if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
+                    "优盟店铺地址必须和当前村小二在同一个行政县域内");
             }
 
             //前置条件校验
@@ -213,11 +220,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
             stationDto.setId(stationId);
             stationDto.setName(updateDto.getStationName());
-            Address address = updateDto.getAddress();
-            if (null != address) {
-                stationDto.setAddress(address);
-                LatitudeUtil.buildPOI(address);
-            }
+            stationDto.setAddress(address);
+            LatitudeUtil.buildPOI(address);
 
             stationDto.setFormat(updateDto.getFormat());
             if (null != updateDto.getCovered()) {
