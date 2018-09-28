@@ -58,7 +58,7 @@ public class UmLifeCycleValidator {
         String umName = partnerDto.getName();
         //优盟门店名称校验
         String stationName = stationDto.getName();
-        StationValidator.nameFormatCheck(stationName);
+        StationValidator.umStationNameCheck(stationName);
         //校验优盟门店名称是否有违禁词汇
         checkStationNameKfc(stationName);
         //校验优盟店名称中是否包含优盟姓名
@@ -97,7 +97,7 @@ public class UmLifeCycleValidator {
         Address address = updateDto.getAddress();
         if (StringUtils.isNotBlank(stationName)) {
             //校验优盟门店名称字符和长度
-            StationValidator.nameFormatCheck(stationName);
+            StationValidator.umStationNameCheck(stationName);
             if (stationName.contains(umName)) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含姓名等信息");
             }
