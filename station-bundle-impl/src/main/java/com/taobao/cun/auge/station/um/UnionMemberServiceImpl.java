@@ -197,8 +197,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
             //优盟实例
             Long stationId = updateDto.getStationId();
-            PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
-                stationId);
+            PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(updateDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(parentStationDto.getId())) {
@@ -214,7 +213,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             }
 
             //前置条件校验
-            umLifeCycleValidator.validateUpdate(updateDto);
+            umLifeCycleValidator.validateUpdate(updateDto, umInstanceDto.getPartnerDto().getName());
 
             StationDto stationDto = new StationDto();
 
@@ -330,7 +329,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         }
     }
 
-    private PartnerInstanceDto getUmPartnerInstanceDto(UnionMemberStateChangeDto stateChangeDto, Long stationId) {
+    private PartnerInstanceDto getUmPartnerInstanceDto(OperatorDto operatorDto, Long stationId) {
         Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
 
         PartnerInstanceCondition condition = new PartnerInstanceCondition();
@@ -339,7 +338,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         condition.setNeedStationInfo(Boolean.TRUE);
         condition.setNeedDesensitization(Boolean.FALSE);
         condition.setNeedPartnerLevelInfo(Boolean.FALSE);
-        condition.copyOperatorDto(stateChangeDto);
+        condition.copyOperatorDto(operatorDto);
 
         return partnerInstanceQueryService.queryInfo(condition);
     }
