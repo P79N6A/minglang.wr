@@ -52,7 +52,7 @@ public class UmLifeCycleValidator {
         //不可重复入驻
         PartnerInstanceDto piDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
         if (piDto != null) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复添加");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
         }
         //优盟姓名
         String umName = partnerDto.getName();
@@ -63,7 +63,7 @@ public class UmLifeCycleValidator {
         checkStationNameKfc(stationName);
         //校验优盟店名称中是否包含优盟姓名
         if (stationName.contains(umName)) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含优盟姓名");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含姓名等信息");
         }
 
         //校验地址字符长度等
@@ -72,7 +72,7 @@ public class UmLifeCycleValidator {
         checkAdressKfc(address.getAddressDetail());
         //校验优盟店地址中是否包含优盟姓名
         if (address.getAddressDetail().contains(umName)) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店地址不可以包含优盟姓名");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店地址不可以包含姓名等信息");
         }
         //校验优盟信息
         PartnerValidator.validatePartnerInfo(partnerDto);
@@ -99,7 +99,7 @@ public class UmLifeCycleValidator {
             //校验优盟门店名称字符和长度
             StationValidator.nameFormatCheck(stationName);
             if (stationName.contains(umName)) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含优盟姓名");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含姓名等信息");
             }
             //校验优盟门店名称是否有违禁词汇
             checkStationNameKfc(stationName);
@@ -110,7 +110,7 @@ public class UmLifeCycleValidator {
         checkAdressKfc(address.getAddressDetail());
 
         if (address.getAddressDetail().contains(umName)) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店地址不可以包含优盟姓名");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店地址不可以包含姓名等信息");
         }
         //校验描述
         validateDescription(updateDto.getDescription());
