@@ -100,28 +100,6 @@ public class LifeCycleValidator {
 	}
 
 	/**
-	 * 校验站点名称中是否有违禁词
-	 * @param stationName
-	 */
-	public void checkStationNameKfc(String stationName) {
-		if (kfcServiceConfig.isProhibitedWord(stationName)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-				"村站名称包含违禁词汇：" + kfcServiceConfig.kfcCheck(stationName).get("word"));
-		}
-	}
-
-	/**
-	 * 校验地址中是否有违禁词
-	 * @param addressDetail
-	 */
-	public void checkAdressKfc(String addressDetail) {
-		if (kfcServiceConfig.isProhibitedWord(addressDetail)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-				"地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(addressDetail).get("word"));
-		}
-	}
-
-	/**
 	 * 判断服务站名同一省内是否存在
  	 */
 	public void checkStationNameDuplicate(Long stationId, String newStationName,String province) {
