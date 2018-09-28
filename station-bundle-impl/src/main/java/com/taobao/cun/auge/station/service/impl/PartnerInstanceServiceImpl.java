@@ -2459,7 +2459,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         Assert.notNull(instance, "partner not exists");
 
-        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.UM_SETTLING, taobaoUserId, PartnerProtocolRelTargetTypeEnum.PARTNER);
+        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.UM_SETTLING, taobaoUserId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
         if (pprDto != null) {
             return;
         }
