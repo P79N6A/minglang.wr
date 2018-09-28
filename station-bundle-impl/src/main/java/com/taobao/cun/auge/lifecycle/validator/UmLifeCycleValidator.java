@@ -5,7 +5,6 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -32,9 +31,6 @@ public class UmLifeCycleValidator {
 
     @Autowired
     private KFCServiceConfig kfcServiceConfig;
-
-    @Autowired
-    private StationBO stationBO;
 
     /**
      * 优盟入驻前置校验
@@ -66,8 +62,6 @@ public class UmLifeCycleValidator {
         if (stationName.contains(umName)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟店名称不可以包含优盟姓名");
         }
-        //校验同一个省域内，村站名称是否重复
-        checkStationNameDuplicate(stationName, address.getProvince());
 
         //校验地址字符长度等
         StationValidator.addressFormatCheck(address);
@@ -106,8 +100,6 @@ public class UmLifeCycleValidator {
             }
             //校验优盟门店名称是否有违禁词汇
             checkStationNameKfc(stationName);
-            //校验同一个省域内，村站名称是否重复
-            checkStationNameDuplicate(stationName, address.getProvince());
         }
         //地址变更后，校验新的地址，字符长度校验
         StationValidator.addressFormatCheck(address);
@@ -153,16 +145,6 @@ public class UmLifeCycleValidator {
         if (kfcServiceConfig.isProhibitedWord(addressDetail)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
                 "地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(addressDetail).get("word"));
-        }
-    }
-
-    /**
-     * 判断服务站名同一省内是否存在
-     */
-    public void checkStationNameDuplicate(String newStationName, String province) {
-        int count = stationBO.getSameNameInProvinceCnt(newStationName, province);
-        if (count > 0) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "优盟店名称同一省域不能重复");
         }
     }
 }
