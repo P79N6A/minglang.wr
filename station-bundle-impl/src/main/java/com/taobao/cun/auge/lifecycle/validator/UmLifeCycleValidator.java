@@ -32,6 +32,9 @@ public class UmLifeCycleValidator {
     @Autowired
     private KFCServiceConfig kfcServiceConfig;
 
+    //优盟描述最多50个字
+    private static final int UM_DESC_MAX_SIZE = 50;
+
     /**
      * 优盟入驻前置校验
      *
@@ -119,7 +122,7 @@ public class UmLifeCycleValidator {
      * @param desc
      */
     private void validateDescription(String desc) {
-        if (StringUtils.isNotBlank(desc) && desc.length() > 50) {
+        if (StringUtils.isNotBlank(desc) && desc.length() > UM_DESC_MAX_SIZE) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "优盟描述不能超过50位");
         }
     }

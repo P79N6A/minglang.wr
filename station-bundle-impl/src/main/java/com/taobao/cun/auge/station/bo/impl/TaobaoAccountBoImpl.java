@@ -37,11 +37,11 @@ public class TaobaoAccountBoImpl implements TaobaoAccountBo {
         }
         // 黑白名单
         NamelistMatchParam buyer = new NamelistMatchParam();
-        buyer.setIdentifier("sm"); // 买家名单表标识
-        buyer.setValue(String.valueOf(taobaoUserId));// 名单表里的类型的值
+        buyer.setIdentifier("sm");
+        buyer.setValue(String.valueOf(taobaoUserId));
         NamelistMatchParam seller = new NamelistMatchParam();
-        seller.setIdentifier("R_172"); // 买家名单表标识
-        seller.setValue(String.valueOf(taobaoUserId));// 名单表里的类型的值
+        seller.setIdentifier("R_172");
+        seller.setValue(String.valueOf(taobaoUserId));
         List<NamelistMatchParam> list = new ArrayList<NamelistMatchParam>();
         list.add(buyer);
         list.add(seller);
