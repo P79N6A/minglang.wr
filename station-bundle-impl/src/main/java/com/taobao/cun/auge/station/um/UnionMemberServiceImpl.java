@@ -162,7 +162,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             pDto.setTaobaoUserId(taobaoUserId);
             pDto.setTaobaoNick(taobaoNick);
             pDto.setName(aliPaymentAccountDto.getFullName());
-            pDto.setAlipayAccount(aliPaymentAccountDto.getAccountNo());
+            pDto.setAlipayAccount(aliPaymentAccountDto.getAlipayId());
             pDto.setIdenNum(aliPaymentAccountDto.getIdCardNumber());
             pDto.setMobile(addDto.getMobile());
             pDto.setBusinessType(PartnerBusinessTypeEnum.PARTTIME);
