@@ -12,12 +12,18 @@ public class UserRoleEnum implements Serializable {
 	public static final UserRoleEnum TEAM_LEADER = new UserRoleEnum("TEAM_LEADER", "特战队长");
 
 	public static final UserRoleEnum PROVINCE_LEADER = new UserRoleEnum("PROVINCE_LEADER", "省负责人");
+	
+	public static final UserRoleEnum EXT_COUNTY_LEADER = new UserRoleEnum("EXT_COUNTY_LEADER", "拓展小二");
+	
+	public static final UserRoleEnum EXT_TEAM_LEADER = new UserRoleEnum("EXT_TEAM_LEADER", "拓展队长");
 
 	private static final Map<String, UserRoleEnum> mappings = new HashMap<String, UserRoleEnum>();
 	static {
 		mappings.put("COUNTY_LEADER", COUNTY_LEADER);
 		mappings.put("TEAM_LEADER", TEAM_LEADER);
 		mappings.put("PROVINCE_LEADER", PROVINCE_LEADER);
+		mappings.put("EXT_COUNTY_LEADER", EXT_COUNTY_LEADER);
+		mappings.put("EXT_TEAM_LEADER", EXT_TEAM_LEADER);
 	}
 
 	private String code;
