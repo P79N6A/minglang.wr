@@ -198,7 +198,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  */
 @Service("partnerInstanceService")
-@HSFProvider(serviceInterface = PartnerInstanceService.class,clientTimeout=8000,serviceVersion="1.0.0.daily.fhh")
+@HSFProvider(serviceInterface = PartnerInstanceService.class,clientTimeout=8000)
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);

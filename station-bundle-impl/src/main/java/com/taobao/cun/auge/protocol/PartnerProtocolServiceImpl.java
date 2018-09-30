@@ -20,7 +20,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("partnerProtocolService")
-@HSFProvider(serviceInterface = PartnerProtocolService.class,serviceVersion="1.0.0.daily.fhh")
+@HSFProvider(serviceInterface = PartnerProtocolService.class)
 public class PartnerProtocolServiceImpl implements PartnerProtocolService {
 
 	@Autowired
