@@ -52,6 +52,8 @@
     <result column="property_payment" jdbcType="VARCHAR" property="propertyPayment" />
     <result column="storage_area" jdbcType="VARCHAR" property="storageArea" />
     <result column="gmt_start_open" jdbcType="TIMESTAMP" property="gmtStartOpen" />
+    <result column="transfer_state" jdbcType="VARCHAR" property="transferState" />
+    <result column="own_dept" jdbcType="VARCHAR" property="ownDept" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -130,7 +132,8 @@
     office_detail, free_deadline, self_costs, remark, manage_model, taobao_nick, parent_id, 
     employee_phone, lng, lat, logistics_phone, logistics_operator, gmt_start_operation, 
     feature, lease_protocol_begin_time, lease_protocol_end_time, lease_type, lease_payment, 
-    water_payment, electric_payment, property_payment, storage_area, gmt_start_open
+    water_payment, electric_payment, property_payment, storage_area, gmt_start_open, 
+    transfer_state, own_dept
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CountyStationExample" resultMap="BaseResultMap">
     <!--
@@ -202,7 +205,8 @@
       feature, lease_protocol_begin_time, lease_protocol_end_time, 
       lease_type, lease_payment, water_payment, 
       electric_payment, property_payment, storage_area, 
-      gmt_start_open)
+      gmt_start_open, transfer_state, own_dept
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{provinceDetail,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
@@ -218,7 +222,8 @@
       #{feature,jdbcType=VARCHAR}, #{leaseProtocolBeginTime,jdbcType=TIMESTAMP}, #{leaseProtocolEndTime,jdbcType=TIMESTAMP}, 
       #{leaseType,jdbcType=VARCHAR}, #{leasePayment,jdbcType=VARCHAR}, #{waterPayment,jdbcType=VARCHAR}, 
       #{electricPayment,jdbcType=VARCHAR}, #{propertyPayment,jdbcType=VARCHAR}, #{storageArea,jdbcType=VARCHAR}, 
-      #{gmtStartOpen,jdbcType=TIMESTAMP})
+      #{gmtStartOpen,jdbcType=TIMESTAMP}, #{transferState,jdbcType=VARCHAR}, #{ownDept,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CountyStation">
     <!--
@@ -365,6 +370,12 @@
       <if test="gmtStartOpen != null">
         gmt_start_open,
       </if>
+      <if test="transferState != null">
+        transfer_state,
+      </if>
+      <if test="ownDept != null">
+        own_dept,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -501,6 +512,12 @@
       </if>
       <if test="gmtStartOpen != null">
         #{gmtStartOpen,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transferState != null">
+        #{transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="ownDept != null">
+        #{ownDept,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -659,6 +676,12 @@
       <if test="record.gmtStartOpen != null">
         gmt_start_open = #{record.gmtStartOpen,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.transferState != null">
+        transfer_state = #{record.transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ownDept != null">
+        own_dept = #{record.ownDept,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -715,7 +738,9 @@
       electric_payment = #{record.electricPayment,jdbcType=VARCHAR},
       property_payment = #{record.propertyPayment,jdbcType=VARCHAR},
       storage_area = #{record.storageArea,jdbcType=VARCHAR},
-      gmt_start_open = #{record.gmtStartOpen,jdbcType=TIMESTAMP}
+      gmt_start_open = #{record.gmtStartOpen,jdbcType=TIMESTAMP},
+      transfer_state = #{record.transferState,jdbcType=VARCHAR},
+      own_dept = #{record.ownDept,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -862,6 +887,12 @@
       <if test="gmtStartOpen != null">
         gmt_start_open = #{gmtStartOpen,jdbcType=TIMESTAMP},
       </if>
+      <if test="transferState != null">
+        transfer_state = #{transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="ownDept != null">
+        own_dept = #{ownDept,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -915,7 +946,9 @@
       electric_payment = #{electricPayment,jdbcType=VARCHAR},
       property_payment = #{propertyPayment,jdbcType=VARCHAR},
       storage_area = #{storageArea,jdbcType=VARCHAR},
-      gmt_start_open = #{gmtStartOpen,jdbcType=TIMESTAMP}
+      gmt_start_open = #{gmtStartOpen,jdbcType=TIMESTAMP},
+      transfer_state = #{transferState,jdbcType=VARCHAR},
+      own_dept = #{ownDept,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

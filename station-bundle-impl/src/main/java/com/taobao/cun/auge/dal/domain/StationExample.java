@@ -3054,6 +3054,76 @@ public class StationExample {
             addCriterion("category not between", value1, value2, "category");
             return (Criteria) this;
         }
+
+        public Criteria andTransferStateIsNull() {
+            addCriterion("transfer_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateIsNotNull() {
+            addCriterion("transfer_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateEqualTo(String value) {
+            addCriterion("transfer_state =", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateNotEqualTo(String value) {
+            addCriterion("transfer_state <>", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateGreaterThan(String value) {
+            addCriterion("transfer_state >", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateGreaterThanOrEqualTo(String value) {
+            addCriterion("transfer_state >=", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateLessThan(String value) {
+            addCriterion("transfer_state <", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateLessThanOrEqualTo(String value) {
+            addCriterion("transfer_state <=", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateLike(String value) {
+            addCriterion("transfer_state like", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateNotLike(String value) {
+            addCriterion("transfer_state not like", value, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateIn(List<String> values) {
+            addCriterion("transfer_state in", values, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateNotIn(List<String> values) {
+            addCriterion("transfer_state not in", values, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateBetween(String value1, String value2) {
+            addCriterion("transfer_state between", value1, value2, "transferState");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransferStateNotBetween(String value1, String value2) {
+            addCriterion("transfer_state not between", value1, value2, "transferState");
+            return (Criteria) this;
+        }
     }
 
     /**
