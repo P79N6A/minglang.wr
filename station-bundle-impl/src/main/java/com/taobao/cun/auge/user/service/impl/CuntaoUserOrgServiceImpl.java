@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,6 +285,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Override
 	public List<CuntaoUserOrgVO> getCuntaoOrgUsers(List<Long> orgIds, List<String> roles){
+		if(CollectionUtils.isEmpty(orgIds)) {
+			return Lists.newArrayList();
+		}
 		CuntaoUserOrgExample example = new CuntaoUserOrgExample();
 		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo("VALID").andUserTypeEqualTo("BUC");
 		criteria.andOrgIdIn(orgIds).andRoleIn(roles);
