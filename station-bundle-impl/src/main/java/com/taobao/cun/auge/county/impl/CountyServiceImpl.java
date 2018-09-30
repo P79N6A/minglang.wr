@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSON;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.common.utils.PositionUtil;
@@ -25,19 +28,11 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.user.dto.Operator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 @Service("CountyService")
 @HSFProvider(serviceInterface = CountyService.class)
 public class CountyServiceImpl implements CountyService{
-
-	private static final Logger logger = LoggerFactory.getLogger(CountyServiceImpl.class);
-
 	@Autowired
 	CountyBO countyBO;
 	
@@ -48,10 +43,8 @@ public class CountyServiceImpl implements CountyService{
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	
 	@Override
-	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
-		logger.info("saveCountyStation"+JSON.toJSONString(countyDto));
-			CountyDto rst = countyBO.saveCountyStation(operator,countyDto);
-			return rst;
+	public CountyDto saveCountyStation(CountyDto countyDto, Operator operator) {
+		return countyBO.saveCountyStation(countyDto, operator);
 	}
 
 	@Override
@@ -196,10 +189,8 @@ public class CountyServiceImpl implements CountyService{
 	}
 	
 	@Override
-    public CountyDto startOperate(String operator, CountyDto countyDto){
-		logger.info("startOperate"+JSON.toJSONString(countyDto));
-			CountyDto rst = countyBO.startOperate(operator,countyDto);
-			return rst;
+    public CountyDto startOperate(CountyDto countyDto, Operator operator){
+		return countyBO.startOperate(countyDto, operator);
 	}
 
 	@Override
@@ -254,7 +245,7 @@ public class CountyServiceImpl implements CountyService{
 	}
 	
 	@Override
-	public boolean startOpen(Long countyStationId,String operator){
+	public boolean startOpen(Long countyStationId, Operator operator){
 		try {
 			return countyBO.startOpen(countyStationId,operator);
 		} catch (Exception e) {
