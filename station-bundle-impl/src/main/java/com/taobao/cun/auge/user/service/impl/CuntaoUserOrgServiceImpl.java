@@ -447,11 +447,11 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	}
 	
 	private long getUserGroupId(String userRole) {
-		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode())) {
+		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode()) || userRole.equals(UserRoleEnum.EXT_TEAM_LEADER.getCode())) {
 			return 11;
 		}
 		
-		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode())) {
+		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode()) || userRole.equals(UserRoleEnum.EXT_PROVINCE_LEADER.getCode())) {
 			return 12;
 		}
 		
