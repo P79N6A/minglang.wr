@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.StationTransferExtMapper">
-  <select id="getTransferStations" parameterType="string" resultType="com.taobao.cun.auge.station.transfer.dto.TransferStation">
+  <select id="getTransferStations" parameterType="long" resultType="com.taobao.cun.auge.station.transfer.dto.TransferStation">
     select a.id as stationId, 
     	a.name as stationName, 
     	b.open_date as openDate,
