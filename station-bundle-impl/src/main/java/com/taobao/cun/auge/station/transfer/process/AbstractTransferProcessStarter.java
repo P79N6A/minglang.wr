@@ -46,9 +46,7 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 		startWorkflow(countyStationTransferJob);
 	}
 
-
 	protected abstract void postHandle(CountyStationTransferJob countyStationTransferJob);
-
 
 	private void startWorkflow(CountyStationTransferJob countyStationTransferJob) throws TransferException {
 		transferWorkflow.start(countyStationTransferJob);
