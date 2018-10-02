@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.station.transfer.dto;
 
-public class TransferJob {
+import java.io.Serializable;
+
+public class TransferJob implements Serializable{
+	private static final long serialVersionUID = -6654185665519590344L;
+
 	private Long countyStationId;
 	
 	private Long targetTeamOrgId;

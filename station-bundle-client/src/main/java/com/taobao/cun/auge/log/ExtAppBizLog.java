@@ -9,7 +9,8 @@ import java.util.List;
  *
  */
 public class ExtAppBizLog extends SimpleAppBizLog{
-    private List<LogContent> logContents;
+	private static final long serialVersionUID = -2061029848076699861L;
+	private List<LogContent> logContents;
 
 	public List<LogContent> getLogContents() {
 		return logContents;

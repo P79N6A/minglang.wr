@@ -1,11 +1,15 @@
 package com.taobao.cun.auge.log;
 
+import java.io.Serializable;
+
 /**
  * 简单日志
  * @author chengyu.zhoucy
  *
  */
-public class SimpleAppBizLog {
+public class SimpleAppBizLog implements Serializable{
+	private static final long serialVersionUID = 3225225751075110070L;
+
 	private String bizType;
 
     private Long bizKey;

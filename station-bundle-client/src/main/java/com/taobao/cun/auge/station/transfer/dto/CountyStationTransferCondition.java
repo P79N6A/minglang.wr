@@ -1,10 +1,13 @@
 package com.taobao.cun.auge.station.transfer.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.taobao.cun.auge.station.dto.CountyStationDto;
 
-public class CountyStationTransferCondition {
+public class CountyStationTransferCondition implements Serializable{
+	private static final long serialVersionUID = -305450898700523643L;
+
 	private boolean countyTransfer;
 	
 	private boolean stationTransfer;

@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.log;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -12,7 +13,9 @@ import com.google.common.collect.Lists;
  * @author chengyu.zhoucy
  *
  */
-public class LogContent {
+public class LogContent implements Serializable{
+	private static final long serialVersionUID = -5154986933794220530L;
+
 	private List<String> errors;
 	
 	private List<String> messages;

@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.station.transfer.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TransferStation {
+public class TransferStation implements Serializable{
+	private static final long serialVersionUID = 6086483054383491541L;
+
 	private Long stationid;
 	
 	private String stationName;

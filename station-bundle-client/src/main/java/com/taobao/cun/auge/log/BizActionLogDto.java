@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.log;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class BizActionLogDto {
+public class BizActionLogDto implements Serializable{
+	private static final long serialVersionUID = -3867559952145996358L;
+
 	private Long objectId;
 	
 	private String objectType;

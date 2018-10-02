@@ -1,12 +1,15 @@
 package com.taobao.cun.auge.station.transfer.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.taobao.cun.auge.station.dto.CountyStationDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 
-public class CountyStationTransferDetail {
+public class CountyStationTransferDetail implements Serializable{
+	private static final long serialVersionUID = 9213386111293723146L;
+
 	private Long id;
 
     private Long targetTeamOrgId;
