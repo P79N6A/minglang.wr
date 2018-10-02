@@ -9,7 +9,6 @@ import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
 
 public class CountyDto implements Serializable{
 	
@@ -116,15 +115,15 @@ public class CountyDto implements Serializable{
 	
 	private Date gmtOpenDate;
 	
-	private TransferState transferState;
+	private String transferState;
 
 	private String ownDept;
 	
-	public TransferState getTransferState() {
+	public String getTransferState() {
 		return transferState;
 	}
 
-	public void setTransferState(TransferState transferState) {
+	public void setTransferState(String transferState) {
 		this.transferState = transferState;
 	}
 

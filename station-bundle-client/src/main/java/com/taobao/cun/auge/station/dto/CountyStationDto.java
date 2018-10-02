@@ -215,16 +215,16 @@ public class CountyStationDto implements Serializable{
      */
     private String storageArea;
     
-    private TransferState transferState;
+    private String transferState;
     
     private String ownDept;
     
 
-	public TransferState getTransferState() {
+	public String getTransferState() {
 		return transferState;
 	}
 
-	public void setTransferState(TransferState transferState) {
+	public void setTransferState(String transferState) {
 		this.transferState = transferState;
 	}
 
