@@ -32,7 +32,7 @@ public class BizBaseOrgConfiguration {
 	private ExtCountyService extCountyService;
 	
 	@Bean
-    public ExtDeptOrgClient ossFileStoreService(
+    public ExtDeptOrgClient extDeptOrgClient(
     		CuntaoOrgTagService cuntaoOrgTagService,
     		ExtCountyService extCountyService,
             CuntaoOrgServiceClient cuntaoOrgServiceClient) throws Exception {
