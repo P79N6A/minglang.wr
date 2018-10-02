@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.transfer.service;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
@@ -20,7 +21,7 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 	private TransferJobBo transferJobBo;
 	
 	
-	public void startTransferProcess(TransferJob transferJob) {
+	public void startTransferProcess(TransferJob transferJob) throws TransferException{
 		transferProcessFacade.startTransferProcess(transferJob);
 	}
 	

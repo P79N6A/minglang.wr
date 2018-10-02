@@ -12,6 +12,7 @@ import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
 import com.taobao.cun.auge.dal.mapper.CountyStationTransferJobMapper;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
+import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferJob;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
@@ -35,7 +36,7 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	
 	@Override
 	@Transactional
-	public void startTransferProcess(TransferJob transferJob) {
+	public void startTransferProcess(TransferJob transferJob) throws TransferException{
 		CountyStationTransferJob countyStationTransferJob = createCountyStationTransferJob(transferJob);
 		
 		transStations(countyStationTransferJob);
@@ -49,7 +50,7 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	protected abstract void postHandle(CountyStationTransferJob countyStationTransferJob);
 
 
-	private void startWorkflow(CountyStationTransferJob countyStationTransferJob) {
+	private void startWorkflow(CountyStationTransferJob countyStationTransferJob) throws TransferException {
 		transferWorkflow.start(countyStationTransferJob);
 	}
 

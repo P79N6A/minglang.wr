@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.TransferJob;
 
@@ -17,7 +18,7 @@ public class TransferProcessFacade {
 	 * 发起交接流程
 	 * @param transferJob
 	 */
-	public void startTransferProcess(TransferJob transferJob) {
+	public void startTransferProcess(TransferJob transferJob) throws TransferException{
 		transferProcessStarterFactory.getInstance(transferJob).startTransferProcess(transferJob);
 	}
 	

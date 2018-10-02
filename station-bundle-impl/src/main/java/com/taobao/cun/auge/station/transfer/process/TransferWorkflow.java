@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
+import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -35,7 +36,7 @@ public class TransferWorkflow {
 	
 	private static final String TASK_CODE = "extCountyTransfer";
 	
-	public void start(CountyStationTransferJob countyStationTransferJob) {
+	public void start(CountyStationTransferJob countyStationTransferJob) throws TransferException{
 		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 		startDto.setBusinessCode(TASK_CODE);
@@ -52,13 +53,13 @@ public class TransferWorkflow {
 		if(optional.isPresent()) {
 			initData.put("extTeamOrgId", String.valueOf(optional.get().getId()));
 		}else {
-			throw new RuntimeException("找不到该县域的拓展队");
+			throw new TransferException("找不到该县域的拓展队");
 		}
 		startDto.setInitData(initData);
 		
 		ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if(!result.isSuccess()) {
-			throw new RuntimeException(result.getException());
+			throw new TransferException("创建流程失败：" + result.getException().getMessage());
 		}
 	}
 }
