@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.transfer.service;
 
+import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
@@ -29,7 +30,7 @@ public interface TransferProcessService {
 	 * @param transferJob
 	 * @throws TransferException 
 	 */
-	void startTransferProcess(TransferJob transferJob) throws TransferException;
+	ResultModel<Boolean> startTransferProcess(TransferJob transferJob) throws TransferException;
 	
 	/**
 	 * 准备流程数据

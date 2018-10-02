@@ -2,7 +2,7 @@ package com.taobao.cun.auge.station.transfer.service;
 
 import javax.annotation.Resource;
 
-import com.taobao.cun.auge.station.transfer.TransferException;
+import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
@@ -21,8 +21,18 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 	private TransferJobBo transferJobBo;
 	
 	
-	public void startTransferProcess(TransferJob transferJob) throws TransferException{
-		transferProcessFacade.startTransferProcess(transferJob);
+	public ResultModel<Boolean> startTransferProcess(TransferJob transferJob) {
+		ResultModel<Boolean> resultModel = new ResultModel<Boolean>();
+		try {
+			transferProcessFacade.startTransferProcess(transferJob);
+			resultModel.setResult(true);
+			resultModel.setSuccess(true);
+		}catch (Exception e) {
+			resultModel.setResult(false);
+			resultModel.setSuccess(false);
+			resultModel.setErrorMessage(e.getMessage());
+		}
+		return resultModel;
 	}
 	
 	public CountyStationTransferCondition prepare(Long countyStationId) {

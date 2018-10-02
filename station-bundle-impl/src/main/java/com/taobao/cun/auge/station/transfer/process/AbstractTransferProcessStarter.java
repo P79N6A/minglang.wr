@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -35,7 +36,7 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	protected TransferItemBo transferItemBo;
 	
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void startTransferProcess(TransferJob transferJob) throws TransferException{
 		CountyStationTransferJob countyStationTransferJob = createCountyStationTransferJob(transferJob);
 		
