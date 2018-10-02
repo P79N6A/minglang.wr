@@ -11,6 +11,8 @@ import com.taobao.cun.auge.station.dto.CountyStationDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -69,8 +71,8 @@ public class CountyStationConverter {
 		countyStationDto.setTownDetail(countyStation.getTownDetail());
 		countyStationDto.setWarehouseNum(countyStation.getWarehouseNum());
 		countyStationDto.setWaterPayment(countyStation.getWaterPayment());
-		
-
+		countyStationDto.setTransferState(TransferState.valueOf(countyStation.getTransferState()));
+		countyStationDto.setOwnDept(countyStation.getOwnDept());
 		return countyStationDto;
 	}
 
@@ -119,6 +121,8 @@ public class CountyStationConverter {
 		countyStation.setTownDetail(countyStationDto.getTownDetail());
 		countyStation.setWarehouseNum(countyStationDto.getWarehouseNum());
 		countyStation.setWaterPayment(countyStationDto.getWaterPayment());
+		countyStation.setOwnDept(countyStationDto.getOwnDept());
+		countyStation.setTransferState(countyStationDto.getTransferState() != null ? countyStationDto.getTransferState().name() : null);
 		return countyStation;
 	}
 

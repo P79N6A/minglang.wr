@@ -349,6 +349,8 @@ public class CountyBOImpl implements CountyBO {
 					countyStationDto.setLeaseProtocolEndTimeFormat(formatDate(countyStation.getLeaseProtocolEndTime()));
 					countyStationDto.setLeaseTypeEnum(CountyStationLeaseTypeEnum.valueof(countyStation.getLeaseType()));
 					countyStationDto.setLeasePayment(countyStation.getLeasePayment());
+					countyStationDto.setTransferState(TransferState.valueOf(countyStation.getTransferState()));
+					countyStationDto.setOwnDept(countyStation.getOwnDept());
 					return countyStationDto;
 				}
 			});
