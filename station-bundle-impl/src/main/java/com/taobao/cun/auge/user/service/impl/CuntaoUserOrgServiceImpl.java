@@ -431,6 +431,18 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			return "PROVINCE_LEADER";
 		}
 		
+		if(userRole.equals(UserRoleEnum.EXT_COUNTY_LEADER.getCode())) {
+			return "EXT_COUNTY_LEADER";
+		}
+		
+		if(userRole.equals(UserRoleEnum.EXT_TEAM_LEADER.getCode())) {
+			return "EXT_TEAM_LEADER";
+		}
+		
+		if(userRole.equals(UserRoleEnum.EXT_PROVINCE_LEADER.getCode())) {
+			return "EXT_PROVINCE_LEADER";
+		}
+		
 		return "COUNTY_ADMIN";
 	}
 	
