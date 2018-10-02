@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
@@ -30,15 +32,17 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	private StationTransferBo stationTransferBo;
 	@Resource
 	protected TransferItemBo transferItemBo;
+	
 	@Override
+	@Transactional
 	public void startTransferProcess(TransferJob transferJob) {
 		CountyStationTransferJob countyStationTransferJob = createCountyStationTransferJob(transferJob);
 		
 		transStations(countyStationTransferJob);
 		
-		startWorkflow(countyStationTransferJob);
-		
 		postHandle(countyStationTransferJob);
+		
+		startWorkflow(countyStationTransferJob);
 	}
 
 
