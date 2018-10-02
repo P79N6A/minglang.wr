@@ -1,13 +1,19 @@
 package com.taobao.cun.auge.station.transfer.process;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
+import com.taobao.cun.auge.log.BizActionEnum;
+import com.taobao.cun.auge.log.BizActionLogDto;
+import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
@@ -27,6 +33,8 @@ public class TransferAuditBo {
 	private TransferJobBo transferJobBo;
 	@Resource
 	private TransferItemBo transferItemBo;
+	@Resource
+	private BizActionLogBo bizActionLogBo;
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	
@@ -35,7 +43,7 @@ public class TransferAuditBo {
 		transferHandlers.put("station", new StationTransferHandler());
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void agree(String applyId, String operator, Long orgId) {
 		CountyStationTransferDetail detail = transferJobBo.getCountyStationTransferDetail(Long.parseLong(applyId));
 		transferHandlers.get(detail.getType()).agree(detail, operator, orgId);
@@ -43,7 +51,7 @@ public class TransferAuditBo {
 		transferItemBo.updateStateByJobId(Long.parseLong(applyId), "AGREE");
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void disagree(String applyId, String operator) {
 		CountyStationTransferDetail detail = transferJobBo.getCountyStationTransferDetail(Long.parseLong(applyId));
 		transferHandlers.get(detail.getType()).disagree(detail);
@@ -56,7 +64,26 @@ public class TransferAuditBo {
 		void disagree(CountyStationTransferDetail detail);
 	}
 	
-	class CountyTransferHandler implements TransferHandler{
+	abstract class AbstractTransferHandler implements TransferHandler{
+		void addBizActionLog(Long refId, String refType, String userId, Long orgId, BizActionEnum bizActionEnum) {
+			BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+			bizActionLogAddDto.setBizActionEnum(bizActionEnum);
+			bizActionLogAddDto.setGmtCreate(new Date());
+			bizActionLogAddDto.setObjectId(refId);
+			bizActionLogAddDto.setObjectType(refType);
+			bizActionLogAddDto.setOpOrgId(orgId);
+			bizActionLogAddDto.setOpWorkId(userId);
+			bizActionLogBo.addLog(bizActionLogAddDto);
+		}
+		
+		void addStationBizActionLog(List<Long> stationIds, String userId, Long orgId) {
+			for(Long stationId : stationIds) {
+				addBizActionLog(stationId, "station", userId, orgId, BizActionEnum.station_transfer_finished);
+			}
+		}
+	}
+	
+	class CountyTransferHandler extends AbstractTransferHandler{
 
 		@Override
 		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
@@ -66,6 +93,9 @@ public class TransferAuditBo {
 			countyStationTransferBo.endTransfer(detail.getCountyStation().getId());
 			//将县在运营部的组织挂到指定的特战队
 			cuntaoOrgBO.updateParent(orgId, detail.getTargetTeamOrgId());
+			//记录日志
+			addBizActionLog(detail.getCountyStation().getId(), "county", userId, orgId, BizActionEnum.countystation_transfer_finished);
+			addStationBizActionLog(detail.getStationIds(), userId, orgId);
 		}
 
 		@Override
@@ -77,12 +107,13 @@ public class TransferAuditBo {
 		}
 	}
 	
-	class StationTransferHandler implements TransferHandler{
+	class StationTransferHandler extends AbstractTransferHandler{
 
 		@Override
 		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
 			//更新站点的转交状态为FINISHED
 			stationTransferBo.endTransfer(detail.getStationIds());
+			addStationBizActionLog(detail.getStationIds(), userId, orgId);
 		}
 
 		@Override
