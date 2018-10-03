@@ -3124,6 +3124,76 @@ public class StationExample {
             addCriterion("transfer_state not between", value1, value2, "transferState");
             return (Criteria) this;
         }
+
+        public Criteria andOwnDeptIsNull() {
+            addCriterion("own_dept is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptIsNotNull() {
+            addCriterion("own_dept is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptEqualTo(String value) {
+            addCriterion("own_dept =", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptNotEqualTo(String value) {
+            addCriterion("own_dept <>", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptGreaterThan(String value) {
+            addCriterion("own_dept >", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptGreaterThanOrEqualTo(String value) {
+            addCriterion("own_dept >=", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptLessThan(String value) {
+            addCriterion("own_dept <", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptLessThanOrEqualTo(String value) {
+            addCriterion("own_dept <=", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptLike(String value) {
+            addCriterion("own_dept like", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptNotLike(String value) {
+            addCriterion("own_dept not like", value, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptIn(List<String> values) {
+            addCriterion("own_dept in", values, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptNotIn(List<String> values) {
+            addCriterion("own_dept not in", values, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptBetween(String value1, String value2) {
+            addCriterion("own_dept between", value1, value2, "ownDept");
+            return (Criteria) this;
+        }
+
+        public Criteria andOwnDeptNotBetween(String value1, String value2) {
+            addCriterion("own_dept not between", value1, value2, "ownDept");
+            return (Criteria) this;
+        }
     }
 
     /**

@@ -260,6 +260,9 @@
 		<if test="partnerName != null and partnerName != ''" >
 			and p.name = #{partnerName,jdbcType=VARCHAR}
 		</if>
+		<if test="ownDept != null and ownDept != ''" >
+			and s.own_dept = #{ownDept,jdbcType=VARCHAR}
+		</if>
    </sql>
    
    

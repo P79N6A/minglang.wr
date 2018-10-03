@@ -117,6 +117,16 @@ public class PartnerInstanceExample implements Serializable {
 	//服务站类目
 	private String category;
 	
+	private String ownDept;
+	
+	public String getOwnDept() {
+		return ownDept;
+	}
+
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
+
 	public String getCourseStatus() {
 		return courseStatus;
 	}
