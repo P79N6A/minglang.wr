@@ -312,6 +312,7 @@ public class CountyBOImpl implements CountyBO {
         	dealWithMobileForQuery(queryCondition);
         	param.put("fullIdPaths", queryCondition.getFullIdPaths());
         }
+        param.put("ownDept", queryCondition.getOwnDept());
 		int total = countyStationMapper.countCountyStation(param);
 		List<CountyDto> countyStationDtos = null;
 		if(total > 0){
