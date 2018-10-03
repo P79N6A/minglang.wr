@@ -2,6 +2,9 @@ package com.taobao.cun.auge.station.transfer.service;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSONArray;
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
@@ -41,12 +44,17 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 
 	@Override
 	public void agree(String applyId, String operator, long orgId) {
-		transferAuditBo.agree(applyId, operator, orgId);
+		transferAuditBo.agree(applyId, parseWorkId(operator), orgId);
+	}
+
+	private String parseWorkId(String operator) {
+		JSONArray array = JSONArray.parseArray(operator);
+		return StringUtils.removeStart((String) array.get(0), "0");
 	}
 
 	@Override
 	public void disagree(String applyId, String operator) {
-		transferAuditBo.disagree(applyId, operator);
+		transferAuditBo.disagree(applyId, parseWorkId(operator));
 	}
 
 	@Override
