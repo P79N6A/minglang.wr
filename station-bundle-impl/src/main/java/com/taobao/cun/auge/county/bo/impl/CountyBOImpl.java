@@ -28,7 +28,6 @@ import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.Ware
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.PageHelper;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.cun.appResource.dto.AppResourceDto;
@@ -314,47 +313,44 @@ public class CountyBOImpl implements CountyBO {
         }
         param.put("ownDept", queryCondition.getOwnDept());
 		int total = countyStationMapper.countCountyStation(param);
-		List<CountyDto> countyStationDtos = null;
+		List<CountyDto> countyStationDtos = Lists.newArrayList();
 		if(total > 0){
 			param.put("startItem", queryCondition.getPageSize() * (queryCondition.getPage() - 1));
 			param.put("pageSize", queryCondition.getPageSize());
 			List<CountyStation> countyStations = countyStationMapper.queryCountyStation(param);
-			countyStationDtos = Lists.transform(countyStations, new Function<CountyStation, CountyDto>(){
-				@Override
-				public CountyDto apply(CountyStation countyStation) {
-					CountyDto countyStationDto = new CountyDto();
-					countyStationDto.setId(countyStation.getId());
-					countyStationDto.setOrgId(countyStation.getOrgId());
-					countyStationDto.setEmployeeId(countyStation.getEmployeeId());
-					countyStationDto.setFreeDeadline(countyStation.getFreeDeadline());
-					countyStationDto.setGmtStartOperation(countyStation.getGmtStartOperation());
-					countyStationDto.setAcreage(countyStation.getAcreage());
-					countyStationDto.setLeasingModel(countyStation.getLeasingModel());
-					countyStationDto.setLogisticsOperator(countyStation.getLogisticsOperator());
-					countyStationDto.setLogisticsPhone(countyStation.getLogisticsPhone());
-					countyStationDto.setManageModel(CountyStationManageModelEnum.valueof(countyStation.getManageModel()));
-					countyStationDto.setManageStatus(CountyStationManageStatusEnum.valueof(countyStation.getManageStatus()));
-					countyStationDto.setName(countyStation.getName());
-					countyStationDto.setOfficeDetail(countyStation.getOfficeDetail());
-					countyStationDto.setOperator(countyStation.getCreator());
-					countyStationDto.setOrgId(countyStation.getOrgId());
-					countyStationDto.setName(countyStation.getName());
-					AddressDto addressDto=new AddressDto();
-					BeanUtils.copyProperties(countyStation, addressDto);
-					countyStationDto.setAddressDto(addressDto);
-					countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
-					countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
-					countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
-					countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
-					countyStationDto.setLeaseProtocolBeginTimeFormat(formatDate(countyStation.getLeaseProtocolBeginTime()));
-					countyStationDto.setLeaseProtocolEndTimeFormat(formatDate(countyStation.getLeaseProtocolEndTime()));
-					countyStationDto.setLeaseTypeEnum(CountyStationLeaseTypeEnum.valueof(countyStation.getLeaseType()));
-					countyStationDto.setLeasePayment(countyStation.getLeasePayment());
-					countyStationDto.setTransferState(countyStation.getTransferState());
-					countyStationDto.setOwnDept(countyStation.getOwnDept());
-					return countyStationDto;
-				}
-			});
+			for(CountyStation countyStation : countyStations) {
+				CountyDto countyStationDto = new CountyDto();
+				countyStationDto.setId(countyStation.getId());
+				countyStationDto.setOrgId(countyStation.getOrgId());
+				countyStationDto.setEmployeeId(countyStation.getEmployeeId());
+				countyStationDto.setFreeDeadline(countyStation.getFreeDeadline());
+				countyStationDto.setGmtStartOperation(countyStation.getGmtStartOperation());
+				countyStationDto.setAcreage(countyStation.getAcreage());
+				countyStationDto.setLeasingModel(countyStation.getLeasingModel());
+				countyStationDto.setLogisticsOperator(countyStation.getLogisticsOperator());
+				countyStationDto.setLogisticsPhone(countyStation.getLogisticsPhone());
+				countyStationDto.setManageModel(CountyStationManageModelEnum.valueof(countyStation.getManageModel()));
+				countyStationDto.setManageStatus(CountyStationManageStatusEnum.valueof(countyStation.getManageStatus()));
+				countyStationDto.setName(countyStation.getName());
+				countyStationDto.setOfficeDetail(countyStation.getOfficeDetail());
+				countyStationDto.setOperator(countyStation.getCreator());
+				countyStationDto.setOrgId(countyStation.getOrgId());
+				countyStationDto.setName(countyStation.getName());
+				AddressDto addressDto=new AddressDto();
+				BeanUtils.copyProperties(countyStation, addressDto);
+				countyStationDto.setAddressDto(addressDto);
+				countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
+				countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
+				countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
+				countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
+				countyStationDto.setLeaseProtocolBeginTimeFormat(formatDate(countyStation.getLeaseProtocolBeginTime()));
+				countyStationDto.setLeaseProtocolEndTimeFormat(formatDate(countyStation.getLeaseProtocolEndTime()));
+				countyStationDto.setLeaseTypeEnum(CountyStationLeaseTypeEnum.valueof(countyStation.getLeaseType()));
+				countyStationDto.setLeasePayment(countyStation.getLeasePayment());
+				countyStationDto.setTransferState(countyStation.getTransferState());
+				countyStationDto.setOwnDept(countyStation.getOwnDept());
+				countyStationDtos.add(countyStationDto);
+			}
 		}
 		PageDto<CountyDto> result= new PageDto<CountyDto>();
 		result.setTotal(total);
