@@ -57,5 +57,4 @@ public class CountyStationBOImpl implements CountyStationBO {
 		countyStation.setGmtModified(new Date());
 		countyStationMapper.updateByPrimaryKey(countyStation);
 	}
-
 }

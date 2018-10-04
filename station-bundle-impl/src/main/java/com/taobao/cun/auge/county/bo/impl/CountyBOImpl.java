@@ -1177,4 +1177,10 @@ public class CountyBOImpl implements CountyBO {
 		countyStationMapper.updateByPrimaryKeySelective(record);
 		return true;
 	}
+
+	@Override
+	public Long getOrgIdByCountyStationId(Long id) {
+		CountyStation countyStation = countyStationMapper.selectByPrimaryKey(id);
+		return countyStation.getOrgId();
+	}
 }

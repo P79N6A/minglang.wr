@@ -127,4 +127,6 @@ public interface CountyService {
 	public boolean startOpen(Long countyStationId, Operator operator);
 	
 	public int countServicingStation(Long countyStationId);
+	
+	Long getOrgIdByCountyStationId(Long id);
 }

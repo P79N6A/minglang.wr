@@ -257,5 +257,10 @@ public class CountyServiceImpl implements CountyService{
 	public int countServicingStation(Long countyStationId) {
 		return countyStationMapper.countServicingStation(countyStationId);
 	}
+
+	@Override
+	public Long getOrgIdByCountyStationId(Long id) {
+		return countyBO.getOrgIdByCountyStationId(id);
+	}
 	
 }
