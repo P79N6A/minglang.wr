@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.station.transfer.process;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.log.BizActionEnum;
-import com.taobao.cun.auge.log.BizActionLogDto;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
@@ -20,13 +18,25 @@ import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
+import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
+import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
 
+/**
+ * 转交审批
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Component
 public class TransferAuditBo {
 	@Resource
 	private CountyStationTransferBo countyStationTransferBo;
 	@Resource
 	private StationTransferBo stationTransferBo;
+	@Resource
+	private CountyTransferStateMgrBo countyTransferStateMgrBo;
+	@Resource
+	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource
 	private CuntaoOrgBO cuntaoOrgBO;
 	@Resource
@@ -65,20 +75,9 @@ public class TransferAuditBo {
 	}
 	
 	abstract class AbstractTransferHandler implements TransferHandler{
-		void addBizActionLog(Long refId, String refType, String userId, Long orgId, BizActionEnum bizActionEnum) {
-			BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
-			bizActionLogAddDto.setBizActionEnum(bizActionEnum);
-			bizActionLogAddDto.setGmtCreate(new Date());
-			bizActionLogAddDto.setObjectId(refId);
-			bizActionLogAddDto.setObjectType(refType);
-			bizActionLogAddDto.setOpOrgId(orgId);
-			bizActionLogAddDto.setOpWorkId(userId);
-			bizActionLogBo.addLog(bizActionLogAddDto);
-		}
-		
 		void addStationBizActionLog(List<Long> stationIds, String userId, Long orgId) {
 			for(Long stationId : stationIds) {
-				addBizActionLog(stationId, "station", userId, orgId, BizActionEnum.station_transfer_finished);
+				bizActionLogBo.addLog(stationId, "station", userId, orgId, BizActionEnum.station_transfer_finished);
 			}
 		}
 	}
@@ -88,22 +87,22 @@ public class TransferAuditBo {
 		@Override
 		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
 			//更新站点的转交状态为FINISHED
-			stationTransferBo.endTransfer(detail.getStationIds());
+			stationTransferStateMgrBo.endTransfer(detail.getStationIds());
 			//更新县点的转交状态为FINISHED
-			countyStationTransferBo.endTransfer(detail.getCountyStation().getId());
+			countyTransferStateMgrBo.endTransfer(detail.getCountyStation().getId());
 			//将县在运营部的组织挂到指定的特战队
 			cuntaoOrgBO.updateParent(orgId, detail.getTargetTeamOrgId());
 			//记录日志
-			addBizActionLog(detail.getCountyStation().getId(), "county", userId, orgId, BizActionEnum.countystation_transfer_finished);
+			bizActionLogBo.addLog(detail.getCountyStation().getId(), "county", userId, orgId, BizActionEnum.countystation_transfer_finished);
 			addStationBizActionLog(detail.getStationIds(), userId, orgId);
 		}
 
 		@Override
 		public void disagree(CountyStationTransferDetail detail) {
 			//更新站点的转交状态为FINISHED
-			countyStationTransferBo.cancelTransfer(detail.getCountyStation().getId());
+			countyTransferStateMgrBo.cancelTransfer(detail.getCountyStation().getId());
 			//更新站点的转交状态为WAITING
-			stationTransferBo.cancelTransfer(detail.getStationIds());
+			stationTransferStateMgrBo.cancelTransfer(detail.getStationIds());
 		}
 	}
 	
@@ -112,14 +111,14 @@ public class TransferAuditBo {
 		@Override
 		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
 			//更新站点的转交状态为FINISHED
-			stationTransferBo.endTransfer(detail.getStationIds());
+			stationTransferStateMgrBo.endTransfer(detail.getStationIds());
 			addStationBizActionLog(detail.getStationIds(), userId, orgId);
 		}
 
 		@Override
 		public void disagree(CountyStationTransferDetail detail) {
 			//更新站点的转交状态为WAITING
-			stationTransferBo.cancelTransfer(detail.getStationIds());
+			stationTransferStateMgrBo.cancelTransfer(detail.getStationIds());
 		}
 	}
 }

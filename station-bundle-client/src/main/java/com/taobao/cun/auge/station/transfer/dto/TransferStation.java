@@ -6,7 +6,7 @@ import java.util.Date;
 public class TransferStation implements Serializable{
 	private static final long serialVersionUID = 6086483054383491541L;
 
-	private Long stationid;
+	private Long stationId;
 	
 	private String stationName;
 	
@@ -26,12 +26,12 @@ public class TransferStation implements Serializable{
 		this.transferState = transferState;
 	}
 
-	public Long getStationid() {
-		return stationid;
+	public Long getStationId() {
+		return stationId;
 	}
 
-	public void setStationid(Long stationid) {
-		this.stationid = stationid;
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
 	}
 
 	public String getStationName() {

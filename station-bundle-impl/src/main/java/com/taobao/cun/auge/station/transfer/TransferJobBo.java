@@ -19,7 +19,15 @@ import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.convert.CountyStationConverter;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
+import com.taobao.cun.auge.station.transfer.dto.TransferJob;
+import com.taobao.cun.common.util.BeanCopy;
 
+/**
+ * 交接任务
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Component
 public class TransferJobBo {
 	@Resource
@@ -63,5 +71,14 @@ public class TransferJobBo {
 		record.setState(state);
 		record.setGmtModified(new Date());
 		countyStationTransferJobMapper.updateByPrimaryKeySelective(record);
+	}
+	
+	public CountyStationTransferJob createCountyStationTransferJob(TransferJob transferJob) {
+		CountyStationTransferJob countyStationTransferJob = BeanCopy.copy(CountyStationTransferJob.class, transferJob);
+		countyStationTransferJob.setGmtCreate(new Date());
+		countyStationTransferJob.setGmtModified(new Date());
+		countyStationTransferJob.setState("NEW");
+		countyStationTransferJobMapper.insert(countyStationTransferJob);
+		return countyStationTransferJob;
 	}
 }

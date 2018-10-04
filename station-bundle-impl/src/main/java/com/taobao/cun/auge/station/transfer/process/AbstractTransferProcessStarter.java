@@ -12,12 +12,12 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
 import com.taobao.cun.auge.dal.mapper.CountyStationTransferJobMapper;
-import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
+import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferJob;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
-import com.taobao.cun.common.util.BeanCopy;
+import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
 
 /**
  * 县村转交抽象实现
@@ -31,14 +31,16 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	@Resource
 	private CountyStationTransferJobMapper countyStationTransferJobMapper;
 	@Resource
-	private StationTransferBo stationTransferBo;
+	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource
 	protected TransferItemBo transferItemBo;
+	@Resource
+	private TransferJobBo transferJobBo;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void startTransferProcess(TransferJob transferJob) throws TransferException{
-		CountyStationTransferJob countyStationTransferJob = createCountyStationTransferJob(transferJob);
+		CountyStationTransferJob countyStationTransferJob = transferJobBo.createCountyStationTransferJob(transferJob);
 		
 		transStations(countyStationTransferJob);
 		
@@ -71,17 +73,6 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 			item.setState("NEW");
 			transferItemBo.insert(item);
 		}
-		stationTransferBo.batchUpdateTransferState(ids, TransferState.TRANSFERING.name());
+		stationTransferStateMgrBo.batchUpdateTransferState(ids, TransferState.TRANSFERING.name());
 	}
-
-
-	private CountyStationTransferJob createCountyStationTransferJob(TransferJob transferJob) {
-		CountyStationTransferJob countyStationTransferJob = BeanCopy.copy(CountyStationTransferJob.class, transferJob);
-		countyStationTransferJob.setGmtCreate(new Date());
-		countyStationTransferJob.setGmtModified(new Date());
-		countyStationTransferJob.setState("NEW");
-		countyStationTransferJobMapper.insert(countyStationTransferJob);
-		return countyStationTransferJob;
-	}
-
 }

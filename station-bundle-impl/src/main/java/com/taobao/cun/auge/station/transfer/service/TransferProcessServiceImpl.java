@@ -14,6 +14,12 @@ import com.taobao.cun.auge.station.transfer.process.TransferAuditBo;
 import com.taobao.cun.auge.station.transfer.process.TransferProcessFacade;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 交接流程服务
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @HSFProvider(serviceInterface = TransferProcessService.class)
 public class TransferProcessServiceImpl implements TransferProcessService {
 	@Resource

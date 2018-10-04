@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.StationTransferExtMapper">
-  <select id="getTransferStations" parameterType="long" resultType="com.taobao.cun.auge.station.transfer.dto.TransferStation">
+  <select id="getTransferableStations" parameterType="long" resultType="com.taobao.cun.auge.station.transfer.dto.TransferStation">
     select a.id as stationId, 
     	a.name as stationName, 
     	b.open_date as openDate,
     	a.transfer_state as transferState,
     	b.type,b.state from station a,partner_station_rel b
+		where a.is_deleted='n' and b.is_deleted='n'
+		and a.id=b.station_id 
+		and b.state in('SERVICING','CLOSING','DECORATING')
+		and b.type in('TP','TPS') and b.is_current='y'
+		and b.open_date is not null
+		and a.transfer_state = 'WAITING'
+		and a.apply_org=#{orgId}
+    </select>
+    
+    <select id="countServicing" parameterType="long" resultType="int">
+    select count(0) from station a,partner_station_rel b
 		where a.is_deleted='n' and b.is_deleted='n'
 		and a.id=b.station_id 
 		and b.state in('SERVICING','CLOSING','DECORATING')
@@ -21,4 +32,19 @@
 	 and is_deleted='n'
 	)
     </update>
+    
+    <update id="autoTransferOrgId" parameterType="long">
+    update station set own_dept='opdept',transfer_state='FINISHED' where apply_org = #{orgId}
+    </update>
+    
+    <select id="selectAutoTransferableCountyIds" parameterType="java.util.Date" resultType="long">
+    <![CDATA[
+    select distinct object_id from biz_action_log a where object_type='county' 
+	and action_name='countystation_transfer_finished'
+	and gmt_create<#{date}
+	and not exists(select 0 from biz_action_log b where a.object_id=b.object_id 
+               and b.action_name='countystation_auto_transfer_finished'
+               and object_type = 'county' )
+    ]]>
+    </select>
 </mapper>

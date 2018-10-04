@@ -8,6 +8,12 @@ import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.TransferJob;
 
+/**
+ * 转交流程对外封装接口
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Component
 public class TransferProcessFacade {
 	@Resource

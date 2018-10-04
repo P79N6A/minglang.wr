@@ -4,41 +4,34 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.domain.StationExample;
-import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.dal.mapper.ext.StationTransferExtMapper;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
+import com.taobao.cun.auge.station.transfer.dto.TransferStation;
 
+/**
+ * 站点交接业务
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Component
 public class StationTransferBo {
 	@Resource
-	private StationMapper stationMapper;
-	@Resource
 	private StationTransferExtMapper stationTransferExtMapper;
 	
-	public void batchUpdateTransferState(List<Long> ids, String transferState) {
-		StationExample example = new StationExample();
-		example.createCriteria().andIdIn(ids);
-		Station station = new Station();
-		station.setTransferState(transferState);
-		stationMapper.updateByExampleSelective(station, example);
+	/**
+	 * 获取县点下所有可交接村点
+	 * 
+	 * @param countyStationId
+	 * @return
+	 */
+	public List<TransferStation> getTransferableStations(Long orgId){
+		return ListUtils.emptyIfNull(stationTransferExtMapper.getTransferableStations(orgId));
 	}
 	
-	public void updateSubStationTransferState(List<Long> ids, String transferState) {
-		stationTransferExtMapper.updateSubStationTransferState(ids, transferState);
-	}
-	
-	@Transactional
-	public void endTransfer(List<Long> stationIds) {
-		batchUpdateTransferState(stationIds, TransferState.FINISHED.name());
-		updateSubStationTransferState(stationIds, TransferState.FINISHED.name());
-	}
-	
-	public void cancelTransfer(List<Long> stationIds) {
-		batchUpdateTransferState(stationIds, TransferState.WAITING.name());
+	public int countServicing(Long orgId) {
+		return stationTransferExtMapper.countServicing(orgId);
 	}
 }

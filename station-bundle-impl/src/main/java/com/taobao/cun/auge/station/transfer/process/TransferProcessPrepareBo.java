@@ -7,16 +7,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.convert.CountyStationConverter;
 import com.taobao.cun.auge.station.dto.CountyStationDto;
-import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
+import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferPhase;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.dto.TransferStation;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 
@@ -34,7 +32,7 @@ public class TransferProcessPrepareBo {
 	@Resource
 	private CountyStationBO countyStationBO;
 	@Resource
-	private CountyStationTransferBo countyStationTransferBo;
+	private StationTransferBo stationTransferBo;
 	
 	private Map<CountyStationTransferPhase, DependStatePrepare> dependStatePrepares = Maps.newHashMap();
 	
@@ -84,25 +82,14 @@ public class TransferProcessPrepareBo {
 	}
 	
 	abstract class AbstractStatePrepare implements DependStatePrepare{
-		protected List<TransferStation> getAllStations(Long countyStationId){
-			return countyStationTransferBo.getTransferStations(countyStationId);
-		}
-		
 		protected CountyStationDto getCountyStationDto(Long countyStationId) {
 			CountyStation countyStation = countyStationBO.getCountyStationById(countyStationId);
 			return CountyStationConverter.toCountyStationDto(countyStation);
 		}
 		
 		protected List<TransferStation> getTransferableStations(Long countyStationId){
-			List<TransferStation> transferStations = getAllStations(countyStationId);
-			List<TransferStation> transferableStations = Lists.newArrayList();
-			//已开业的村点，并且是未交接的村点
-			for(TransferStation transferStation : transferStations) {
-				if(transferStation.getOpenDate() != null && transferStation.getTransferState().equals(TransferState.WAITING.name())) {
-					transferableStations.add(transferStation);
-				}
-			}
-			return transferableStations;
+			CountyStation countyStation = countyStationBO.getCountyStationById(countyStationId);
+			return stationTransferBo.getTransferableStations(countyStation.getOrgId());
 		}
 	}
 	
@@ -115,9 +102,10 @@ public class TransferProcessPrepareBo {
 		@Override
 		public CountyStationTransferCondition prepare(Long countyStationId) {
 			CountyStationTransferCondition countyStationTransferCondition = new CountyStationTransferCondition();
-			List<TransferStation> transferStations = getAllStations(countyStationId);
-			if(transferStations.size() < SERVICING_NUM) {
-				countyStationTransferCondition.setMemo("服务中站点数：" + transferStations.size() + ",不满足：" + SERVICING_NUM + "个的条件");
+			CountyStation countyStation = countyStationBO.getCountyStationById(countyStationId);
+			int servicingStationNum = stationTransferBo.countServicing(countyStation.getOrgId());
+			if(servicingStationNum < SERVICING_NUM) {
+				countyStationTransferCondition.setMemo("服务中站点数：" + servicingStationNum + ",不满足：" + SERVICING_NUM + "个的条件");
 				return countyStationTransferCondition;
 			}
 			

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
-import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
+import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 
 /**
  * 县点转交
@@ -20,11 +20,11 @@ import com.taobao.cun.auge.station.transfer.dto.TransferState;
 @Component
 public class CountyStationTransferProcessStarter extends AbstractTransferProcessStarter {
 	@Resource
-	private CountyStationTransferBo countyStationTransferBo;
+	private CountyTransferStateMgrBo countyTransferStateMgrBo;
 	
 	@Override
 	protected void postHandle(CountyStationTransferJob countyStationTransferJob) {
-		countyStationTransferBo.updateTransferState(countyStationTransferJob.getCountyStationId(),TransferState.TRANSFERING.name());
+		countyTransferStateMgrBo.updateTransferState(countyStationTransferJob.getCountyStationId(),TransferState.TRANSFERING.name());
 		
 		TransferItem item = new TransferItem();
 		item.setCreator(countyStationTransferJob.getCreator());

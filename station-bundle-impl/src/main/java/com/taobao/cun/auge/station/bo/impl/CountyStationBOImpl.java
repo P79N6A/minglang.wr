@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,14 @@ public class CountyStationBOImpl implements CountyStationBO {
 	public Long addCountyStation(CountyStation cs){
 		countyStationMapper.insert(cs);
 		return cs.getId();
+	}
+	
+	@Override
+	public void updateOwnDept(Long id, String ownDept) {
+		CountyStation countyStation = countyStationMapper.selectByPrimaryKey(id);
+		countyStation.setOwnDept(ownDept);
+		countyStation.setGmtModified(new Date());
+		countyStationMapper.updateByPrimaryKey(countyStation);
 	}
 
 }

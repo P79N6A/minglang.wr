@@ -50,4 +50,15 @@ public class BizActionLogBo {
 		}
 		return bizActionLogDtos;
 	}
+	
+	public void addLog(Long refId, String refType, String userId, Long orgId, BizActionEnum bizActionEnum) {
+		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+		bizActionLogAddDto.setBizActionEnum(bizActionEnum);
+		bizActionLogAddDto.setGmtCreate(new Date());
+		bizActionLogAddDto.setObjectId(refId);
+		bizActionLogAddDto.setObjectType(refType);
+		bizActionLogAddDto.setOpOrgId(orgId);
+		bizActionLogAddDto.setOpWorkId(userId);
+		addLog(bizActionLogAddDto);
+	}
 }
