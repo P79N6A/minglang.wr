@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
@@ -77,7 +78,7 @@ public class TransferAuditBo {
 	abstract class AbstractTransferHandler implements TransferHandler{
 		void addStationBizActionLog(List<Long> stationIds, String userId, Long orgId) {
 			for(Long stationId : stationIds) {
-				bizActionLogBo.addLog(stationId, "station", userId, orgId, BizActionEnum.station_transfer_finished);
+				bizActionLogBo.addLog(stationId, "station", userId, orgId, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
 			}
 		}
 	}
@@ -93,7 +94,7 @@ public class TransferAuditBo {
 			//将县在运营部的组织挂到指定的特战队
 			cuntaoOrgBO.updateParent(orgId, detail.getTargetTeamOrgId());
 			//记录日志
-			bizActionLogBo.addLog(detail.getCountyStation().getId(), "county", userId, orgId, BizActionEnum.countystation_transfer_finished);
+			bizActionLogBo.addLog(detail.getCountyStation().getId(), "county", userId, orgId, OrgDeptType.extdept.name(), BizActionEnum.countystation_transfer_finished);
 			addStationBizActionLog(detail.getStationIds(), userId, orgId);
 		}
 

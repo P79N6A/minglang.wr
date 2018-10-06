@@ -26,6 +26,11 @@ public class CountyTransferStateMgrBo implements TransferStateMgrBo<CountyStatio
 	@Resource
 	private CountyStationMapper countyStationMapper;
 	
+	public CountyStationTransferPhase getTransferPhaseByOrgId(Long orgId) {
+		CountyStation countyStation = countyStationBO.getCountyStationByOrgId(orgId);
+		return getTransferPhase(countyStation.getId());
+	}
+	
 	@Override
 	public CountyStationTransferPhase getTransferPhase(Long id) {
 		CountyStation countyStation = countyStationBO.getCountyStationById(id);

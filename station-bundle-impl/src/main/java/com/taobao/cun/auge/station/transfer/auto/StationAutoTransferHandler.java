@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferStation;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
@@ -34,7 +35,7 @@ public class StationAutoTransferHandler implements AutoTransferHandler {
 	public void transfer(CountyStation countyStation) {
 		List<TransferStation> transferStations = stationTransferBo.getTransferableStations(countyStation.getOrgId());
 		for(TransferStation transferStation : transferStations) {
-			bizActionLogBo.addLog(transferStation.getStationId(), "station", "system", 0L, BizActionEnum.station_auto_transfer_finished);
+			bizActionLogBo.addLog(transferStation.getStationId(), "station", "system", 0L, OrgDeptType.extdept.name(), BizActionEnum.station_auto_transfer_finished);
 		}
 		stationTransferStateMgrBo.autoTransfer(countyStation.getOrgId());
 		

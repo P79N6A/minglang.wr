@@ -567,6 +567,7 @@ public class CountyBOImpl implements CountyBO {
 		bizActionLogAddDto.setObjectId(countyId);
 		bizActionLogAddDto.setObjectType("county");
 		bizActionLogAddDto.setRoleName(operator.getRoleName());
+		bizActionLogAddDto.setDept(OrgDeptType.extdept.name());
 		bizActionLogBo.addLog(bizActionLogAddDto);
 	}
 

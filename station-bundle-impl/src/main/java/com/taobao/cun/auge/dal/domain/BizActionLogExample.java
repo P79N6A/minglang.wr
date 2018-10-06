@@ -924,6 +924,76 @@ public class BizActionLogExample {
             addCriterion("value2 not between", value1, value2, "value2");
             return (Criteria) this;
         }
+
+        public Criteria andDeptIsNull() {
+            addCriterion("dept is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptIsNotNull() {
+            addCriterion("dept is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptEqualTo(String value) {
+            addCriterion("dept =", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptNotEqualTo(String value) {
+            addCriterion("dept <>", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptGreaterThan(String value) {
+            addCriterion("dept >", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptGreaterThanOrEqualTo(String value) {
+            addCriterion("dept >=", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptLessThan(String value) {
+            addCriterion("dept <", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptLessThanOrEqualTo(String value) {
+            addCriterion("dept <=", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptLike(String value) {
+            addCriterion("dept like", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptNotLike(String value) {
+            addCriterion("dept not like", value, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptIn(List<String> values) {
+            addCriterion("dept in", values, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptNotIn(List<String> values) {
+            addCriterion("dept not in", values, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptBetween(String value1, String value2) {
+            addCriterion("dept between", value1, value2, "dept");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeptNotBetween(String value1, String value2) {
+            addCriterion("dept not between", value1, value2, "dept");
+            return (Criteria) this;
+        }
     }
 
     /**

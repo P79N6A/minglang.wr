@@ -18,12 +18,22 @@ public class BizActionLogDto implements Serializable{
 	
 	private Long opOrgId;
 	
+	private String dept;
+	
 	private String value1;
 	
 	private String value2;
 	
 	private Date gmtCreate;
 	
+	public String getDept() {
+		return dept;
+	}
+
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+
 	public String getRoleName() {
 		return roleName;
 	}

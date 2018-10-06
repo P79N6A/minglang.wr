@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 
 /**
@@ -27,6 +28,6 @@ public class CountyAutoTransferHandler implements AutoTransferHandler {
 	@Override
 	public void transfer(CountyStation countyStation) {
 		countyTransferStateMgrBo.autoTransfer(countyStation.getId());
-		bizActionLogBo.addLog(countyStation.getId(), "county", "system", 0L, BizActionEnum.countystation_auto_transfer_finished);
+		bizActionLogBo.addLog(countyStation.getId(), "county", "system", 0L, OrgDeptType.extdept.name(), BizActionEnum.countystation_auto_transfer_finished);
 	}
 }

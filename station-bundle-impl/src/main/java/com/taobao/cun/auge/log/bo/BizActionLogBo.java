@@ -26,6 +26,7 @@ public class BizActionLogBo {
 		record.setActionName(bizActionLogAddDto.getBizActionEnum().name());
 		record.setGmtCreate(new Date());
 		record.setOpOrgId(bizActionLogAddDto.getOpOrgId());
+		record.setDept(bizActionLogAddDto.getDept());
 		record.setOpWorkId(bizActionLogAddDto.getOpWorkId());
 		record.setObjectId(bizActionLogAddDto.getObjectId());
 		record.setObjectType(bizActionLogAddDto.getObjectType());
@@ -51,7 +52,7 @@ public class BizActionLogBo {
 		return bizActionLogDtos;
 	}
 	
-	public void addLog(Long refId, String refType, String userId, Long orgId, BizActionEnum bizActionEnum) {
+	public void addLog(Long refId, String refType, String userId, Long orgId, String dept, BizActionEnum bizActionEnum) {
 		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
 		bizActionLogAddDto.setBizActionEnum(bizActionEnum);
 		bizActionLogAddDto.setGmtCreate(new Date());
@@ -59,6 +60,7 @@ public class BizActionLogBo {
 		bizActionLogAddDto.setObjectType(refType);
 		bizActionLogAddDto.setOpOrgId(orgId);
 		bizActionLogAddDto.setOpWorkId(userId);
+		bizActionLogAddDto.setDept(dept);
 		addLog(bizActionLogAddDto);
 	}
 }

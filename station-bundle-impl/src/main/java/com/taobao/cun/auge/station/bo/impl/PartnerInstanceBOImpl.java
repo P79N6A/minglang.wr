@@ -45,7 +45,11 @@ import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.log.BizActionEnum;
+import com.taobao.cun.auge.log.BizActionLogDto;
+import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.monitor.BusinessMonitorBO;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.qualification.service.CuntaoQualificationService;
 import com.taobao.cun.auge.qualification.service.Qualification;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -70,6 +74,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferPhase;
+import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -134,6 +140,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     @Autowired
 	@Qualifier("distributeChannelCodeSequence")
 	private GroupSequence groupSequence;
+    @Autowired
+    private BizActionLogBo bizActionLogBo;
+    @Autowired
+    private CountyTransferStateMgrBo countyTransferStateMgrBo;
+    
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
     {
@@ -322,10 +333,26 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         if (partnerStationRel == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceId is null instanceId["+instanceId+"]");
         }
-
         partnerStationRel.setOpenDate(openDate);
         DomainUtils.beforeUpdate(partnerStationRel, operator);
         partnerStationRelMapper.updateByPrimaryKeySelective(partnerStationRel);
+        
+        //记录操作日志
+        Station station = stationBO.getStationById(partnerStationRel.getStationId());
+        BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+        bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_open);
+        bizActionLogAddDto.setObjectId(partnerStationRel.getStationId());
+        bizActionLogAddDto.setObjectType("station");
+        bizActionLogAddDto.setOpOrgId(station.getApplyOrg());
+        bizActionLogAddDto.setOpWorkId(operator);
+        bizActionLogAddDto.setValue1(String.valueOf(partnerStationRel.getTaobaoUserId()));
+        CountyStationTransferPhase countyStationTransferPhase = countyTransferStateMgrBo.getTransferPhaseByOrgId(station.getApplyOrg());
+        if(countyStationTransferPhase.equals(CountyStationTransferPhase.COUNTY_AUTO_TRANSED)) {
+        	bizActionLogAddDto.setDept(OrgDeptType.opdept.name());
+        }else {
+        	bizActionLogAddDto.setDept(OrgDeptType.extdept.name());
+        }
+        bizActionLogBo.addLog(bizActionLogAddDto);
     }
 
     @Override
