@@ -505,6 +505,9 @@
 	<if test="stationNum!=null and stationNum!=''">
 		and s.station_num = #{stationNum,jdbcType=VARCHAR}
 	</if>
+	<if test="ownDept!=null and ownDept!=''">
+		and s.own_dept = #{ownDept,jdbcType=VARCHAR}
+	</if>
 	</sql>
 
     <select id="selectPartnerInstancesByIds" resultMap="PartnerInstanceMap" parameterType="java.util.List" >
