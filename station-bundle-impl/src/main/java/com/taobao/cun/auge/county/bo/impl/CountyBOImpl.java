@@ -29,6 +29,7 @@ import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import com.jcabi.log.Logger;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -196,8 +197,11 @@ public class CountyBOImpl implements CountyBO {
 		CountyStation county = countyStationMapper.selectByPrimaryKey(id);
 		if (county != null) {
 			CountyDto dto = toCountyDto(county);
-			List<CnWarehouseDto> warehouses = getWarehouses(id);
-			dto.setWarehouseDtos(warehouses);
+			try {
+				List<CnWarehouseDto> warehouses = getWarehouses(id);
+				dto.setWarehouseDtos(warehouses);
+			}catch(Exception e) {
+			}
 			return dto;
 		} else {
 			return null;
