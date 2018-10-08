@@ -31,6 +31,16 @@ public class CountyTransferStateMgrBo implements TransferStateMgrBo<CountyStatio
 		return getTransferPhase(countyStation.getId());
 	}
 	
+	public String getCountyDeptById(Long id) {
+		CountyStation countyStation = countyStationBO.getCountyStationById(id);
+		return countyStation.getOwnDept();
+	}
+	
+	public String getCountyDeptByOrgId(Long orgId) {
+		CountyStation countyStation = countyStationBO.getCountyStationByOrgId(orgId);
+		return countyStation.getOwnDept();
+	}
+	
 	@Override
 	public CountyStationTransferPhase getTransferPhase(Long id) {
 		CountyStation countyStation = countyStationBO.getCountyStationById(id);

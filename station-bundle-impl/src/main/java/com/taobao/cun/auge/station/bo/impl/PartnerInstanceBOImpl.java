@@ -49,7 +49,6 @@ import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.monitor.BusinessMonitorBO;
-import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.qualification.service.CuntaoQualificationService;
 import com.taobao.cun.auge.qualification.service.Qualification;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -74,7 +73,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferPhase;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -346,12 +344,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         bizActionLogAddDto.setOpOrgId(station.getApplyOrg());
         bizActionLogAddDto.setOpWorkId(operator);
         bizActionLogAddDto.setValue1(String.valueOf(partnerStationRel.getTaobaoUserId()));
-        CountyStationTransferPhase countyStationTransferPhase = countyTransferStateMgrBo.getTransferPhaseByOrgId(station.getApplyOrg());
-        if(countyStationTransferPhase.equals(CountyStationTransferPhase.COUNTY_AUTO_TRANSED)) {
-        	bizActionLogAddDto.setDept(OrgDeptType.opdept.name());
-        }else {
-        	bizActionLogAddDto.setDept(OrgDeptType.extdept.name());
-        }
+        bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(station.getApplyOrg()));
         bizActionLogBo.addLog(bizActionLogAddDto);
     }
 
