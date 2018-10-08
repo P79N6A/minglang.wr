@@ -164,6 +164,24 @@ public final class StationValidator {
         }
         return true;
     }
+
+    public static boolean umStationNameCheck(String name) {
+        if (StringUtils.isEmpty(name)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"优盟店名称不能为空");
+        }
+        if (name.length() > 10 || name.length() < 2) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"优盟店名称长度2-10");
+        }
+        for (String vw : nameInvalidWord) {
+            if (name.indexOf(vw) >= 0) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"优盟店名称不能含有特殊关键字:"+vw);
+            }
+        }
+        if(!isAllChinese(name)){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"优盟店名称只允许中文汉字");
+        }
+        return true;
+    }
     
     /**
      * 地址格式校验

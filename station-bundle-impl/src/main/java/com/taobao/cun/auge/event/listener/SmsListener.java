@@ -88,11 +88,11 @@ public class SmsListener implements EventListener {
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String operatorId = stateChangeEvent.getOperator();
-		
+		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
 		// 查询手机号码
 		String mobile = findPartnerMobile(instanceId);
 		// 查询短信模板
-		DingtalkTemplateEnum dingTalkType = findSmsTemplate(stateChangeEnum);
+		DingtalkTemplateEnum dingTalkType = findSmsTemplate(stateChangeEnum,partnerType);
 		if (null == dingTalkType) {
 			logger.info("没有找到钉钉模板.");
 			return;
@@ -172,22 +172,28 @@ public class SmsListener implements EventListener {
 		}
 	}
 
-	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
-		// 正式提交后，入驻中，发短信
-		if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
-			return DingtalkTemplateEnum.NODE_COMMIT;
-		} // 正式提交后，装修中，发短信
-		else if (PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)) {
-			return DingtalkTemplateEnum.NODE_RECV;
-		} // 正式提交后，服务中，发短信
-		else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
-			return DingtalkTemplateEnum.NODE_OPEN;
-		} // 申请停业,发短信
-		else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
-			return DingtalkTemplateEnum.NODE_LEAVE_APPLY;
-		} // 由停业中，变更为已停业,发短信
-		else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
-			return DingtalkTemplateEnum.NODE_LEAVE;
+	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum,PartnerInstanceTypeEnum partnerType) {
+		if(PartnerInstanceTypeEnum.UM.equals(partnerType)){
+			if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.UM_START_SERVICING;
+			}
+		}else {
+			// 正式提交后，入驻中，发短信
+			if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.NODE_COMMIT;
+			} // 正式提交后，装修中，发短信
+			else if (PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.NODE_RECV;
+			} // 正式提交后，服务中，发短信
+			else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.NODE_OPEN;
+			} // 申请停业,发短信
+			else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.NODE_LEAVE_APPLY;
+			} // 由停业中，变更为已停业,发短信
+			else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
+				return DingtalkTemplateEnum.NODE_LEAVE;
+			}
 		}
 		logger.warn("没有找到短信模板。stateChangeEnum=" + stateChangeEnum.getDescription());
 		return null;

@@ -15,9 +15,9 @@ public final class PartnerValidator {
 	public static final Pattern P = Pattern.compile("^((1))\\d{10}$");
 
 	private PartnerValidator(){
-		
+
 	}
-	
+
 	public static void validatePartnerInfo(PartnerDto partnerDto) {
 		if (StringUtils.isBlank(partnerDto.getTaobaoNick())) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"申请人淘宝会员名不能为空");
@@ -39,7 +39,7 @@ public final class PartnerValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"手机号必须是11位数字组成，且以1开头");
 		}
 	}
-	
+
 	public static void validateParnterCanUpdateInfo(PartnerUpdateServicingDto partnerDto) {
 		if (partnerDto == null) {
 			return;
@@ -50,7 +50,7 @@ public final class PartnerValidator {
 			}
 		}
 	}
-	
+
 	public static void validateParnterUpdateInfoByPartner(PartnerUpdateServicingDto partnerDto) {
 		if (partnerDto == null) {
 			return;
@@ -62,8 +62,17 @@ public final class PartnerValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"手机号必须是11位数字组成，且以1开头");
 		}
 	}
-	
-	private static boolean isMobileNO(String mobiles) {
+
+    public static void validatePartnerMobile(String mobile) {
+        if (StringUtil.isBlank(mobile)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "手机号不能为空");
+        }
+        if (!isMobileNO(mobile)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "手机号必须是11位数字组成，且以1开头");
+        }
+    }
+
+    private static boolean isMobileNO(String mobiles) {
 		Matcher m = P.matcher(mobiles);
 		return m.matches();
 	}

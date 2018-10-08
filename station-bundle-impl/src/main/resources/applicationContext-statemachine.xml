@@ -38,4 +38,12 @@
             <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
         </property>
     </bean>
+
+    <!-- 优盟合作店状态机配置 -->
+    <bean id="UMStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+        <property name="path" value="statemachine/statemachine-um.xml"/>
+        <property name="listener">
+            <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
+        </property>
+    </bean>
 </beans>

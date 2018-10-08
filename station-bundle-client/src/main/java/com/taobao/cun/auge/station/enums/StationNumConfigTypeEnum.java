@@ -22,12 +22,14 @@ public class StationNumConfigTypeEnum implements Serializable {
     public static final StationNumConfigTypeEnum C  = new StationNumConfigTypeEnum("C", "村");
     public static final StationNumConfigTypeEnum D = new StationNumConfigTypeEnum("D", "电器");
     public static final StationNumConfigTypeEnum M = new StationNumConfigTypeEnum("M", "母婴");
+    public static final StationNumConfigTypeEnum UM  = new StationNumConfigTypeEnum("UM", "优盟");
 
 
     static {
     	mappings.put("C", C);
         mappings.put("D", D);
         mappings.put("M", M);
+        mappings.put("UM", UM);
     }
 
     public StationNumConfigTypeEnum(String code, String desc) {

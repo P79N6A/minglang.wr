@@ -356,8 +356,15 @@ public interface PartnerInstanceService {
      * @param taobaoUserId
      */
     public void signProjectNoticeProtocol(Long taobaoUserId);
-    
-    /**
+
+	/**
+	 * 签署优盟协议
+	 *
+	 * @param taobaoUserId
+	 */
+	public void signUmProtocol(Long taobaoUserId);
+
+	/**
      * 创建卖家信息，包含卖家分销渠道ID，卖家UIC,卖家shopId
      * @param taobaoUserId
      */

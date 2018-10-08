@@ -347,7 +347,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		sDto.setName(request.getName());
 		sDto.setProducts(request.getProducts());
 		sDto.setStationNum(request.getStationNum());
-		buildPOI(request.getAddress());
+		LatitudeUtil.buildPOI(request.getAddress());
 		sDto.setAddress(request.getAddress());
 		Map<String, String> featureMap = new HashMap<String, String>();
 		featureMap.put("villageFlag", request.getVillageFlag());
@@ -359,27 +359,6 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		initStationAttachments(request.getAttachements());
 		sDto.setAttachments(request.getAttachements());
 		return sDto;
-	}
-
-	private static void buildPOI(Address address) {
-		String villageDetail = address.getVillageDetail();
-		String lastDivisionId = getLastDivisionId(address);
-		String addressDetail = StringUtils.isNotEmpty(villageDetail) ? villageDetail : address.getAddressDetail();
-		Map<String, String> map = LatitudeUtil.findLatitude(lastDivisionId, addressDetail);
-		address.setLat(PositionUtil.converUp(map.get("lat")));
-		address.setLng(PositionUtil.converUp(map.get("lng")));
-	}
-
-	private static String getLastDivisionId(Address address) {
-		String lastDivisionId = null;
-		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(address.getTown()))
-				.orElse(StringUtils.trimToNull(address.getCounty()));
-		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId))
-				.orElse(StringUtils.trimToNull(address.getCity()));
-		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId))
-				.orElse(StringUtils.trimToNull(address.getProvince()));
-		lastDivisionId = Optional.ofNullable(StringUtils.trimToNull(lastDivisionId)).orElse("");
-		return lastDivisionId;
 	}
 
 	private PartnerInstanceDto buildPartnerInstanceDto(StationDto stationDto, PartnerDto partnerDto,
@@ -445,7 +424,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 				? StationCategoryEnum.valueofDesc(request.getCategory()).getCode() : "");
 		featureMap.put("managementType", request.getManagementType());
 		stationDto.setFeature(featureMap);
-		buildPOI(request.getAddress());
+		LatitudeUtil.buildPOI(request.getAddress());
 		stationDto.setAddress(request.getAddress());
 
 		return stationDto;
