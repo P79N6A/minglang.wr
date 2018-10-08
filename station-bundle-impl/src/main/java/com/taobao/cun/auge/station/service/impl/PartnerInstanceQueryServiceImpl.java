@@ -307,7 +307,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                 partnerDto.setName(SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
             }
             if (StringUtil.isNotBlank(partnerDto.getIdenNum())) {
-                partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
+                partnerDto.setIdenNum(SensitiveDataUtil.idCardNoHide(partnerDto.getIdenNum()));
+                //partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
             }
             if (StringUtil.isNotBlank(partnerDto.getTaobaoNick())) {
                 partnerDto.setTaobaoNick(SensitiveDataUtil.taobaoNickHide(partnerDto.getTaobaoNick()));
