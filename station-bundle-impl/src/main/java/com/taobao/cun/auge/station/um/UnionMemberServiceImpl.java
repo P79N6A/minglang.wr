@@ -127,12 +127,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         BeanValidator.validateWithThrowable(addDto);
         try {
             Station parentStationDto = stationBO.getStationById(addDto.getParentStationId());
-            String parentCountyCode = parentStationDto.getCounty();
+            String parentCityCode = parentStationDto.getCity();
             Address address = addDto.getAddress();
             //优盟店铺地址必须和当前村小二在同一个行政县域内（第三级地址保持一致）
-            if (null != parentCountyCode && !parentCountyCode.equals(address.getCounty())) {
+            if (null != parentCityCode && !parentCityCode.equals(address.getCity())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-                    "优盟店地址必须和当前村小二在同一个行政县域内");
+                    "优盟店地址必须和当前村小二在同一个行政市域内");
             }
 
             StationDto sDto = new StationDto();
