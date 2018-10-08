@@ -97,6 +97,7 @@ public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
         generalTaskSubmitService.submitAddUserTagTasks(partnerInstanceDto.getId(), operatorId);
+        generalTaskSubmitService.submitCreateUnionAdzoneTask(partnerInstanceDto,operatorId);
     }
 
     @Override

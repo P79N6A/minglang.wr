@@ -149,7 +149,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         logger.info("submitSettlingSysProcessTasks : {}", JSON.toJSONString(taskDtos));
     }
 
-    private GeneralTaskDto buildCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator) {
+    public GeneralTaskDto buildCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator) {
         String businessNo = String.valueOf(instance.getId());
         GeneralTaskDto taskDto = new GeneralTaskDto();
         taskDto.setBusinessNo(businessNo);
@@ -289,6 +289,14 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         wangwangGeneralTaskDto.setRetryTaskConfig(retry);
         wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
         return wangwangGeneralTaskDto;
+    }
+    
+    
+    @Override
+    public void submitCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator) {
+        GeneralTaskDto generalTaskDto = buildCreateUnionAdzoneTask(instance, operator);
+        generalTaskDto.setBusinessStepNo(1L);
+        taskSubmitService.submitTask(generalTaskDto);
     }
 
     @Override
