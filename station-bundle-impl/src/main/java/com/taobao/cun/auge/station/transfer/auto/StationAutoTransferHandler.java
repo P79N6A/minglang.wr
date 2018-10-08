@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.dto.OrgDeptType;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferStation;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
@@ -30,6 +31,8 @@ public class StationAutoTransferHandler implements AutoTransferHandler {
 	private StationTransferBo stationTransferBo;
 	@Resource
 	private BizActionLogBo bizActionLogBo;
+	@Resource
+	private StationBO stationBO;
 	
 	@Override
 	public void transfer(CountyStation countyStation) {
@@ -38,7 +41,7 @@ public class StationAutoTransferHandler implements AutoTransferHandler {
 			bizActionLogBo.addLog(transferStation.getStationId(), "station", "system", 0L, OrgDeptType.extdept.name(), BizActionEnum.station_auto_transfer_finished);
 		}
 		stationTransferStateMgrBo.autoTransfer(countyStation.getOrgId());
-		
+		stationBO.updateStationDeptByOrgId(countyStation.getOrgId(), OrgDeptType.opdept);
 	}
 
 }

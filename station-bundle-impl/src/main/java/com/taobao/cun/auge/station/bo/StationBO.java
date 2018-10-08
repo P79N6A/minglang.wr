@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
 import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
@@ -126,4 +127,11 @@ public interface StationBO {
      * @return
      */
     List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition);
+
+    /**
+     * 批量更新所属部门
+     * @param orgId
+     * @param orgDeptType
+     */
+	void updateStationDeptByOrgId(Long orgId, OrgDeptType orgDeptType);
 }
