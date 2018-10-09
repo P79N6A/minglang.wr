@@ -492,4 +492,24 @@
             }
         }
     ],
+    "UM": [
+        {
+            "stationApplyState": "SUMITTED",
+            "desc": "合伙人station_apply SUMITTED",
+            "partnerInstanceState": "SETTLING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "SERVICING",
+            "desc": "合伙人station_apply SERVICING",
+            "partnerInstanceState": "SERVICING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLY_CONFIRMED",
+            "desc": "合伙人station_apply QUIT_APPLY_CONFIRMED",
+            "partnerInstanceState": "CLOSED",
+            "condition": {}
+        }
+    ]
 }

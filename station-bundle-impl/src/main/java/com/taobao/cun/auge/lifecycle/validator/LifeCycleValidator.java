@@ -98,9 +98,11 @@ public class LifeCycleValidator {
 	    }
 	    checkStationNameDuplicate(ins.getStationDto().getId(),ins.getStationDto().getName(),ins.getStationDto().getAddress().getProvince());
 	}
-	
+
+	/**
+	 * 判断服务站名同一省内是否存在
+ 	 */
 	public void checkStationNameDuplicate(Long stationId, String newStationName,String province) {
-        // 判断服务站名同一省内是否存在
         String oldName = null;
         if (stationId != null) {
             Station oldStation = stationBO.getStationById(stationId);

@@ -145,4 +145,11 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitClosedCainiaoStation(Long instanceId, String operatorId);
 
+	/**
+	 * 创建拉新联盟pid
+	 * @param instance
+	 * @param operator
+	 */
+	public void submitCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator);
+
 }

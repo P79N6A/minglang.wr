@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.payment.account.impl;
 
+import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
@@ -120,7 +121,8 @@ public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryServic
 	 */
 	private void hidepaymentAccount(AliPaymentAccountDto paymentAccountDto) {
 		paymentAccountDto.setAlipayId(SensitiveDataUtil.alipayLogonIdHide(paymentAccountDto.getAlipayId()));
-		paymentAccountDto.setIdCardNumber(SensitiveDataUtil.idCardNoHide(paymentAccountDto.getIdCardNumber()));
+		//和村站详情上，省份证脱敏规则保持一致
+		paymentAccountDto.setIdCardNumber(IdCardUtil.idCardNoHide(paymentAccountDto.getIdCardNumber()));
 		paymentAccountDto.setFullName(SensitiveDataUtil.customizeHide(paymentAccountDto.getFullName(), 0, paymentAccountDto.getFullName().length() - 1, 1));
 	}
 

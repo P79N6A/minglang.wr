@@ -834,6 +834,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         types.add(PartnerInstanceTypeEnum.TP.getCode());
         types.add(PartnerInstanceTypeEnum.TPA.getCode());
         types.add(PartnerInstanceTypeEnum.TPT.getCode());
+        types.add(PartnerInstanceTypeEnum.UM.getCode());
         List<String> statuses = new ArrayList<String>();
         statuses.add(PartnerInstanceStateEnum.DECORATING.getCode());
         statuses.add(PartnerInstanceStateEnum.SERVICING.getCode());
