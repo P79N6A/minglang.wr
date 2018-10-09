@@ -361,6 +361,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			.andLoginIdEqualTo(cuntaoUserOrgVO.getLoginId())
 			.andOrgIdEqualTo(cuntaoUserOrgVO.getOrgId())
 			.andIsDeletedEqualTo("n")
+			.andRoleEqualTo(cuntaoUserOrgVO.getUserRoleEnum().getCode())
 			.andStatusEqualTo("VALID");
 		List<CuntaoUserOrg> cuntaoUserOrgs = cuntaoUserOrgMapper.selectByExample(example);
 		
