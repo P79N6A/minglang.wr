@@ -15,6 +15,7 @@ import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 
 import com.google.common.base.Strings;
+import com.taobao.cun.auge.configuration.ProductCondition;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
@@ -32,6 +33,7 @@ import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,6 +44,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Conditional(ProductCondition.class)
 public class EndorPartnerJingweiTask implements InitializingBean{
 	@Value("${jingwei.taskid.endor.partner}")
 	private String taskId;

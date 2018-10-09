@@ -10,8 +10,7 @@ public enum BizActionEnum {
 	//服务站
 	station_create("创建服务站"),
 	station_open("服务站开业"),
-	station_transfer_finished("服务站交接完成"),
-	station_auto_transfer_finished("服务站自动交接完成"); //n+75天系统自动交接
+	station_transfer_finished("服务站交接完成"); //n+75天系统自动交接
 	
 	public String desc;
 	

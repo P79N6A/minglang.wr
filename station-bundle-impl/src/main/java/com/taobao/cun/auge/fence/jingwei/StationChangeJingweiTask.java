@@ -11,16 +11,19 @@ import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 
 import com.taobao.cun.auge.alilang.jingwei.JingweiTask;
+import com.taobao.cun.auge.configuration.ProductCondition;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.service.FenceInstanceJobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by xiao on 18/7/12.
  */
 @Component
+@Conditional(ProductCondition.class)
 public class StationChangeJingweiTask extends JingweiTask {
 
     @Value("${jingwei.taskid.fence}")

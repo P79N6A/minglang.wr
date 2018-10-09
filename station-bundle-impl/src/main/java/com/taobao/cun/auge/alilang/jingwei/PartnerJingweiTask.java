@@ -14,6 +14,7 @@ import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 
 import com.google.common.base.Strings;
+import com.taobao.cun.auge.configuration.ProductCondition;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Conditional(ProductCondition.class)
 public class PartnerJingweiTask extends JingweiTask {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Value("${jingwei.taskid.partner}")
