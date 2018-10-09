@@ -102,9 +102,9 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
 		bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
 		bizActionLogAddDto.setObjectType("station");
-		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
-		bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getStationDto().getApplyOrg());
-		bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getStationDto().getOperator());
+		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getOperatorOrgId()));
+		bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getOperatorOrgId());
+		bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getOperator());
 		bizActionLogAddDto.setValue1(String.valueOf(partnerInstanceDto.getTaobaoUserId()));
 		bizActionLogAddDto.setValue2(String.valueOf(partnerInstanceDto.getId()));
 		bizActionLogBo.addLog(bizActionLogAddDto);
