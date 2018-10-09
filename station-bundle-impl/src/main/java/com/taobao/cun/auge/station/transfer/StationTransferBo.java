@@ -31,6 +31,16 @@ public class StationTransferBo {
 		return ListUtils.emptyIfNull(stationTransferExtMapper.getTransferableStations(orgId));
 	}
 	
+	/**
+	 * 获取县点下所有可自动交接村点
+	 * 
+	 * @param countyStationId
+	 * @return
+	 */
+	public List<TransferStation> getAutoTransferableStations(Long orgId){
+		return ListUtils.emptyIfNull(stationTransferExtMapper.getAutoTransferableStations(orgId));
+	}
+	
 	public int countServicing(Long orgId) {
 		return stationTransferExtMapper.countServicing(orgId);
 	}

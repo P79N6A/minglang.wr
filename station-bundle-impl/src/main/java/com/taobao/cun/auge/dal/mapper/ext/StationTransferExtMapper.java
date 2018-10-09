@@ -10,6 +10,8 @@ import com.taobao.cun.auge.station.transfer.dto.TransferStation;
 public interface StationTransferExtMapper {
 	List<TransferStation> getTransferableStations(@Param("orgId")Long orgId);
 	
+	List<TransferStation> getAutoTransferableStations(@Param("orgId")Long orgId);
+	
 	int countServicing(@Param("orgId")Long orgId);
 	
 	void updateSubStationTransferState(@Param("stationIds") List<Long> stationIds, @Param("tansferState")String tansferState);

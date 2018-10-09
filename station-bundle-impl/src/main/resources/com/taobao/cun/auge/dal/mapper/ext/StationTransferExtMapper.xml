@@ -16,6 +16,20 @@
 		and a.apply_org=#{orgId}
     </select>
     
+    <select id="getAutoTransferableStations" parameterType="long" resultType="com.taobao.cun.auge.station.transfer.dto.TransferStation">
+    select a.id as stationId, 
+    	a.name as stationName, 
+    	b.open_date as openDate,
+    	a.transfer_state as transferState,
+    	b.type,b.state from station a,partner_station_rel b
+		where a.is_deleted='n' and b.is_deleted='n'
+		and a.id=b.station_id 
+		and b.state in('SERVICING','CLOSING','DECORATING','SETTLING')
+		and b.type in('TP','TPS')
+		and a.transfer_state = 'WAITING'
+		and a.apply_org=#{orgId}
+    </select>
+    
     <select id="countServicing" parameterType="long" resultType="int">
     select count(0) from station a,partner_station_rel b
 		where a.is_deleted='n' and b.is_deleted='n'
