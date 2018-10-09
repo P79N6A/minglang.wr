@@ -10,7 +10,7 @@
 		where a.is_deleted='n' and b.is_deleted='n'
 		and a.id=b.station_id 
 		and b.state in('SERVICING','CLOSING','DECORATING')
-		and b.type in('TP','TPS') and b.is_current='y'
+		and b.type in('TP','TPS')
 		and b.open_date is not null
 		and a.transfer_state = 'WAITING'
 		and a.apply_org=#{orgId}
@@ -21,7 +21,7 @@
 		where a.is_deleted='n' and b.is_deleted='n'
 		and a.id=b.station_id 
 		and b.state in('SERVICING','CLOSING','DECORATING')
-		and b.type in('TP','TPS') and b.is_current='y'
+		and b.type in('TP','TPS')
 		and a.apply_org=#{orgId}
     </select>
     
