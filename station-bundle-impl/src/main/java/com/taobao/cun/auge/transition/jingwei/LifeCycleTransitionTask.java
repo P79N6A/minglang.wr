@@ -8,15 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
+import com.taobao.cun.auge.configuration.ProductCondition;
 import com.taobao.cun.auge.transition.record.LifecycleTransitionRecorder;
 
 @Component
+@Conditional(ProductCondition.class)
 public class LifeCycleTransitionTask {
 
 	@Value("${jingwei.lifecycle.transition.taskId}")
