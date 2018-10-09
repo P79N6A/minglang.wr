@@ -37,7 +37,7 @@ public class AutoTransferFacade {
 	private int autoTransferDay;
 	
 	public void transfer() {
-		Date date = DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), -1 * (autoTransferDay - 1));
+		Date date = DateUtils.addDays(DateUtils.truncate(new Date(), Calendar.DATE), -1 * autoTransferDay);
 		
 		List<Long> countyIds = countyStationTransferBo.getAutoTransferableCountyIds(date);
 		
