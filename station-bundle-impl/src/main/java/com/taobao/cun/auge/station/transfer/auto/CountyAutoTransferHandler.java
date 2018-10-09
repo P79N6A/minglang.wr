@@ -28,6 +28,6 @@ public class CountyAutoTransferHandler implements AutoTransferHandler {
 	@Override
 	public void transfer(CountyStation countyStation) {
 		countyTransferStateMgrBo.autoTransfer(countyStation.getId());
-		bizActionLogBo.addLog(countyStation.getId(), "county", "system", 0L, OrgDeptType.extdept.name(), BizActionEnum.countystation_auto_transfer_finished);
+		bizActionLogBo.addLog(countyStation.getId(), "county", "auto", 0L, OrgDeptType.extdept.name(), BizActionEnum.countystation_auto_transfer_finished);
 	}
 }
