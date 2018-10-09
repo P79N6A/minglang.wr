@@ -43,7 +43,6 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 
     private Long TPT_TAG = new Double(Math.pow(2, 55)).longValue();
 
-
     @Override
     public void addUserTag(UserTagDto userTagDto) {
         BeanValidator.validateWithThrowable(userTagDto);
@@ -70,10 +69,19 @@ public class UicTagAdapterImpl implements UicTagAdapter {
                     addTpUserTag(taobaoUserId);
                     addTptUserTag(taobaoUserId);
                     break;
+                case UM:
+                    addUmUserTag(taobaoUserId);
+                    break;
             }
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [addUserTag]  parameter = {}, {}", JSON.toJSONString(userTagDto), e);
             throw new AugeUicTagException("addUserTag  error!", e);
+        }
+    }
+
+    private void addUmUserTag(Long taobaoUserId) {
+        if(!userTagService.hasTag(taobaoUserId, UserTag.UM_USER_TAG.getTag())){
+            userTagService.addTag(taobaoUserId,UserTag.UM_USER_TAG.getTag());
         }
     }
 
@@ -116,10 +124,19 @@ public class UicTagAdapterImpl implements UicTagAdapter {
                     removeTpUserTag(taobaoUserId);
                     removeTptUserTag(taobaoUserId);
                     break;
+                case UM:
+                    removeUmUserTag(taobaoUserId);
+                    break;
             }
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [removeUserTag] parameter = {}, {}", JSON.toJSONString(userTagDto), e);
-            throw new AugeUicTagException("addUserTag  error!", e);
+            throw new AugeUicTagException("removeUserTag  error!", e);
+        }
+    }
+
+    private void removeUmUserTag(Long taobaoUserId) {
+        if(userTagService.hasTag(taobaoUserId, UserTag.UM_USER_TAG.getTag())){
+            userTagService.removeTag(taobaoUserId,UserTag.UM_USER_TAG.getTag());
         }
     }
 

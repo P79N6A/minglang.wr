@@ -10,7 +10,7 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StateMachineComponent(stateMachine = {"TPStateMachine", "TPAStateMachine", "TPTStateMachine", "TPSStateMachine"}, actionKey = "stateMachineComponent")
+@StateMachineComponent(stateMachine = {"TPStateMachine", "TPAStateMachine", "TPTStateMachine", "TPSStateMachine", "UMStateMachine"}, actionKey = "stateMachineComponent")
 public class StateMachineComponentImpl {
 
     @Autowired

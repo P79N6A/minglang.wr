@@ -143,18 +143,19 @@
 		level.current_level as level,
 		level.expected_level
 		</if>
-		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-			,
-			life.business_type as lifecycle_business_type,
-			life.settled_protocol,
-			life.bond,
-			life.quit_protocol,
-			life.logistics_approve,
-			life.current_step,
-			life.role_approve,
-			life.confirm,
-			life.system
+		<if test="partnerType !='UM'" >
+		  <if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+				,
+				life.business_type as lifecycle_business_type,
+				life.settled_protocol,
+				life.bond,
+				life.quit_protocol,
+				life.logistics_approve,
+				life.current_step,
+				life.role_approve,
+				life.confirm,
+				life.system
+			</if>
 		</if>
 		
 		from partner_station_rel instance
@@ -172,8 +173,10 @@
 		</if>
 		
 		,partner p,station s,cuntao_org org
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-			, partner_lifecycle_items life
+		<if test="partnerType !='UM'" >
+			<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+				, partner_lifecycle_items life
+			</if>
 		</if>
 		
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
@@ -187,9 +190,11 @@
 		   	 and level.current_level = #{partnerInstanceLevel,jdbcType=VARCHAR}
 			</if>
 		</if>
-		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-			and instance.id = life.partner_instance_id
+
+		<if test="partnerType !='UM'" >
+			<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+				and instance.id = life.partner_instance_id
+			</if>
 		</if>
 		
 		<if test="courseStatus !=null and courseStatus !=''">
@@ -201,9 +206,11 @@
     	</if>
 		
 		<include refid="partner_station_query_condition" />
-		
-		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-			<include refid="partner_lifecycle_items_condition" />
+
+		<if test="partnerType !='UM'" >
+			<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+				<include refid="partner_lifecycle_items_condition" />
+			</if>
 		</if>
 		order by instance.gmt_modified desc
   </select>
