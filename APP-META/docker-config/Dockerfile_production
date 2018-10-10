@@ -1,5 +1,4 @@
 FROM reg.docker.alibaba-inc.com/aone-base-global/xls7u_base:1.0.3
-ENV APP_NAME=auge
 
 RUN sed -i '$i\sed -i "s\/180\/360\/g" /home/admin/${APP_NAME}/bin/preload.sh' /home/admin/start.sh
 
