@@ -1,12 +1,14 @@
 package com.taobao.cun.auge.test.init;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStation;
@@ -18,11 +20,12 @@ import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
+import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.ExtAppBizLog;
 import com.taobao.cun.auge.log.LogContent;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
+import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
-import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
@@ -41,6 +44,8 @@ public class OrgInitServiceImpl implements OrgInitService {
 	private FileStoreService fileStoreService;
 	@Resource
 	private AppBizLogBo appBizLogBo;
+	@Resource
+	private BizActionLogBo bizActionLogBo;
 	@Resource
 	private ExtDeptOrgClient extDeptOrgClient;
 	@Resource
@@ -115,8 +120,12 @@ public class OrgInitServiceImpl implements OrgInitService {
 		extAppBizLog.setBizType("init-county");
 		extAppBizLog.setBizKey(0L);
 		extAppBizLog.setCreator("system");
-		extAppBizLog.setState("error");
 		extAppBizLog.setLogContents(doInitCounty());
+		if(CollectionUtils.isEmpty(extAppBizLog.getLogContents())){
+			extAppBizLog.setState("success");
+		}else {
+			extAppBizLog.setState("error");
+		}
 		appBizLogBo.addLog(extAppBizLog);
 	}
 	
@@ -135,31 +144,54 @@ public class OrgInitServiceImpl implements OrgInitService {
 			String[] array = line.split(",");
 			Long provinceOrgId = Long.parseLong(array[0]);
 			Long countyOrgId = Long.parseLong(array[1]);
-			String loginId = array[2];
-			String loginName = array[3];
-			Optional<CuntaoOrgDto> optional = extDeptOrgClient.getExtTeamByProvinceOrg(provinceOrgId);
-			if(optional.isPresent()) {
-				cuntaoOrgBO.updateParent(countyOrgId, optional.get().getId());
-				List<CuntaoUserOrgVO> cuntaoUserOrgVOs = Lists.newArrayList();
-				CuntaoUserOrgVO cuntaoUserOrgVO = new CuntaoUserOrgVO();
-				cuntaoUserOrgVO.setLoginId(loginId);
-				cuntaoUserOrgVO.setOrgId(countyOrgId);
-				cuntaoUserOrgVO.setModifier("init");
-				cuntaoUserOrgVO.setCreator("init");
-				cuntaoUserOrgVO.setUserRoleEnum(UserRoleEnum.EXT_COUNTY_LEADER);
-				cuntaoUserOrgVO.setUserName(loginName);
-				cuntaoUserOrgVO.setUserType(UserTypeEnum.BUC.getCode());
-				cuntaoUserOrgVOs.add(cuntaoUserOrgVO);
-				cuntaoUserOrgService.assignLeaders(countyOrgId, "EXT_COUNTY_LEADER", cuntaoUserOrgVOs);
+			Long teamOrgId = Long.parseLong(array[2]);
+			Date transferDate = null;
+			try {
+				transferDate = DateUtils.parseDate(array[3], "yyyyMMdd");
+			} catch (ParseException e) {
+				LogContent logContent = new LogContent();
+				logContent.addError("时间格式不对");
+				logContent.setParams(line);
+				logContents.add(logContent);
+				continue;
+			}
+			String extWorkId = array[4];
+			String extWorkName = array[5];
+			String opWorkId = array[6];
+			String opWorkName = array[7];
+			
+			cuntaoOrgBO.updateParent(countyOrgId, teamOrgId);
+			initLeader(countyOrgId, extWorkId, extWorkName, UserRoleEnum.EXT_COUNTY_LEADER);
+			initLeader(countyOrgId, opWorkId, opWorkName, UserRoleEnum.COUNTY_LEADER);
+			CountyStationExample example = new CountyStationExample();
+			example.createCriteria().andOrgIdEqualTo(countyOrgId).andIsDeletedEqualTo("n");
+			List<CountyStation> countyStations = countyStationMapper.selectByExample(example);
+			if(countyStations.size() > 0) {
+				CountyStation countyStation = countyStations.get(0);
+				bizActionLogBo.addLog(countyStation.getId(), "county", extWorkId, countyOrgId, OrgDeptType.extdept.name(), transferDate, BizActionEnum.countystation_transfer_finished);
 			}else {
 				LogContent logContent = new LogContent();
-				logContent.addError("没有拓展战队");
+				logContent.addError("找不到县点");
 				logContent.setParams(line);
 				logContents.add(logContent);
 			}
 		}
 		
 		return logContents;
+	}
+	
+	private void initLeader(Long orgId, String loginId, String loginName, UserRoleEnum userRoleEnum) {
+		List<CuntaoUserOrgVO> cuntaoUserOrgVOs = Lists.newArrayList();
+		CuntaoUserOrgVO cuntaoUserOrgVO = new CuntaoUserOrgVO();
+		cuntaoUserOrgVO.setLoginId(loginId);
+		cuntaoUserOrgVO.setOrgId(orgId);
+		cuntaoUserOrgVO.setModifier("init-001");
+		cuntaoUserOrgVO.setCreator("init-001");
+		cuntaoUserOrgVO.setUserRoleEnum(userRoleEnum);
+		cuntaoUserOrgVO.setUserName(loginName);
+		cuntaoUserOrgVO.setUserType(UserTypeEnum.BUC.getCode());
+		cuntaoUserOrgVOs.add(cuntaoUserOrgVO);
+		cuntaoUserOrgService.assignLeaders(orgId, userRoleEnum.getCode(), cuntaoUserOrgVOs);
 	}
 
 	@Override

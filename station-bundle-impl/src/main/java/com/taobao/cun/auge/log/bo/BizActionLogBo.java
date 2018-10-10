@@ -24,7 +24,9 @@ public class BizActionLogBo {
 		BizActionLog record = new BizActionLog();
 		record.setActionDesc(bizActionLogAddDto.getBizActionEnum().desc);
 		record.setActionName(bizActionLogAddDto.getBizActionEnum().name());
-		record.setGmtCreate(new Date());
+		if(record.getGmtCreate() == null) {
+			record.setGmtCreate(new Date());
+		}
 		record.setOpOrgId(bizActionLogAddDto.getOpOrgId());
 		record.setDept(bizActionLogAddDto.getDept());
 		record.setOpWorkId(bizActionLogAddDto.getOpWorkId());
@@ -56,6 +58,18 @@ public class BizActionLogBo {
 		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
 		bizActionLogAddDto.setBizActionEnum(bizActionEnum);
 		bizActionLogAddDto.setGmtCreate(new Date());
+		bizActionLogAddDto.setObjectId(refId);
+		bizActionLogAddDto.setObjectType(refType);
+		bizActionLogAddDto.setOpOrgId(orgId);
+		bizActionLogAddDto.setOpWorkId(userId);
+		bizActionLogAddDto.setDept(dept);
+		addLog(bizActionLogAddDto);
+	}
+	
+	public void addLog(Long refId, String refType, String userId, Long orgId, String dept, Date createTime, BizActionEnum bizActionEnum) {
+		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+		bizActionLogAddDto.setBizActionEnum(bizActionEnum);
+		bizActionLogAddDto.setGmtCreate(createTime);
 		bizActionLogAddDto.setObjectId(refId);
 		bizActionLogAddDto.setObjectType(refType);
 		bizActionLogAddDto.setOpOrgId(orgId);
