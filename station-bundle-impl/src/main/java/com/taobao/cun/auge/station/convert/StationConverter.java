@@ -70,6 +70,8 @@ public class StationConverter {
 		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(station.getIsOnTown()));
 		stationDto.setTaobaoUserId(station.getTaobaoUserId());
 		stationDto.setCategory(station.getCategory());
+		stationDto.setTransferState(station.getTransferState());
+		stationDto.setOwnDept(station.getOwnDept());
 		return stationDto;
 	}
 
@@ -118,6 +120,8 @@ public class StationConverter {
 				: stationDto.getPartnerInstanceIsOnTown().getCode());
 		station.setStationType(stationDto.getStationType());
 		station.setCategory(stationDto.getCategory());
+		station.setTransferState(stationDto.getTransferState());
+		station.setOwnDept(stationDto.getOwnDept());
 		return station;
 	}
 

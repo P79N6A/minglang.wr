@@ -115,6 +115,26 @@ public class CountyDto implements Serializable{
 	
 	private Date gmtOpenDate;
 	
+	private String transferState;
+
+	private String ownDept;
+	
+	public String getTransferState() {
+		return transferState;
+	}
+
+	public void setTransferState(String transferState) {
+		this.transferState = transferState;
+	}
+
+	public String getOwnDept() {
+		return ownDept;
+	}
+
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
+
 	public AddressDto getAddressDto() {
 		return addressDto;
 	}

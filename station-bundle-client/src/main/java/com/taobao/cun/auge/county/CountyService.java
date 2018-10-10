@@ -7,6 +7,7 @@ import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyPOI;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.user.dto.Operator;
 /**
  * 从center迁移至auge
  * 供org、motion、无线端调用
@@ -22,7 +23,7 @@ public interface CountyService {
 	 * @param countyDto
 	 * @return
 	 */
-	public CountyDto saveCountyStation(String operator,CountyDto countyDto);
+	public CountyDto saveCountyStation(CountyDto countyDto, Operator operator);
 	
 	/**
 	 * 查询大区列表下的省编码与名称列表
@@ -114,7 +115,7 @@ public interface CountyService {
 	 */
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
 	
-	public CountyDto startOperate(String operator,CountyDto countyDto);
+	public CountyDto startOperate(CountyDto countyDto, Operator operator);
 	
 	/**
 	 * 
@@ -123,7 +124,9 @@ public interface CountyService {
 	 */
 	public CountyPOI queryCountyPOI(Long countyAreaId);
 	
-	public boolean startOpen(Long countyStationId,String operator);
+	public boolean startOpen(Long countyStationId, Operator operator);
 	
 	public int countServicingStation(Long countyStationId);
+	
+	Long getOrgIdByCountyStationId(Long id);
 }

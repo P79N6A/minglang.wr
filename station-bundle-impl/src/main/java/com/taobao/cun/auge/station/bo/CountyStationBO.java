@@ -21,4 +21,6 @@ public interface CountyStationBO {
 	public CountyStation getCountyStationById(Long id);
 	
 	public Long addCountyStation(CountyStation cs);
+
+	void updateOwnDept(Long id, String ownDept);
 }

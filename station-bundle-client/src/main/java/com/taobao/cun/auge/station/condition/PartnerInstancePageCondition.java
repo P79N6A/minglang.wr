@@ -62,6 +62,16 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	private TPCategoryEnum tpCategoryEnum;
 	
+	private String ownDept;
+	
+	public String getOwnDept() {
+		return ownDept;
+	}
+
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}

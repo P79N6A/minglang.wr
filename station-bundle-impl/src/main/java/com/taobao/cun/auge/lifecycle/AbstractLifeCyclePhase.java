@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -18,6 +17,11 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
+import com.taobao.cun.auge.log.BizActionEnum;
+import com.taobao.cun.auge.log.BizActionLogDto;
+import com.taobao.cun.auge.log.bo.BizActionLogBo;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
+import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
@@ -38,6 +42,8 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
+import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 
 
 public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
@@ -55,10 +61,11 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	
 	@Autowired
     private PartnerInstanceBO partnerInstanceBO;
-
+	
+	@Autowired
+	private CountyTransferStateMgrBo countyTransferStateMgrBo;
     @Autowired
-    private DiamondConfiguredProperties diamondConfiguredProperties;
-
+    private BizActionLogBo bizActionLogBo;
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
 	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
@@ -80,6 +87,12 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		// 判断同一省不能重复村站名
 		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
 		lifeCycleValidator.checkStationNameDuplicate(stationId,stationDto.getName()+nameSuffix,stationDto.getAddress().getProvince());
+		stationDto.setOwnDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
+		if(stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
+			stationDto.setTransferState(TransferState.WAITING.name());
+		}else {
+			stationDto.setTransferState(TransferState.FINISHED.name());
+		}
 		stationId = stationBO.addStation(stationDto);
 		partnerInstanceDto.setStationId(stationId);
 		if (partnerInstanceDto.getParentStationId() == null) {
@@ -88,7 +101,21 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		criusAttachmentService.addAttachmentBatch(stationDto.getAttachments(), stationId,
 				AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(partnerInstanceDto));
 		saveStationFixProtocol(stationDto, stationId);
+		addCreateLog(partnerInstanceDto);
 		return stationId;
+	}
+
+	private void addCreateLog(PartnerInstanceDto partnerInstanceDto) {
+		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+		bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
+		bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
+		bizActionLogAddDto.setObjectType("station");
+		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
+		bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getOperatorOrgId());
+		bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getOperator());
+		bizActionLogAddDto.setValue1(String.valueOf(partnerInstanceDto.getTaobaoUserId()));
+		bizActionLogAddDto.setValue2(String.valueOf(partnerInstanceDto.getId()));
+		bizActionLogBo.addLog(bizActionLogAddDto);
 	}
 
 	public void checkStationNumDuplicate(Long stationId, String newStationNum) {

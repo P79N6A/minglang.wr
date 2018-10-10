@@ -48,6 +48,8 @@
     <result column="station_type" jdbcType="INTEGER" property="stationType" />
     <result column="mode" jdbcType="VARCHAR" property="mode" />
     <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="transfer_state" jdbcType="VARCHAR" property="transferState" />
+    <result column="own_dept" jdbcType="VARCHAR" property="ownDept" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -125,7 +127,7 @@
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
     manager_id, provider_id, feature, status, fixed_type, version, is_on_town, station_type, 
-    mode, category
+    mode, category, transfer_state, own_dept
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
@@ -195,7 +197,8 @@
       area_type, manager_id, provider_id, 
       feature, status, fixed_type, 
       version, is_on_town, station_type, 
-      mode, category)
+      mode, category, transfer_state, 
+      own_dept)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoNick,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
@@ -209,7 +212,8 @@
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
       #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{stationType,jdbcType=INTEGER}, 
-      #{mode,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR})
+      #{mode,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{transferState,jdbcType=VARCHAR}, 
+      #{ownDept,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -344,6 +348,12 @@
       <if test="category != null">
         category,
       </if>
+      <if test="transferState != null">
+        transfer_state,
+      </if>
+      <if test="ownDept != null">
+        own_dept,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -468,6 +478,12 @@
       </if>
       <if test="category != null">
         #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="transferState != null">
+        #{transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="ownDept != null">
+        #{ownDept,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -614,6 +630,12 @@
       <if test="record.category != null">
         category = #{record.category,jdbcType=VARCHAR},
       </if>
+      <if test="record.transferState != null">
+        transfer_state = #{record.transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ownDept != null">
+        own_dept = #{record.ownDept,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -666,7 +688,9 @@
       is_on_town = #{record.isOnTown,jdbcType=CHAR},
       station_type = #{record.stationType,jdbcType=INTEGER},
       mode = #{record.mode,jdbcType=VARCHAR},
-      category = #{record.category,jdbcType=VARCHAR}
+      category = #{record.category,jdbcType=VARCHAR},
+      transfer_state = #{record.transferState,jdbcType=VARCHAR},
+      own_dept = #{record.ownDept,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -801,6 +825,12 @@
       <if test="category != null">
         category = #{category,jdbcType=VARCHAR},
       </if>
+      <if test="transferState != null">
+        transfer_state = #{transferState,jdbcType=VARCHAR},
+      </if>
+      <if test="ownDept != null">
+        own_dept = #{ownDept,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -850,7 +880,9 @@
       is_on_town = #{isOnTown,jdbcType=CHAR},
       station_type = #{stationType,jdbcType=INTEGER},
       mode = #{mode,jdbcType=VARCHAR},
-      category = #{category,jdbcType=VARCHAR}
+      category = #{category,jdbcType=VARCHAR},
+      transfer_state = #{transferState,jdbcType=VARCHAR},
+      own_dept = #{ownDept,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -14,6 +14,7 @@ import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
+import com.taobao.cun.auge.configuration.ProductCondition;
 import com.taobao.cun.auge.transition.record.LifecycleTransitionRecorder;
 
 @Component

@@ -144,6 +144,27 @@ public class StationDto extends OperatorDto implements Serializable{
 	private String invalidNameMsg;
 	
 	private String category;
+	
+	private String transferState;
+	
+	private String ownDept;
+	
+	public String getTransferState() {
+		return transferState;
+	}
+
+	public void setTransferState(String transferState) {
+		this.transferState = transferState;
+	}
+
+	public String getOwnDept() {
+		return ownDept;
+	}
+
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
+
 	public Long getId() {
 		return id;
 	}

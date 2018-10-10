@@ -5,4 +5,6 @@ import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 public interface CuntaoOrgBO {
 
 	public Long addOrg(CuntaoOrg org,String operator);
+
+	void updateParent(Long id, Long parentId);
 }
