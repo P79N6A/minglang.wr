@@ -11,5 +11,7 @@ public interface OrgInitService {
 	 */
 	void createVirtualTeam();
 	
+	void initState();
+	
 	void initCounty();
 }

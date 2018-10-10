@@ -9,15 +9,23 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
+import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationExample;
+import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.log.ExtAppBizLog;
 import com.taobao.cun.auge.log.LogContent;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
@@ -39,6 +47,10 @@ public class OrgInitServiceImpl implements OrgInitService {
 	private CuntaoOrgBO cuntaoOrgBO;
 	@Resource
 	private CuntaoUserOrgService cuntaoUserOrgService;
+	@Resource
+	private StationMapper stationMapper;
+	@Resource
+	private CountyStationMapper countyStationMapper;
 	
 	@Override
 	public void createVirtualTeam() {
@@ -148,5 +160,24 @@ public class OrgInitServiceImpl implements OrgInitService {
 		}
 		
 		return logContents;
+	}
+
+	@Override
+	public void initState() {
+		List<Station> stations = stationMapper.selectByExample(new StationExample());
+		for(Station station : stations) {
+			Station s = stationMapper.selectByPrimaryKey(station.getId());
+			s.setTransferState(TransferState.FINISHED.name());
+			s.setOwnDept(OrgDeptType.opdept.name());
+			stationMapper.updateByPrimaryKey(s);
+		}
+		
+		List<CountyStation> countyStations = countyStationMapper.selectByExample(new CountyStationExample());
+		for(CountyStation countyStation : countyStations) {
+			CountyStation s = countyStationMapper.selectByPrimaryKey(countyStation.getId());
+			s.setTransferState(TransferState.FINISHED.name());
+			s.setOwnDept(OrgDeptType.opdept.name());
+			countyStationMapper.updateByPrimaryKey(s);
+		}
 	}
 }
