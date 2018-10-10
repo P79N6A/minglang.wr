@@ -20,6 +20,8 @@ import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
+import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
@@ -40,6 +42,7 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 
 
@@ -63,7 +66,6 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	private CountyTransferStateMgrBo countyTransferStateMgrBo;
     @Autowired
     private BizActionLogBo bizActionLogBo;
-
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
 	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
@@ -85,6 +87,12 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		// 判断同一省不能重复村站名
 		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
 		lifeCycleValidator.checkStationNameDuplicate(stationId,stationDto.getName()+nameSuffix,stationDto.getAddress().getProvince());
+		stationDto.setOwnDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
+		if(stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
+			stationDto.setTransferState(TransferState.WAITING.name());
+		}else {
+			stationDto.setTransferState(TransferState.FINISHED.name());
+		}
 		stationId = stationBO.addStation(stationDto);
 		partnerInstanceDto.setStationId(stationId);
 		if (partnerInstanceDto.getParentStationId() == null) {
@@ -102,7 +110,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
 		bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
 		bizActionLogAddDto.setObjectType("station");
-		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getOperatorOrgId()));
+		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
 		bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getOperatorOrgId());
 		bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getOperator());
 		bizActionLogAddDto.setValue1(String.valueOf(partnerInstanceDto.getTaobaoUserId()));
