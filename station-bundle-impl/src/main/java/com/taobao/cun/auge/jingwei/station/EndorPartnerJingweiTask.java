@@ -32,6 +32,7 @@ import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**

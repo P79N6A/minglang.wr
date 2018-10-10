@@ -1,10 +1,11 @@
 package com.taobao.cun.auge.org.bo.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.taobao.cun.auge.cache.TairCache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample.Criteria;
@@ -12,14 +13,10 @@ import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 @Component("cuntaoOrgBO")
 public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 	@Autowired
 	CuntaoOrgMapper cuntaoOrgMapper;
-	@Autowired
-	TairCache tairCache;
 
 	@Override
     public Long addOrg(CuntaoOrg org, String operator) {
@@ -62,16 +59,20 @@ public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 		cuntaoOrgMapper.updateByPrimaryKey(sod);
 		parentOrg.setIsLeaf("n");
 		cuntaoOrgMapper.updateByPrimaryKey(parentOrg);
-		try {
-			List<String> list1 = new ArrayList<String>();
-			// 刷新全国节点缓存
-			list1.add("cuntao_orgid_1");
-			// 刷新父节点缓存
-			list1.add("cuntao_orgid_" + sod.getParentId().toString());
-			tairCache.minvalid(list1);
-		} catch (Exception e) {
-		}
 		return sod.getId();
 	}
 
+	@Override
+	public void updateParent(Long id, Long parentId) {
+		CuntaoOrg parentOrg = cuntaoOrgMapper.selectByPrimaryKey(parentId);
+		CuntaoOrg org = cuntaoOrgMapper.selectByPrimaryKey(id);
+		org.setTempParentId(parentId);
+		org.setParentId(parentId);
+		org.setTempFullIdPath(parentOrg.getTempFullIdPath() + "/" + id);
+		org.setFullIdPath(parentOrg.getTempFullIdPath() + "/" + id);
+		org.setTempFullNamePath(parentOrg.getTempFullNamePath() + "/" + org.getName());
+		org.setFullNamePath(parentOrg.getTempFullNamePath() + "/" + org.getName());
+		org.setGmtModified(new Date());
+		cuntaoOrgMapper.updateByPrimaryKey(org);
+	}
 }

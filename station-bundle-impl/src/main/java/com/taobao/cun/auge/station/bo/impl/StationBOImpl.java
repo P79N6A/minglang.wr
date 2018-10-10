@@ -28,6 +28,7 @@ import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
 import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
@@ -216,5 +217,15 @@ public class StationBOImpl implements StationBO {
 	@Override
 	public List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition) {
 		return stationExtMapper.getFenceInitingStations(fenceStationQueryCondition);
+	}
+	
+	@Override
+	public void updateStationDeptByOrgId(Long orgId, OrgDeptType orgDeptType) {
+		Station record = new Station();
+		record.setOwnDept(orgDeptType.name());
+		record.setGmtModified(new Date());
+		StationExample example = new StationExample();
+		example.createCriteria().andApplyOrgEqualTo(orgId);
+		stationMapper.updateByExampleSelective(record, example);
 	}
 }

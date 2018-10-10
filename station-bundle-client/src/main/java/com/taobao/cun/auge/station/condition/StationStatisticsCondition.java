@@ -18,7 +18,14 @@ public class StationStatisticsCondition implements Serializable{
 	private String applierName;
 	private String type;
 	private String level;
+	private String ownDept;
 	
+	public String getOwnDept() {
+		return ownDept;
+	}
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
 	public String getOrgId() {
 		return orgId;
 	}

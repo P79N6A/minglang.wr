@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-
+import com.google.common.base.Strings;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 
 import com.taobao.cun.auge.common.Address;
@@ -478,6 +478,9 @@ public final class PartnerInstanceConverter {
 		}
 		if(null != condition.getTpCategoryEnum()){
 			example.setCategory(condition.getTpCategoryEnum().getCode());
+		}
+		if(!Strings.isNullOrEmpty(condition.getOwnDept())) {
+			example.setOwnDept(condition.getOwnDept());
 		}
 		return example;
 	}

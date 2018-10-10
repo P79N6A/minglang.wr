@@ -5,14 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.station.dto.CountyStationDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 县服务中心 dto domain 转换器
@@ -69,8 +70,8 @@ public class CountyStationConverter {
 		countyStationDto.setTownDetail(countyStation.getTownDetail());
 		countyStationDto.setWarehouseNum(countyStation.getWarehouseNum());
 		countyStationDto.setWaterPayment(countyStation.getWaterPayment());
-		
-
+		countyStationDto.setTransferState(countyStation.getTransferState());
+		countyStationDto.setOwnDept(countyStation.getOwnDept());
 		return countyStationDto;
 	}
 
@@ -119,6 +120,8 @@ public class CountyStationConverter {
 		countyStation.setTownDetail(countyStationDto.getTownDetail());
 		countyStation.setWarehouseNum(countyStationDto.getWarehouseNum());
 		countyStation.setWaterPayment(countyStationDto.getWaterPayment());
+		countyStation.setOwnDept(countyStationDto.getOwnDept());
+		countyStation.setTransferState(countyStationDto.getTransferState());
 		return countyStation;
 	}
 

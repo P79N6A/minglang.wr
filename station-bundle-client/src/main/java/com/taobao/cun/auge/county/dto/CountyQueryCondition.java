@@ -17,8 +17,14 @@ public class CountyQueryCondition implements Serializable{
 	private int page;
 	private Long orgId;
 	private Boolean isMobile;
+	private String ownDept;
 	
-	
+	public String getOwnDept() {
+		return ownDept;
+	}
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
 	public Long getOrgId() {
 		return orgId;
 	}

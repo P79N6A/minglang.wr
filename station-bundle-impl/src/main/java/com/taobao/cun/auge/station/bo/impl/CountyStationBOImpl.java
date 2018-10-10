@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -10,8 +14,6 @@ import com.taobao.cun.auge.dal.domain.CountyStationExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component("countyStationBO")
 public class CountyStationBOImpl implements CountyStationBO {
@@ -47,5 +49,12 @@ public class CountyStationBOImpl implements CountyStationBO {
 		countyStationMapper.insert(cs);
 		return cs.getId();
 	}
-
+	
+	@Override
+	public void updateOwnDept(Long id, String ownDept) {
+		CountyStation countyStation = countyStationMapper.selectByPrimaryKey(id);
+		countyStation.setOwnDept(ownDept);
+		countyStation.setGmtModified(new Date());
+		countyStationMapper.updateByPrimaryKey(countyStation);
+	}
 }

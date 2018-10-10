@@ -7,6 +7,7 @@ import java.util.Map;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
 
 /**
  * 县服务中心dto
@@ -213,6 +214,27 @@ public class CountyStationDto implements Serializable{
      * 仓储面积
      */
     private String storageArea;
+    
+    private String transferState;
+    
+    private String ownDept;
+    
+
+	public String getTransferState() {
+		return transferState;
+	}
+
+	public void setTransferState(String transferState) {
+		this.transferState = transferState;
+	}
+
+	public String getOwnDept() {
+		return ownDept;
+	}
+
+	public void setOwnDept(String ownDept) {
+		this.ownDept = ownDept;
+	}
 
 	public Long getId() {
 		return id;
