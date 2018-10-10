@@ -11,12 +11,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.dal.domain.BizActionLog;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
+import com.taobao.cun.auge.dal.mapper.BizActionLogMapper;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
@@ -56,6 +58,8 @@ public class OrgInitServiceImpl implements OrgInitService {
 	private StationMapper stationMapper;
 	@Resource
 	private CountyStationMapper countyStationMapper;
+	@Resource
+	private BizActionLogMapper bizActionLogMapper;
 	
 	@Override
 	public void createVirtualTeam() {
@@ -130,6 +134,13 @@ public class OrgInitServiceImpl implements OrgInitService {
 	}
 	
 	private List<LogContent> doInitCounty() {
+		BizActionLog record = new BizActionLog();
+		record.setId(19L);
+		try {
+			record.setGmtCreate(DateUtils.parseDate("20180904", "yyyyMMdd"));
+		} catch (ParseException e1) {
+		}
+		bizActionLogMapper.updateByPrimaryKeySelective(record);
 		List<LogContent> logContents = Lists.newArrayList();
 		List<String> lines = null;
 		try {

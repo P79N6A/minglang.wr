@@ -24,8 +24,10 @@ public class BizActionLogBo {
 		BizActionLog record = new BizActionLog();
 		record.setActionDesc(bizActionLogAddDto.getBizActionEnum().desc);
 		record.setActionName(bizActionLogAddDto.getBizActionEnum().name());
-		if(record.getGmtCreate() == null) {
+		if(bizActionLogAddDto.getGmtCreate() == null) {
 			record.setGmtCreate(new Date());
+		}else {
+			record.setGmtCreate(bizActionLogAddDto.getGmtCreate());
 		}
 		record.setOpOrgId(bizActionLogAddDto.getOpOrgId());
 		record.setDept(bizActionLogAddDto.getDept());
