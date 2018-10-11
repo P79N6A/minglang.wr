@@ -18,4 +18,12 @@ public interface PartnerRoleImportService {
 	 * @return
 	 */
 	String importRoleByStationIds(List<Long> stationIds, Long orgId, String roleName, String creator);
+	
+	/**
+	 * 删除村小二角色
+	 * @param stationIds
+	 * @param roleName
+	 * @return
+	 */
+	String removeRoleByStationIds(List<Long> stationIds, String roleName, Long orgId, String operator);
 }
