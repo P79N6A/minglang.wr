@@ -101,11 +101,10 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		criusAttachmentService.addAttachmentBatch(stationDto.getAttachments(), stationId,
 				AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(partnerInstanceDto));
 		saveStationFixProtocol(stationDto, stationId);
-		addCreateLog(partnerInstanceDto);
 		return stationId;
 	}
 
-	private void addCreateLog(PartnerInstanceDto partnerInstanceDto) {
+	protected void addCreateLog(PartnerInstanceDto partnerInstanceDto) {
 		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
 		bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
 		bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
