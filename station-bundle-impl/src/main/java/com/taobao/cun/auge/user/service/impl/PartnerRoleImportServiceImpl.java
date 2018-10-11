@@ -20,6 +20,7 @@ import com.taobao.cun.auge.user.service.PartnerRoleImportService;
 import com.taobao.cun.crius.oss.client.FileStoreService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
+import com.taobao.cun.endor.base.dto.UserRoleDeleteDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -39,7 +40,7 @@ public class PartnerRoleImportServiceImpl implements PartnerRoleImportService {
 	
 	@Override
 	public String importRoleByStationIds(List<Long> stationIds, Long orgId, String roleName, String creator) {
-		final String identifier = creator + "_" + System.currentTimeMillis() + ".json";
+		final String identifier = "partner_role_import_" + creator + "_" + System.currentTimeMillis() + ".json";
 		ImportInfo importInfo = new ImportInfo();
 		importInfo.setCreateTime(new Date());
 		importInfo.setCreator(creator);
@@ -78,12 +79,11 @@ public class PartnerRoleImportServiceImpl implements PartnerRoleImportService {
 								errorMsgs.add(new ErrorMsg(stationId, ExceptionUtils.getStackFrames(e)));
 							}
 						}
-						
-						if(success) {
-							successNum.incrementAndGet();
-						}else {
-							failNum.incrementAndGet();
-						}
+					}
+					if(success) {
+						successNum.incrementAndGet();
+					}else {
+						failNum.incrementAndGet();
 					}
 				}
 				importInfo.setFailNum(failNum.get());
@@ -196,5 +196,51 @@ public class PartnerRoleImportServiceImpl implements PartnerRoleImportService {
 		public void setMsgs(String[] msgs) {
 			this.msgs = msgs;
 		}
+	}
+	@Override
+	public String removeRoleByStationIds(List<Long> stationIds, String roleName, Long orgId, String operator) {
+		final String identifier = "partner_role_remove_" + operator + "_" + System.currentTimeMillis() + ".json";
+		ImportInfo importInfo = new ImportInfo();
+		importInfo.setCreateTime(new Date());
+		importInfo.setCreator(operator);
+		importInfo.setRoleName(roleName);
+		importInfo.setStationIds(stationIds);
+		
+		final AtomicInteger successNum = new AtomicInteger(0);
+		final AtomicInteger failNum = new AtomicInteger(0);
+		final List<ErrorMsg> errorMsgs = Lists.newArrayList();
+		importInfo.setErrorMsgs(errorMsgs);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(Long stationId : stationIds) {
+					boolean success = false;
+					PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+					if(partnerStationRel == null) {
+						errorMsgs.add(new ErrorMsg(stationId, "找不到村小二"));
+					}else {
+						try {
+							UserRoleDeleteDto userRoleDeleteDto = new UserRoleDeleteDto();
+							userRoleDeleteDto.setRoleName(roleName);
+							userRoleDeleteDto.setUserId(String.valueOf(partnerStationRel.getTaobaoUserId()));
+							userRoleDeleteDto.setOrgId(orgId); 
+							storeEndorApiClient.getUserRoleServiceClient().deleteUserRole(userRoleDeleteDto);
+							success = true;
+						}catch(Exception e) {
+							errorMsgs.add(new ErrorMsg(stationId, ExceptionUtils.getStackFrames(e)));
+						}
+					}
+					if(success) {
+						successNum.incrementAndGet();
+					}else {
+						failNum.incrementAndGet();
+					}
+				}
+				importInfo.setFailNum(failNum.get());
+				importInfo.setSuccessNum(successNum.get());
+				fileStoreService.saveFile(identifier, identifier, JSON.toJSONString(importInfo).getBytes(),"application/json");
+			}}).start();
+		
+		return "http://crius.cn-hangzhou.oss-cdn.aliyun-inc.com/" + identifier;
 	}
 }

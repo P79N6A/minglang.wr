@@ -82,6 +82,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
               String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
               partnerInstanceDto.getStationDto().setStationNum(stationNum);
               stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
+              addCreateLog(partnerInstanceDto);
               stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 
             		  stationNum);
               
