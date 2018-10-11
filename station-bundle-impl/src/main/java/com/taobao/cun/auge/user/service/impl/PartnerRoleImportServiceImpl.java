@@ -79,12 +79,11 @@ public class PartnerRoleImportServiceImpl implements PartnerRoleImportService {
 								errorMsgs.add(new ErrorMsg(stationId, ExceptionUtils.getStackFrames(e)));
 							}
 						}
-						
-						if(success) {
-							successNum.incrementAndGet();
-						}else {
-							failNum.incrementAndGet();
-						}
+					}
+					if(success) {
+						successNum.incrementAndGet();
+					}else {
+						failNum.incrementAndGet();
 					}
 				}
 				importInfo.setFailNum(failNum.get());
@@ -226,14 +225,15 @@ public class PartnerRoleImportServiceImpl implements PartnerRoleImportService {
 							userRoleDeleteDto.setUserId(String.valueOf(partnerStationRel.getTaobaoUserId()));
 							userRoleDeleteDto.setOrgId(orgId); 
 							storeEndorApiClient.getUserRoleServiceClient().deleteUserRole(userRoleDeleteDto);
+							success = true;
 						}catch(Exception e) {
 							errorMsgs.add(new ErrorMsg(stationId, ExceptionUtils.getStackFrames(e)));
 						}
-						if(success) {
-							successNum.incrementAndGet();
-						}else {
-							failNum.incrementAndGet();
-						}
+					}
+					if(success) {
+						successNum.incrementAndGet();
+					}else {
+						failNum.incrementAndGet();
 					}
 				}
 				importInfo.setFailNum(failNum.get());
