@@ -28,6 +28,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +99,9 @@ public class SmsListener implements EventListener {
 			return;
 		}
 		String content = appResourceService.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
-
-		generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
+		if(StringUtils.isNotBlank(content)) {
+			generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
+		}
 	}
 	
 	private void smsParentPartner(PartnerInstanceStateChangeEvent stateChangeEvent) {
