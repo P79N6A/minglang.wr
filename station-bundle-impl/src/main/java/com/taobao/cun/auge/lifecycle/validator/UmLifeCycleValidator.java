@@ -112,6 +112,7 @@ public class UmLifeCycleValidator {
             //校验优盟门店名称是否有违禁词汇
             checkStationNameKfc(stationName);
 
+            // 判断同一省不能重复村站名
             checkStationNameDuplicate(updateDto.getStationId(), stationName, address.getProvince());
         }
         //地址变更后，校验新的地址，字符长度校验
@@ -162,16 +163,16 @@ public class UmLifeCycleValidator {
     }
 
     /**
-     * 判断服务站名同一省内是否存在
+     * 判断优盟服务站名同一省内是否存在
      */
-    public void checkStationNameDuplicate(Long stationId, String newStationName,String province) {
+    public void checkStationNameDuplicate(Long stationId, String newStationName, String province) {
         String oldName = null;
         if (stationId != null) {
             Station oldStation = stationBO.getStationById(stationId);
             oldName = oldStation.getName();
         }
         if (!StringUtils.equals(oldName, newStationName)) {
-            int count = stationBO.getSameNameInProvinceCnt(newStationName,province);
+            int count = stationBO.getSameNameInProvinceCnt(newStationName, province);
             if (count > 0) {
                 throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "优盟店名称同一省域不能重复");
             }

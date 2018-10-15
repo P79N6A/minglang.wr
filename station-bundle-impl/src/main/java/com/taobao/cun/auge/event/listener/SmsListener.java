@@ -99,6 +99,7 @@ public class SmsListener implements EventListener {
 			return;
 		}
 		String content = appResourceService.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
+
 		if(StringUtils.isNotBlank(content)) {
 			generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
 		}
