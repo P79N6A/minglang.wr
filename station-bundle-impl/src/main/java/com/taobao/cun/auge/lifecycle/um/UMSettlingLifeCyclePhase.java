@@ -134,7 +134,10 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
 
     public Long addUmPartnerInstanceRel(PartnerInstanceDto partnerInstanceDto) {
         partnerInstanceDto.setState(PartnerInstanceStateEnum.SERVICING);
-        partnerInstanceDto.setApplyTime(new Date());
+        Date serviceBeginTime = new Date();
+        partnerInstanceDto.setApplyTime(serviceBeginTime);
+        partnerInstanceDto.setServiceBeginTime(serviceBeginTime);
+        partnerInstanceDto.setOpenDate(serviceBeginTime);
         partnerInstanceDto.setApplierId(partnerInstanceDto.getOperator());
         partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
         partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
