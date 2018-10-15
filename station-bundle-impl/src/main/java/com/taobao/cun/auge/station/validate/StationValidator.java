@@ -16,6 +16,8 @@ public final class StationValidator {
 	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
 	
 	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】《》‘；：”“’。，、？]";
+
+	static final String OTHER_VILLAGE = "-1";
 	
 	/**
      * 全角对应于ASCII表的可见字符从！开始，偏移值为65281
@@ -49,9 +51,9 @@ public final class StationValidator {
     
     public static HashSet<String> generalInvalidWord = new HashSet<String>();
     
-    public static HashSet<String> addressInvalidWord = new HashSet<String>();
+    public static HashSet<String> addressInvalidWord = new HashSet<>();
     
-    public static HashSet<String> nameInvalidWord = new HashSet<String>();
+    public static HashSet<String> nameInvalidWord = new HashSet<>();
 	
     static {
         generalInvalidWord.add("www");
@@ -203,9 +205,12 @@ public final class StationValidator {
         }
         String loweraddr = address.getAddressDetail();
         for(String vm : addressInvalidWord){
-            if(loweraddr.indexOf(vm) >= 0){
+            if(loweraddr.contains(vm)){
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能含有特殊关键字:"+vm);
             }
+        }
+        if (OTHER_VILLAGE.equals(address.getVillage()) && !StringUtils.isEmpty(address.getVillageDetail()) && !isSpecialStr(address.getVillageDetail(),RULE_REGEX_ADDRESS)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"所属行政村不可含有特殊字符");
         }
         return true;
     }
