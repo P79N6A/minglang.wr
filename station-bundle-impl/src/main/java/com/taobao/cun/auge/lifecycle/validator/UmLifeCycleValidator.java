@@ -26,6 +26,9 @@ import org.springframework.stereotype.Component;
 public class UmLifeCycleValidator {
 
     @Autowired
+    private StationBO stationBO;
+
+    @Autowired
     PartnerInstanceBO partnerInstanceBO;
 
     @Autowired

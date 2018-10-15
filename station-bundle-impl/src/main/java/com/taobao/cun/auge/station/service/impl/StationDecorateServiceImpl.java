@@ -680,15 +680,24 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 
 	@Override
 	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds) {
-		PartnerStationRelExample example = new PartnerStationRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andTypeEqualTo("TP").andStateIn(Lists.newArrayList("SERVICING","DECORATING"));
-		 List<PartnerStationRel> rels = partnerStationRelMapper.selectByExample(example);
-		for(PartnerStationRel rel :rels){
+//		PartnerStationRelExample example = new PartnerStationRelExample();
+//		example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andTypeEqualTo("TP").andStateIn(Lists.newArrayList("SERVICING","DECORATING"));
+//		 List<PartnerStationRel> rels = partnerStationRelMapper.selectByExample(example);
+//		for(PartnerStationRel rel :rels){
+//			try {
+//				this.openAccessCbuMarket(rel.getTaobaoUserId());
+//				logger.info("OpenAccessCbuMarket success:"+rel.getTaobaoUserId());
+//			} catch (Exception e) {
+//				logger.info("OpenAccessCbuMarket error:["+e.getMessage()+"]"+rel.getTaobaoUserId());
+//			}
+//		}
+		
+		for(Long taobaoUserId :taobaoUserIds){
 			try {
-				this.openAccessCbuMarket(rel.getTaobaoUserId());
-				logger.info("OpenAccessCbuMarket success:"+rel.getTaobaoUserId());
+				this.openAccessCbuMarket(taobaoUserId);
+				logger.info("OpenAccessCbuMarket success:"+taobaoUserId);
 			} catch (Exception e) {
-				logger.info("OpenAccessCbuMarket error:["+e.getMessage()+"]"+rel.getTaobaoUserId());
+				logger.info("OpenAccessCbuMarket error:["+e.getMessage()+"]"+taobaoUserId);
 			}
 		}
 	}
