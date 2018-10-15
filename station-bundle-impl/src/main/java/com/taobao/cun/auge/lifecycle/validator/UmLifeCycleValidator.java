@@ -40,9 +40,6 @@ public class UmLifeCycleValidator {
     //优盟描述最多50个字
     private static final int UM_DESC_MAX_SIZE = 50;
 
-    @Autowired
-    private StationBO stationBO;
-
     /**
      * 优盟入驻前置校验
      *
