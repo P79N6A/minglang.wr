@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.lifecycle.um;
 
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -8,7 +9,10 @@ import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
+import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -16,6 +20,8 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.transfer.dto.TransferState;
+import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +41,12 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     @Autowired
     private UmLifeCycleValidator umLifeCycleValidator;
 
+    @Autowired
+    private CountyTransferStateMgrBo countyTransferStateMgrBo;
+
+    @Autowired
+    private StationBO stationBO;
+
     @Override
     @PhaseStepMeta(descr = "创建或更新优盟站点")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -50,7 +62,7 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
             partnerInstanceDto.getStationDto().setStationNum(stationNum);
 
             //创建优盟门店
-            stationId = addStation(partnerInstanceDto, StationType.STATION.getType());
+            stationId = addUmStation(partnerInstanceDto, StationType.STATION.getType());
             stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
                 typeEnum, stationNum);
             partnerInstanceDto.setStationId(stationId);
@@ -66,6 +78,34 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
             }
             updateStation(stationId, partnerInstanceDto);
         }
+    }
+
+    public Long addUmStation(PartnerInstanceDto partnerInstanceDto, int stationType) {
+        StationDto stationDto = partnerInstanceDto.getStationDto();
+        stationDto.setState(StationStateEnum.INVALID);
+        stationDto.setStatus(StationStatusEnum.NEW);
+        stationDto.copyOperatorDto(partnerInstanceDto);
+        stationDto.setStationType(stationType);
+        PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+        if (partnerDto != null) {
+            stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+            stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+            stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+        }
+
+        stationDto.setOwnDept(
+            countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
+        if (stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
+            stationDto.setTransferState(TransferState.WAITING.name());
+        } else {
+            stationDto.setTransferState(TransferState.FINISHED.name());
+        }
+        Long stationId = stationBO.addStation(stationDto);
+        partnerInstanceDto.setStationId(stationId);
+        if (partnerInstanceDto.getParentStationId() == null) {
+            partnerInstanceDto.setParentStationId(stationId);
+        }
+        return stationId;
     }
 
     @Override
