@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service("alipayRiskScanService")
-@HSFProvider(serviceInterface= AlipayRiskScanService.class)
+@HSFProvider(serviceInterface= AlipayRiskScanService.class, clientTimeout = 10000)
 public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 	private static final Logger logger = LoggerFactory.getLogger(AlipayRiskScanServiceImpl.class);
 

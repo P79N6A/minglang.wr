@@ -16,6 +16,7 @@ import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
 import com.taobao.cun.auge.station.strategy.TptStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
+import com.taobao.cun.auge.station.strategy.UmStrategy;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,9 @@ public class PartnerInstanceHandler implements InitializingBean{
 	
 	@Autowired
 	private TptStrategy tptStrategy;
+
+	@Autowired
+	private UmStrategy umStrategy;
 	
 	Map<String,PartnerInstanceStrategy> strategy = new HashMap<String,PartnerInstanceStrategy>();
 	@Override
@@ -42,6 +46,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.put(PartnerInstanceTypeEnum.TPV.getCode(), tpvStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TPT.getCode(), tptStrategy);
+		strategy.put(PartnerInstanceTypeEnum.UM.getCode(), umStrategy);
 	}
 	
 	/**
