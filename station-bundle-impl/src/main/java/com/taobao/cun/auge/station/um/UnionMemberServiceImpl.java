@@ -106,11 +106,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
             }
 
-            PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
-                parentStationId);
-            if (partnerInstance == null || partnerInstance.getStationDto() == null) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二站点不存在");
-            }
+            //PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
+            //    parentStationId);
+            //if (partnerInstance == null || partnerInstance.getStationDto() == null) {
+            //    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二站点不存在");
+            //}
             return paymentAccountDto;
         } catch (AugeBusinessException e) {
             logger.warn(JSON.toJSONString(checkDto), e);
