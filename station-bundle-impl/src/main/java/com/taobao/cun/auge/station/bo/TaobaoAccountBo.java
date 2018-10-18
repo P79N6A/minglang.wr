@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
+
 /**
  * 淘宝账号bo
  *
@@ -21,6 +23,6 @@ public interface TaobaoAccountBo {
      * @param taobaoUserId
      * @return
      */
-    boolean isAlipayRiskUser(Long taobaoUserId);
+    boolean isAlipayRiskUser(AliPaymentAccountDto taobaoUserId);
 
 }

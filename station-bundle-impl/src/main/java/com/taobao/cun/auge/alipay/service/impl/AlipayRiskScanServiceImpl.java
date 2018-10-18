@@ -92,4 +92,40 @@ public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 			throw new ServiceException("checkEntryRisk error",e);
 		}
 	}
+
+	@Override
+	public AlipayRiskScanResult checkEntryRisk(Long taobaoUserId, String fullName, String idCardNo) {
+		if (null == taobaoUserId || 0 == taobaoUserId) {
+			throw new IllegalArgumentException("taobaoUserId is null");
+		}
+
+		if (StringUtils.isBlank(idCardNo)) {
+			return AlipayRiskScanResult.success(true, "因为没有找到身份证信息，入职校验存在风险");
+		}
+		try {
+			Map<String, Object> params = Maps.newHashMap();
+			params.put("eventType", EVENT_TYPE);
+			params.put("idCardNo", idCardNo); // 必填参数
+			params.put("name", fullName); // 选填
+			params.put("taobaoId", String.valueOf(taobaoUserId));// 选填
+			params.put("appKey", appKey);
+			// 生成签名
+			String sign = AlipayRiskScanSignGenerator.sign(PATH, params, secretKey);
+			params.put("sign", sign);
+			Map<String, String> map = Maps.newHashMap();
+			for (String key : params.keySet()) {
+				map.put(key, params.get(key) + "");
+			}
+			String response = HttpClientUtil.get(url, map, null);
+			if (StringUtils.isBlank(response)) {
+				throw new ServiceException("支付宝接口调用失败");
+			}
+			AlipayRiskScanResult result = JSON.parseObject(response, AlipayRiskScanResult.class);
+			return result;
+		} catch (Exception e) {
+			logger.error("checkEntryRisk error.taobaoUserId =" + taobaoUserId + " fullName=" + fullName + " idCardNo="
+				+ idCardNo, e);
+			throw new ServiceException("checkEntryRisk error", e);
+		}
+	}
 }

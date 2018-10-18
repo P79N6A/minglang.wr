@@ -97,7 +97,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号。");
             }
 
-            if (taobaoAccountBo.isAlipayRiskUser(taobaoUserId)) {
+            if (taobaoAccountBo.isAlipayRiskUser(paymentAccountDto)) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号！");
             }
 

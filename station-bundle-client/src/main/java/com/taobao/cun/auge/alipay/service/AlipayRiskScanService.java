@@ -8,5 +8,5 @@ public interface AlipayRiskScanService {
 	
 	public AlipayRiskScanResult checkEntryRisk(String taobaoNick);
 
-
+	public AlipayRiskScanResult checkEntryRisk(Long taobaoUserId, String fullName, String idCardNo);
 }
