@@ -236,6 +236,9 @@ public class BailServiceImpl implements BailService {
 						cuntaoUnFreezeBailDto.setSource("auge");
 						cuntaoUnFreezeBailDto.setOutOrderId("CT_REPLENISH_" + partnerInstanceId + "_UNFREEZE");
 						cuntaoUnFreezeBailDto.setUserTypeEnum(UserTypeEnum.STORE);
+						if (!StringUtils.isEmpty(accountMoney.getAccountNo())) {
+							cuntaoUnFreezeBailDto.setAlipayId(accountMoney.getAccountNo());
+						}
 						return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
 					}else{
 						resultModel.setSuccess(true);
