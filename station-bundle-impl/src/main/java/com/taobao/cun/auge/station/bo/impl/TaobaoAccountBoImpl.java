@@ -7,6 +7,7 @@ import java.util.Map;
 import com.taobao.cun.auge.alipay.dto.AlipayRiskScanData;
 import com.taobao.cun.auge.alipay.dto.AlipayRiskScanResult;
 import com.taobao.cun.auge.alipay.service.AlipayRiskScanService;
+import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
 import com.taobao.namelist.model.NamelistResult;
 import com.taobao.namelist.param.NamelistMatchParam;
@@ -60,8 +61,8 @@ public class TaobaoAccountBoImpl implements TaobaoAccountBo {
     }
 
     @Override
-    public boolean isAlipayRiskUser(Long taobaoUserId) {
-        AlipayRiskScanResult risk = alipayRiskScanService.checkEntryRisk(taobaoUserId);
+    public boolean isAlipayRiskUser(AliPaymentAccountDto accountDto) {
+        AlipayRiskScanResult risk = alipayRiskScanService.checkEntryRisk(accountDto.getTaobaoUserId(), accountDto.getFullName(), accountDto.getIdCardNumber());
         if (risk != null && risk.isSuccess()) {
             AlipayRiskScanData riskData = risk.getData();
             return riskData.isRisk();
