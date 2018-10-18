@@ -1,13 +1,12 @@
 package com.taobao.cun.auge.payment.account.impl;
 
-import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
+import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -52,14 +51,14 @@ public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryServic
 	@Override
 	public AliPaymentAccountDto queryStationMemberPaymentAccountHideByNick(String nick) {
 		AliPaymentAccountDto paymentAccountDtoResult = this.queryStationMemberPaymentAccountByNick(nick);
-		hidepaymentAccount(paymentAccountDtoResult);
+		PaymentAccountDtoUtil.hidepaymentAccount(paymentAccountDtoResult);
 		return paymentAccountDtoResult;
 	}
 
 	@Override
 	public AliPaymentAccountDto queryStationMemberPaymentAccountHideByUserId(Long userId) {
 		AliPaymentAccountDto paymentAccountDtoResult = this.queryStationMemberPaymentAccountByUserId(userId);
-		hidepaymentAccount(paymentAccountDtoResult);
+		PaymentAccountDtoUtil.hidepaymentAccount(paymentAccountDtoResult);
 		return paymentAccountDtoResult;
 	}
 
@@ -113,17 +112,6 @@ public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryServic
 
 
 
-	/**
-	 * 将支付宝账户信息脱敏
-	 * 
-	 * @param paymentAccountDto
-	 *            支付宝账号信息
-	 */
-	private void hidepaymentAccount(AliPaymentAccountDto paymentAccountDto) {
-		paymentAccountDto.setAlipayId(SensitiveDataUtil.alipayLogonIdHide(paymentAccountDto.getAlipayId()));
-		//和村站详情上，省份证脱敏规则保持一致
-		paymentAccountDto.setIdCardNumber(IdCardUtil.idCardNoHide(paymentAccountDto.getIdCardNumber()));
-		paymentAccountDto.setFullName(SensitiveDataUtil.customizeHide(paymentAccountDto.getFullName(), 0, paymentAccountDto.getFullName().length() - 1, 1));
-	}
+
 
 }

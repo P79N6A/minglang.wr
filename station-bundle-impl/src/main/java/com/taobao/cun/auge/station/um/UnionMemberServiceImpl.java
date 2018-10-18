@@ -13,6 +13,7 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
+import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -89,7 +90,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             String taobaoNick = checkDto.getTaobaoNick();
 
             AliPaymentAccountDto paymentAccountDto = paymentAccountQueryService
-                .queryStationMemberPaymentAccountHideByNick(
+                .queryStationMemberPaymentAccountByNick(
                     taobaoNick);
             Long taobaoUserId = paymentAccountDto.getTaobaoUserId();
 
@@ -97,7 +98,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号。");
             }
 
-            if (taobaoAccountBo.isAlipayRiskUser(taobaoUserId)) {
+            if (taobaoAccountBo.isAlipayRiskUser(paymentAccountDto)) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号！");
             }
 
@@ -111,6 +112,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //if (partnerInstance == null || partnerInstance.getStationDto() == null) {
             //    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二站点不存在");
             //}
+            PaymentAccountDtoUtil.hidepaymentAccount(paymentAccountDto);
             return paymentAccountDto;
         } catch (AugeBusinessException e) {
             logger.warn(JSON.toJSONString(checkDto), e);
