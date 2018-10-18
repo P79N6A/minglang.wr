@@ -8,6 +8,7 @@ import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgNewuserOrderGetRequest;
 import com.taobao.api.response.TbkDgNewuserOrderGetResponse;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.UnionNewuserOrder;
@@ -15,10 +16,7 @@ import com.taobao.cun.auge.dal.domain.UnionNewuserOrderExample;
 import com.taobao.cun.auge.dal.mapper.UnionNewuserOrderMapper;
 import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.NewuserOrderInitRequest;
-import com.taobao.cun.auge.station.dto.NewuserOrderInitResponse;
-import com.taobao.cun.auge.station.dto.NewuserOrderStat;
-import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
+import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.union.api.client.service.EntryService;
@@ -40,6 +38,7 @@ import java.util.Map;
 public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerAdzoneServiceImpl.class);
+    private static final String PID_CACHE_PRE = "PID_";
 
     @Autowired
     PartnerAdzoneBO partnerAdzoneBO;
@@ -51,6 +50,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     UnionNewuserOrderMapper unionNewuserOrderMapper;
     @Autowired
     AppResourceService appResourceService;
+    @Autowired
+    TairCache tairCache;
 
     @Value("${taobao.union.app.key}")
     private String appKey;
@@ -68,7 +69,6 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     private static final String CONFIG_UNION_NEWUSER_TYPE = "union_newuser";
     private static final String CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE = "current_update_date_";
     private static final String CONFIG_UNION_NEWUSER_ACTIVITY_ID = "activity_id_";
-
 
     @Override
     public String createAdzone(Long taobaoUserId) {
@@ -95,11 +95,12 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
-            logger.error(PARTNER_ADZONE_ERROR + "create adzone erroor: {}, {}", JSON.toJSONString(variables), result.toString());
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone erroor: {}, {}", JSON.toJSONString(variables),
+                result.toString());
             throw new AugeSystemException(result.toString());
         }
-        Map data = (Map) result.getData();
-        String pid = (String) data.get("pid");
+        Map data = (Map)result.getData();
+        String pid = (String)data.get("pid");
         partnerAdzoneBO.addAdzone(taobaoUserId, stationId, pid);
         return pid;
     }
@@ -107,6 +108,11 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     @Override
     public String getUnionPid(Long taobaoUserId, Long stationId) {
         Assert.notNull(taobaoUserId, "taobaoUserId is null");
+        String cacheKey = PID_CACHE_PRE + taobaoUserId + (stationId == null ? "" : stationId);
+        String pid = tairCache.get(cacheKey);
+        if (null != pid) {
+            return pid;
+        }
         if (stationId == null) {
             PartnerStationRel instance = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
             if (null == instance || null == instance.getStationId()) {
@@ -115,7 +121,11 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
             }
             stationId = instance.getStationId();
         }
-        return partnerAdzoneBO.getUnionPid(taobaoUserId, stationId);
+        pid = partnerAdzoneBO.getUnionPid(taobaoUserId, stationId);
+        if (StringUtils.isNotBlank(pid)) {
+            tairCache.put(cacheKey, pid, 3600);
+        }
+        return pid;
     }
 
     @Override
@@ -161,7 +171,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
                 logger.error(PARTNER_ADZONE_ERROR + "TbkDgNewuserOrderGetRequestError:" + JSON.toJSONString(rsp));
             }
         } catch (ApiException e) {
-            logger.info(PARTNER_ADZONE_ERROR + "start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}", pageNO, activityId);
+            logger.info(PARTNER_ADZONE_ERROR + "start TbkDgNewuserOrderGetRequest,pageNo = {} , activityId = {}",
+                pageNO, activityId);
             response.setSuccess(false);
         }
 
@@ -173,7 +184,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Assert.notNull(activityId, "activityId is null");
         Assert.notNull(updateDate, "updateDate is null");
 
-        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + updateDate.substring(0, 6));
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE,
+            CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + updateDate.substring(0, 6));
         if (currentUpdateDate != null && currentUpdateDate.equalsIgnoreCase(updateDate)) {
             return;
         }
@@ -196,7 +208,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         }
         Long adzoneId = Long.parseLong(unionPid.split("_")[3]);
 
-        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE, CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
+        String currentUpdateDate = appResourceService.queryAppResourceValue(CONFIG_UNION_NEWUSER_TYPE,
+            CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE + statDate);
         NewuserOrderStat stat = new NewuserOrderStat();
         if (null != currentUpdateDate) {
             stat = partnerAdzoneBO.getNewuserOrderStat(adzoneId, statDate, currentUpdateDate);
