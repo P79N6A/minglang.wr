@@ -67,10 +67,6 @@ public class TaobaoAccountBoImpl implements TaobaoAccountBo {
             AlipayRiskScanData riskData = risk.getData();
             return riskData.isRisk();
         }
-        logger.error("alipayRiskScanService error", risk.getErrorMsg());
-        // 如果支付宝效验异常暂时放过
         return false;
     }
-
-
 }
