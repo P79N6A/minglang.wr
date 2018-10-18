@@ -358,6 +358,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         task.setOperator(operatorDto.getOperator());
         task.setParameterType(UserTagDto.class.getName());
         task.setParameter(JSON.toJSONString(userTagDto));
+        task.setPriority(TaskPriority.HIGH);
         taskLists.add(task);
 
         GeneralTaskDto succTask = new GeneralTaskDto();
@@ -424,6 +425,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         startProcessTask.setOperator(processTask.getOperator());
         startProcessTask.setParameterType(StartProcessDto.class.getName());
         startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
+        startProcessTask.setPriority(TaskPriority.HIGH);
 
         GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
         // 20s执行一次
@@ -547,6 +549,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         task.setOperator(operatorId);
         task.setParameterType(UserTagDto.class.getName());
         task.setParameter(JSON.toJSONString(userTagDto));
+        task.setPriority(TaskPriority.HIGH);
         taskLists.add(task);
 
         // 旺旺去标
@@ -831,7 +834,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
         retry.setIntervalIncrement(false);
         wangwangGeneralTaskDto.setRetryTaskConfig(retry);
-        wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
+        wangwangGeneralTaskDto.setPriority(TaskPriority.NORMAL);
         taskDtos.add(wangwangGeneralTaskDto);
         // 旺旺打标 end
 
