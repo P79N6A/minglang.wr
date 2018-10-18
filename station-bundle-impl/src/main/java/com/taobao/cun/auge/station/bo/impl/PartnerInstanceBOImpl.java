@@ -208,7 +208,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         criteria.andIsDeletedEqualTo("n");
 
         // 排除自己
-        criteria.andTypeNotEqualTo(curPartnerInstance.getType());
+        //criteria.andTypeNotEqualTo(curPartnerInstance.getType());
+        criteria.andTypeNotIn(Lists.newArrayList(curPartnerInstance.getType(),"UM"));
 
         return partnerStationRelMapper.selectByExample(example);
     }
