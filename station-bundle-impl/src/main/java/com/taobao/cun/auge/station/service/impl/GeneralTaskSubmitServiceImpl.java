@@ -358,6 +358,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         task.setOperator(operatorDto.getOperator());
         task.setParameterType(UserTagDto.class.getName());
         task.setParameter(JSON.toJSONString(userTagDto));
+        task.setPriority(TaskPriority.HIGH);
         taskLists.add(task);
 
         GeneralTaskDto succTask = new GeneralTaskDto();
@@ -548,6 +549,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         task.setOperator(operatorId);
         task.setParameterType(UserTagDto.class.getName());
         task.setParameter(JSON.toJSONString(userTagDto));
+        task.setPriority(TaskPriority.HIGH);
         taskLists.add(task);
 
         // 旺旺去标
