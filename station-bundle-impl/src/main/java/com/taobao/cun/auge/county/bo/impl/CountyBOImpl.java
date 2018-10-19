@@ -651,7 +651,7 @@ public class CountyBOImpl implements CountyBO {
 				.andAddressCodeEqualTo(StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity());
 			List<CuntaoOrgAdminAddress> addressList = cuntaoOrgAdminAddressMapper.selectByExample(example);
 			if(CollectionUtils.isNotEmpty(addressList)){
-				new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"所在行政区已存在县服务中心");
+				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"所在行政区已存在县服务中心");
 			}
 
 	}
