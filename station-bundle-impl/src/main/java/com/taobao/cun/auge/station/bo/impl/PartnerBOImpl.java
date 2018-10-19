@@ -6,6 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import com.taobao.cun.auge.alilang.AlilangUserInitService;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -35,13 +44,6 @@ import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.diamond.client.Diamond;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @Component("partnerBO")
 public class PartnerBOImpl implements PartnerBO {
@@ -59,6 +61,8 @@ public class PartnerBOImpl implements PartnerBO {
 	public static String FLOW_BUSINESS_CODE="partner_flower_name_apply";
 	public static String DIAMOND_BLACK="com.taobao.cun:auge.flowerName.blackList";
 	public static String DIAMOND_GROUP="DEFAULT_GROUP";
+	@Autowired
+	AlilangUserInitService alilangUserInitService;
 
 	@Override
 	public Partner getNormalPartnerByTaobaoUserId(Long taobaoUserId)
@@ -102,7 +106,20 @@ public class PartnerBOImpl implements PartnerBO {
 		ValidateUtils.notNull(partnerDto.getId());
 		Partner record = PartnerConverter.toParnter(partnerDto,true);
 		DomainUtils.beforeUpdate(record, partnerDto.getOperator());
+		Partner c = getPartnerById(record.getId());
 		exPartnerMapper.updateByPrimaryKeySelective(record);
+		//同步村密手机号 容错
+		try {
+			if (StringUtils.isNotEmpty(partnerDto.getMobile())) {
+				if (c != null && !partnerDto.getMobile().equals(c.getMobile()) ) {
+					 PartnerDto pd = PartnerConverter.toPartnerDto(c);
+					 pd.setMobile(partnerDto.getMobile());
+					alilangUserInitService.syncInfo(pd);
+				}
+			}
+		} catch (Exception e) {
+		}
+		
 	}
 
 	@Override
