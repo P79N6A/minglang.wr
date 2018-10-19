@@ -20,6 +20,9 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -39,6 +42,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
+	
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
 	@Autowired
 	private StationBO sationBO;
@@ -130,10 +136,17 @@ public class StoreReadServiceImpl implements StoreReadService {
 		StoreDto store = this.getStoreBySharedStoreId(sharedStoreId);
 		Assert.notNull(store);
 		Station station = this.sationBO.getStationById(store.getStationId());
-		if(station.getApplyOrg() == 99999L){
-				return true;
+		CuntaoOrgDto largearea = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.LARGE_AREA);
+		if (largearea != null) {
+			return largearea.getId().equals(500004L);
 		}
-		return false;
+		return true;
+		
+		//return largearea.getId().equals(500004L);
+//		if(station.getApplyOrg() == 99999L){
+//				return true;
+//		}
+//		return false;
 	}
 
 }
