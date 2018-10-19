@@ -145,7 +145,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             sDto.setFormat(addDto.getFormat());
             sDto.setCovered(String.valueOf(addDto.getCovered()));
             sDto.setDescription(addDto.getDescription());
-            LatitudeUtil.buildPOI(address);
+//            LatitudeUtil.buildPOI(address);
 
             PartnerInstanceDto piDto = new PartnerInstanceDto();
             piDto.setOperator(addDto.getOperator());
@@ -222,7 +222,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             stationDto.setId(stationId);
             stationDto.setName(updateDto.getStationName());
             stationDto.setAddress(address);
-            LatitudeUtil.buildPOI(address);
+//            LatitudeUtil.buildPOI(address);
 
             stationDto.setFormat(updateDto.getFormat());
             if (null != updateDto.getCovered()) {
