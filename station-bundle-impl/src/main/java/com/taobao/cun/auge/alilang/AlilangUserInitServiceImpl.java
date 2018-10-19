@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @HSFProvider(serviceInterface = AlilangUserInitService.class)
 public class AlilangUserInitServiceImpl implements AlilangUserInitService {
+	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Value("${notify.alilang.topic}")
 	private String topic;
@@ -68,13 +69,28 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 	
 	private void newAlilangUser(PartnerInstanceDto partnerInstanceDto) {
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		syncInfo(partnerDto);
+	}
+	
+	private List<AccountMoney> getAllAccountMoneys(){
+		AccountMoneyExample example = new AccountMoneyExample();
+		example.createCriteria()
+			.andIsDeletedEqualTo("n")
+			.andTargetTypeEqualTo(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE.getCode())
+			.andThawTimeIsNull()
+			.andStateEqualTo(AccountMoneyStateEnum.HAS_FROZEN.getCode());
+		return accountMoneyMapper.selectByExample(example);
+	}
+
+	@Override
+	public void syncInfo(PartnerDto pd) {
 		PartnerMessage partnerMessage = new PartnerMessage();
-		partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
-		partnerMessage.setMobile(partnerDto.getMobile());
-		partnerMessage.setOmobile(partnerDto.getMobile());
+		partnerMessage.setTaobaoUserId(pd.getTaobaoUserId());
+		partnerMessage.setMobile(pd.getMobile());
+		partnerMessage.setOmobile(pd.getMobile());
 		partnerMessage.setAction("update");
-		partnerMessage.setEmail(partnerDto.getEmail());
-		partnerMessage.setName(partnerDto.getName());
+		partnerMessage.setEmail(pd.getEmail());
+		partnerMessage.setName(pd.getName());
 		//partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
 		partnerMessage.setAlilangOrgId(alilangOrgId);
 		String str = JSONObject.toJSONString(partnerMessage);
@@ -91,16 +107,6 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 		}else{
 			logger.error("send message error.{}", sendResult.getErrorMessage());
 		}
-	}
-	
-	private List<AccountMoney> getAllAccountMoneys(){
-		AccountMoneyExample example = new AccountMoneyExample();
-		example.createCriteria()
-			.andIsDeletedEqualTo("n")
-			.andTargetTypeEqualTo(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE.getCode())
-			.andThawTimeIsNull()
-			.andStateEqualTo(AccountMoneyStateEnum.HAS_FROZEN.getCode());
-		return accountMoneyMapper.selectByExample(example);
 	}
 
 }
