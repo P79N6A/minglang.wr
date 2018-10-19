@@ -287,7 +287,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
         retry.setIntervalIncrement(false);
         wangwangGeneralTaskDto.setRetryTaskConfig(retry);
-        wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
+        wangwangGeneralTaskDto.setPriority(TaskPriority.NORMAL);
         return wangwangGeneralTaskDto;
     }
     
@@ -309,6 +309,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.UPDATE_SERVICING_CAINIAO.getCode());
         cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
         cainiaoTaskVo.setOperator(operatorId);
+        cainiaoTaskVo.setPriority(TaskPriority.HIGH);
 
         SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
         syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
@@ -391,6 +392,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
             wwTask.setOperator(operatorDto.getOperator());
             wwTask.setParameterType(String.class.getName());
             wwTask.setParameter(taobaoNick);
+            wwTask.setPriority(TaskPriority.NORMAL);
             taskLists.add(wwTask);
         }
 
@@ -563,6 +565,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         wangwangTaskVo.setOperator(operatorId);
         wangwangTaskVo.setParameterType(String.class.getName());
         wangwangTaskVo.setParameter(taobaoNick);
+        wangwangTaskVo.setPriority(TaskPriority.NORMAL);
         taskLists.add(wangwangTaskVo);
 
         Optional<PartnerTpg> tpgResult = partnerTpgBO.queryByParnterInstanceId(instanceId);
@@ -627,6 +630,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
         dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
         dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
+        dealStanderBailTaskVo.setPriority(TaskPriority.HIGH);
 
         AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
         alipayStandardBailDto.setAmount(frozenMoney);
@@ -650,6 +654,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
         dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
         dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
+        dealStanderBailTaskVo.setPriority(TaskPriority.HIGH);
 
         AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
         alipayStandardBailDto.setAmount(frozenMoney);
@@ -678,6 +683,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         thawMoneyTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
         thawMoneyTaskVo.setBusinessStepDesc("thawMoneySuccess");
         thawMoneyTaskVo.setOperator(operatorDto.getOperator());
+        thawMoneyTaskVo.setPriority(TaskPriority.HIGH);
 
         PartnerInstanceThrawSuccessDto thrawSuccessDto = new PartnerInstanceThrawSuccessDto();
         thrawSuccessDto.copyOperatorDto(operatorDto);
@@ -701,6 +707,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
         cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
         cainiaoTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+        cainiaoTaskVo.setPriority(TaskPriority.HIGH);
 
         // 不撤点
         if ("n".equals(isQuitStation)) {
@@ -729,6 +736,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
         dealStationTagTaskVo.setBusinessStepDesc("取消支付宝标示");
         dealStationTagTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+        dealStationTagTaskVo.setPriority(TaskPriority.HIGH);
 
         AlipayTagDto alipayTagDto = new AlipayTagDto();
         alipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);

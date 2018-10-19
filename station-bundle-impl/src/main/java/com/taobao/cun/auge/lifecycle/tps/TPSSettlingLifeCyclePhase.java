@@ -1,5 +1,11 @@
 package com.taobao.cun.auge.lifecycle.tps;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -25,11 +31,9 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.dto.StoreCategory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 /**
  * 村小二入驻中阶段组件
@@ -38,7 +42,9 @@ import org.springframework.util.Assert;
 @Component
 @Phase(type="TPS",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中服务节点")
 public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(TPSSettlingLifeCyclePhase.class);
+	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
@@ -50,6 +56,10 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
+	
+	@Autowired
+	private StationDecorateService stationDecorateService;
+	
 	@Override
 	@PhaseStepMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -124,7 +134,13 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="创建培训装修记录")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-	
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		try {
+			//开通1688授权
+			stationDecorateService.openAccessCbuMarket(partnerInstanceDto.getTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("openAccessCbuMarket error,taobaoUserId"+partnerInstanceDto.getTaobaoUserId(),e);
+		}
 	}
 
 	@Override

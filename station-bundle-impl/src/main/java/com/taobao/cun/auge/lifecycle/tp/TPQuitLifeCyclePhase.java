@@ -1,6 +1,11 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerApply;
@@ -37,11 +42,10 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二已退出阶段组件
@@ -56,6 +60,8 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private StationBO stationBO;
+	@Autowired
+	private StationService stationService;
 	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
@@ -89,6 +95,10 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
+			}else {
+				List<Long> sIds = new ArrayList<Long>();
+				sIds.add(partnerInstanceDto.getStationId());
+				stationService.updateStationCategory(sIds, "INVALID");
 			}
 		}
 		
