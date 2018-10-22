@@ -157,8 +157,8 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
 			//如果资格认证通过，招募信息改成  资格认证通过，否则改成面试通过
-			PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
-			
+		/*	PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
+
 			if(pqaDto != null && PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_PASS);
 			}else  if (pqaDto != null && PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
@@ -170,7 +170,7 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 					partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
 				}
 				
-			}
+			}*/
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
 			

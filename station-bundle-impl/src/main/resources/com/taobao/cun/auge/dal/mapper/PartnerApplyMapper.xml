@@ -1016,11 +1016,11 @@
       <if test="leaseArea != null" >
         lease_area = #{leaseArea,jdbcType=DECIMAL},
       </if>
-	  <if test="examApplyStatus != null" >
-        exam_apply_status = #{examApplyStatus,jdbcType=VARCHAR},
+	  <if test="applyExamStatus != null" >
+        apply_exam_status = #{applyExamStatus,jdbcType=VARCHAR},
       </if>
-      <if test="examApplyPoint != null" >
-        exam_apply_point = #{examApplyPoint,jdbcType=INTEGER},
+      <if test="applyExamPoint != null" >
+        apply_exam_point = #{applyExamPoint,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
