@@ -30,11 +30,6 @@ public class BusinessInfoDto implements Serializable {
     private String mobile;
 
     /**
-     * 账户持有人联系邮箱(可能为空)
-     */
-    private String email;
-
-    /**
      * 商家（企业）证件类型,1代表营业执照
      */
     private String idType = "1";
@@ -79,14 +74,6 @@ public class BusinessInfoDto implements Serializable {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getIdType() {

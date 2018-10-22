@@ -20,14 +20,14 @@ public class PersonInfoDto implements Serializable {
     private String name;
 
     /**
+     * 账户持有人联系地址
+     */
+    private String address;
+
+    /**
      * 账户持有人联系电话
      */
     private String mobile;
-
-    /**
-     * 账户持有人联系邮箱(可能为空)
-     */
-    private String email;
 
     /**
      * 账户持有人证件类型,100代表身份证
@@ -60,20 +60,20 @@ public class PersonInfoDto implements Serializable {
         this.name = name;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getMobile() {
         return mobile;
     }
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getIdType() {
