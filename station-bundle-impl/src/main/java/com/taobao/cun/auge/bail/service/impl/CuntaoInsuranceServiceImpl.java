@@ -11,6 +11,8 @@ import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
+import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
+import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang.time.DateUtils;
@@ -26,6 +28,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     public static final String SP_NO = "6696";//合伙人保险编号
     
     public static final String SP_TYPE = "2";//合伙人保险类型
+
     @Autowired
     private PartnerTagService partnerTagService;
     @Autowired
@@ -35,10 +38,19 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     @Autowired
     private PartnerBO partnerBO;
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(CuntaoInsuranceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
-     @Override
+    @Override
+    public PersonInfoDto queryPersonInfo(Long taobaoUserId, String cpCode) {
+        return null;
+    }
+
+    @Override
+    public BusinessInfoDto queryBusinessInfo(Long taobaoUserId, String cpCode) {
+        return null;
+    }
+
+    @Override
      public Boolean hasInsurance(Long taobaoUserId){
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
            return true;
@@ -139,5 +151,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         }
         return false;
     }
+
+
 
 }
