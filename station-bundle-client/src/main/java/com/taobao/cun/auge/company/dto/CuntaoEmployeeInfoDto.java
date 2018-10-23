@@ -35,7 +35,7 @@ public class CuntaoEmployeeInfoDto implements Serializable {
 	/** 离职时间 */
 	public Date leaveJobTime;
 	/** 工人身份 */
-	private List<CuntaoEmployeeIdentifierEnum> Identifier;
+	private List<CuntaoEmployeeIdentifierEnum> identifier;
 
 	public Long getEmployeeId() {
 		return employeeId;
@@ -110,10 +110,10 @@ public class CuntaoEmployeeInfoDto implements Serializable {
 	}
 
 	public List<CuntaoEmployeeIdentifierEnum> getIdentifier() {
-		return Identifier;
+		return identifier;
 	}
 
 	public void setIdentifier(List<CuntaoEmployeeIdentifierEnum> identifier) {
-		Identifier = identifier;
+		this.identifier = identifier;
 	}
 }
