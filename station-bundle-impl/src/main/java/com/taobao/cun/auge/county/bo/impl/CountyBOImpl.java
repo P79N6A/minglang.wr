@@ -591,6 +591,8 @@ public class CountyBOImpl implements CountyBO {
         //新建县服务中心
         if (countyDto.getId() == null || countyDto.getId() <= 0) {
             CountyStation countyStation = toCountyStationDOAddNew(countyDto, taobaoUserId, operator.getOpWorkId());
+			//判断新增县服务中心所在行政区是否已存在服务中心
+			validateIfExistedCountyStation(countyDto);
             countyStationBO.addCountyStation(countyStation);
             countyDto.setId(countyStation.getId());
             // 同步菜鸟县仓
@@ -607,8 +609,15 @@ public class CountyBOImpl implements CountyBO {
             bindOrg2Address(countyStation,operator.getOpWorkId());
             addCountyStationActionLog(countyDto.getId(), BizActionEnum.countystation_create, operator);
         } else {
-            //修改县服务中心
+			//修改县服务中心
             CountyStation old = countyStationMapper.selectByPrimaryKey(countyDto.getId());
+			//判断修改县服务中心时，县服务中心地址是否已经修改,city和province前面已经做了非空判断
+			String oldLastAdreessCode = StringUtils.isNotBlank(old.getCounty())?old.getCounty():old.getCity();
+			String newLastAdreessCode = StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity();
+			if(!oldLastAdreessCode.equals(newLastAdreessCode)){
+				//地址发生改变
+				validateIfExistedCountyStation(countyDto);
+			}
             CountyStation countyStation = toCountyStationDOUpdate(operator.getOpWorkId(), countyDto, old, taobaoUserId);
             countyStationMapper.updateByPrimaryKeySelective(countyStation);
             //如果是运营中 修改同步菜鸟驿站
@@ -631,7 +640,24 @@ public class CountyBOImpl implements CountyBO {
         }
         return countyDto;
 	}
-	
+
+	/**
+	 * 验证新增的县服务中心所在行政县是否已存在县服务中心
+	 *
+	 * @param countyDto
+	 */
+	private void validateIfExistedCountyStation(CountyDto countyDto) {
+		CuntaoOrgAdminAddressExample example = new CuntaoOrgAdminAddressExample();
+		example.createCriteria().andIsDeletedEqualTo("n")
+				.andAddressCodeEqualTo(StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity());
+			List<CuntaoOrgAdminAddress> addressList = cuntaoOrgAdminAddressMapper.selectByExample(example);
+			if(CollectionUtils.isNotEmpty(addressList)){
+				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"所在行政区已存在县服务中心");
+			}
+
+	}
+
+
 	public static void validateSaveCountyStationParam(CountyDto countyDto) {
         Validate.notNull(countyDto, "countyDto is null");
         Validate.notEmpty(countyDto.getName(), "countyDto.name is empty");
