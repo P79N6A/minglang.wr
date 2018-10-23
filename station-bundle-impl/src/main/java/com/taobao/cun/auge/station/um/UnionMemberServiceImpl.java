@@ -102,11 +102,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号！");
             }
 
+
             PartnerInstanceDto piDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
             if (piDto != null) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
             }
-
             //PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
             //    parentStationId);
             //if (partnerInstance == null || partnerInstance.getStationDto() == null) {
@@ -128,6 +128,16 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     public Long addUnionMember(UnionMemberAddDto addDto) {
         BeanValidator.validateWithThrowable(addDto);
         try {
+            String taobaoNick = addDto.getTaobaoNick();
+            AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
+                    .queryStationMemberPaymentAccountByNick(taobaoNick);
+            Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
+
+            PartnerInstanceDto existedPiDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+            if (existedPiDto != null) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
+            }
+
             Station parentStationDto = stationBO.getStationById(addDto.getParentStationId());
             String parentCityCode = parentStationDto.getCity();
             Address address = addDto.getAddress();
@@ -152,14 +162,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             piDto.setOperatorOrgId(addDto.getOperatorOrgId());
             piDto.setOperatorType(addDto.getOperatorType());
 
-            String taobaoNick = addDto.getTaobaoNick();
-
             PartnerDto pDto = new PartnerDto();
-
-            AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
-                .queryStationMemberPaymentAccountByNick(taobaoNick);
-            Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
-
             pDto.setTaobaoUserId(taobaoUserId);
             pDto.setTaobaoNick(taobaoNick);
             pDto.setName(aliPaymentAccountDto.getFullName());
