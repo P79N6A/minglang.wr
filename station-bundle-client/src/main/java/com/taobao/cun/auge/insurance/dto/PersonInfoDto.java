@@ -42,7 +42,7 @@ public class PersonInfoDto implements Serializable {
     /**
      * 账户持有人支付宝帐号
      */
-    private String aplipayAccount;
+    private String alipayAccount;
 
     public String getNameType() {
         return nameType;
@@ -92,11 +92,11 @@ public class PersonInfoDto implements Serializable {
         this.idenNum = idenNum;
     }
 
-    public String getAplipayAccount() {
-        return aplipayAccount;
+    public String getAlipayAccount() {
+        return alipayAccount;
     }
 
-    public void setAplipayAccount(String aplipayAccount) {
-        this.aplipayAccount = aplipayAccount;
+    public void setAlipayAccount(String alipayAccount) {
+        this.alipayAccount = alipayAccount;
     }
 }

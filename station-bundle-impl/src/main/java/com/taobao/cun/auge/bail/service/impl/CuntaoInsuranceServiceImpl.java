@@ -2,6 +2,7 @@ package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.alipay.baoxian.scene.facade.common.AliSceneResult;
 import com.alipay.baoxian.scene.facade.common.policy.dto.InsPolicyDTO;
@@ -9,25 +10,39 @@ import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
 import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
+import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
+import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("cuntaoInsuranceService")
 @HSFProvider(serviceInterface = CuntaoInsuranceService.class)
 public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
-    
-    public static final String SP_NO = "6696";//合伙人保险编号
-    
-    public static final String SP_TYPE = "2";//合伙人保险类型
+
+    /**
+     * 合伙人保险编号
+     */
+    private final static String SP_NO = "6696";
+
+    /**
+     * 合伙人保险类型
+     */
+    private final static String SP_TYPE = "2";
 
     @Autowired
     private PartnerTagService partnerTagService;
@@ -37,17 +52,60 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     private DiamondConfiguredProperties diamondConfiguredProperties;
     @Autowired
     private PartnerBO partnerBO;
+    @Autowired
+    private PartnerApplyBO partnerApplyBO;
+    @Autowired
+    private CuntaoQualificationBO qualificationBO;
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
     @Override
     public PersonInfoDto queryPersonInfo(Long taobaoUserId, String cpCode) {
-        return null;
+        validateCpCode(cpCode);
+        return Optional.ofNullable(partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId))
+                        .map(this::buildPersonInfoDto)
+                        .orElse(null);
+    }
+
+    private PersonInfoDto buildPersonInfoDto(Partner partner) {
+        PersonInfoDto infoDto = new PersonInfoDto();
+        BeanUtils.copyProperties(partner, infoDto);
+        PartnerApply apply = partnerApplyBO.getPartnerApplyByUserId(partner.getTaobaoUserId());
+        if (apply != null) {
+            String addressDetail = StringUtils.isEmpty(apply.getAddressDetail()) ?
+                apply.getAddressDetailName().replaceAll("\\|", "") :
+                apply.getAddressDetailName().replaceAll("\\|", "").concat(apply.getAddressDetail());
+            infoDto.setAddress(addressDetail);
+        }
+        return infoDto;
     }
 
     @Override
     public BusinessInfoDto queryBusinessInfo(Long taobaoUserId, String cpCode) {
-        return null;
+        validateCpCode(cpCode);
+        return Optional.ofNullable(qualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId))
+                        .map(this::buildBusinessInfo)
+                        .orElse(null);
+    }
+
+    private BusinessInfoDto buildBusinessInfo(CuntaoQualification qualification) {
+        BusinessInfoDto infoDto = new BusinessInfoDto();
+        infoDto.setName(qualification.getCompanyName());
+        infoDto.setType(String.valueOf(qualification.getEnterpriceType()));
+        infoDto.setIdenNum(qualification.getQualiNo());
+        infoDto.setAddress(qualification.getRegsiterAddress());
+        infoDto.setLegalPerson(qualification.getLegalPerson());
+        PartnerApply apply = partnerApplyBO.getPartnerApplyByUserId(qualification.getTaobaoUserId());
+        if (apply != null) {
+            infoDto.setMobile(apply.getPhone());
+        }
+        return infoDto;
+    }
+
+    private void validateCpCode(String cpCode) {
+        if (!diamondConfiguredProperties.getInsureCpCodes().contains(cpCode)) {
+            throw new AugeBusinessException(AugeErrorCodes.CP_NOT_EXISTS_ERROR_CODE, "forbidden to access");
+        }
     }
 
     @Override
