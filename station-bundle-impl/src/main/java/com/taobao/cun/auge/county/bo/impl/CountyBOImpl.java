@@ -614,7 +614,7 @@ public class CountyBOImpl implements CountyBO {
 			//判断修改县服务中心时，县服务中心地址是否已经修改,city和province前面已经做了非空判断
 			String oldLastAdreessCode = StringUtils.isNotBlank(old.getCounty())?old.getCounty():old.getCity();
 			String newLastAdreessCode = StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity();
-			if(oldLastAdreessCode.equals(newLastAdreessCode)){
+			if(!oldLastAdreessCode.equals(newLastAdreessCode)){
 				//地址发生改变
 				validateIfExistedCountyStation(countyDto);
 			}
