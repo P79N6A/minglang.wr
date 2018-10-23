@@ -9,8 +9,8 @@ import com.taobao.cun.auge.dal.domain.AddressInfoDecisionExample;
 import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample.Criteria;
-import com.taobao.cun.auge.dal.mapper.AddressInfoDecisionMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerApplyMapper;
+import com.taobao.cun.auge.station.bo.AddressInfoDecisionBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerApplyStateEnum;
@@ -26,8 +26,7 @@ public class PartnerApplyBOImpl implements PartnerApplyBO{
     PartnerApplyMapper partnerApplyMapper;
 
     @Autowired
-    AddressInfoDecisionMapper addressInfoDecisionMapper;
-
+    AddressInfoDecisionBO addressInfoDecisionBO;
     @Override
     @Transactional
     public void restartPartnerApplyByUserId(PartnerApplyDto partnerApplyDto) {
@@ -50,7 +49,7 @@ public class PartnerApplyBOImpl implements PartnerApplyBO{
                 AddressInfoDecisionExample addressExample = new AddressInfoDecisionExample();
                 addressExample.createCriteria().andIsDeletedEqualTo("n").andPartnerApplyIdEqualTo(partnerApply.getId());
                 DomainUtils.beforeUpdate(addressInfoDecision, partnerApplyDto.getOperator());
-                addressInfoDecisionMapper.updateByExampleSelective(addressInfoDecision,addressExample);
+                addressInfoDecisionBO.updateByExampleSelective(addressInfoDecision,addressExample);
             });
         }
 

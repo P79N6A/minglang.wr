@@ -15,6 +15,6 @@ public interface AddressInfoDecisionBO {
      * @param addressInfoDecision
      * @param addressInfoDecisionExample
      */
-    public void updateByExampleSelective(AddressInfoDecision addressInfoDecision, AddressInfoDecisionExample addressInfoDecisionExample);
+    void updateByExampleSelective(AddressInfoDecision addressInfoDecision, AddressInfoDecisionExample addressInfoDecisionExample);
 
 }
