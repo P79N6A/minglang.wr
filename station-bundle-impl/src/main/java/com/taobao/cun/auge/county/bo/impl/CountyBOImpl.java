@@ -611,9 +611,10 @@ public class CountyBOImpl implements CountyBO {
         } else {
 			//修改县服务中心
             CountyStation old = countyStationMapper.selectByPrimaryKey(countyDto.getId());
-			//判断修改县服务中心时，县服务中心地址是否已经修改 county:null=>not null ;not null => null ; not equals;city:not equals
-			if((old.getCounty() == null&&countyDto.getCounty()!=null)
-					||(old.getCounty() != null&&!old.getCounty().equals(countyDto.getCounty()))||(!old.getCity().equals(countyDto.getCity()))){
+			//判断修改县服务中心时，县服务中心地址是否已经修改,city和province前面已经做了非空判断
+			String oldLastAdreessCode = StringUtils.isNotBlank(old.getCounty())?old.getCounty():old.getCity();
+			String newLastAdreessCode = StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity();
+			if(oldLastAdreessCode.equals(newLastAdreessCode)){
 				//地址发生改变
 				validateIfExistedCountyStation(countyDto);
 			}
