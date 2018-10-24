@@ -29,7 +29,7 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 	@Resource
 	private TransferJobBo transferJobBo;
 	
-	
+	@Override
 	public ResultModel<Boolean> startTransferProcess(TransferJob transferJob) {
 		ResultModel<Boolean> resultModel = new ResultModel<Boolean>();
 		try {
@@ -43,7 +43,8 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 		}
 		return resultModel;
 	}
-	
+
+	@Override
 	public CountyStationTransferCondition prepare(Long countyStationId) {
 		return transferProcessFacade.prepare(countyStationId);
 	}

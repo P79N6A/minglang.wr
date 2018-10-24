@@ -4,15 +4,20 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.dal.domain.AddressInfoDecision;
+import com.taobao.cun.auge.dal.domain.AddressInfoDecisionExample;
 import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerApplyMapper;
+import com.taobao.cun.auge.station.bo.AddressInfoDecisionBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
-import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
+import com.taobao.cun.recruit.partner.enums.PartnerApplyStateEnum;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("partnerApplyBO")
 public class PartnerApplyBOImpl implements PartnerApplyBO{
@@ -20,19 +25,35 @@ public class PartnerApplyBOImpl implements PartnerApplyBO{
     @Autowired
     PartnerApplyMapper partnerApplyMapper;
 
+    @Autowired
+    AddressInfoDecisionBO addressInfoDecisionBO;
     @Override
+    @Transactional
     public void restartPartnerApplyByUserId(PartnerApplyDto partnerApplyDto) {
-        PartnerApply partnerApply = getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
-        if (partnerApply != null){
-            partnerApply.setState(partnerApplyDto.getState().getCode());
-            PartnerApplyExample example = new PartnerApplyExample();
-            Criteria criteria = example.createCriteria();
-            criteria.andTaobaoUserIdEqualTo(partnerApplyDto.getTaobaoUserId());
-            criteria.andIsDeletedEqualTo("n");
-            criteria.andStateEqualTo(PartnerApplyStateEnum.STATE_APPLY_COOPERATION.getCode());
-            DomainUtils.beforeUpdate(partnerApply, partnerApplyDto.getOperator());
-            partnerApplyMapper.updateByExampleSelective(partnerApply, example);
+       //根据taobaoUserId查询所有符合条件的PartnerApply数据
+        PartnerApplyExample example = new PartnerApplyExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andTaobaoUserIdEqualTo(partnerApplyDto.getTaobaoUserId());
+        criteria.andIsDeletedEqualTo("n");
+        List<PartnerApply> partnerApplyList = partnerApplyMapper.selectByExample(example);
+        if(CollectionUtils.isNotEmpty(partnerApplyList)){
+            partnerApplyList.forEach(partnerApply -> {
+                //退出时，partner_apply表中的state状态全部改为待面试
+                partnerApply.setState(PartnerApplyStateEnum.STATE_APPLY_INTERVIEW.getCode());
+                partnerApply.setAuditOpinion(PartnerApplyStateEnum.STATE_APPLY_INTERVIEW.getDesc());
+                DomainUtils.beforeUpdate(partnerApply, partnerApplyDto.getOperator());
+                partnerApplyMapper.updateByPrimaryKeySelective(partnerApply);
+                //地址决策表删除记录
+                AddressInfoDecision addressInfoDecision = new AddressInfoDecision();
+                addressInfoDecision.setIsDeleted("y");
+                AddressInfoDecisionExample addressExample = new AddressInfoDecisionExample();
+                addressExample.createCriteria().andIsDeletedEqualTo("n").andPartnerApplyIdEqualTo(partnerApply.getId());
+                DomainUtils.beforeUpdate(addressInfoDecision, partnerApplyDto.getOperator());
+                addressInfoDecisionBO.updateByExampleSelective(addressInfoDecision,addressExample);
+            });
         }
+
+
     }
 
     @Override
