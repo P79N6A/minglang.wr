@@ -10,6 +10,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
+import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.lock.TairManualReleaseDistributeLock;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
@@ -82,7 +83,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     private UmLifeCycleValidator umLifeCycleValidator;
 
     @Autowired
-    private TairManualReleaseDistributeLock distributeLock;
+    private ManualReleaseDistributeLock distributeLock;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
