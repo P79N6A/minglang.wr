@@ -12,17 +12,16 @@ import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
 import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
-import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     @Autowired
     private PartnerBO partnerBO;
     @Autowired
-    private PartnerApplyBO partnerApplyBO;
+    private PartnerInstanceBO partnerInstanceBO;
     @Autowired
     private CuntaoQualificationBO qualificationBO;
 
@@ -70,12 +69,10 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     private PersonInfoDto buildPersonInfoDto(Partner partner) {
         PersonInfoDto infoDto = new PersonInfoDto();
         BeanUtils.copyProperties(partner, infoDto);
-        PartnerApply apply = partnerApplyBO.getPartnerApplyByUserId(partner.getTaobaoUserId());
-        if (apply != null) {
-            String addressDetail = StringUtils.isEmpty(apply.getAddressDetail()) ?
-                apply.getAddressDetailName().replaceAll("\\|", "") :
-                apply.getAddressDetailName().replaceAll("\\|", "").concat(apply.getAddressDetail());
-            infoDto.setAddress(addressDetail);
+        PartnerInstanceDto instanceDto = partnerInstanceBO.getCurrentPartnerInstanceByPartnerId(
+            partner.getId());
+        if (instanceDto != null && instanceDto.getStationDto() != null && instanceDto.getStationDto().getAddress() != null) {
+            infoDto.setAddress(instanceDto.getStationDto().getAddress().buildAddressDetail());
         }
         return infoDto;
     }
@@ -95,9 +92,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         infoDto.setIdenNum(qualification.getQualiNo());
         infoDto.setAddress(qualification.getRegsiterAddress());
         infoDto.setLegalPerson(qualification.getLegalPerson());
-        PartnerApply apply = partnerApplyBO.getPartnerApplyByUserId(qualification.getTaobaoUserId());
-        if (apply != null) {
-            infoDto.setMobile(apply.getPhone());
+        Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(qualification.getTaobaoUserId());
+        if (partner != null) {
+            infoDto.setMobile(partner.getMobile());
         }
         return infoDto;
     }
