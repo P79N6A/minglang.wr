@@ -136,7 +136,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 100);
             if (!lockResult) {
                 logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
-                throw new AugeSystemException("请勿重复提交");
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,
+                    "请勿重复提交");
             }
 
             AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
