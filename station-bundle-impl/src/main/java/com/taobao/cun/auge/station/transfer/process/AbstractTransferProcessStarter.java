@@ -55,7 +55,6 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 		transferWorkflow.start(countyStationTransferJob);
 	}
 
-
 	private void transStations(CountyStationTransferJob countyStationTransferJob) {
 		String[] array = countyStationTransferJob.getStationIdList().split(",");
 		

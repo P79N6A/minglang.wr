@@ -5,14 +5,19 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.log.BizActionEnum;
+import com.taobao.cun.auge.log.BizActionLogDto;
+import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.convert.CountyStationConverter;
 import com.taobao.cun.auge.station.dto.CountyStationDto;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
+import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferCondition;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferPhase;
 import com.taobao.cun.auge.station.transfer.dto.TransferStation;
@@ -33,6 +38,10 @@ public class TransferProcessPrepareBo {
 	private CountyStationBO countyStationBO;
 	@Resource
 	private StationTransferBo stationTransferBo;
+	@Resource
+	private BizActionLogBo bizActionLogBo;
+	@Resource
+	private TransferJobBo transferJobBo;
 	
 	private Map<CountyStationTransferPhase, DependStatePrepare> dependStatePrepares = Maps.newHashMap();
 	
@@ -114,7 +123,6 @@ public class TransferProcessPrepareBo {
 				countyStationTransferCondition.setMemo("没有可交接村点");
 				return countyStationTransferCondition;
 			}
-			countyStationTransferCondition.setStationTransfer(true);
 			countyStationTransferCondition.setCountyTransfer(true);
 			countyStationTransferCondition.setTransferStations(transferableStations);
 			countyStationTransferCondition.setCountyStationDto(getCountyStationDto(countyStationId));
@@ -130,18 +138,39 @@ public class TransferProcessPrepareBo {
 	class TransedStatePrepare extends AbstractStatePrepare{
 		@Override
 		public CountyStationTransferCondition prepare(Long countyStationId) {
-			CountyStationTransferCondition countyStationTransferCondition = new CountyStationTransferCondition();
-			
-			List<TransferStation> transferableStations = getTransferableStations(countyStationId);
-			if(transferableStations.isEmpty()) {
-				countyStationTransferCondition.setMemo("没有可交接村点");
+			//检查是否发起了提前交接
+			if(isAdvanceTransfering(countyStationId)) {
+				CountyStationTransferCondition countyStationTransferCondition = new CountyStationTransferCondition();
+				countyStationTransferCondition.setMemo("县点处于提前交接期，不能发起新交接流程");
 				return countyStationTransferCondition;
 			}
-			countyStationTransferCondition.setStationTransfer(true);
+			
+			return doPrepare(countyStationId);
+		}
+
+		private CountyStationTransferCondition doPrepare(Long countyStationId) {
+			CountyStationTransferCondition countyStationTransferCondition = new CountyStationTransferCondition();
+			//取出县点交接时间
+			List<BizActionLogDto> bizActionLogDtos = bizActionLogBo.getBizActionLogDtos(countyStationId, "county", BizActionEnum.countystation_transfer_finished);
+			if(CollectionUtils.isNotEmpty(bizActionLogDtos)) {
+				BizActionLogDto bizActionLogDto = bizActionLogDtos.get(0);
+				countyStationTransferCondition.setCountyTransferDate(bizActionLogDto.getGmtCreate());
+			}
+			countyStationTransferCondition.setAdvanceTransfer(true);
 			countyStationTransferCondition.setCountyTransfer(false);
-			countyStationTransferCondition.setTransferStations(transferableStations);
 			countyStationTransferCondition.setCountyStationDto(getCountyStationDto(countyStationId));
+			//获取可交接的村点
+			List<TransferStation> transferableStations = getTransferableStations(countyStationId);
+			if(!transferableStations.isEmpty()) {
+				countyStationTransferCondition.setStationTransfer(true);
+				countyStationTransferCondition.setTransferStations(transferableStations);
+			}
+			
 			return countyStationTransferCondition;
+		}
+
+		private boolean isAdvanceTransfering(Long countyStationId) {
+			return CollectionUtils.isNotEmpty(transferJobBo.getCountyStationTransferJobs(countyStationId, "advance", "NEW"));
 		}
 	}
 }

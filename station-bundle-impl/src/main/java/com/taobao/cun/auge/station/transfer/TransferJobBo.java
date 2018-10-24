@@ -12,6 +12,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
+import com.taobao.cun.auge.dal.domain.CountyStationTransferJobExample;
 import com.taobao.cun.auge.dal.mapper.CountyStationTransferJobMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -63,6 +64,12 @@ public class TransferJobBo {
 		}
 		countyStationTransferDetail.setStations(stationQueryService.queryStations(stationIds));
 		return countyStationTransferDetail;
+	}
+	
+	public List<CountyStationTransferJob> getCountyStationTransferJobs(Long countyId, String type, String state) {
+		CountyStationTransferJobExample example = new CountyStationTransferJobExample();
+		example.createCriteria().andCountyStationIdEqualTo(countyId).andTypeEqualTo(type).andStateEqualTo(state);
+		return countyStationTransferJobMapper.selectByExample(example);
 	}
 	
 	public void updateTransferJobState(Long id, String state) {
