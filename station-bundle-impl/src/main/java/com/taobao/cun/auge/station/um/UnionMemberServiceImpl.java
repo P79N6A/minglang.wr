@@ -133,7 +133,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         BeanValidator.validateWithThrowable(addDto);
         String taobaoNick = addDto.getTaobaoNick();
         try {
-            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 100);
+            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 3);
             if (!lockResult) {
                 logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
                 throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,
@@ -198,7 +198,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             logger.error(JSON.toJSONString(addDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }finally {
-            //distributeLock.unlock("unionMember-addUnionMember", taobaoNick);
+            distributeLock.unlock("unionMember-addUnionMember", taobaoNick);
         }
     }
 
