@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.log.service;
 
+import java.util.List;
+
+import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
 
 /**
@@ -13,4 +16,13 @@ public interface BizActionLogService {
 	 * @param bizActionLogAddDto
 	 */
 	void addLog(BizActionLogDto bizActionLogAddDto);
+	
+	/**
+	 * 查询日志
+	 * @param objectId
+	 * @param objectType
+	 * @param bizActionEnum
+	 * @return
+	 */
+	List<BizActionLogDto> getBizActionLogs(Long objectId, String objectType, BizActionEnum bizActionEnum);
 }
