@@ -526,6 +526,10 @@
 			<!--<groupId>com.taobao.configserver</groupId>-->
 			<!--<artifactId>config-client</artifactId>-->
 		<!--</dependency>-->
+		<dependency>
+			<groupId>com.taobao</groupId>
+			<artifactId>biz-base-lock</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

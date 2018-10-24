@@ -4,13 +4,13 @@ import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
+import com.taobao.cun.auge.lock.TairManualReleaseDistributeLock;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
@@ -81,6 +81,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Autowired
     private UmLifeCycleValidator umLifeCycleValidator;
 
+    @Autowired
+    private TairManualReleaseDistributeLock distributeLock;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public AliPaymentAccountDto checkUnionMember(UnionMemberCheckDto checkDto) {
@@ -127,8 +130,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Long addUnionMember(UnionMemberAddDto addDto) {
         BeanValidator.validateWithThrowable(addDto);
+        String taobaoNick = addDto.getTaobaoNick();
         try {
-            String taobaoNick = addDto.getTaobaoNick();
+            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 5);
+            if (!lockResult) {
+                logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
+                throw new AugeSystemException("请勿重复提交");
+            }
+
             AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
                     .queryStationMemberPaymentAccountByNick(taobaoNick);
             Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
@@ -186,6 +195,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         } catch (Exception e) {
             logger.error(JSON.toJSONString(addDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
+        }finally {
+            distributeLock.unlock("unionMember-addUnionMember", taobaoNick);
         }
     }
 
