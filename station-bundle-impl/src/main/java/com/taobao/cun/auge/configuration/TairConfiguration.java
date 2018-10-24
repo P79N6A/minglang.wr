@@ -3,9 +3,9 @@ package com.taobao.cun.auge.configuration;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.lock.TairManualReleaseDistributeLock;
 import com.taobao.cun.crius.tair.RdbTairFacade;
-import com.taobao.cun.crius.tair.impl.LdbTairFacadeImpl;
-import com.taobao.cun.crius.tair.impl.MdbTairFacadeImpl;
-import com.taobao.cun.crius.tair.impl.RdbTairFacadeImpl;
+import com.taobao.cun.crius.tair.facade.LdbTairFacadeImpl;
+import com.taobao.cun.crius.tair.facade.MdbTairFacadeImpl;
+import com.taobao.cun.crius.tair.facade.RdbTairFacadeImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
