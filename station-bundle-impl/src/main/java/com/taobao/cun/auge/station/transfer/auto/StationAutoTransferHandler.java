@@ -35,10 +35,10 @@ public class StationAutoTransferHandler implements AutoTransferHandler {
 	private StationBO stationBO;
 	
 	@Override
-	public void transfer(CountyStation countyStation) {
+	public void transfer(CountyStation countyStation, String operator, Long opOrgId) {
 		List<TransferStation> transferStations = stationTransferBo.getTransferableStations(countyStation.getOrgId());
 		for(TransferStation transferStation : transferStations) {
-			bizActionLogBo.addLog(transferStation.getStationId(), "station", "auto", 0L, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
+			bizActionLogBo.addLog(transferStation.getStationId(), "station", operator, opOrgId, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
 		}
 		stationTransferStateMgrBo.autoTransfer(countyStation.getOrgId());
 		stationBO.updateStationDeptByOrgId(countyStation.getOrgId(), OrgDeptType.opdept);

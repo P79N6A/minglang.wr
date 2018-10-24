@@ -13,5 +13,5 @@ public interface AutoTransferHandler {
 	 * 转交
 	 * @param countyStation
 	 */
-	void transfer(CountyStation countyStation);
+	void transfer(CountyStation countyStation, String operator, Long opOrgId);
 }

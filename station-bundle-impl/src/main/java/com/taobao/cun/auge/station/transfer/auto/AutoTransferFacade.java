@@ -43,7 +43,7 @@ public class AutoTransferFacade {
 		
 		for(Long countyId : countyIds) {
 			try {
-				autoTransferBo.transfer(countyId);
+				autoTransferBo.transfer(countyId, "auto", 0L);
 			}catch(Throwable t) {
 				ExtAppBizLog extAppBizLog = new ExtAppBizLog();
 				extAppBizLog.setBizType("county_auto_trans");

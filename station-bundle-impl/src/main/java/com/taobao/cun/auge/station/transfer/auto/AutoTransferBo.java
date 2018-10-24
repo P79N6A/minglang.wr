@@ -37,10 +37,10 @@ public class AutoTransferBo implements BeanPostProcessor{
 	private CountyStationBO countyStationBO;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void transfer(Long countyStationId) {
+	public void transfer(Long countyStationId, String operator, Long opOrgId) {
 		CountyStation countyStation = countyStationBO.getCountyStationById(countyStationId);
 		handlers.forEach(handler->{
-			handler.transfer(countyStation);
+			handler.transfer(countyStation, operator, opOrgId);
 		});
 	}
 	

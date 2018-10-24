@@ -18,6 +18,7 @@ import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
+import com.taobao.cun.auge.station.transfer.auto.AutoTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
@@ -46,6 +47,8 @@ public class TransferAuditBo {
 	private TransferItemBo transferItemBo;
 	@Resource
 	private BizActionLogBo bizActionLogBo;
+	@Resource
+	private AutoTransferBo autoTransferBo; 
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	
@@ -80,6 +83,22 @@ public class TransferAuditBo {
 			for(Long stationId : stationIds) {
 				bizActionLogBo.addLog(stationId, "station", userId, orgId, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
 			}
+		}
+	}
+	/**
+	 * 提前发起交接
+	 * @author chengyu.zhoucy
+	 *
+	 */
+	class AdvanceTransferHandler implements TransferHandler{
+
+		@Override
+		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
+			autoTransferBo.transfer(detail.getCountyStation().getId(), userId, orgId);
+		}
+
+		@Override
+		public void disagree(CountyStationTransferDetail detail) {
 		}
 	}
 	
