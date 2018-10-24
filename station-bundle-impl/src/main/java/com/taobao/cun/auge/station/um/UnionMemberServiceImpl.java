@@ -133,7 +133,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         BeanValidator.validateWithThrowable(addDto);
         String taobaoNick = addDto.getTaobaoNick();
         try {
-            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 5);
+            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 3);
             if (!lockResult) {
                 logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
                 throw new AugeSystemException("请勿重复提交");
