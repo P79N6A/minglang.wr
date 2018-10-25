@@ -48,7 +48,7 @@ public class TransferAuditBo {
 	@Resource
 	private BizActionLogBo bizActionLogBo;
 	@Resource
-	private UltimateTransferBo advanceUltimateTransferBo; 
+	private UltimateTransferBo advanceUltimateTransferBo;
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	

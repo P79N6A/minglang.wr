@@ -141,7 +141,7 @@ public class TransferProcessPrepareBo {
 			//检查是否发起了提前交接
 			if(isAdvanceTransfering(countyStationId)) {
 				CountyStationTransferCondition countyStationTransferCondition = new CountyStationTransferCondition();
-				countyStationTransferCondition.setMemo("县点处于提前交接期，不能发起新交接流程");
+				countyStationTransferCondition.setMemo("县点已经发起了【提前交接流程】，所以不能发起新流程");
 				return countyStationTransferCondition;
 			}
 			

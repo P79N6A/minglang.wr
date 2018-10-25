@@ -55,7 +55,7 @@ public class CountyTransferWorkflow extends AbstractTransferWorkflow{
 
 	@Override
 	public void teminate(Long countyId) {
-		List<CountyStationTransferJob> countyStationTransferJobs = transferJobBo.getCountyStationTransferJobs(countyId, "advance", "NEW");
+		List<CountyStationTransferJob> countyStationTransferJobs = transferJobBo.getCountyStationTransferJobs(countyId, "station", "NEW");
 		teminateFlow(countyStationTransferJobs, TASK_CODE);
 		for(CountyStationTransferJob countyStationTransferJob : countyStationTransferJobs) {
 			transferItemBo.updateStateByJobId(countyStationTransferJob.getId(), "CANCEL");
