@@ -50,7 +50,7 @@ public class CountyTransferWorkflow extends AbstractTransferWorkflow{
 			throw new TransferException("找不到该县域的拓展队");
 		}
 		
-		startWorkflow(TASK_CODE, countyStationTransferJob, Maps.newHashMap());
+		startWorkflow(TASK_CODE, countyStationTransferJob, initData);
 	}
 
 	@Override
