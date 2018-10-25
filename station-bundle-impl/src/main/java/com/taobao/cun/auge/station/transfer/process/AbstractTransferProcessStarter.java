@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
-import com.taobao.cun.auge.dal.mapper.CountyStationTransferJobMapper;
 import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
@@ -29,8 +28,6 @@ import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
 public abstract class AbstractTransferProcessStarter implements TransferProcessStarter {
 	@Resource
 	private TransferWorkflow countyTransferWorkflow;
-	@Resource
-	private CountyStationTransferJobMapper countyStationTransferJobMapper;
 	@Resource
 	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource

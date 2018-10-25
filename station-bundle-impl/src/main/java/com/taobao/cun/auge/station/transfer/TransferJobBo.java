@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Splitter;
@@ -69,7 +70,7 @@ public class TransferJobBo {
 	public List<CountyStationTransferJob> getCountyStationTransferJobs(Long countyId, String type, String state) {
 		CountyStationTransferJobExample example = new CountyStationTransferJobExample();
 		example.createCriteria().andCountyStationIdEqualTo(countyId).andTypeEqualTo(type).andStateEqualTo(state);
-		return countyStationTransferJobMapper.selectByExample(example);
+		return ListUtils.emptyIfNull(countyStationTransferJobMapper.selectByExample(example));
 	}
 	
 	public void updateTransferJobState(Long id, String state) {

@@ -15,4 +15,10 @@ public interface TransferWorkflow {
 	 * @throws TransferException
 	 */
 	void start(CountyStationTransferJob countyStationTransferJob) throws TransferException;
+	
+	/**
+	 * 终止流程
+	 * @param countyId
+	 */
+	void teminate(Long countyId);
 }
