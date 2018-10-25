@@ -25,7 +25,7 @@ import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 @Component
 public class AutoUltimateTransferFacade {
 	@Resource
-	private UltimateTransferBo autoUltimateTransferBo;
+	private BaseUltimateTransferBo autoUltimateTransferBo;
 	
 	@Resource
 	private AppBizLogBo appBizLogBo;

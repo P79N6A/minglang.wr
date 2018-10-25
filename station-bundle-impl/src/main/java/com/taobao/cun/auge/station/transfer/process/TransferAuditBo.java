@@ -21,7 +21,7 @@ import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
-import com.taobao.cun.auge.station.transfer.ultimate.UltimateTransferBo;
+import com.taobao.cun.auge.station.transfer.ultimate.BaseUltimateTransferBo;
 
 /**
  * 转交审批
@@ -48,7 +48,7 @@ public class TransferAuditBo {
 	@Resource
 	private BizActionLogBo bizActionLogBo;
 	@Resource
-	private UltimateTransferBo advanceUltimateTransferBo;
+	private BaseUltimateTransferBo advanceUltimateTransferBo;
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	

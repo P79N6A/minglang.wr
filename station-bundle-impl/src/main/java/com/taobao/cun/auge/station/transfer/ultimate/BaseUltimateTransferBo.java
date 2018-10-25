@@ -17,7 +17,7 @@ import com.taobao.cun.auge.station.transfer.ultimate.handle.UltimateTransferHand
  *
  */
 @Component
-public abstract class UltimateTransferBo {
+public abstract class BaseUltimateTransferBo {
 	@Resource
 	private CountyStationBO countyStationBO;
 	@Resource

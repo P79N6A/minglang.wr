@@ -13,7 +13,7 @@ import com.taobao.cun.auge.station.transfer.process.flow.TransferWorkflow;
  *
  */
 @Component
-public class AutoUltimateTransferBo extends UltimateTransferBo{
+public class AutoUltimateTransferBo extends BaseUltimateTransferBo{
 	@Resource
 	private TransferWorkflow advanceTransferWorkflow;
 	@Resource
