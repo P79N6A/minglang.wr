@@ -9,12 +9,9 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.station.transfer.TransferException;
-import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
-import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
 /**
- * 交接工作流
+ * 提前交接工作流
  * 
  * @author chengyu.zhoucy
  *
@@ -25,21 +22,11 @@ public class AdvanceTransferWorkflow extends AbstractTransferWorkflow{
 	
 	@Override
 	public void start(CountyStationTransferJob countyStationTransferJob) throws TransferException{
-		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
-
-		startDto.setBusinessCode(TASK_CODE);
-		startDto.setBusinessId(String.valueOf(countyStationTransferJob.getId()));
-		startDto.setApplierId(countyStationTransferJob.getCreator());
-		startDto.setApplierUserType(UserTypeEnum.BUC);
 		Map<String, String> initData = Maps.newHashMap();
+		//设置发起组织
 		CountyStation countyStation = countyStationBO.getCountyStationById(countyStationTransferJob.getCountyStationId());
 		initData.put("orgId", String.valueOf(countyStation.getOrgId()));
-		startDto.setInitData(initData);
-		
-		ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
-		if(!result.isSuccess()) {
-			throw new TransferException("创建流程失败：" + result.getException().getMessage());
-		}
+		startWorkflow(TASK_CODE, countyStationTransferJob, initData);
 	}
 
 	@Override

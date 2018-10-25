@@ -18,9 +18,6 @@ import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
-import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
-import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
 /**
  * 交接工作流
@@ -41,15 +38,8 @@ public class CountyTransferWorkflow extends AbstractTransferWorkflow{
 	
 	@Override
 	public void start(CountyStationTransferJob countyStationTransferJob) throws TransferException{
-		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
-
-		startDto.setBusinessCode(TASK_CODE);
-		startDto.setBusinessId(String.valueOf(countyStationTransferJob.getId()));
-		startDto.setApplierId(countyStationTransferJob.getCreator());
-		startDto.setApplierUserType(UserTypeEnum.BUC);
 		Map<String, String> initData = Maps.newHashMap();
 		initData.put("targetTeamOrgId", String.valueOf(countyStationTransferJob.getTargetTeamOrgId()));
-		
 		CountyStation countyStation = countyStationBO.getCountyStationById(countyStationTransferJob.getCountyStationId());
 		initData.put("orgId", String.valueOf(countyStation.getOrgId()));
 		//拓展队
@@ -59,12 +49,8 @@ public class CountyTransferWorkflow extends AbstractTransferWorkflow{
 		}else {
 			throw new TransferException("找不到该县域的拓展队");
 		}
-		startDto.setInitData(initData);
 		
-		ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
-		if(!result.isSuccess()) {
-			throw new TransferException("创建流程失败：" + result.getException().getMessage());
-		}
+		startWorkflow(TASK_CODE, countyStationTransferJob, Maps.newHashMap());
 	}
 
 	@Override
