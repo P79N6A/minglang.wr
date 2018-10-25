@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.transfer.auto;
+package com.taobao.cun.auge.station.transfer.ultimate.handle;
 
 import com.taobao.cun.auge.dal.domain.CountyStation;
 

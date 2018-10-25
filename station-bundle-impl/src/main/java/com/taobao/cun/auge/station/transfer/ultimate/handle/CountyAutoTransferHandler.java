@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.transfer.auto;
+package com.taobao.cun.auge.station.transfer.ultimate.handle;
 
 import javax.annotation.Priority;
 import javax.annotation.Resource;
@@ -28,6 +28,6 @@ public class CountyAutoTransferHandler implements AutoTransferHandler {
 	@Override
 	public void transfer(CountyStation countyStation, String operator, Long opOrgId) {
 		countyTransferStateMgrBo.autoTransfer(countyStation.getId());
-		bizActionLogBo.addLog(countyStation.getId(), "county", operator, opOrgId, OrgDeptType.extdept.name(), BizActionEnum.countystation_auto_transfer_finished);
+		bizActionLogBo.addLog(countyStation.getId(), "county", operator, opOrgId, OrgDeptType.extdept.name(), BizActionEnum.countystation_final_transfer_finished);
 	}
 }

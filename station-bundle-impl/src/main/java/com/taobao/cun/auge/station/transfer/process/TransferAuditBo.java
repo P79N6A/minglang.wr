@@ -18,10 +18,10 @@ import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
 import com.taobao.cun.auge.station.transfer.StationTransferBo;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
-import com.taobao.cun.auge.station.transfer.auto.AutoTransferBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
+import com.taobao.cun.auge.station.transfer.ultimate.UltimateTransferBo;
 
 /**
  * 转交审批
@@ -48,13 +48,14 @@ public class TransferAuditBo {
 	@Resource
 	private BizActionLogBo bizActionLogBo;
 	@Resource
-	private AutoTransferBo autoTransferBo; 
+	private UltimateTransferBo advanceUltimateTransferBo; 
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	
 	public TransferAuditBo() {
 		transferHandlers.put("county", new CountyTransferHandler());
 		transferHandlers.put("station", new StationTransferHandler());
+		transferHandlers.put("advance", new AdvanceTransferHandler());
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -94,7 +95,7 @@ public class TransferAuditBo {
 
 		@Override
 		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
-			autoTransferBo.transfer(detail.getCountyStation().getId(), userId, orgId);
+			advanceUltimateTransferBo.transfer(detail.getCountyStation().getId(), userId, orgId);
 		}
 
 		@Override
