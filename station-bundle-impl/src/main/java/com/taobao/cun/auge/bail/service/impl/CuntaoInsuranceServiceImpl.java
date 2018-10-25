@@ -18,14 +18,14 @@ import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
 import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.uic.common.domain.BasePaymentAccountDO;
+import com.taobao.uic.common.domain.ResultDO;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,27 +52,19 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     @Autowired
     private PartnerBO partnerBO;
     @Autowired
-    private PartnerInstanceBO partnerInstanceBO;
-    @Autowired
     private CuntaoQualificationBO qualificationBO;
+    @Autowired
+    private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
     @Override
     public PersonInfoDto queryPersonInfo(Long taobaoUserId, String cpCode) {
         validateCpCode(cpCode);
-        return Optional.ofNullable(partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId))
-                        .map(this::buildPersonInfoDto)
-                        .orElse(null);
-    }
-
-    private PersonInfoDto buildPersonInfoDto(Partner partner) {
         PersonInfoDto infoDto = new PersonInfoDto();
-        BeanUtils.copyProperties(partner, infoDto);
-        PartnerInstanceDto instanceDto = partnerInstanceBO.getCurrentPartnerInstanceByPartnerId(
-            partner.getId());
-        if (instanceDto != null && instanceDto.getStationDto() != null && instanceDto.getStationDto().getAddress() != null) {
-            infoDto.setAddress(instanceDto.getStationDto().getAddress().buildAddressDetail());
+        ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByUserId(taobaoUserId);
+        if (resultDO.isSuccess()) {
+            infoDto.setAlipayAccount(resultDO.getModule().getOutUser());
         }
         return infoDto;
     }
