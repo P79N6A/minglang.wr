@@ -4,13 +4,14 @@ import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
+import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
+import com.taobao.cun.auge.lock.TairManualReleaseDistributeLock;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
@@ -81,6 +82,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Autowired
     private UmLifeCycleValidator umLifeCycleValidator;
 
+    @Autowired
+    private ManualReleaseDistributeLock distributeLock;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public AliPaymentAccountDto checkUnionMember(UnionMemberCheckDto checkDto) {
@@ -102,11 +106,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "经过综合评定，该账号存在安全风险，更换其他账号！");
             }
 
+
             PartnerInstanceDto piDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
             if (piDto != null) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
             }
-
             //PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
             //    parentStationId);
             //if (partnerInstance == null || partnerInstance.getStationDto() == null) {
@@ -127,7 +131,24 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Long addUnionMember(UnionMemberAddDto addDto) {
         BeanValidator.validateWithThrowable(addDto);
+        String taobaoNick = addDto.getTaobaoNick();
         try {
+            boolean lockResult = distributeLock.lock("unionMember-addUnionMember", taobaoNick, 3);
+            if (!lockResult) {
+                logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,
+                    "请勿重复提交");
+            }
+
+            AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
+                    .queryStationMemberPaymentAccountByNick(taobaoNick);
+            Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
+
+            PartnerInstanceDto existedPiDto = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+            if (existedPiDto != null) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该账号已经合作，不能重复使用");
+            }
+
             Station parentStationDto = stationBO.getStationById(addDto.getParentStationId());
             String parentCityCode = parentStationDto.getCity();
             Address address = addDto.getAddress();
@@ -145,21 +166,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             sDto.setFormat(addDto.getFormat());
             sDto.setCovered(String.valueOf(addDto.getCovered()));
             sDto.setDescription(addDto.getDescription());
-            LatitudeUtil.buildPOI(address);
+//            LatitudeUtil.buildPOI(address);
 
             PartnerInstanceDto piDto = new PartnerInstanceDto();
             piDto.setOperator(addDto.getOperator());
             piDto.setOperatorOrgId(addDto.getOperatorOrgId());
             piDto.setOperatorType(addDto.getOperatorType());
 
-            String taobaoNick = addDto.getTaobaoNick();
-
             PartnerDto pDto = new PartnerDto();
-
-            AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
-                .queryStationMemberPaymentAccountByNick(taobaoNick);
-            Long taobaoUserId = aliPaymentAccountDto.getTaobaoUserId();
-
             pDto.setTaobaoUserId(taobaoUserId);
             pDto.setTaobaoNick(taobaoNick);
             pDto.setName(aliPaymentAccountDto.getFullName());
@@ -183,6 +197,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         } catch (Exception e) {
             logger.error(JSON.toJSONString(addDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
+        }finally {
+            distributeLock.unlock("unionMember-addUnionMember", taobaoNick);
         }
     }
 
@@ -222,7 +238,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             stationDto.setId(stationId);
             stationDto.setName(updateDto.getStationName());
             stationDto.setAddress(address);
-            LatitudeUtil.buildPOI(address);
+//            LatitudeUtil.buildPOI(address);
 
             stationDto.setFormat(updateDto.getFormat());
             if (null != updateDto.getCovered()) {

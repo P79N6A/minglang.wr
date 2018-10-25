@@ -855,6 +855,21 @@
 				<artifactId>config-common</artifactId>
 				<version>2.2.0</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao</groupId>
+				<artifactId>biz-base-lock</artifactId>
+				<version>1.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>tair-client</artifactId>
+				<version>1.5.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.rdb</groupId>
+				<artifactId>rdb-client</artifactId>
+				<version>1.2.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
