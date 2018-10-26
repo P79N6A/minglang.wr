@@ -3,13 +3,13 @@ package com.taobao.cun.auge.station.transfer.ultimate.handle;
 import javax.annotation.Priority;
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
+import com.taobao.cun.auge.annotation.Tag;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
 import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
+import org.springframework.stereotype.Component;
 
 /**
  * 处理县点：县点OWN_DEPT变更成OrgDeptType.OP_DEPT
@@ -19,7 +19,8 @@ import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
  */
 @Component
 @Priority(100)
-public class CountyAutoTransferHandler implements AutoTransferHandler {
+@Tag({HandlerGroup.AUTO, HandlerGroup.ADVANCE})
+public class CountyUltimateTransferHandler implements UltimateTransferHandler {
 	@Resource
 	private CountyTransferStateMgrBo countyTransferStateMgrBo;
 	@Resource

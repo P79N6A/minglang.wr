@@ -6,7 +6,7 @@ import javax.annotation.Priority;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
-
+import com.taobao.cun.auge.annotation.Tag;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
@@ -24,7 +24,8 @@ import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
  */
 @Component
 @Priority(200)
-public class StationAutoTransferHandler implements AutoTransferHandler {
+@Tag({HandlerGroup.AUTO, HandlerGroup.ADVANCE})
+public class StationUltimateTransferHandler implements UltimateTransferHandler {
 	@Resource
 	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource

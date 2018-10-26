@@ -26,18 +26,14 @@ public abstract class BaseUltimateTransferBo {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void transfer(Long countyStationId, String operator, Long opOrgId) {
 		CountyStation countyStation = countyStationBO.getCountyStationById(countyStationId);
-		ultimateTransferHandlerManager.getHandlers().forEach(handler->{
+		ultimateTransferHandlerManager.getHandlers(getHandlerGroup()).forEach(handler->{
 			handler.transfer(countyStation, operator, opOrgId);
 		});
-		
-		afterTransferProcess(countyStationId, operator, opOrgId);
 	}
 
 	/**
-	 * 交接处理完后续流程
-	 * @param countyStationId
-	 * @param operator
-	 * @param opOrgId
+	 * 获取处理器分组
+	 * @return
 	 */
-	protected abstract void afterTransferProcess(Long countyStationId, String operator, Long opOrgId);
+	protected abstract String getHandlerGroup();
 }
