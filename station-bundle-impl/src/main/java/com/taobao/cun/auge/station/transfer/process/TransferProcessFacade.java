@@ -20,6 +20,7 @@ public class TransferProcessFacade {
 	private TransferProcessStarterFactory transferProcessStarterFactory;
 	@Resource
 	private TransferProcessPrepareBo transferProcessPrepareBo;
+	
 	/**
 	 * 发起交接流程
 	 * @param transferJob

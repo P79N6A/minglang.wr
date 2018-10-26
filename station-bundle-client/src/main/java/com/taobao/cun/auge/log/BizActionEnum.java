@@ -5,7 +5,7 @@ public enum BizActionEnum {
 	countystation_create("创建县服务中心"),
 	countystation_open("县点开业"),
 	countystation_transfer_finished("县点交接完成"),
-	countystation_auto_transfer_finished("县点自动交接完成"), //n+75天系统自动交接
+	countystation_final_transfer_finished("县点最终交接完成"), //n+75天系统自动交接
 	countystation_operate("县点运营"),
 	//服务站
 	station_create("创建服务站"),

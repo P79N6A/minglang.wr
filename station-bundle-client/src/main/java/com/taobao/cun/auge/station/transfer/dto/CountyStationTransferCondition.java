@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.transfer.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.station.dto.CountyStationDto;
@@ -12,6 +13,8 @@ public class CountyStationTransferCondition implements Serializable{
 	
 	private boolean stationTransfer;
 	
+	private boolean advanceTransfer;
+	
 	private CountyStationDto countyStationDto;
 	
 	/**
@@ -21,6 +24,20 @@ public class CountyStationTransferCondition implements Serializable{
 	
 	private String memo;
 	
+	private Date countyTransferDate;
+	
+	public boolean isAdvanceTransfer() {
+		return advanceTransfer;
+	}
+	public void setAdvanceTransfer(boolean advanceTransfer) {
+		this.advanceTransfer = advanceTransfer;
+	}
+	public Date getCountyTransferDate() {
+		return countyTransferDate;
+	}
+	public void setCountyTransferDate(Date countyTransferDate) {
+		this.countyTransferDate = countyTransferDate;
+	}
 	public String getMemo() {
 		return memo;
 	}

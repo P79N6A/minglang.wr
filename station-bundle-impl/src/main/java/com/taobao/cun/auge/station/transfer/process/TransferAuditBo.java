@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.CountyStationTransferDetail;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
+import com.taobao.cun.auge.station.transfer.ultimate.BaseUltimateTransferBo;
 
 /**
  * 转交审批
@@ -46,12 +47,15 @@ public class TransferAuditBo {
 	private TransferItemBo transferItemBo;
 	@Resource
 	private BizActionLogBo bizActionLogBo;
+	@Resource
+	private BaseUltimateTransferBo advanceUltimateTransferBo;
 	
 	private Map<String, TransferHandler> transferHandlers = Maps.newHashMap();
 	
 	public TransferAuditBo() {
 		transferHandlers.put("county", new CountyTransferHandler());
 		transferHandlers.put("station", new StationTransferHandler());
+		transferHandlers.put("advance", new AdvanceTransferHandler());
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -80,6 +84,22 @@ public class TransferAuditBo {
 			for(Long stationId : stationIds) {
 				bizActionLogBo.addLog(stationId, "station", userId, orgId, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
 			}
+		}
+	}
+	/**
+	 * 提前发起交接
+	 * @author chengyu.zhoucy
+	 *
+	 */
+	class AdvanceTransferHandler implements TransferHandler{
+
+		@Override
+		public void agree(CountyStationTransferDetail detail, String userId, Long orgId) {
+			advanceUltimateTransferBo.transfer(detail.getCountyStation().getId(), userId, orgId);
+		}
+
+		@Override
+		public void disagree(CountyStationTransferDetail detail) {
 		}
 	}
 	

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.dal.domain.Station;
@@ -57,7 +58,7 @@ public class StationTransferStateMgrBo implements TransferStateMgrBo<StationTran
 		stationTransferExtMapper.updateSubStationTransferState(ids, transferState);
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void endTransfer(List<Long> stationIds) {
 		batchUpdateTransferState(stationIds, TransferState.FINISHED.name());
 		updateSubStationTransferState(stationIds, TransferState.FINISHED.name());

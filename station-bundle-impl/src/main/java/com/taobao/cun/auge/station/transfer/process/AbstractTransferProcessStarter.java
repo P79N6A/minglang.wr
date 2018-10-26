@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.CountyStationTransferJob;
 import com.taobao.cun.auge.dal.domain.TransferItem;
-import com.taobao.cun.auge.dal.mapper.CountyStationTransferJobMapper;
 import com.taobao.cun.auge.station.transfer.TransferException;
 import com.taobao.cun.auge.station.transfer.TransferItemBo;
 import com.taobao.cun.auge.station.transfer.TransferJobBo;
 import com.taobao.cun.auge.station.transfer.dto.TransferJob;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
+import com.taobao.cun.auge.station.transfer.process.flow.TransferWorkflow;
 import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
 
 /**
@@ -27,9 +27,7 @@ import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
  */
 public abstract class AbstractTransferProcessStarter implements TransferProcessStarter {
 	@Resource
-	private TransferWorkflow transferWorkflow;
-	@Resource
-	private CountyStationTransferJobMapper countyStationTransferJobMapper;
+	private TransferWorkflow countyTransferWorkflow;
 	@Resource
 	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource
@@ -52,9 +50,8 @@ public abstract class AbstractTransferProcessStarter implements TransferProcessS
 	protected abstract void postHandle(CountyStationTransferJob countyStationTransferJob);
 
 	private void startWorkflow(CountyStationTransferJob countyStationTransferJob) throws TransferException {
-		transferWorkflow.start(countyStationTransferJob);
+		countyTransferWorkflow.start(countyStationTransferJob);
 	}
-
 
 	private void transStations(CountyStationTransferJob countyStationTransferJob) {
 		String[] array = countyStationTransferJob.getStationIdList().split(",");
