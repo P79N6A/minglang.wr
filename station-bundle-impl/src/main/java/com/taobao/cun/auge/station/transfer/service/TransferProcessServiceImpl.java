@@ -43,7 +43,7 @@ public class TransferProcessServiceImpl implements TransferProcessService {
 		}
 		return resultModel;
 	}
-
+	
 	@Override
 	public CountyStationTransferCondition prepare(Long countyStationId) {
 		return transferProcessFacade.prepare(countyStationId);

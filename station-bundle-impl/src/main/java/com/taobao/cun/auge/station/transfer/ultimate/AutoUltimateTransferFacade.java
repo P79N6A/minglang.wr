@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.transfer.auto;
+package com.taobao.cun.auge.station.transfer.ultimate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -23,9 +23,9 @@ import com.taobao.cun.auge.station.transfer.CountyStationTransferBo;
  *
  */
 @Component
-public class AutoTransferFacade {
+public class AutoUltimateTransferFacade {
 	@Resource
-	private AutoTransferBo autoTransferBo;
+	private BaseUltimateTransferBo autoUltimateTransferBo;
 	
 	@Resource
 	private AppBizLogBo appBizLogBo;
@@ -43,13 +43,13 @@ public class AutoTransferFacade {
 		
 		for(Long countyId : countyIds) {
 			try {
-				autoTransferBo.transfer(countyId);
+				autoUltimateTransferBo.transfer(countyId, "auto", 0L);
 			}catch(Throwable t) {
 				ExtAppBizLog extAppBizLog = new ExtAppBizLog();
 				extAppBizLog.setBizType("county_auto_trans");
 				extAppBizLog.setBizKey(countyId);
 				extAppBizLog.setCreator("system");
-				extAppBizLog.setState("error");
+				extAppBizLog.setState("ERROR");
 				LogContent logContent = new LogContent();
 				logContent.setException(t);
 				extAppBizLog.setLogContents(Lists.newArrayList(logContent));

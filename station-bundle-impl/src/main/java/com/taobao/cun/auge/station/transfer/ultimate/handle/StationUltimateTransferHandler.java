@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.transfer.auto;
+package com.taobao.cun.auge.station.transfer.ultimate.handle;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import javax.annotation.Priority;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
-
+import com.taobao.cun.auge.annotation.Tag;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
@@ -24,7 +24,8 @@ import com.taobao.cun.auge.station.transfer.state.StationTransferStateMgrBo;
  */
 @Component
 @Priority(200)
-public class StationAutoTransferHandler implements AutoTransferHandler {
+@Tag({HandlerGroup.AUTO, HandlerGroup.ADVANCE})
+public class StationUltimateTransferHandler implements UltimateTransferHandler {
 	@Resource
 	private StationTransferStateMgrBo stationTransferStateMgrBo;
 	@Resource
@@ -35,10 +36,10 @@ public class StationAutoTransferHandler implements AutoTransferHandler {
 	private StationBO stationBO;
 	
 	@Override
-	public void transfer(CountyStation countyStation) {
+	public void transfer(CountyStation countyStation, String operator, Long opOrgId) {
 		List<TransferStation> transferStations = stationTransferBo.getTransferableStations(countyStation.getOrgId());
 		for(TransferStation transferStation : transferStations) {
-			bizActionLogBo.addLog(transferStation.getStationId(), "station", "auto", 0L, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
+			bizActionLogBo.addLog(transferStation.getStationId(), "station", operator, opOrgId, OrgDeptType.extdept.name(), BizActionEnum.station_transfer_finished);
 		}
 		stationTransferStateMgrBo.autoTransfer(countyStation.getOrgId());
 		stationBO.updateStationDeptByOrgId(countyStation.getOrgId(), OrgDeptType.opdept);

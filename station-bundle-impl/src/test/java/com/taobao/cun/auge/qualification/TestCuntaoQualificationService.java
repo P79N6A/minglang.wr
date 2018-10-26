@@ -19,11 +19,11 @@ public class TestCuntaoQualificationService {
 	
 	@Test
 	public void testInvalidQualification(){
-		cuntaoQualificationService.invalidQualification(3645044160l);
+		cuntaoQualificationService.invalidQualification(3645044160L);
 	}
 	
 	@Test
 	public void testRecoverQualification(){
-		cuntaoQualificationService.recoverQualification(3645044160l);
+		cuntaoQualificationService.recoverQualification(3645044160L);
 	}
 }
