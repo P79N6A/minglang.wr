@@ -8,6 +8,12 @@ import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.cun.auge.log.service.AppBizLogService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 应用日志记录
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @HSFProvider(serviceInterface = AppBizLogService.class)
 public class AppBizLogServiceImpl implements AppBizLogService {
 	@Resource

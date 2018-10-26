@@ -18,8 +18,19 @@ public class TransferProcessStarterFactory {
 	private TransferProcessStarter stationTransferProcessStarter;
 	@Resource
 	private TransferProcessStarter countyStationTransferProcessStarter;
+	@Resource
+	private TransferProcessStarter advanceTransferProcessStarter;
 	
 	public TransferProcessStarter getInstance(TransferJob transferJob) {
-		return transferJob.getType().equals("county") ? countyStationTransferProcessStarter : stationTransferProcessStarter;
+		switch(transferJob.getType()) {
+		case "county":
+			return countyStationTransferProcessStarter;
+		case "station":
+			return stationTransferProcessStarter;
+		case "advance":
+			return advanceTransferProcessStarter;
+		default:
+			throw new UnsupportedOperationException("不支持该类型的交接流程：" + transferJob.getType());
+		}
 	}
 }

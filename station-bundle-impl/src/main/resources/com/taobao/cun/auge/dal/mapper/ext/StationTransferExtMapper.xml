@@ -57,7 +57,7 @@
 	and action_name='countystation_transfer_finished'
 	and gmt_create<#{date}
 	and not exists(select 0 from biz_action_log b where a.object_id=b.object_id 
-               and b.action_name='countystation_auto_transfer_finished'
+               and b.action_name='countystation_final_transfer_finished'
                and object_type = 'county' )
     ]]>
     </select>
