@@ -132,7 +132,7 @@ public final class StationValidator {
 		}
 	}
 	
-	private static boolean isSpecialStr(String str,String rule) {
+	public static boolean isSpecialStr(String str,String rule) {
 		Pattern pat = Pattern.compile(rule);
 		Matcher mat = pat.matcher(str);
 		if (mat.find()) {
