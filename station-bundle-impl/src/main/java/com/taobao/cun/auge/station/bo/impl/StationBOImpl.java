@@ -158,13 +158,11 @@ public class StationBOImpl implements StationBO {
 	private void validateAddress(StationDto stationDto) {
 		Address address = stationDto.getAddress();
 		if (address != null) {
-			if (StringUtils.isNotEmpty(address.getAddressDetail())) {
-				if (!StationValidator.isSpecialStr(address.getAddressDetail(),StationValidator.RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(address.getAddressDetail())) {
+			String addressDetail = address.buildAddressDetail();
+			if (StringUtils.isNotEmpty(addressDetail)) {
+				if (!StationValidator.isSpecialStr(addressDetail,StationValidator.RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(addressDetail)) {
 					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不可含有特殊字符,并且最少一个汉字");
 				}
-			}
-			if (StringUtils.isNotEmpty(address.getVillageDetail()) && !StationValidator.isSpecialStr(address.getVillageDetail(),StationValidator.RULE_REGEX_ADDRESS)) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"所属行政村不可含有特殊字符");
 			}
 		}
 	}
