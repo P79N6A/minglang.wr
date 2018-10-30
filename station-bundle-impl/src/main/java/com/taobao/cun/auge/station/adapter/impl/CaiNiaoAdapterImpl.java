@@ -33,15 +33,14 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
-import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +59,6 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private StationWriteService stationWriteService;
 	@Resource
 	private StationUserWriteService stationUserWriteService;
-	@Resource
-	private Emp360Adapter emp360Adapter;
 	@Resource
 	private WarehouseReadService warehouseReadService;
 	@Resource
@@ -175,7 +172,18 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
               .append(ADDRESS_SPLIT)
               .append(StringUtil.isBlank(stationAddress.getAddressDetail()) ? " " : villageDetail + stationAddress.getAddressDetail());
 		 }
-         return address.toString();
+		String addressStr = address.toString();
+		//防止传包含特殊字符的地址给到菜鸟
+		validateAddress(addressStr);
+         return addressStr;
+	}
+
+	private void validateAddress(String address) {
+		if (StringUtils.isNotEmpty(address)) {
+			if (!StationValidator.isSpecialStr(address,StationValidator.RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(address)) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不可含有特殊字符,并且最少一个汉字");
+			}
+		}
 	}
 
 	@Override
