@@ -17,6 +17,11 @@ public final class StationValidator {
 	
 	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】《》‘；：”“’。，、？]";
 
+    /**
+     * 比上述特殊字符少了一个^字符,该字符是菜鸟用来分隔的
+     */
+	public static final String CAINIAO_RULE_REGEX_ADDRESS = "[`~!@#$%&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】《》‘；：”“’。，、？]";
+
 	static final String OTHER_VILLAGE = "-1";
 	
 	/**
