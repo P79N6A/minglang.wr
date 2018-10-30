@@ -180,7 +180,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	private void validateAddress(String address) {
 		if (StringUtils.isNotEmpty(address)) {
-			if (!StationValidator.isSpecialStr(address,StationValidator.RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(address)) {
+			if (!StationValidator.isSpecialStr(address,StationValidator.CAINIAO_RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(address)) {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不可含有特殊字符,并且最少一个汉字");
 			}
 		}
