@@ -28,7 +28,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.vipserver.client.utils.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 映射规则解析器
@@ -70,7 +70,7 @@ public class PartnerLifecycleRuleParser {
 		Assert.notNull(mappingRule, "Mapping rule not exists for " + item);
 
 		// 是否已执行
-		if (CollectionUtils.isNotEmpty((mappingRule.getExecutedCondition()))) {
+		if (!CollectionUtils.isEmpty((mappingRule.getExecutedCondition()))) {
 			// 多个规则里面只要满足其一即认为已执行
 			for (Map<String, String> ruleCondition : mappingRule.getExecutedCondition()) {
 				if (isMatchExecuteCondition(ruleCondition, lifecycle)) {
@@ -80,7 +80,7 @@ public class PartnerLifecycleRuleParser {
 		}
 
 		// 是否可执行
-		if (CollectionUtils.isNotEmpty((mappingRule.getExecutableCondition()))) {
+		if (!CollectionUtils.isEmpty((mappingRule.getExecutableCondition()))) {
 			// 多个规则里面只要满足其一即认为可执行
 			for (Map<String, String> ruleCondition : mappingRule.getExecutableCondition()) {
 				if (isMatchExecuteCondition(ruleCondition, lifecycle)) {

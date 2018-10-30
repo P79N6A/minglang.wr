@@ -542,11 +542,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         ValidateUtils.notNull(taobaoUserId);
         ValidateUtils.notNull(waitFrozenMoney);
             PartnerStationRel psRel = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
-            Assert.notNull(psRel, "partner instance not exists");
+            if(psRel == null){
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人不满足执行条件");
+            }
             Long instanceId = psRel.getId();
             PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
-            Assert.notNull(items, "PartnerLifecycleItems not exists");
-
+            if(items == null){
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人不满足执行条件");
+            }
             PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(
                     PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
             if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {

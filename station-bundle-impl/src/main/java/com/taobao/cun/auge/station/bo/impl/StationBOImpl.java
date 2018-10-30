@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -127,6 +129,7 @@ public class StationBOImpl implements StationBO {
 	public void updateStation(StationDto stationDto){
 		ValidateUtils.notNull(stationDto);
 		ValidateUtils.notNull(stationDto.getId());
+		validateAddress(stationDto);
 		Station oldRecord = getStationById(stationDto.getId());
 		if (oldRecord == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station is null");
@@ -150,6 +153,18 @@ public class StationBOImpl implements StationBO {
 		
 		DomainUtils.beforeUpdate(record, stationDto.getOperator());
 		stationMapper.updateByPrimaryKeySelective(record);
+	}
+
+	private void validateAddress(StationDto stationDto) {
+		Address address = stationDto.getAddress();
+		if (address != null) {
+			String addressDetail = address.buildAddressDetail();
+			if (StringUtils.isNotEmpty(addressDetail)) {
+				if (!StationValidator.isSpecialStr(addressDetail,StationValidator.RULE_REGEX_ADDRESS) || !StationValidator.isContainChinese(addressDetail)) {
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不可含有特殊字符,并且最少一个汉字");
+				}
+			}
+		}
 	}
 
 	@Override
