@@ -21,14 +21,14 @@ private static final long serialVersionUID = 1173751851665155410L;
 	public static final CuntaoEmployeeIdentifierEnum STORE_MANAGER = new CuntaoEmployeeIdentifierEnum("STORE_MANAGER","门店管理员");
 
 
-	public static final Map<String, CuntaoEmployeeIdentifierEnum> mappings = new HashMap<String, CuntaoEmployeeIdentifierEnum>();
+	public static final Map<String, CuntaoEmployeeIdentifierEnum> MAPPING = new HashMap<String, CuntaoEmployeeIdentifierEnum>();
 	
 	static {
-		mappings.put("VENDOR_DISTRIBUTOR", VENDOR_DISTRIBUTOR);
-		mappings.put("STORE_PICKER", STORE_PICKER);
-		mappings.put("VENDOR_INSTALLER", VENDOR_INSTALLER);
-		mappings.put("VENDOR_MANAGER", VENDOR_MANAGER);
-		mappings.put("STORE_MANAGER", STORE_MANAGER);
+		MAPPING.put("VENDOR_DISTRIBUTOR", VENDOR_DISTRIBUTOR);
+		MAPPING.put("STORE_PICKER", STORE_PICKER);
+		MAPPING.put("VENDOR_INSTALLER", VENDOR_INSTALLER);
+		MAPPING.put("VENDOR_MANAGER", VENDOR_MANAGER);
+		MAPPING.put("STORE_MANAGER", STORE_MANAGER);
 		
 	}
 
@@ -63,7 +63,7 @@ private static final long serialVersionUID = 1173751851665155410L;
 		if (code==null) {
             return null;
         }
-		return mappings.get(code);
+		return MAPPING.get(code);
 	}
 
 	public String getCode() {

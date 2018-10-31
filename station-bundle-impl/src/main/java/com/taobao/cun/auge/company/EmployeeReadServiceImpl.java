@@ -243,7 +243,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 		CuntaoEmployeeRelExample cuntaoVendorEmployeeExample = new CuntaoEmployeeRelExample();
 		cuntaoVendorEmployeeExample.createCriteria().andOwnerIdEqualTo(vendors.get(0).getId()).andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIdentifierIn(identifiers);
 		List<CuntaoEmployeeRel> reLs = cuntaoEmployeeRelMapper.selectByExample(cuntaoVendorEmployeeExample);
-		List<Long> employeeIds = reLs.stream().map(EmployeeRel -> EmployeeRel.getEmployeeId()).collect(Collectors.toList());
+		List<Long> employeeIds = reLs.stream().map(CuntaoEmployeeRel::getEmployeeId).collect(Collectors.toList());
 		//根据工人ID，取工人基本信息
 		if (CollectionUtils.isNotEmpty(employeeIds)) {
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();

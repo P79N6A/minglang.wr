@@ -66,6 +66,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
      */
     private final static String WHITELIST_DATAID = "insurance";
 
+    private final static String SWHITCH_OFF = "false";
+
     @Autowired
     private PartnerTagService partnerTagService;
     @Autowired
@@ -138,7 +140,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
      */
      @Override
      public Boolean hasInsurance(Long taobaoUserId){
-        if ("false".equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
+        if (SWHITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             return true;
         }
         try {
@@ -223,7 +225,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
      */
     @Override
     public  Integer hasReInsurance(Long taobaoUserId) {
-        if ("false".equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
+        if (SWHITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             return 0;
         }
         try {
