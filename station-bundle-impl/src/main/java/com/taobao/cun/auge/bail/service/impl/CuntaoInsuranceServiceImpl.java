@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.ali.unit.rule.util.StringUtils;
 import com.alipay.baoxian.scene.facade.common.AliSceneResult;
 import com.alipay.baoxian.scene.facade.common.policy.dto.InsPolicyDTO;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
 import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
-import com.alipay.insopenprod.common.service.facade.model.common.InsPolicy;
 import com.alipay.insopenprod.common.service.facade.model.common.InsQueryPerson;
 import com.alipay.insopenprod.common.service.facade.model.request.scene.InsPolicySearchRequest;
 import com.alipay.insopenprod.common.service.facade.model.result.scene.InsPolicySearchResult;
@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.DiamondHelper;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -54,6 +55,16 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
      * 村淘人身意外险编号
      */
     private final static String  PAI_NO = "4025";
+
+    /**
+     * 保险白名单Group
+     */
+    private final static String WHITELIST_GROUP = "whiteList";
+
+    /**
+     * 保险白名单DataId
+     */
+    private final static String WHITELIST_DATAID = "insurance";
 
     @Autowired
     private PartnerTagService partnerTagService;
@@ -111,54 +122,42 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         }
     }
 
-    @Override
+    /**
+     * 企业支付宝白名单
+     * @param taobaoId
+     * @return
+     */
+    private boolean isInFactoryAlipayList(Long taobaoId) {
+        return DiamondHelper.getConfig(WHITELIST_GROUP, WHITELIST_DATAID).contains(String.valueOf(taobaoId));
+    }
+
+    /**
+     * 查询是否购买过保险
+     * @param taobaoUserId
+     * @return
+     */
+     @Override
      public Boolean hasInsurance(Long taobaoUserId){
-        if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
+        if ("false".equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             return true;
         }
         try {
-            Integer identy = partnerTagService.getPartnerType(taobaoUserId);
-            if(null != identy && identy.intValue() != 1){
+            Integer identity = partnerTagService.getPartnerType(taobaoUserId);
+            if(null != identity && identity != 1){
                 //如果是合伙人要判断是否买过保险，淘帮手是不用强制买保险
                 return true;
             }
-            //一.查询原数据,判断合伙人是否买过保险
             Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-            Date nowTime = DateUtils.addDays(new Date(), 1);
-            if(null != partner && idenNumDupliInsure(partner.getIdenNum())){
-                return true;
+            if (null == partner || StringUtils.isEmpty(partner.getIdenNum())) {
+                return false;
             }
-            AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(String.valueOf(taobaoUserId),SP_TYPE, SP_NO);
-            if (insure.isSuccess() && CollectionUtils.isNotEmpty(insure.getModel())) {
-                for (InsPolicyDTO policy : insure.getModel()) {
-                    if (nowTime.after(policy.getEffectStartTime()) && nowTime.before(policy.getEffectEndTime())) {
-                        // 投保中的保险
-                        return true;
-                    }
-                }
+            //一.先从老平台查询原数据,判断合伙人是否买过保险
+            if(queryInsuranceFromOldPlatform(partner.getIdenNum())){
+                return true;
             }
 
             //二.原始数据没有查询到则调用蚂蚁接口，判断是否买过保险
-            InsPolicySearchRequest insRequest = new InsPolicySearchRequest();
-            InsQueryPerson insQueryPerson = new InsQueryPerson();
-            //1投保人，2被保人，村淘默认按照投保人维度查询
-            insQueryPerson.setType("1");
-            //证件号码
-            insQueryPerson.setCertNo(partner.getIdenNum());
-            //证件类型，100身份证
-            insQueryPerson.setCertType("100");
-            insRequest.setPerson(insQueryPerson);
-            //产品列表集合村淘合伙人意外险:4025 村淘雇主责任险 4027
-            insRequest.setProductList( Lists.newArrayList(PAI_NO));
-            //保单状态列表
-            insRequest.setStatusList(Lists.newArrayList("GUARANTEE"));
-            insRequest.setPageNo(1);
-            insRequest.setPageSize(1);
-            //投放渠道，必填，村淘默认cuntao
-            insRequest.setChannel("cuntao");
-            InsPolicySearchResult searchResult = insPolicyApiFacade.search(insRequest);
-            if("Success".equals(searchResult.getErrorMessage())&&searchResult.getTotal()>0){
-                //查询到有效保单
+            if (queryInsuranceFromAlipay(partner.getIdenNum())) {
                 return true;
             }
         } catch (Exception e) {
@@ -167,17 +166,70 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         }
         return false;
     }
-    
-    /*村小二保险续签*/
+
+    private boolean queryInsuranceFromOldPlatform( String idenNum){
+        Date nowTime = DateUtils.addDays(new Date(), 1);
+        List<Partner> partners =  partnerBO.getPartnerByIdnum(idenNum);
+        if(CollectionUtils.isNotEmpty(partners)){
+            for(Partner p : partners){
+                AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService
+                    .queryPolicyByInsured(String.valueOf(p.getTaobaoUserId()),
+                        SP_TYPE, SP_NO);
+                if (insure.isSuccess() && CollectionUtils.isNotEmpty(insure.getModel())) {
+                    for (InsPolicyDTO policy : insure.getModel()) {
+                        if (nowTime.after(policy.getEffectStartTime()) && nowTime.before(policy.getEffectEndTime())) {
+                            // 投保中的保险
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 从蚂蚁保险查询是否购买保险
+     * @param idenNum
+     * @return
+     */
+    private Boolean queryInsuranceFromAlipay(String idenNum) {
+        InsPolicySearchRequest insRequest = new InsPolicySearchRequest();
+        InsQueryPerson insQueryPerson = new InsQueryPerson();
+        //1投保人，2被保人，村淘默认按照投保人维度查询
+        insQueryPerson.setType("1");
+        //证件号码
+        insQueryPerson.setCertNo(idenNum);
+        //证件类型，100身份证
+        insQueryPerson.setCertType("100");
+        insRequest.setPerson(insQueryPerson);
+        //产品列表集合村淘合伙人意外险:4025 村淘雇主责任险 4027
+        insRequest.setProductList( Lists.newArrayList(PAI_NO));
+        //保单状态列表
+        insRequest.setStatusList(Lists.newArrayList("GUARANTEE"));
+        insRequest.setPageNo(1);
+        insRequest.setPageSize(1);
+        //投放渠道，必填，村淘默认cuntao
+        insRequest.setChannel("cuntao");
+        InsPolicySearchResult searchResult = insPolicyApiFacade.search(insRequest);
+        //查询到有效保单
+        return "Success".equals(searchResult.getErrorMessage())&&searchResult.getTotal()>0;
+    }
+
+    /**
+     * 村小二保险续签
+     * @param taobaoUserId
+     * @return
+     */
     @Override
     public  Integer hasReInsurance(Long taobaoUserId) {
-        if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
+        if ("false".equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             return 0;
         }
         try {
-            Integer identy = partnerTagService.getPartnerType(taobaoUserId);
+            Integer identity = partnerTagService.getPartnerType(taobaoUserId);
             // 如果是合伙人要判断是否买过保险，淘帮手是不用强制买保险
-            if (identy != null && identy.intValue() == 1) {
+            if (identity != null && identity == 1) {
                 // TODO支付宝接口判断是否买过保险
                 AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService
                         .queryPolicyByInsured(String.valueOf(taobaoUserId),
@@ -209,28 +261,5 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         }
 		return 0;
     }
-
-    
-    //企业支付宝白名单
-    private boolean isInFactoryAlipayList(Long taobaoId) {
-        return diamondConfiguredProperties.getInsureWhiteListConfig().contains(taobaoId);
-    }
-
-    private boolean idenNumDupliInsure( String idenNum){
-        List<Partner> partners =  partnerBO.getPartnerByIdnum(idenNum);
-        if(partners != null && partners.size() > 1){
-            for(Partner p : partners){
-                AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService
-                        .queryPolicyByInsured(String.valueOf(p.getTaobaoUserId()),
-                                SP_TYPE, SP_NO);
-                if (insure.isSuccess() && CollectionUtils.isNotEmpty(insure.getModel())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
 
 }
