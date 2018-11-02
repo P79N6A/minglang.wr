@@ -8,6 +8,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
@@ -35,17 +41,13 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.PositionUtil;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.StationValidator;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component("caiNiaoAdapter")
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
@@ -65,9 +67,15 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private WarehouseWriteService warehouseWriteService;
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
+	
+	@Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
 
 	@Override
 	public Long addCounty(CaiNiaoStationDto station)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.addCounty.param.error:station is null!");
 		}
@@ -82,6 +90,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
 	@Override
     public Long addCountyByOrg(CaiNiaoStationDto stationDto) {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (stationDto == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.addCounty.param.error:station is null!");
 		}
@@ -188,6 +200,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public Long addStation(CaiNiaoStationDto station)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.addStation.param.error:station is null!");
 		}
@@ -275,6 +291,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean addStationUserRel(CaiNiaoStationDto station, String userType)
 			 {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,getErrorMessage("addStationUserRel", "","station is null!"));
 		}
@@ -293,6 +313,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public boolean modifyStation(CaiNiaoStationDto station)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,getErrorMessage("modifyStation", "","station is null"));
 		}
@@ -385,6 +409,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean updateStationUserRel(CaiNiaoStationDto station)
 			 {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationUserRel.param.error:station is null!");
 		}
@@ -399,6 +426,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public boolean removeStationById(Long cainiaoStationId, Long userId)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (cainiaoStationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.removeStationById.param.error:cainiaoStationId is null!");
 		}
@@ -420,6 +451,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean removeNotUserdStationById(Long cainiaoStationId)
 			 {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (cainiaoStationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.removeStationById.param.error:cainiaoStationId is null!");
 		}
@@ -440,6 +475,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public boolean removeStationUserRel(Long userId)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (userId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
 					"CaiNiaoAdapterBO.removeStationUserRel.param.error:userId is null!");
@@ -455,6 +494,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
     public boolean updateStationFeatures(Long stationId,
 			LinkedHashMap<String, String> features)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (stationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationFeature.param.error:stationId is null!");
 		}
@@ -473,6 +516,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean updateStationUserRelFeature(Long userId,
 			Map<String, String> featureMap)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (userId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationUserRelFeature.param.error:userId is null!");
 		}
@@ -489,6 +536,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public boolean unBindAdmin(Long cainiaoStationId)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (cainiaoStationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.unBindAdmin.param.error:cainiaoStationId is null!");
 		}
@@ -505,6 +556,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean bindAdmin(CaiNiaoStationDto station)
 			 {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.bindAdmin.param.error:station is null!");
 		}
@@ -546,6 +601,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean updateAdmin(CaiNiaoStationDto station)
 			 {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateAdmin.param.error:station is null!");
 		}
@@ -562,6 +621,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Override
 	public boolean removeStationFeatures(Long stationId,
 			Set<String> keys)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 		if (stationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.removeStationFeatures.param.error:stationId is null!");
 		}
@@ -589,6 +652,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
     public boolean closeToCainiaoStation(Long cainiaoStationId)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 			Result<Boolean> res = stationWriteService.pauseStationById(cainiaoStationId, Modifier.newSystem());
 			if (!res.isSuccess()) {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
@@ -598,6 +665,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
     public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto)  {
+		if ("y".equals(diamondConfiguredProperties.getCainiaoSwitch())) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.11.11 fengwang!");
+		}
+		
 			UpdateStationInfoParam param = new UpdateStationInfoParam();
 			param.setId(dto.getCainiaoStationId());
 			param.setLng(dto.getLng());

@@ -125,7 +125,19 @@ public class DiamondConfiguredProperties {
     @Value("${serviceAbilitySHRHCountyAuditActivityId}")
     private String serviceAbilitySHRHCountyAuditActivityId;
     
-    public String getReplenishFrozenUrl() {
+    
+    @Value("${cainiao.switch}")
+    private String cainiaoSwitch;
+    
+    public String getCainiaoSwitch() {
+		return cainiaoSwitch;
+	}
+
+	public void setCainiaoSwitch(String cainiaoSwitch) {
+		this.cainiaoSwitch = cainiaoSwitch;
+	}
+
+	public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
 
