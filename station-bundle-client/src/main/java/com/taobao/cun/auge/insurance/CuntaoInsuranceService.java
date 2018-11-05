@@ -5,12 +5,34 @@ import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
 
 public interface CuntaoInsuranceService {
 
+	/**
+	 * 查询个人信息
+	 * @param taobaoUserId
+	 * @param cpCode
+	 * @return
+	 */
 	PersonInfoDto queryPersonInfo(Long taobaoUserId, String cpCode);
 
+	/**
+	 * 查询企业信息
+	 * @param taobaoUserId
+	 * @param cpCode
+	 * @return
+	 */
 	BusinessInfoDto queryBusinessInfo(Long taobaoUserId, String cpCode);
 
+	/**
+	 * 是否买过保险
+	 * @param taobaoUserId
+	 * @return
+	 */
 	Boolean hasInsurance(Long taobaoUserId);
-	
+
+	/**
+	 * 是否续签
+	 * @param taobaoUserId
+	 * @return
+	 */
 	Integer hasReInsurance(Long taobaoUserId);
 
 }
