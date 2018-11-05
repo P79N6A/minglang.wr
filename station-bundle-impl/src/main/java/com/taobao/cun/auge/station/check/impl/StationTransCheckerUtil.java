@@ -8,9 +8,9 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
  * Created by xiao on 18/11/5.
  */
 
-public class StationTransCheckerFactory {
+public class StationTransCheckerUtil {
 
-    public static List<StationTransChecker> getStationTransCheckerList() {
+    private static List<StationTransChecker> getStationTransCheckerList() {
         return CheckerFactory.getCheckerList(StationTransChecker.class);
     }
 

@@ -1,7 +1,10 @@
 package com.taobao.cun.auge.station.check.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -25,9 +28,9 @@ public class CheckerFactory implements ApplicationContextAware {
     public static <T> List<T> getCheckerList(Class<T> type) {
         Map<String, T> beansOfType = applicationContext.getBeansOfType(type);
         if (!CollectionUtils.isEmpty(beansOfType)) {
-            return (List<T>)beansOfType.values();
+            return new ArrayList<>(beansOfType.values());
         }
-        return null;
+        return Collections.emptyList();
     }
 
 }
