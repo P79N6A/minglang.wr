@@ -13,9 +13,9 @@ public class StationClassEnum implements Serializable {
 
 	private static final long serialVersionUID = -6688380187765631177L;
 
-	public static final StationClassEnum STATION_YP = new StationClassEnum("YP4", "天猫优品服务站");
-	public static final StationClassEnum STATION_ELEC = new StationClassEnum("YP4", "天猫优品服务站-电器");
-	public static final StationClassEnum STORE_ELEC = new StationClassEnum("YP4", "天猫优品电器体验店");
+	public static final StationClassEnum STATION_YP = new StationClassEnum("STATION_YP", "天猫优品服务站");
+	public static final StationClassEnum STATION_ELEC = new StationClassEnum("STATION_ELEC", "天猫优品服务站-电器");
+	public static final StationClassEnum STORE_ELEC = new StationClassEnum("STORE_ELEC", "天猫优品电器体验店");
 
 	public static final Map<String, StationClassEnum> mappings = new HashMap<String, StationClassEnum>();
 
