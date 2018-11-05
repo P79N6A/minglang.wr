@@ -155,7 +155,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
             if(queryInsuranceFromOldPlatform(partner.getIdenNum())){
                 return true;
             }
-
+            
             //二.原始数据没有查询到则调用蚂蚁接口，判断是否买过保险
             if (queryInsuranceFromAlipay(partner.getIdenNum())) {
                 return true;
@@ -200,8 +200,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         insQueryPerson.setType("1");
         //证件号码
         insQueryPerson.setCertNo(idenNum);
-        //证件类型，100身份证
-        insQueryPerson.setCertType("100");
+        //证件类型，10身份证
+        insQueryPerson.setCertType("10");
         insRequest.setPerson(insQueryPerson);
         //产品列表集合村淘合伙人意外险:4025 村淘雇主责任险 4027
         insRequest.setProductList( Lists.newArrayList(PAI_NO));
