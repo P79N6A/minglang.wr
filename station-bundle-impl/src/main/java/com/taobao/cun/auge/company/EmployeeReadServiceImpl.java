@@ -254,7 +254,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 					CuntaoEmployeeInfoDto dto = new CuntaoEmployeeInfoDto();
 					ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(e.getTaobaoUserId());
 					dto.setAlipayAccount(basePaymentAccountDOResult.getModule().getOutUser());
-			        ResultDO<BaseUserDO> baseUserDOresult = uicReadServiceClient.getBaseUserByUserId(taobaoUserId);
+			        ResultDO<BaseUserDO> baseUserDOresult = uicReadServiceClient.getBaseUserByUserId(e.getTaobaoUserId());
 			        BaseUserDO baseUserDO = baseUserDOresult.getModule();
 					dto.setCertNo(baseUserDO.getIdCardNumber());
 					dto.setEmployeeId(e.getId());
