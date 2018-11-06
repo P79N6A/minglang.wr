@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.taobao.cun.auge.station.check.impl.StationTransCheckerUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -85,7 +84,9 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
+import com.taobao.cun.auge.station.check.impl.StationTransCheckerUtil;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -123,6 +124,7 @@ import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.dto.StationTransInfoDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
@@ -314,6 +316,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     
     @Autowired
     private StoreWriteBO storeWriteBO;
+    
+    @Autowired
+    private StationTransInfoBO stationTransInfoBO;
+    
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
@@ -2336,6 +2342,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setId(rel.getStationId());
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
+		
+		StationTransInfoDto trDto = new StationTransInfoDto();
+		trDto.setFromBizType(transDto.getType().getFromBizType().getCode());
+		trDto.setToBizType(transDto.getType().getToBizType().getCode());
+		trDto.setOldBizDate(rel.getOpenDate());
+		trDto.setOperator(transDto.getOperator());
+		trDto.setOperateTime(new Date());
+		trDto.setOperatorType(transDto.getOperatorType().getCode());
+		trDto.setRemark(transDto.getType().getDescription());
+		trDto.setStationId(rel.getStationId());
+		trDto.setStatus(PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode());
+		trDto.setTaobaoUserId(String.valueOf(rel.getTaobaoUserId()));
+		trDto.setType(transDto.getType().getType().name());
+		stationTransInfoBO.addTransInfo(trDto);
 		
 		//同步菜鸟
 	    generalTaskSubmitService.submitUpdateCainiaoStation(transDto.getInstanceId(), transDto.getOperator());
