@@ -261,7 +261,6 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 					if ("y".equals(e.getIsDeleted())) {
 						dto.setLeaveJobTime(e.getGmtModified());
 					}
-					
 					dto.setMobile(e.getMobile());
 					dto.setName(e.getName());
 					dto.setStartJobTime(e.getGmtCreate());
