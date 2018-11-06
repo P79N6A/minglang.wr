@@ -2334,7 +2334,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setAddress(address);
 		stationDto.setStationNum(stationNum);
 		stationDto.setId(rel.getStationId());
-		stationDto.setPartnerInstanceIsOnTown(transDto.getStationDto().getPartnerInstanceIsOnTown());
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
 		
