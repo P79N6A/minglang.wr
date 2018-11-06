@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.taobao.cun.auge.station.check.impl.StationTransCheckerUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -2311,11 +2312,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		 if (rel == null) {
 			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"rel is null");
 		 }
-		 
-		 if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站是天猫优品，不需要转型");
-		 }
-		 
+
+        //转型规则校验
+        StationTransCheckerUtil.check(transDto);
+
 		Station station = stationBO.getStationById(rel.getStationId());
 	  
         String stationNum = stationNumConfigBO.createStationNum(station.getProvince(), StationNumConfigTypeEnum.C,0);
@@ -2334,7 +2334,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setAddress(address);
 		stationDto.setStationNum(stationNum);
 		stationDto.setId(rel.getStationId());
-		stationDto.setPartnerInstanceIsOnTown(transDto.getStationDto().getPartnerInstanceIsOnTown());
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
 		

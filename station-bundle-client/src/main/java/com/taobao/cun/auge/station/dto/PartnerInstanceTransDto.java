@@ -12,6 +12,8 @@ public class PartnerInstanceTransDto extends OperatorDto implements Serializable
 	 * 实例ID
 	 */
 	private Long instanceId;
+
+	private String toBizType;
 	
 	/**
 	 * 村点dto
@@ -37,6 +39,14 @@ public class PartnerInstanceTransDto extends OperatorDto implements Serializable
 
 	public void setInstanceId(Long instanceId) {
 		this.instanceId = instanceId;
+	}
+
+	public String getToBizType() {
+		return toBizType;
+	}
+
+	public void setToBizType(String toBizType) {
+		this.toBizType = toBizType;
 	}
 
 	public StationDto getStationDto() {
