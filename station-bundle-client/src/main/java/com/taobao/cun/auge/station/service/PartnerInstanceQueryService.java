@@ -316,11 +316,11 @@ public interface PartnerInstanceQueryService {
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
     
     /**
-     * 根据淘宝账号获得  业务类型
-     * @param taobaoUserId
+     * 根据id获得  业务类型
+     * @param instanceId
      * @return
      */
-    public StationBizTypeEnum  getBizTypeByTaobaoUserId(Long taobaoUserId);
+	StationBizTypeEnum  getBizTypeByInstanceId(Long instanceId);
     
 }
 
