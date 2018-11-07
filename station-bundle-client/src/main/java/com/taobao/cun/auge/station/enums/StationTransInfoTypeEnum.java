@@ -60,7 +60,6 @@ public class StationTransInfoTypeEnum implements Serializable {
 			sb.append(toBizType.getCode());
 		}
 		String code = sb.toString();
-
 		for (TypeEnum typeEnum : TypeEnum.values()) {
 			if (code.equals(typeEnum.name())) {
 				return valueof(typeEnum);
