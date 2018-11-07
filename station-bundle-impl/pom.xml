@@ -548,6 +548,10 @@
 			<groupId>com.alipay.insopenprod</groupId>
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>mtop-spring-boot-starter</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
