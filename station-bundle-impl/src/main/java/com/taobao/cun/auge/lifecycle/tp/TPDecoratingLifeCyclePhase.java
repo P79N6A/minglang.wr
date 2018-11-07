@@ -5,13 +5,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSON;
-
-import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-
-import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -19,6 +19,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
@@ -35,9 +36,11 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -45,6 +48,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
@@ -56,6 +60,9 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -67,11 +74,6 @@ import com.taobao.cun.settle.bail.enums.BailBizSceneEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二装修中阶段组件
@@ -114,6 +116,9 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     private CuntaoNewBailService cuntaoNewBailService;
     
     private static Logger logger = LoggerFactory.getLogger(TPDecoratingLifeCyclePhase.class);
+    
+    @Autowired
+    private StationTransInfoBO stationTransInfoBO;
 
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
@@ -125,6 +130,13 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		stationDto.setStatus(StationStatusEnum.DECORATING);
 		stationDto.setId(stationId);
 		stationDto.copyOperatorDto(partnerInstanceDto);
+		
+		if (PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstanceDto.getState().getCode()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(partnerInstanceDto.getTransStatusEnum())){
+			StationTransInfo sti = stationTransInfoBO.getLastTransInfoByStationId(stationId);
+		    if (sti != null && StationBizTypeEnum.YOUPIN_ELEC.getCode().equals(sti.getToBizType())) {
+		    	stationDto.setCategory("ELEC");
+		    }
+		}
 		stationBO.updateStation(stationDto);
 	}
 
@@ -283,15 +295,15 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 			}
 		}
-		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
-		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-		    if(!hasRepublishBonds(rel.getTaobaoUserId(),rel,partnerLifecycleDto)){
-		        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
-	            partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
-	            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-	            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,null,null);
-		    }
-		}
+//		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化 已下线
+//		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+//		    if(!hasRepublishBonds(rel.getTaobaoUserId(),rel,partnerLifecycleDto)){
+//		        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
+//	            partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
+//	            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+//	            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,null,null);
+//		    }
+//		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 		
 	}
@@ -358,6 +370,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			piDto.setPartnerId(changePartnerId);
 		}
 		partnerInstanceBO.updatePartnerStationRel(piDto);
+		//更新转型记录
+		stationTransInfoBO.changeTransing(rel.getStationId(), operatorDto.getOperator());
 		//上下文需要
 		rel.setMode(StationModeEnum.V4.getCode());
 	}
