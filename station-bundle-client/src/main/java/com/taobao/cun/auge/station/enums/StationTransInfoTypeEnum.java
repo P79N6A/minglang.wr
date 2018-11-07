@@ -50,7 +50,7 @@ public class StationTransInfoTypeEnum implements Serializable {
 
 	}
 
-	public static TypeEnum getTypeEnumByBizType(StationBizTypeEnum fromBizType, StationBizTypeEnum toBizType) {
+	public static StationTransInfoTypeEnum getTypeEnumByBizType(StationBizTypeEnum fromBizType, StationBizTypeEnum toBizType) {
 		StringBuilder sb = new StringBuilder();
 		if (fromBizType != null) {
 			sb.append(fromBizType.getCode());
@@ -63,7 +63,7 @@ public class StationTransInfoTypeEnum implements Serializable {
 
 		for (TypeEnum typeEnum : TypeEnum.values()) {
 			if (code.equals(typeEnum.name())) {
-				return typeEnum;
+				return valueof(typeEnum);
 			}
 		}
 		return null;
