@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.check.impl;
+package com.taobao.cun.auge.station.check.impl.trans;
 
 import com.taobao.cun.auge.configuration.DiamondFactory;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -22,7 +22,7 @@ public class TransDiamondChecker implements StationTransChecker {
 
     @Override
     public void check(PartnerInstanceTransDto transDto) {
-         if (StationBizTypeEnum.YOUPIN.equals(transDto.getType().getFromBizType())) {
+         if (StationBizTypeEnum.YOUPIN_ELEC.equals(transDto.getType().getToBizType())) {
             PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(transDto.getInstanceId());
             if (!DiamondFactory.getTransDiamondConfig().contains(String.valueOf(rel.getStationId()))) {
                 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,

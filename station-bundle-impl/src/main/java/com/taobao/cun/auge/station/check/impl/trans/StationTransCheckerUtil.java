@@ -1,7 +1,8 @@
-package com.taobao.cun.auge.station.check.impl;
+package com.taobao.cun.auge.station.check.impl.trans;
 
 import java.util.List;
 import com.taobao.cun.auge.station.check.StationTransChecker;
+import com.taobao.cun.auge.station.check.impl.CheckerFactory;
 import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 
 /**

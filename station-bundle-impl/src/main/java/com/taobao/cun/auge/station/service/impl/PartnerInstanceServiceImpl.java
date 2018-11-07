@@ -86,7 +86,7 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
-import com.taobao.cun.auge.station.check.impl.StationTransCheckerUtil;
+import com.taobao.cun.auge.station.check.impl.trans.StationTransCheckerUtil;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
