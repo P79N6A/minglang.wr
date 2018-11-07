@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.check.impl;
+package com.taobao.cun.auge.station.check.impl.trans;
 
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.check.StationTransChecker;
