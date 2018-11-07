@@ -4,20 +4,20 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StationTransInfoBizTypeEnum implements Serializable {
+public class StationBizTypeEnum implements Serializable {
 
-	private static final Map<String, StationTransInfoBizTypeEnum> MAPPING = new HashMap<String, StationTransInfoBizTypeEnum>();
+	private static final Map<String, StationBizTypeEnum> MAPPING = new HashMap<String, StationBizTypeEnum>();
 
 	private static final long serialVersionUID = -2325045809951918493L;
 
 	private String code;
 	private String desc;
 
-	public static final StationTransInfoBizTypeEnum STATION = new StationTransInfoBizTypeEnum("STATION", "农村淘宝服务站");
-	public static final StationTransInfoBizTypeEnum YOUPIN = new StationTransInfoBizTypeEnum("YOUPIN", "天猫优品服务站");
-	public static final StationTransInfoBizTypeEnum YOUPIN_ELEC = new StationTransInfoBizTypeEnum("YOUPIN_ELEC",
+	public static final StationBizTypeEnum STATION = new StationBizTypeEnum("STATION", "农村淘宝服务站");
+	public static final StationBizTypeEnum YOUPIN = new StationBizTypeEnum("YOUPIN", "天猫优品服务站");
+	public static final StationBizTypeEnum YOUPIN_ELEC = new StationBizTypeEnum("YOUPIN_ELEC",
 			"天猫优品服务站-电器合作店");
-	public static final StationTransInfoBizTypeEnum TPS_ELEC = new StationTransInfoBizTypeEnum("TPS_ELEC", "天猫优品电器体验店");
+	public static final StationBizTypeEnum TPS_ELEC = new StationBizTypeEnum("TPS_ELEC", "天猫优品电器体验店");
 
 	static {
 		MAPPING.put("STATION", STATION);
@@ -26,12 +26,12 @@ public class StationTransInfoBizTypeEnum implements Serializable {
 		MAPPING.put("TPS_ELEC", TPS_ELEC);
 	}
 
-	public StationTransInfoBizTypeEnum(String code, String desc) {
+	public StationBizTypeEnum(String code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}
 
-	public StationTransInfoBizTypeEnum() {
+	public StationBizTypeEnum() {
 
 	}
 
@@ -51,7 +51,7 @@ public class StationTransInfoBizTypeEnum implements Serializable {
 		this.desc = desc;
 	}
 
-	public static StationTransInfoBizTypeEnum valueof(String code) {
+	public static StationBizTypeEnum valueof(String code) {
 		if (code == null) {
 			return null;
 		}
@@ -77,7 +77,7 @@ public class StationTransInfoBizTypeEnum implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		StationTransInfoBizTypeEnum other = (StationTransInfoBizTypeEnum) obj;
+		StationBizTypeEnum other = (StationBizTypeEnum) obj;
 		if (code == null) {
 			if (other.code != null) {
 				return false;

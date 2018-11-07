@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
 
 /**
  * 合伙人实例查询服务
@@ -313,6 +314,13 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
+    
+    /**
+     * 根据淘宝账号获得  业务类型
+     * @param taobaoUserId
+     * @return
+     */
+    public StationBizTypeEnum  getBizTypeByTaobaoUserId(Long taobaoUserId);
     
 }
 

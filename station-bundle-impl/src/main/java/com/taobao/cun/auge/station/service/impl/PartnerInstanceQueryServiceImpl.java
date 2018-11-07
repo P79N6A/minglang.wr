@@ -101,6 +101,7 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.ReplenishStatusEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
+import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
@@ -914,5 +915,29 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             logger.error("重构过渡接口被调用");
         }
     }
+
+	@Override
+	public StationBizTypeEnum getBizTypeByTaobaoUserId(Long taobaoUserId) {
+		ValidateUtils.notNull(taobaoUserId);
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (null == rel) {
+            return null;
+        }
+        Station station = stationBO.getStationById(rel.getStationId());
+        if(null == station){
+        	return null;
+        }
+        if ("TP".equals(rel.getType())) {
+        	if (StationModeEnum.V4.getCode().equals(rel.getMode())) {
+        		return "ELEC".equals(station.getCategory()) ? StationBizTypeEnum.YOUPIN_ELEC:StationBizTypeEnum.YOUPIN;
+        	}else{
+        		return StationBizTypeEnum.STATION;
+        	}
+        }else if ("TPS".equals(rel.getType())) {
+        	return StationBizTypeEnum.TPS_ELEC;
+        }	
+		return null;
+	}
+    
     
 }

@@ -12,37 +12,32 @@ public class StationTransInfoTypeEnum implements Serializable {
 	// 描述
 	private String description;
 	// 起始业务态
-	private StationTransInfoBizTypeEnum fromBizType;
+	private StationBizTypeEnum fromBizType;
 	// 目标业务态
-	private StationTransInfoBizTypeEnum toBizType;
+	private StationBizTypeEnum toBizType;
 
 	public enum TypeEnum {
 		STATION_TO_YOUPIN, STATION_TO_YOUPIN_ELEC, STATION_TO_TPS_ELEC, YOUPIN_TO_YOUPIN_ELEC, YOUPIN_TO_TPS_ELEC, YOUPIN_ELEC_TO_TPS_ELEC
 	}
 
 	public static final StationTransInfoTypeEnum STATION_TO_YOUPIN = new StationTransInfoTypeEnum(
-			TypeEnum.STATION_TO_YOUPIN, "服务站转型天猫优品", StationTransInfoBizTypeEnum.STATION,
-			StationTransInfoBizTypeEnum.YOUPIN);
+			TypeEnum.STATION_TO_YOUPIN, "服务站转型天猫优品", StationBizTypeEnum.STATION, StationBizTypeEnum.YOUPIN);
 
 	public static final StationTransInfoTypeEnum STATION_TO_YOUPIN_ELEC = new StationTransInfoTypeEnum(
-			TypeEnum.STATION_TO_YOUPIN_ELEC, "服务站转型电器合作店", StationTransInfoBizTypeEnum.STATION,
-			StationTransInfoBizTypeEnum.YOUPIN_ELEC);
+			TypeEnum.STATION_TO_YOUPIN_ELEC, "服务站转型电器合作店", StationBizTypeEnum.STATION, StationBizTypeEnum.YOUPIN_ELEC);
 
 	public static final StationTransInfoTypeEnum STATION_TO_TPS_ELEC = new StationTransInfoTypeEnum(
-			TypeEnum.STATION_TO_TPS_ELEC, "服务站转型电器体验店", StationTransInfoBizTypeEnum.STATION,
-			StationTransInfoBizTypeEnum.TPS_ELEC);
+			TypeEnum.STATION_TO_TPS_ELEC, "服务站转型电器体验店", StationBizTypeEnum.STATION, StationBizTypeEnum.TPS_ELEC);
 
 	public static final StationTransInfoTypeEnum YOUPIN_TO_YOUPIN_ELEC = new StationTransInfoTypeEnum(
-			TypeEnum.YOUPIN_TO_YOUPIN_ELEC, "天猫优品转型电器合作店", StationTransInfoBizTypeEnum.YOUPIN,
-			StationTransInfoBizTypeEnum.YOUPIN_ELEC);
+			TypeEnum.YOUPIN_TO_YOUPIN_ELEC, "天猫优品转型电器合作店", StationBizTypeEnum.YOUPIN, StationBizTypeEnum.YOUPIN_ELEC);
 
 	public static final StationTransInfoTypeEnum YOUPIN_TO_TPS_ELEC = new StationTransInfoTypeEnum(
-			TypeEnum.YOUPIN_TO_TPS_ELEC, "天猫优品转型电器体验店", StationTransInfoBizTypeEnum.YOUPIN,
-			StationTransInfoBizTypeEnum.TPS_ELEC);
+			TypeEnum.YOUPIN_TO_TPS_ELEC, "天猫优品转型电器体验店", StationBizTypeEnum.YOUPIN, StationBizTypeEnum.TPS_ELEC);
 
 	public static final StationTransInfoTypeEnum YOUPIN_ELEC_TO_TPS_ELEC = new StationTransInfoTypeEnum(
-			TypeEnum.YOUPIN_ELEC_TO_TPS_ELEC, "电器合作店转型电器体验店", StationTransInfoBizTypeEnum.YOUPIN_ELEC,
-			StationTransInfoBizTypeEnum.TPS_ELEC);
+			TypeEnum.YOUPIN_ELEC_TO_TPS_ELEC, "电器合作店转型电器体验店", StationBizTypeEnum.YOUPIN_ELEC,
+			StationBizTypeEnum.TPS_ELEC);
 
 	private static final Map<TypeEnum, StationTransInfoTypeEnum> MAPPINGS = new HashMap<TypeEnum, StationTransInfoTypeEnum>();
 	static {
@@ -55,6 +50,25 @@ public class StationTransInfoTypeEnum implements Serializable {
 
 	}
 
+	public static TypeEnum getTypeEnumByBizType(StationBizTypeEnum fromBizType, StationBizTypeEnum toBizType) {
+		StringBuilder sb = new StringBuilder();
+		if (fromBizType != null) {
+			sb.append(fromBizType.getCode());
+		}
+		sb.append("_TO_");
+		if (toBizType != null) {
+			sb.append(toBizType.getCode());
+		}
+		String code = sb.toString();
+
+		for (TypeEnum typeEnum : TypeEnum.values()) {
+			if (code.equals(typeEnum.name())) {
+				return typeEnum;
+			}
+		}
+		return null;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -63,19 +77,19 @@ public class StationTransInfoTypeEnum implements Serializable {
 		this.description = description;
 	}
 
-	public StationTransInfoBizTypeEnum getFromBizType() {
+	public StationBizTypeEnum getFromBizType() {
 		return fromBizType;
 	}
 
-	public void setFromBizType(StationTransInfoBizTypeEnum fromBizType) {
+	public void setFromBizType(StationBizTypeEnum fromBizType) {
 		this.fromBizType = fromBizType;
 	}
 
-	public StationTransInfoBizTypeEnum getToBizType() {
+	public StationBizTypeEnum getToBizType() {
 		return toBizType;
 	}
 
-	public void setToBizType(StationTransInfoBizTypeEnum toBizType) {
+	public void setToBizType(StationBizTypeEnum toBizType) {
 		this.toBizType = toBizType;
 	}
 
@@ -107,8 +121,8 @@ public class StationTransInfoTypeEnum implements Serializable {
 		return objType.getType().equals(this.getType());
 	}
 
-	public StationTransInfoTypeEnum(TypeEnum type, String description, StationTransInfoBizTypeEnum fromBizType,
-			StationTransInfoBizTypeEnum toBizType) {
+	public StationTransInfoTypeEnum(TypeEnum type, String description, StationBizTypeEnum fromBizType,
+			StationBizTypeEnum toBizType) {
 		this.type = type;
 		this.description = description;
 		this.toBizType = toBizType;
