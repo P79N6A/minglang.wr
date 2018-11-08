@@ -886,10 +886,6 @@
 				<artifactId>insopenprod-common-service-facade</artifactId>
 				<version>1.0.0.20181022</version>
 			</dependency>
-			<dependency>
-				<groupId>com.alibaba.boot</groupId>
-				<artifactId>mtop-spring-boot-starter</artifactId>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
