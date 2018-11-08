@@ -21,10 +21,11 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="from_biz_type" jdbcType="VARCHAR" property="fromBizType" />
     <result column="to_biz_type" jdbcType="VARCHAR" property="toBizType" />
-    <result column="old_biz_date" jdbcType="TIMESTAMP" property="oldBizDate" />
-    <result column="new_biz_date" jdbcType="TIMESTAMP" property="newBizDate" />
+    <result column="old_open_date" jdbcType="TIMESTAMP" property="oldOpenDate" />
+    <result column="new_open_date" jdbcType="TIMESTAMP" property="newOpenDate" />
     <result column="is_latest" jdbcType="CHAR" property="isLatest" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="trans_date" jdbcType="TIMESTAMP" property="transDate" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -99,7 +100,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, taobao_user_id, station_id, 
     operate_time, operator, operator_type, type, status, from_biz_type, to_biz_type, 
-    old_biz_date, new_biz_date, is_latest, remark
+    old_open_date, new_open_date, is_latest, remark, trans_date
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationTransInfoExample" resultMap="BaseResultMap">
     <!--
@@ -160,16 +161,16 @@
       modifier, is_deleted, taobao_user_id, 
       station_id, operate_time, operator, 
       operator_type, type, status, 
-      from_biz_type, to_biz_type, old_biz_date, 
-      new_biz_date, is_latest, remark
-      )
+      from_biz_type, to_biz_type, old_open_date, 
+      new_open_date, is_latest, remark, 
+      trans_date)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{taobaoUserId,jdbcType=VARCHAR}, 
       #{stationId,jdbcType=BIGINT}, #{operateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=VARCHAR}, 
       #{operatorType,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{fromBizType,jdbcType=VARCHAR}, #{toBizType,jdbcType=VARCHAR}, #{oldBizDate,jdbcType=TIMESTAMP}, 
-      #{newBizDate,jdbcType=TIMESTAMP}, #{isLatest,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}
-      )
+      #{fromBizType,jdbcType=VARCHAR}, #{toBizType,jdbcType=VARCHAR}, #{oldOpenDate,jdbcType=TIMESTAMP}, 
+      #{newOpenDate,jdbcType=TIMESTAMP}, #{isLatest,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{transDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.StationTransInfo">
     <!--
@@ -223,17 +224,20 @@
       <if test="toBizType != null">
         to_biz_type,
       </if>
-      <if test="oldBizDate != null">
-        old_biz_date,
+      <if test="oldOpenDate != null">
+        old_open_date,
       </if>
-      <if test="newBizDate != null">
-        new_biz_date,
+      <if test="newOpenDate != null">
+        new_open_date,
       </if>
       <if test="isLatest != null">
         is_latest,
       </if>
       <if test="remark != null">
         remark,
+      </if>
+      <if test="transDate != null">
+        trans_date,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -279,17 +283,20 @@
       <if test="toBizType != null">
         #{toBizType,jdbcType=VARCHAR},
       </if>
-      <if test="oldBizDate != null">
-        #{oldBizDate,jdbcType=TIMESTAMP},
+      <if test="oldOpenDate != null">
+        #{oldOpenDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="newBizDate != null">
-        #{newBizDate,jdbcType=TIMESTAMP},
+      <if test="newOpenDate != null">
+        #{newOpenDate,jdbcType=TIMESTAMP},
       </if>
       <if test="isLatest != null">
         #{isLatest,jdbcType=CHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="transDate != null">
+        #{transDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -345,17 +352,20 @@
       <if test="record.toBizType != null">
         to_biz_type = #{record.toBizType,jdbcType=VARCHAR},
       </if>
-      <if test="record.oldBizDate != null">
-        old_biz_date = #{record.oldBizDate,jdbcType=TIMESTAMP},
+      <if test="record.oldOpenDate != null">
+        old_open_date = #{record.oldOpenDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.newBizDate != null">
-        new_biz_date = #{record.newBizDate,jdbcType=TIMESTAMP},
+      <if test="record.newOpenDate != null">
+        new_open_date = #{record.newOpenDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.isLatest != null">
         is_latest = #{record.isLatest,jdbcType=CHAR},
       </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.transDate != null">
+        trans_date = #{record.transDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -383,10 +393,11 @@
       status = #{record.status,jdbcType=VARCHAR},
       from_biz_type = #{record.fromBizType,jdbcType=VARCHAR},
       to_biz_type = #{record.toBizType,jdbcType=VARCHAR},
-      old_biz_date = #{record.oldBizDate,jdbcType=TIMESTAMP},
-      new_biz_date = #{record.newBizDate,jdbcType=TIMESTAMP},
+      old_open_date = #{record.oldOpenDate,jdbcType=TIMESTAMP},
+      new_open_date = #{record.newOpenDate,jdbcType=TIMESTAMP},
       is_latest = #{record.isLatest,jdbcType=CHAR},
-      remark = #{record.remark,jdbcType=VARCHAR}
+      remark = #{record.remark,jdbcType=VARCHAR},
+      trans_date = #{record.transDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -440,17 +451,20 @@
       <if test="toBizType != null">
         to_biz_type = #{toBizType,jdbcType=VARCHAR},
       </if>
-      <if test="oldBizDate != null">
-        old_biz_date = #{oldBizDate,jdbcType=TIMESTAMP},
+      <if test="oldOpenDate != null">
+        old_open_date = #{oldOpenDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="newBizDate != null">
-        new_biz_date = #{newBizDate,jdbcType=TIMESTAMP},
+      <if test="newOpenDate != null">
+        new_open_date = #{newOpenDate,jdbcType=TIMESTAMP},
       </if>
       <if test="isLatest != null">
         is_latest = #{isLatest,jdbcType=CHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="transDate != null">
+        trans_date = #{transDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -475,10 +489,11 @@
       status = #{status,jdbcType=VARCHAR},
       from_biz_type = #{fromBizType,jdbcType=VARCHAR},
       to_biz_type = #{toBizType,jdbcType=VARCHAR},
-      old_biz_date = #{oldBizDate,jdbcType=TIMESTAMP},
-      new_biz_date = #{newBizDate,jdbcType=TIMESTAMP},
+      old_open_date = #{oldOpenDate,jdbcType=TIMESTAMP},
+      new_open_date = #{newOpenDate,jdbcType=TIMESTAMP},
       is_latest = #{isLatest,jdbcType=CHAR},
-      remark = #{remark,jdbcType=VARCHAR}
+      remark = #{remark,jdbcType=VARCHAR},
+      trans_date = #{transDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

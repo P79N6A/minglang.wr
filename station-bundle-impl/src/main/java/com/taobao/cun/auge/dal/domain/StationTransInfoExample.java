@@ -1195,123 +1195,123 @@ public class StationTransInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateIsNull() {
-            addCriterion("old_biz_date is null");
+        public Criteria andOldOpenDateIsNull() {
+            addCriterion("old_open_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateIsNotNull() {
-            addCriterion("old_biz_date is not null");
+        public Criteria andOldOpenDateIsNotNull() {
+            addCriterion("old_open_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateEqualTo(Date value) {
-            addCriterion("old_biz_date =", value, "oldBizDate");
+        public Criteria andOldOpenDateEqualTo(Date value) {
+            addCriterion("old_open_date =", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateNotEqualTo(Date value) {
-            addCriterion("old_biz_date <>", value, "oldBizDate");
+        public Criteria andOldOpenDateNotEqualTo(Date value) {
+            addCriterion("old_open_date <>", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateGreaterThan(Date value) {
-            addCriterion("old_biz_date >", value, "oldBizDate");
+        public Criteria andOldOpenDateGreaterThan(Date value) {
+            addCriterion("old_open_date >", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("old_biz_date >=", value, "oldBizDate");
+        public Criteria andOldOpenDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("old_open_date >=", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateLessThan(Date value) {
-            addCriterion("old_biz_date <", value, "oldBizDate");
+        public Criteria andOldOpenDateLessThan(Date value) {
+            addCriterion("old_open_date <", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateLessThanOrEqualTo(Date value) {
-            addCriterion("old_biz_date <=", value, "oldBizDate");
+        public Criteria andOldOpenDateLessThanOrEqualTo(Date value) {
+            addCriterion("old_open_date <=", value, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateIn(List<Date> values) {
-            addCriterion("old_biz_date in", values, "oldBizDate");
+        public Criteria andOldOpenDateIn(List<Date> values) {
+            addCriterion("old_open_date in", values, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateNotIn(List<Date> values) {
-            addCriterion("old_biz_date not in", values, "oldBizDate");
+        public Criteria andOldOpenDateNotIn(List<Date> values) {
+            addCriterion("old_open_date not in", values, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateBetween(Date value1, Date value2) {
-            addCriterion("old_biz_date between", value1, value2, "oldBizDate");
+        public Criteria andOldOpenDateBetween(Date value1, Date value2) {
+            addCriterion("old_open_date between", value1, value2, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andOldBizDateNotBetween(Date value1, Date value2) {
-            addCriterion("old_biz_date not between", value1, value2, "oldBizDate");
+        public Criteria andOldOpenDateNotBetween(Date value1, Date value2) {
+            addCriterion("old_open_date not between", value1, value2, "oldOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateIsNull() {
-            addCriterion("new_biz_date is null");
+        public Criteria andNewOpenDateIsNull() {
+            addCriterion("new_open_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateIsNotNull() {
-            addCriterion("new_biz_date is not null");
+        public Criteria andNewOpenDateIsNotNull() {
+            addCriterion("new_open_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateEqualTo(Date value) {
-            addCriterion("new_biz_date =", value, "newBizDate");
+        public Criteria andNewOpenDateEqualTo(Date value) {
+            addCriterion("new_open_date =", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateNotEqualTo(Date value) {
-            addCriterion("new_biz_date <>", value, "newBizDate");
+        public Criteria andNewOpenDateNotEqualTo(Date value) {
+            addCriterion("new_open_date <>", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateGreaterThan(Date value) {
-            addCriterion("new_biz_date >", value, "newBizDate");
+        public Criteria andNewOpenDateGreaterThan(Date value) {
+            addCriterion("new_open_date >", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("new_biz_date >=", value, "newBizDate");
+        public Criteria andNewOpenDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("new_open_date >=", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateLessThan(Date value) {
-            addCriterion("new_biz_date <", value, "newBizDate");
+        public Criteria andNewOpenDateLessThan(Date value) {
+            addCriterion("new_open_date <", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateLessThanOrEqualTo(Date value) {
-            addCriterion("new_biz_date <=", value, "newBizDate");
+        public Criteria andNewOpenDateLessThanOrEqualTo(Date value) {
+            addCriterion("new_open_date <=", value, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateIn(List<Date> values) {
-            addCriterion("new_biz_date in", values, "newBizDate");
+        public Criteria andNewOpenDateIn(List<Date> values) {
+            addCriterion("new_open_date in", values, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateNotIn(List<Date> values) {
-            addCriterion("new_biz_date not in", values, "newBizDate");
+        public Criteria andNewOpenDateNotIn(List<Date> values) {
+            addCriterion("new_open_date not in", values, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateBetween(Date value1, Date value2) {
-            addCriterion("new_biz_date between", value1, value2, "newBizDate");
+        public Criteria andNewOpenDateBetween(Date value1, Date value2) {
+            addCriterion("new_open_date between", value1, value2, "newOpenDate");
             return (Criteria) this;
         }
 
-        public Criteria andNewBizDateNotBetween(Date value1, Date value2) {
-            addCriterion("new_biz_date not between", value1, value2, "newBizDate");
+        public Criteria andNewOpenDateNotBetween(Date value1, Date value2) {
+            addCriterion("new_open_date not between", value1, value2, "newOpenDate");
             return (Criteria) this;
         }
 
@@ -1452,6 +1452,66 @@ public class StationTransInfoExample {
 
         public Criteria andRemarkNotBetween(String value1, String value2) {
             addCriterion("remark not between", value1, value2, "remark");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateIsNull() {
+            addCriterion("trans_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateIsNotNull() {
+            addCriterion("trans_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateEqualTo(Date value) {
+            addCriterion("trans_date =", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateNotEqualTo(Date value) {
+            addCriterion("trans_date <>", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateGreaterThan(Date value) {
+            addCriterion("trans_date >", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("trans_date >=", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateLessThan(Date value) {
+            addCriterion("trans_date <", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateLessThanOrEqualTo(Date value) {
+            addCriterion("trans_date <=", value, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateIn(List<Date> values) {
+            addCriterion("trans_date in", values, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateNotIn(List<Date> values) {
+            addCriterion("trans_date not in", values, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateBetween(Date value1, Date value2) {
+            addCriterion("trans_date between", value1, value2, "transDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransDateNotBetween(Date value1, Date value2) {
+            addCriterion("trans_date not between", value1, value2, "transDate");
             return (Criteria) this;
         }
     }

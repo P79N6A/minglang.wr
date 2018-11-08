@@ -54,8 +54,8 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 		i.setFromBizType(dto.getFromBizType());
 		i.setId(dto.getId());
 		i.setIsLatest(dto.getIsLatest());
-		i.setNewBizDate(dto.getNewBizDate());
-		i.setOldBizDate(dto.getOldBizDate());
+		i.setNewOpenDate(dto.getNewOpenDate());
+		i.setOldOpenDate(dto.getOldOpenDate());
 		i.setOperateTime(dto.getOperateTime());
 		i.setOperator(dto.getOperator());
 		i.setOperatorType(dto.getOperatorType());
@@ -66,6 +66,7 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 		i.setToBizType(dto.getToBizType());
 		i.setType(dto.getType());
 		i.setFromBizType(dto.getFromBizType());
+		i.setTransDate(dto.getTransDate());
 		return i;
 	}
 	
@@ -77,8 +78,9 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 		i.setFromBizType(info.getFromBizType());
 		i.setId(info.getId());
 		i.setIsLatest(info.getIsLatest());
-		i.setNewBizDate(info.getNewBizDate());
-		i.setOldBizDate(info.getOldBizDate());
+		i.setNewOpenDate(info.getNewOpenDate());
+		i.setOldOpenDate(info.getOldOpenDate());
+		i.setTransDate(info.getTransDate());
 		i.setOperateTime(info.getOperateTime());
 		i.setOperator(info.getOperator());
 		i.setOperatorType(info.getOperatorType());
@@ -117,6 +119,7 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"当前状态不允许修改，必须待转型");
 		}
 		s.setStatus(PartnerInstanceTransStatusEnum.TRANS_ING.getCode());
+		s.setTransDate(new Date());
 		DomainUtils.beforeUpdate(s, operator);
 		stationTransInfoMapper.updateByPrimaryKeySelective(s);
 
@@ -131,7 +134,7 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"当前状态不允许修改,必须转型中");
 		}
 		s.setStatus(PartnerInstanceTransStatusEnum.TRANS_DONE.getCode());
-		s.setNewBizDate(newBizDate);
+		s.setNewOpenDate(newBizDate);
 		DomainUtils.beforeUpdate(s, operator);
 		stationTransInfoMapper.updateByPrimaryKeySelective(s);
 	}

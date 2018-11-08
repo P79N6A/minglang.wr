@@ -46,12 +46,14 @@ public class StationTransInfoDto  implements Serializable{
     /**
      * 来源数据，业务时间（如：开业时间）
      */
-    private Date oldBizDate;
+    private Date oldOpenDate;
 
     /**
      * 目标数据，业务时间（如：开业时间）
      */
-    private Date newBizDate;
+    private Date newOpenDate;
+    
+    private Date transDate;
 
     /**
      * 最近数据标示 （是：y,否：n）
@@ -156,20 +158,28 @@ public class StationTransInfoDto  implements Serializable{
 		this.toBizType = toBizType;
 	}
 
-	public Date getOldBizDate() {
-		return oldBizDate;
+	public Date getOldOpenDate() {
+		return oldOpenDate;
 	}
 
-	public void setOldBizDate(Date oldBizDate) {
-		this.oldBizDate = oldBizDate;
+	public void setOldOpenDate(Date oldOpenDate) {
+		this.oldOpenDate = oldOpenDate;
 	}
 
-	public Date getNewBizDate() {
-		return newBizDate;
+	public Date getNewOpenDate() {
+		return newOpenDate;
 	}
 
-	public void setNewBizDate(Date newBizDate) {
-		this.newBizDate = newBizDate;
+	public void setNewOpenDate(Date newOpenDate) {
+		this.newOpenDate = newOpenDate;
+	}
+
+	public Date getTransDate() {
+		return transDate;
+	}
+
+	public void setTransDate(Date transDate) {
+		this.transDate = transDate;
 	}
 
 	public String getIsLatest() {
