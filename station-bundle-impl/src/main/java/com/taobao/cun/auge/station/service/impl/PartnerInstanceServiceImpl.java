@@ -165,6 +165,7 @@ import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
@@ -2318,14 +2319,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		 if (rel == null) {
 			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"rel is null");
 		 }
-
         //转型规则校验
         StationTransCheckerUtil.check(transDto);
-
 		Station station = stationBO.getStationById(rel.getStationId());
-	  
-        String stationNum = stationNumConfigBO.createStationNum(station.getProvince(), StationNumConfigTypeEnum.C,0);
-       
         //更新村点信息
 		StationDto stationDto = new StationDto();
 		stationDto.setName(transDto.getStationDto().getName());
@@ -2333,16 +2329,39 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (transDto.getStationDto().getAddress().getAddressDetail() != null) {
 			address.setAddressDetail(transDto.getStationDto().getAddress().getAddressDetail());
 		}
-		if (transDto.getStationDto().getAddress().getVillage() != null && transDto.getStationDto().getAddress().getVillageDetail() != null) {
-			address.setVillage(transDto.getStationDto().getAddress().getVillage());
-			address.setVillageDetail(transDto.getStationDto().getAddress().getVillageDetail());
-		}
+//		if (transDto.getStationDto().getAddress().getVillage() != null && transDto.getStationDto().getAddress().getVillageDetail() != null) {
+//			address.setVillage(transDto.getStationDto().getAddress().getVillage());
+//			address.setVillageDetail(transDto.getStationDto().getAddress().getVillageDetail());
+//		}
 		stationDto.setAddress(address);
-		stationDto.setStationNum(stationNum);
+		if (!StationTransInfoTypeEnum.YOUPIN_TO_YOUPIN_ELEC.getType().name().equals(transDto.getType().getType().name())) {
+			String stationNum = stationNumConfigBO.createStationNum(station.getProvince(), StationNumConfigTypeEnum.C,0);
+			stationDto.setStationNum(stationNum);
+			stationNumConfigBO.updateSeqNumByStationNum(station.getProvince(), StationNumConfigTypeEnum.C, stationNum);
+        }
 		stationDto.setId(rel.getStationId());
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
-		
+		//保存转型信息
+		saveTransInfo(transDto, rel);
+		//同步菜鸟
+	    generalTaskSubmitService.submitUpdateCainiaoStation(transDto.getInstanceId(), transDto.getOperator());
+	    //更新实例为待转型
+	    partnerInstanceBO.updateTransStatusByInstanceId(transDto.getInstanceId(), PartnerInstanceTransStatusEnum.WAIT_TRANS, transDto.getOperator());
+        //记录日志
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		String buildOperatorName = buildOperatorName(transDto);
+		cuntaoFlowRecord.setTargetId(rel.getStationId());
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle("发起转型");
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(transDto.getOperator());
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+	}
+
+
+	private void saveTransInfo(PartnerInstanceTransDto transDto, PartnerStationRel rel) {
 		StationTransInfoDto trDto = new StationTransInfoDto();
 		trDto.setFromBizType(transDto.getType().getFromBizType().getCode());
 		trDto.setToBizType(transDto.getType().getToBizType().getCode());
@@ -2357,25 +2376,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		trDto.setType(transDto.getType().getType().name());
 		trDto.setIsModifyLnglat(transDto.getIsModifyLnglat());
 		stationTransInfoBO.addTransInfo(trDto);
-		
-		//同步菜鸟
-	    generalTaskSubmitService.submitUpdateCainiaoStation(transDto.getInstanceId(), transDto.getOperator());
-	    //更新实例为待转型
-	    partnerInstanceBO.updateTransStatusByInstanceId(transDto.getInstanceId(), PartnerInstanceTransStatusEnum.WAIT_TRANS, transDto.getOperator());
-        stationNumConfigBO.updateSeqNumByStationNum(station.getProvince(), StationNumConfigTypeEnum.C, stationNum);
-        
-        //记录日志
-		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-		String buildOperatorName = buildOperatorName(transDto);
-		cuntaoFlowRecord.setTargetId(rel.getStationId());
-		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
-		cuntaoFlowRecord.setNodeTitle("发起转型");
-		cuntaoFlowRecord.setOperatorName(buildOperatorName);
-		cuntaoFlowRecord.setOperatorWorkid(transDto.getOperator());
-		cuntaoFlowRecord.setOperateTime(new Date());
-		//cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
-		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-       
 	}
 	
 
