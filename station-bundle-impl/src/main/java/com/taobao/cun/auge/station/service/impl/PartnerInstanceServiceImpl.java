@@ -2355,6 +2355,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		trDto.setStatus(PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode());
 		trDto.setTaobaoUserId(String.valueOf(rel.getTaobaoUserId()));
 		trDto.setType(transDto.getType().getType().name());
+		trDto.setIsModifyLnglat(transDto.getIsModifyLnglat());
 		stationTransInfoBO.addTransInfo(trDto);
 		
 		//同步菜鸟

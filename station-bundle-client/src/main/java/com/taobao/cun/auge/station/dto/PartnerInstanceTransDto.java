@@ -21,7 +21,19 @@ public class PartnerInstanceTransDto extends OperatorDto implements Serializable
 	 * 转型类型
 	 */
 	private StationTransInfoTypeEnum type;
-	
+
+	/**
+	 * 是否更改经纬度
+	 */
+	private String isModifyLnglat;
+
+	public String getIsModifyLnglat() {
+		return isModifyLnglat;
+	}
+
+	public void setIsModifyLnglat(String isModifyLnglat) {
+		this.isModifyLnglat = isModifyLnglat;
+	}
 
 	public StationTransInfoTypeEnum getType() {
 		return type;
