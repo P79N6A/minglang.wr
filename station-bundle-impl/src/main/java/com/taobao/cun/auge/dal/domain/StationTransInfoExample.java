@@ -1514,6 +1514,76 @@ public class StationTransInfoExample {
             addCriterion("trans_date not between", value1, value2, "transDate");
             return (Criteria) this;
         }
+
+        public Criteria andIsModifyLnglatIsNull() {
+            addCriterion("is_modify_lnglat is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatIsNotNull() {
+            addCriterion("is_modify_lnglat is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatEqualTo(String value) {
+            addCriterion("is_modify_lnglat =", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatNotEqualTo(String value) {
+            addCriterion("is_modify_lnglat <>", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatGreaterThan(String value) {
+            addCriterion("is_modify_lnglat >", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatGreaterThanOrEqualTo(String value) {
+            addCriterion("is_modify_lnglat >=", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatLessThan(String value) {
+            addCriterion("is_modify_lnglat <", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatLessThanOrEqualTo(String value) {
+            addCriterion("is_modify_lnglat <=", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatLike(String value) {
+            addCriterion("is_modify_lnglat like", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatNotLike(String value) {
+            addCriterion("is_modify_lnglat not like", value, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatIn(List<String> values) {
+            addCriterion("is_modify_lnglat in", values, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatNotIn(List<String> values) {
+            addCriterion("is_modify_lnglat not in", values, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatBetween(String value1, String value2) {
+            addCriterion("is_modify_lnglat between", value1, value2, "isModifyLnglat");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsModifyLnglatNotBetween(String value1, String value2) {
+            addCriterion("is_modify_lnglat not between", value1, value2, "isModifyLnglat");
+            return (Criteria) this;
+        }
     }
 
     /**

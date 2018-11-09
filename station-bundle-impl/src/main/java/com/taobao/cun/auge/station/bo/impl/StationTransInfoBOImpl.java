@@ -67,6 +67,7 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 		i.setType(dto.getType());
 		i.setFromBizType(dto.getFromBizType());
 		i.setTransDate(dto.getTransDate());
+		i.setIsModifyLnglat(dto.getIsModifyLnglat());
 		return i;
 	}
 	
@@ -91,6 +92,7 @@ public class StationTransInfoBOImpl implements StationTransInfoBO {
 		i.setToBizType(info.getToBizType());
 		i.setType(info.getType());
 		i.setFromBizType(info.getFromBizType());
+		i.setIsModifyLnglat(info.getIsModifyLnglat());
 		return i;
 	}
 

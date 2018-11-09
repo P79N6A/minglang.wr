@@ -2346,7 +2346,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		StationTransInfoDto trDto = new StationTransInfoDto();
 		trDto.setFromBizType(transDto.getType().getFromBizType().getCode());
 		trDto.setToBizType(transDto.getType().getToBizType().getCode());
-		trDto.setOldBizDate(rel.getOpenDate());
+		trDto.setOldOpenDate(rel.getOpenDate());
 		trDto.setOperator(transDto.getOperator());
 		trDto.setOperateTime(new Date());
 		trDto.setOperatorType(transDto.getOperatorType().getCode());

@@ -26,6 +26,7 @@
     <result column="is_latest" jdbcType="CHAR" property="isLatest" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="trans_date" jdbcType="TIMESTAMP" property="transDate" />
+    <result column="is_modify_lnglat" jdbcType="CHAR" property="isModifyLnglat" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -100,7 +101,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, taobao_user_id, station_id, 
     operate_time, operator, operator_type, type, status, from_biz_type, to_biz_type, 
-    old_open_date, new_open_date, is_latest, remark, trans_date
+    old_open_date, new_open_date, is_latest, remark, trans_date, is_modify_lnglat
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationTransInfoExample" resultMap="BaseResultMap">
     <!--
@@ -163,14 +164,14 @@
       operator_type, type, status, 
       from_biz_type, to_biz_type, old_open_date, 
       new_open_date, is_latest, remark, 
-      trans_date)
+      trans_date, is_modify_lnglat)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{taobaoUserId,jdbcType=VARCHAR}, 
       #{stationId,jdbcType=BIGINT}, #{operateTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=VARCHAR}, 
       #{operatorType,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
       #{fromBizType,jdbcType=VARCHAR}, #{toBizType,jdbcType=VARCHAR}, #{oldOpenDate,jdbcType=TIMESTAMP}, 
       #{newOpenDate,jdbcType=TIMESTAMP}, #{isLatest,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{transDate,jdbcType=TIMESTAMP})
+      #{transDate,jdbcType=TIMESTAMP}, #{isModifyLnglat,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.StationTransInfo">
     <!--
@@ -239,6 +240,9 @@
       <if test="transDate != null">
         trans_date,
       </if>
+      <if test="isModifyLnglat != null">
+        is_modify_lnglat,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -297,6 +301,9 @@
       </if>
       <if test="transDate != null">
         #{transDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isModifyLnglat != null">
+        #{isModifyLnglat,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -367,6 +374,9 @@
       <if test="record.transDate != null">
         trans_date = #{record.transDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.isModifyLnglat != null">
+        is_modify_lnglat = #{record.isModifyLnglat,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -397,7 +407,8 @@
       new_open_date = #{record.newOpenDate,jdbcType=TIMESTAMP},
       is_latest = #{record.isLatest,jdbcType=CHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
-      trans_date = #{record.transDate,jdbcType=TIMESTAMP}
+      trans_date = #{record.transDate,jdbcType=TIMESTAMP},
+      is_modify_lnglat = #{record.isModifyLnglat,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -466,6 +477,9 @@
       <if test="transDate != null">
         trans_date = #{transDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="isModifyLnglat != null">
+        is_modify_lnglat = #{isModifyLnglat,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -493,7 +507,8 @@
       new_open_date = #{newOpenDate,jdbcType=TIMESTAMP},
       is_latest = #{isLatest,jdbcType=CHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      trans_date = #{transDate,jdbcType=TIMESTAMP}
+      trans_date = #{transDate,jdbcType=TIMESTAMP},
+      is_modify_lnglat = #{isModifyLnglat,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

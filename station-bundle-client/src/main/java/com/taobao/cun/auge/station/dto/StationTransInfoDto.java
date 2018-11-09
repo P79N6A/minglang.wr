@@ -77,7 +77,20 @@ public class StationTransInfoDto  implements Serializable{
 	 * com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 	 */
 	private String operatorType;
+	/**
+	 * 是否更改经纬度
+	 */
+	private String isModifyLnglat;
+	
     
+	public String getIsModifyLnglat() {
+		return isModifyLnglat;
+	}
+
+	public void setIsModifyLnglat(String isModifyLnglat) {
+		this.isModifyLnglat = isModifyLnglat;
+	}
+
 	public String getOperator() {
 		return operator;
 	}
