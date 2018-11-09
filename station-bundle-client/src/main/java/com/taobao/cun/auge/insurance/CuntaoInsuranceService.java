@@ -2,6 +2,9 @@ package com.taobao.cun.auge.insurance;
 
 import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
 import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
+import com.taobao.mtop.common.Result;
+
+import java.util.Map;
 
 public interface CuntaoInsuranceService {
 
@@ -34,5 +37,13 @@ public interface CuntaoInsuranceService {
 	 * @return
 	 */
 	Integer hasReInsurance(Long taobaoUserId);
+
+	/**
+	 * 包装了是否买过保险接口和是否续建接口
+	 * 供无线端调用
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Result<Map<String,Object>> hasInsuranceForMobile(Long taobaoUserId);
 
 }
