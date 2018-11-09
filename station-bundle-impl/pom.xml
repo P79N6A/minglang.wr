@@ -155,10 +155,6 @@
 					<artifactId>mtop-core-domain</artifactId>
 					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>mtop-common-service</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -209,10 +205,6 @@
 				</exclusion>
 				<exclusion>
 					<artifactId>mtop-core-domain</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mtop-common-service</artifactId>
 					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
 			</exclusions>
