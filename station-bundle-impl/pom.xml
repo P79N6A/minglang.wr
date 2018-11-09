@@ -572,10 +572,6 @@
 			<groupId>com.taobao.wireless.mtop</groupId>
 			<artifactId>mtop-pandora-hsf-agent</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.taobao.wireless</groupId>
-			<artifactId>mtop-common-service</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

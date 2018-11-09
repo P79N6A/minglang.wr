@@ -26,7 +26,6 @@ import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.mtop.common.Result;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
@@ -224,23 +223,44 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
      */
     @Override
     public  Integer hasReInsurance(Long taobaoUserId) {
-       /* if (SWHITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
+        if (SWHITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             return 0;
-        }*/
+        }
         try {
             Integer identity = partnerTagService.getPartnerType(taobaoUserId);
             // 如果是合伙人要判断是否买过保险，淘帮手是不用强制买保险
             if (identity != null && identity == 1) {
-                    Date nowTime = new Date();
-                    // 查询老平台保险数据
-                    AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(String.valueOf(taobaoUserId),SP_TYPE, SP_NO);
-                    // 查询新平台的保险数据
-                    Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-                    InsPolicySearchResult searchResult = null;
-                    if(partner != null){
-                        //查询未生效或在保障中的保单
-                        searchResult  = queryInsuranceFromAlipay(partner.getIdenNum(),Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+                Date nowTime = new Date();
+                // 查询新平台的保险数据
+                Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+                InsPolicySearchResult searchResult = null;
+                if(partner != null){
+                    //查询未生效或在保障中的保单
+                    searchResult  = queryInsuranceFromAlipay(partner.getIdenNum(),Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+                }
+                //1.新平台数据判断
+                if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
+                    for (InsPolicy policy : searchResult.getPolicys()) {
+                        int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
+                        if (nowTime.after(policy.getEffectStartTime())
+                                && nowTime.before(policy.getEffectEndTime())
+                                && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                        ){
+                            // 已经续保了不用提醒
+                            for(InsPolicy py : searchResult.getPolicys()){
+                                if(py.getEffectStartTime().after(policy.getEffectEndTime())){
+                                    return 0;
+                                }
+                            }
+                            // 续保30天内提醒
+                            return durDate;
+                        }
                     }
+                    return 0;
+                }
+
+                // 2.查询老平台保险数据
+                AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(String.valueOf(taobaoUserId),SP_TYPE, SP_NO);
                     if (insure.isSuccess() && insure.getModel() != null&& insure.getModel().size() > 0) {
                         for (InsPolicyDTO policy : insure.getModel()) {
                             int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
@@ -254,7 +274,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
                                         return 0;
                                     }
                                 }
-                                //2.老、新台数据结合判断 已经续保了不用提醒
+                                //3.老、新台数据结合判断 已经续保了不用提醒
                                 if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
                                     for(InsPolicy newPy : searchResult.getPolicys()){
                                         if(newPy.getEffectStartTime().after(policy.getEffectEndTime())){
@@ -267,25 +287,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
                             }
                         }
                     }
-                    //3.新平台数据单独判断
-                    if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
-                        for (InsPolicy policy : searchResult.getPolicys()) {
-                            int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
-                            if (nowTime.after(policy.getEffectStartTime())
-                                    && nowTime.before(policy.getEffectEndTime())
-                                    && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
-                            ){
-                                // 已经续保了不用提醒
-                                for(InsPolicy py : searchResult.getPolicys()){
-                                    if(py.getEffectStartTime().after(policy.getEffectEndTime())){
-                                        return 0;
-                                    }
-                                }
-                                // 续保30天内提醒
-                                return durDate;
-                            }
-                        }
-                    }
+
                 }
         } catch (Exception e) {
             logger.error("isInsure get error,taobaoUserId = {}",taobaoUserId,e);
@@ -296,8 +298,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
 
 
     @Override
-    public Result<Map<String,Object>> hasInsuranceForMobile(Long taobaoUserId) {
-        Result<Map<String, Object>> result = new Result<>();
+    public Map<String,Object> hasInsuranceForMobile(Long taobaoUserId) {
         Map<String,Object> resultMap  = new HashMap<String,Object>();
         //查询当前有无买过保险
         Boolean hasInsurance = hasInsurance(taobaoUserId);
@@ -305,9 +306,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         Integer effectiveDay = hasReInsurance(taobaoUserId);
         resultMap.put("hasInsurance",hasInsurance);
         resultMap.put("effectiveDay",effectiveDay);
-        result.setSuccess(true);
-        result.setModel(resultMap);
-        return result;
+        return resultMap;
     }
 
 

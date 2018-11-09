@@ -44,6 +44,6 @@ public interface CuntaoInsuranceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<Map<String,Object>> hasInsuranceForMobile(Long taobaoUserId);
+	Map<String,Object> hasInsuranceForMobile(Long taobaoUserId);
 
 }
