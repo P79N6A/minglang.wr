@@ -144,8 +144,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         }
         try {
             Integer identity = partnerTagService.getPartnerType(taobaoUserId);
-            if(null != identity && identity != 1){
-                //如果是合伙人要判断是否买过保险，淘帮手是不用强制买保险
+            if(null == identity || identity != 1){
+                //只有合伙人才强制买保险
                 return true;
             }
             Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
@@ -164,7 +164,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
             }
         } catch (Exception e) {
             logger.error("hasInsurance method execute error ,{taobaoUserId} = {}" ,taobaoUserId,e);
-            return false;
+           //异常按购买保险处理
+            return true;
         }
         return false;
     }
@@ -286,11 +287,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
                                 return durDate;
                             }
                         }
+                        return 0;
                     }
 
                 }
         } catch (Exception e) {
             logger.error("isInsure get error,taobaoUserId = {}",taobaoUserId,e);
+            //异常按有效期大于30天处理
             return 0;
         }
 		return 0;
@@ -300,14 +303,96 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     @Override
     public Map<String,Object> hasInsuranceForMobile(Long taobaoUserId) {
         Map<String,Object> resultMap  = new HashMap<String,Object>();
-        //查询当前有无买过保险
-        Boolean hasInsurance = hasInsurance(taobaoUserId);
-        //查询是否需要续签,即保险剩余的有效天数
-        Integer effectiveDay = hasReInsurance(taobaoUserId);
-        resultMap.put("hasInsurance",hasInsurance);
-        resultMap.put("effectiveDay",effectiveDay);
+        if (SWHITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
+            resultMap.put("hasInsurance",true);
+            resultMap.put("effectiveDay",0);
+            return resultMap;
+        }
+        Integer identity = partnerTagService.getPartnerType(taobaoUserId);
+        if(null == identity || identity != 1){
+            //只有合伙人才强制买保险
+            resultMap.put("hasInsurance",true);
+            resultMap.put("effectiveDay",0);
+            return resultMap;
+
+        }
+        // 查询新平台的保险数据
+        Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+        if(partner == null || StringUtils.isBlank(partner.getIdenNum())){
+            resultMap.put("hasInsurance",false);
+            return resultMap;
+
+        }
+        //查询未生效或在保障中的保单
+        InsPolicySearchResult searchResult  = queryInsuranceFromAlipay(partner.getIdenNum(),Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+
+        resultMap.put("hasInsurance",false);
+        if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
+            for(InsPolicy insPolicy : searchResult.getPolicys()){
+                if("GUARANTEE".equals(insPolicy.getPolicyStatus())){
+                    resultMap.put("hasInsurance",true);
+                }
+            }
+        }
+        if(queryInsuranceFromOldPlatform(partner.getIdenNum())){
+            resultMap.put("hasInsurance",true);
+        }
+        Date nowTime = new Date();
+        //1.新平台数据判断
+        if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
+            for (InsPolicy policy : searchResult.getPolicys()) {
+                int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
+                if (nowTime.after(policy.getEffectStartTime())
+                        && nowTime.before(policy.getEffectEndTime())
+                        && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                ){
+                    // 已经续保了不用提醒
+                    for(InsPolicy py : searchResult.getPolicys()){
+                        if(py.getEffectStartTime().after(policy.getEffectEndTime())){
+                            resultMap.put("effectiveDay",0);
+                            return resultMap;
+                        }
+                    }
+                    // 续保30天内提醒
+                    resultMap.put("effectiveDay",durDate);
+                    return resultMap;
+                }
+            }
+        }
+
+        // 2.查询老平台保险数据
+        AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(String.valueOf(taobaoUserId),SP_TYPE, SP_NO);
+        if (insure.isSuccess() && insure.getModel() != null&& insure.getModel().size() > 0) {
+            for (InsPolicyDTO policy : insure.getModel()) {
+                int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
+                if (nowTime.after(policy.getEffectStartTime())
+                        && nowTime.before(policy.getEffectEndTime())
+                        && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                ){
+                    //1.老平台数据单独判断 已经续保了不用提醒
+                    for(InsPolicyDTO oldPy : insure.getModel()){
+                        if(oldPy.getEffectStartTime().after(policy.getEffectEndTime())){
+                            resultMap.put("effectiveDay",0);
+                            return resultMap;
+                        }
+                    }
+                    //3.老、新台数据结合判断 已经续保了不用提醒
+                    if(searchResult!=null&&searchResult.isSuccess()&&searchResult.getTotal()>0){
+                        for(InsPolicy newPy : searchResult.getPolicys()){
+                            if(newPy.getEffectStartTime().after(policy.getEffectEndTime())){
+                                resultMap.put("effectiveDay",0);
+                                return resultMap;
+                            }
+                        }
+                    }
+                    // 续保30天内提醒
+                    resultMap.put("effectiveDay",durDate);
+                    return resultMap;
+                }
+            }
+        }
+        resultMap.put("effectiveDay",0);
         return resultMap;
     }
-
 
 }
