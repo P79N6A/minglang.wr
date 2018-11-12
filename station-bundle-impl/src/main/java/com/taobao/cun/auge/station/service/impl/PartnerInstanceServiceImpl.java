@@ -2343,7 +2343,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
 		//保存转型信息
-		saveTransInfo(transDto, rel);
+		saveTransInfo(transDto, rel,station.getApplyOrg());
 		//同步菜鸟
 	    generalTaskSubmitService.submitUpdateCainiaoStation(transDto.getInstanceId(), transDto.getOperator());
 	    //更新实例为待转型
@@ -2361,7 +2361,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 
-	private void saveTransInfo(PartnerInstanceTransDto transDto, PartnerStationRel rel) {
+	private void saveTransInfo(PartnerInstanceTransDto transDto, PartnerStationRel rel,Long orgId) {
 		StationTransInfoDto trDto = new StationTransInfoDto();
 		trDto.setFromBizType(transDto.getType().getFromBizType().getCode());
 		trDto.setToBizType(transDto.getType().getToBizType().getCode());
@@ -2376,6 +2376,25 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		trDto.setType(transDto.getType().getType().name());
 		trDto.setIsModifyLnglat(transDto.getIsModifyLnglat());
 		stationTransInfoBO.addTransInfo(trDto);
+		if ("y".equals(transDto.getIsModifyLnglat())) {
+			if (OperatorTypeEnum.BUC.getCode().equals(transDto.getOperatorType().getCode())) {
+				 try {
+					 EnhancedUser  enhancedUser = enhancedUserQueryService.getUser(transDto.getOperator());
+					  
+		             CuntaoUserRole role = new CuntaoUserRole();
+		             role.setCreator(transDto.getOperator());
+		             role.setModifier(transDto.getOperator());
+		             role.setOrgId(orgId);
+		             role.setEndTime(DateUtil.addDays(new Date(), 7));
+		             role.setRoleName("LNG_LAT_MANAGER");
+		             role.setUserId(transDto.getOperator());
+		             role.setUserName(enhancedUser.getLastName());
+		             cuntaoUserRoleService.addCunUserRole(role);
+		         } catch (BucException e) {
+		             logger.error("Query user failed, user id : " +transDto.getOperator(),e);
+		         }
+			}
+		}
 	}
 	
 
