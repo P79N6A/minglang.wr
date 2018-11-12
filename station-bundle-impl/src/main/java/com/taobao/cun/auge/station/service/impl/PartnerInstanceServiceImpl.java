@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -2401,44 +2402,44 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean freezeBondForTrans(FreezeBondDto freezeBondDto) {
-		  ValidateUtils.validateParam(freezeBondDto);
-        Long taobaoUserId = freezeBondDto.getTaobaoUserId();
-        String accountNo = freezeBondDto.getAccountNo();
-        String alipayAccount = freezeBondDto.getAlipayAccount();
-        //补缴最后都得补缴到基础保证金金额，不由外部透传
-        Double money = frozenMoneyConfig.getTPFrozenMoneyAmount();
-
-        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-        
-        if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
-            AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-                    AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-            if  (bondMoney == null || !PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
-                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"数据异常，不能操作");
+		ValidateUtils.validateParam(freezeBondDto);
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(freezeBondDto.getTaobaoUserId());
+        StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+        if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
+            PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus()) && null != lastTransInfo) {
+            //目前优品转电器合作店不需要补交保证金
+            if (!StationTransInfoTypeEnum.YOUPIN_TO_YOUPIN_ELEC.getType().name().equals(lastTransInfo.getType())) {
+                //修改保证金冻结状态
+                updateFrozenMoney(freezeBondDto, instance.getId());
             }
-            String operator = String.valueOf(taobaoUserId);
-
-            // 修改保证金冻结状态
-            AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
-            accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
-            accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
-            accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
-            accountMoneyUpdateDto.setFrozenTime(new Date());
-            accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
-            accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
-            accountMoneyUpdateDto.setAccountNo(accountNo);
-            accountMoneyUpdateDto.setOperator(operator);
-            accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
-            accountMoneyUpdateDto.setMoney(BigDecimal.valueOf(money));
-            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
-            
         	PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instance.getId());
         	partnerInstanceDto.copyOperatorDto(freezeBondDto);
-        	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.DECORATING_EVENT);
-    		stateMachineService.executePhase(phaseEvent);
+            //进入装修中
+            stateMachineService.executePhase(LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.DECORATING_EVENT));
         }
         return true;
 	}
+
+    private void updateFrozenMoney(FreezeBondDto freezeBondDto, Long instanceId) {
+        AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+            AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+        if  (bondMoney == null) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"数据异常，不能操作");
+        }
+        AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+        accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
+        accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+        accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
+        accountMoneyUpdateDto.setFrozenTime(new Date());
+        accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+        accountMoneyUpdateDto.setAlipayAccount(freezeBondDto.getAlipayAccount());
+        accountMoneyUpdateDto.setAccountNo(freezeBondDto.getAccountNo());
+        accountMoneyUpdateDto.setOperator(String.valueOf(freezeBondDto.getTaobaoUserId()));
+        accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
+        //补缴最后都得补缴到基础保证金金额，不由外部透传
+        accountMoneyUpdateDto.setMoney(BigDecimal.valueOf(frozenMoneyConfig.getTPFrozenMoneyAmount()));
+        accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+    }
 
 
 	@Override
