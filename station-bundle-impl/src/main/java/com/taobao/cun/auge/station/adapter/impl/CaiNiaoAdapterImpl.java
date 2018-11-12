@@ -72,10 +72,11 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
     AppResourceService appResourceService;
 	
 	private void checkCainiaoSwitch() {
-		String s=appResourceService.queryAppResourceValue("cainiao_switch", "cainiao_switch");
-		if ("y".equals(s)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"shuang11 fengwang!");
-		}
+		
+//		String s=appResourceService.queryAppResourceValue("cainiao_switch", "cainiao_switch");
+//		if ("y".equals(s)) {
+//			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"shuang11 fengwang!");
+//		}
 	}
 	@Override
 	public Long addCounty(CaiNiaoStationDto station)  {
