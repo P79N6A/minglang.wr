@@ -311,7 +311,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	@Override
 	public boolean modifyStation(CaiNiaoStationDto station)  {
-		checkCainiaoSwitch();
+		//checkCainiaoSwitch();
 		
 		if (station == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,getErrorMessage("modifyStation", "","station is null"));
