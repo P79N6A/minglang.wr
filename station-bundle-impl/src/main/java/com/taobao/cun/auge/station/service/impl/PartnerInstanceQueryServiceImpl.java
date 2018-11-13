@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -21,7 +25,6 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
-import com.taobao.cun.auge.client.operator.DefaultOperatorEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
@@ -40,12 +43,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
-import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.sop.inspection.dto.InspectionInsPageCondition;
-import com.taobao.cun.auge.sop.inspection.dto.InspectionInsPageDto;
-import com.taobao.cun.auge.sop.inspection.enums.InspectionStateEnum;
-import com.taobao.cun.auge.sop.inspection.service.InspectionService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
@@ -105,7 +103,6 @@ import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
@@ -114,7 +111,6 @@ import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
-import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -169,9 +165,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     PartnerInstanceLevelDataQueryService partnerInstanceLevelDataQueryService;
 
     @Autowired
-    PartnerInstanceHandler partnerInstanceHandler;
-
-    @Autowired
     CountyStationBO countyStationBO;
 
     @Autowired
@@ -192,13 +185,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     private FrozenMoneyAmountConfig frozenMoneyConfig;
 
     @Autowired
-    private PartnerStationRelMapper partnerStationRelMapper;
-
-    @Autowired
-    private UserTagService userTagService;
-
-    @Autowired
-    private InspectionService inspectionService;
+    private StationTransInfoBO stationTransInfoBO;
 
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -964,6 +951,17 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             }
         } else if ("TPS".equals(rel.getType())) {
             return StationBizTypeEnum.TPS_ELEC;
+        }
+        return null;
+    }
+
+    @Override
+    public StationTransInfoTypeEnum getWaitConfirmTransInfoTypeByTaobaoUserId(Long taobaoUserId) {
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (instance != null && PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
+            PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
+            StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+            return StationTransInfoTypeEnum.getTransInfoTypeEnumByCode(lastTransInfo.getType());
         }
         return null;
     }

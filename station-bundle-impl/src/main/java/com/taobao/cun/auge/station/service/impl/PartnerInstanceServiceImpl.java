@@ -2489,7 +2489,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Override
     public boolean freezeBondForTrans(FreezeBondDto freezeBondDto) {
-        ValidateUtils.validateParam(freezeBondDto);
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(freezeBondDto.getTaobaoUserId());
         StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&

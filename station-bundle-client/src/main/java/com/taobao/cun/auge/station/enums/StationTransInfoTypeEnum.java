@@ -135,6 +135,10 @@ public class StationTransInfoTypeEnum implements Serializable {
 		return MAPPINGS.get(type);
 	}
 
+	public static StationTransInfoTypeEnum getTransInfoTypeEnumByCode(String code) {
+		return MAPPINGS.get(TypeEnum.valueOf(code));
+	}
+
 	public StationTransInfoTypeEnum() {
 
 	}
