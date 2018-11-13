@@ -44,7 +44,7 @@ JAVA_OPTS="-server"
 
 # use memory based on the available resources in the machine
 let memTotal=`cat /proc/meminfo | grep MemTotal | awk '{printf "%d", $2/1024*0.75 }'`
-if [ $memTotal -gt 6000 ]; then
+if [ $memTotal -ge 6000 ]; then
     JAVA_OPTS="${JAVA_OPTS} -Xms4g -Xmx4g"
     JAVA_OPTS="${JAVA_OPTS} -Xmn2g"
 else
