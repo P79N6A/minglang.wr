@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.taobao.cun.auge.dal.domain.StationTransInfo;
+import com.taobao.cun.auge.trans.StationTransResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -2489,6 +2490,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Override
     public boolean freezeBondForTrans(FreezeBondDto freezeBondDto) {
+        ValidateUtils.validateParam(freezeBondDto);
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(freezeBondDto.getTaobaoUserId());
         StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
@@ -2670,5 +2672,35 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             result.addErrorInfo(errorInfo);
         }
         return result;
+    }
+
+    @Override
+    public StationTransResponse confirmTrans(Long taobaoUserId) {
+        StationTransResponse response = new StationTransResponse();
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+        if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
+            PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())
+            && null != lastTransInfo) {
+            PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instance.getId());
+            partnerInstanceDto.setOperator(String.valueOf(taobaoUserId));
+            partnerInstanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
+            //进入装修中
+            try{
+                stateMachineService.executePhase(
+                    LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT));
+                response.setSuccessful(true);
+            } catch (AugeBusinessException e) {
+                response.setSuccessful(false);
+                response.setErrorMessage(e.getMessage());
+            } catch(Exception e) {
+                response.setSuccessful(false);
+                response.setErrorMessage("确认失败,请联系县小二");
+            }
+        } else {
+            response.setSuccessful(false);
+            response.setErrorMessage("确认失败,请联系县小二");
+        }
+        return response;
     }
 }
