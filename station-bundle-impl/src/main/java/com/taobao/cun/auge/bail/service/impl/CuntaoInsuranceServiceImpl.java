@@ -151,7 +151,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         }
         try {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-            if (partnerInstance != null && PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType())) {
+            if (partnerInstance != null && PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
                 Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
                 if (null == partner || StringUtils.isEmpty(partner.getIdenNum())) {
                     return false;
@@ -238,7 +238,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         }
         try {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-            if (partnerInstance != null && PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType())) {
+            if (partnerInstance != null && PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
                 Date nowTime = new Date();
                 // 查询新平台的保险数据
                 Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
@@ -311,7 +311,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Override
     public Map<String, Object> hasInsuranceForMobile(Long taobaoUserId) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<>(2);
         if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
             resultMap.put("hasInsurance", true);
             resultMap.put("effectiveDay", 0);

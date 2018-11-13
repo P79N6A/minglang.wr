@@ -64,6 +64,10 @@ public class PartnerInstanceTypeEnum implements Serializable {
 		this.type = type;
 	}
 
+	public static boolean isTpOrTps(String code) {
+		return TP.code.equals(code) || TPS.code.equals(code);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
