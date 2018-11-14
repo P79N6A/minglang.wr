@@ -37,10 +37,13 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 @Service("cuntaoInsuranceService")
 @HSFProvider(serviceInterface = CuntaoInsuranceService.class)
+@RefreshScope
 public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     /**
@@ -69,6 +72,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     private final static String WHITELIST_DATAID = "insurance";
 
     private final static String SWITCH_OFF = "false";
+
+    @Value("${insurance.expired.day}")
+    private Integer insuranceExpiredDay;
 
     @Autowired
     private PartnerTagService partnerTagService;
@@ -254,7 +260,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                         int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
                         if (nowTime.after(policy.getEffectStartTime())
                             && nowTime.before(policy.getEffectEndTime())
-                            && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                            && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
                             ) {
                             // 已经续保了不用提醒
                             for (InsPolicy py : searchResult.getPolicys()) {
@@ -262,7 +268,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                                     return 0;
                                 }
                             }
-                            // 续保30天内提醒
+                            // 续保insuranceExpiredDay天内提醒
                             return durDate;
                         }
                     }
@@ -277,7 +283,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                         int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
                         if (nowTime.after(policy.getEffectStartTime())
                             && nowTime.before(policy.getEffectEndTime())
-                            && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                            && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
                             ) {
                             //1.老平台数据单独判断 已经续保了不用提醒
                             for (InsPolicyDTO oldPy : insure.getModel()) {
@@ -293,7 +299,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                                     }
                                 }
                             }
-                            // 续保30天内提醒
+                            // 续保insuranceExpiredDay天内提醒
                             return durDate;
                         }
                     }
@@ -303,7 +309,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             }
         } catch (Exception e) {
             logger.error("isInsure get error,taobaoUserId = {}", taobaoUserId, e);
-            //异常按有效期大于30天处理
+            //异常按有效期大于insuranceExpiredDay天处理
             return 0;
         }
         return 0;
@@ -317,13 +323,12 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             resultMap.put("effectiveDay", 0);
             return resultMap;
         }
-        Integer identity = partnerTagService.getPartnerType(taobaoUserId);
-        if (null == identity || identity != 1) {
-            //只有合伙人才强制买保险
+        PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if(partnerInstance == null && !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
+            //只有合伙人和淘帮手才强制买保险
             resultMap.put("hasInsurance", true);
             resultMap.put("effectiveDay", 0);
             return resultMap;
-
         }
         // 查询新平台的保险数据
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
@@ -354,7 +359,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
                 if (nowTime.after(policy.getEffectStartTime())
                     && nowTime.before(policy.getEffectEndTime())
-                    && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                    && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
                     ) {
                     // 已经续保了不用提醒
                     for (InsPolicy py : searchResult.getPolicys()) {
@@ -363,7 +368,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                             return resultMap;
                         }
                     }
-                    // 续保30天内提醒
+                    // 续保insuranceExpiredDay天内提醒
                     resultMap.put("effectiveDay", durDate);
                     return resultMap;
                 }
@@ -378,7 +383,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
                 if (nowTime.after(policy.getEffectStartTime())
                     && nowTime.before(policy.getEffectEndTime())
-                    && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
+                    && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
                     ) {
                     //1.老平台数据单独判断 已经续保了不用提醒
                     for (InsPolicyDTO oldPy : insure.getModel()) {
@@ -396,7 +401,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                             }
                         }
                     }
-                    // 续保30天内提醒
+                    // 续保insuranceExpiredDay天内提醒
                     resultMap.put("effectiveDay", durDate);
                     return resultMap;
                 }
