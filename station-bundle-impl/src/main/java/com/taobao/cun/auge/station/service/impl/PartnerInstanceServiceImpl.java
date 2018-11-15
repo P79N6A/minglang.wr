@@ -2407,6 +2407,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if (rel == null) {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "rel is null");
         }
+        if (PartnerInstanceTransStatusEnum.TRANS_ING.getCode().equals(rel.getTransStatus())) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "您目前已处于转型中,请勿重复提交");
+        }
         //转型规则校验
         StationTransCheckerUtil.check(transDto);
         Station station = stationBO.getStationById(rel.getStationId());
@@ -2417,11 +2420,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if (transDto.getStationDto().getAddress().getAddressDetail() != null) {
             address.setAddressDetail(transDto.getStationDto().getAddress().getAddressDetail());
         }
-        //		if (transDto.getStationDto().getAddress().getVillage() != null && transDto.getStationDto().getAddress
-        // ().getVillageDetail() != null) {
-        //			address.setVillage(transDto.getStationDto().getAddress().getVillage());
-        //			address.setVillageDetail(transDto.getStationDto().getAddress().getVillageDetail());
-        //		}
         stationDto.setAddress(address);
         if (!StationTransInfoTypeEnum.YOUPIN_TO_YOUPIN_ELEC.getType().name().equals(
             transDto.getType().getType().name())) {
@@ -2681,7 +2679,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
             PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())
-            && null != lastTransInfo) {
+            && null != lastTransInfo && PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(lastTransInfo.getStatus())) {
             PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instance.getId());
             partnerInstanceDto.setOperator(String.valueOf(taobaoUserId));
             partnerInstanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
