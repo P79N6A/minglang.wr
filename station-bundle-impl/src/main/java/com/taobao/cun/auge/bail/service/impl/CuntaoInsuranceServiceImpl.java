@@ -121,6 +121,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(qualification.getTaobaoUserId());
         if (partner != null) {
             infoDto.setMobile(partner.getMobile());
+            infoDto.setIdenCard(partner.getIdenNum());
         }
         return infoDto;
     }

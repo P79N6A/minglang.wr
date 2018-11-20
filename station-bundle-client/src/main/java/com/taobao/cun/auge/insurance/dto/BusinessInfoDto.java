@@ -40,6 +40,11 @@ public class BusinessInfoDto implements Serializable {
     private String idenNum;
 
     /**
+     * 法人身份证号
+     */
+    private String idenCard;
+
+    /**
      * 商家（企业）法定代表人名称
      */
     private String legalPerson;
@@ -90,6 +95,14 @@ public class BusinessInfoDto implements Serializable {
 
     public void setIdenNum(String idenNum) {
         this.idenNum = idenNum;
+    }
+
+    public String getIdenCard() {
+        return idenCard;
+    }
+
+    public void setIdenCard(String idenCard) {
+        this.idenCard = idenCard;
     }
 
     public String getLegalPerson() {
