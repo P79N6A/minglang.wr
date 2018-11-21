@@ -137,7 +137,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
             //如果转型状态为转型中，更新为已转型
             if(PartnerInstanceTransStatusEnum.TRANS_ING.equals(partnerInstanceDto.getTransStatusEnum())) {
             	 partnerInstanceBO.updateTransStatusByInstanceId(partnerInstanceDto.getId(), PartnerInstanceTransStatusEnum.TRANS_DONE, partnerInstanceDto.getOperator());
-            	 stationTransInfoBO.finishTrans(partnerInstanceDto.getStationDto().getId(), partnerInstanceDto.getOpenDate(), partnerInstanceDto.getOperator());
+            	 stationTransInfoBO.finishTrans(partnerInstanceDto.getStationId(), partnerInstanceDto.getOpenDate(), partnerInstanceDto.getOperator());
             }
            
         }
