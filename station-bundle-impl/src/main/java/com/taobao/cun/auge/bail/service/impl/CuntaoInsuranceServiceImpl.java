@@ -217,8 +217,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insQueryPerson.setType("1");
         //证件号码
         insQueryPerson.setCertNo(idenNum);
-        //证件类型，线下10:身份证 线上100:身份证
-        insQueryPerson.setCertType("10");
+        //证件类型，100:身份证
+        insQueryPerson.setCertType("100");
         insRequest.setPerson(insQueryPerson);
         //产品列表集合村淘合伙人意外险:4025
         insRequest.setProductList(Lists.newArrayList(PAI_NO));
