@@ -39,11 +39,13 @@ public interface CuntaoInsuranceService {
 	Integer hasReInsurance(Long taobaoUserId);
 
 	/**
-	 * 包装了是否买过保险接口和是否续建接口
-	 * 供无线端调用
+	 * 返回保险有效天数，与无线端约定
+	 * 0 ：表示未购买保险
+	 * 0-提醒时间:表示购买过保险单有效期在提醒时间内
+	 * 365：购买过保险且有效期超过提醒时间
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Map<String,Object> hasInsuranceForMobile(Long taobaoUserId);
+	Integer hasInsuranceForMobile(Long taobaoUserId);
 
 }
