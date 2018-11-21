@@ -12,7 +12,6 @@ import com.alipay.insopenprod.common.service.facade.model.common.InsQueryPerson;
 import com.alipay.insopenprod.common.service.facade.model.request.scene.InsPolicySearchRequest;
 import com.alipay.insopenprod.common.service.facade.model.result.scene.InsPolicySearchResult;
 import com.google.common.collect.Lists;
-import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.DiamondHelper;
@@ -77,8 +76,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     private Integer insuranceExpiredDay;
 
     @Autowired
-    private PartnerTagService partnerTagService;
-    @Autowired
     private PolicyQueryService policyQueryService;
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -124,6 +121,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(qualification.getTaobaoUserId());
         if (partner != null) {
             infoDto.setMobile(partner.getMobile());
+            infoDto.setIdenCard(partner.getIdenNum());
         }
         return infoDto;
     }
