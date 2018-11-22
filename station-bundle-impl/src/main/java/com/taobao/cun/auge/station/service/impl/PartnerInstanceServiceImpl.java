@@ -2481,6 +2481,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     cuntaoUserRoleService.addCunUserRole(role);
                 } catch (BucException e) {
                     logger.error("Query user failed, user id : " + transDto.getOperator(), e);
+                }catch (Exception e1) {
+                    logger.error("Query user failed, user id : " + transDto.getOperator(), e1);
                 }
             }
         }
