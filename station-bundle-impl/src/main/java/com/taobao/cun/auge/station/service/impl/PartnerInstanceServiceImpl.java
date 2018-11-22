@@ -2409,8 +2409,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if (rel == null) {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "rel is null");
         }
-        if (PartnerInstanceTransStatusEnum.TRANS_ING.getCode().equals(rel.getTransStatus())) {
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "您目前已处于转型中,请勿重复提交");
+        if (!PartnerInstanceTransStatusEnum.canCommitTrans(rel.getTransStatus())) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "您目前已发起转型,请勿重复提交");
         }
         //转型规则校验
         StationTransCheckerUtil.check(transDto);
