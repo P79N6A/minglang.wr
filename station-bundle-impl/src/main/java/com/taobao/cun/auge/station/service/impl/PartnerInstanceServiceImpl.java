@@ -2379,6 +2379,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      * @param freezeBondDto
      * @return boolean
      */
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public boolean freezeRePublishBond(FreezeBondDto freezeBondDto) {
         ValidateUtils.validateParam(freezeBondDto);
@@ -2400,7 +2401,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         return true;
     }
-
+    
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void commitTrans(PartnerInstanceTransDto transDto) {
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(transDto.getInstanceId());
