@@ -17,12 +17,12 @@ public class StationClassEnum implements Serializable {
 	public static final StationClassEnum STATION_ELEC = new StationClassEnum("STATION_ELEC", "天猫优品服务站-电器");
 	public static final StationClassEnum STORE_ELEC = new StationClassEnum("STORE_ELEC", "天猫优品电器体验店");
 
-	public static final Map<String, StationClassEnum> mappings = new HashMap<String, StationClassEnum>();
+	public static final Map<String, StationClassEnum> MAPPINGS = new HashMap<String, StationClassEnum>();
 
 	static {
-		mappings.put("STATION_YP", STATION_YP);
-		mappings.put("STATION_ELEC", STATION_ELEC);
-		mappings.put("STORE_ELEC", STORE_ELEC);
+		MAPPINGS.put("STATION_YP", STATION_YP);
+		MAPPINGS.put("STATION_ELEC", STATION_ELEC);
+		MAPPINGS.put("STORE_ELEC", STORE_ELEC);
 	}
 
 	private String code;
@@ -73,7 +73,7 @@ public class StationClassEnum implements Serializable {
 		if (code == null) {
             return null;
         }
-		return mappings.get(code);
+		return MAPPINGS.get(code);
 	}
 
 	@SuppressWarnings("unused")

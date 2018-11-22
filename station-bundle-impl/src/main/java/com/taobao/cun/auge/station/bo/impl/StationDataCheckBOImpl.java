@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.buc.api.exception.BucException;
-import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.cainiao.cuntaonetwork.constants.station.StationStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.station.StationDTO;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
@@ -22,8 +20,6 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
-import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -33,16 +29,13 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
-import com.taobao.cun.auge.org.dto.CuntaoUserRole;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationDataCheckBO;
 import com.taobao.cun.auge.station.bo.StationTransInfoBO;
-import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.dto.StationTransInfoDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
@@ -68,7 +61,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	@Autowired
 	PartnerBO partnerBO;
 	@Autowired
-	PartnerStationRelMapper PartnerStationRelMapper;
+	PartnerStationRelMapper partnerStationRelMapper;
 	@Autowired
 	StationTransInfoBO stationTransInfoBO;
 
@@ -369,7 +362,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 		if (CollectionUtils.isNotEmpty(insIds)) {// 指定参数
 			PartnerStationRelExample example = new PartnerStationRelExample();
 			example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andIdIn(insIds);
-			relList = PartnerStationRelMapper.selectByExample(example);
+			relList = partnerStationRelMapper.selectByExample(example);
 			batchCheckTrans(relList);
 		} else {
 			PartnerStationRelExample example = new PartnerStationRelExample();
@@ -383,7 +376,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 			example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andStateIn(sList).andTypeEqualTo("TP")
 			.andTransStatusIn(tList);
 			example.setOrderByClause("id asc");
-			int count = PartnerStationRelMapper.countByExample(example);
+			int count = partnerStationRelMapper.countByExample(example);
 			logger.info("check trans begin,count={}", count);
 			int pageSize = 200;
 			int pageNum = 1;
@@ -392,7 +385,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 			while (pageNum <= total) {
 				logger.info("check-trans-doing {},{}", pageNum, pageSize);
 				PageHelper.startPage(pageNum, pageSize);
-				relList = PartnerStationRelMapper.selectByExample(example);
+				relList = partnerStationRelMapper.selectByExample(example);
 				batchCheckTrans(relList);
 				pageNum++;
 			}

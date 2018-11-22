@@ -17,7 +17,30 @@ public class StationTransInfoTypeEnum implements Serializable {
 	private StationBizTypeEnum toBizType;
 
 	public enum TypeEnum {
-		STATION_TO_YOUPIN, STATION_TO_YOUPIN_ELEC, STATION_TO_TPS_ELEC, YOUPIN_TO_YOUPIN_ELEC, YOUPIN_TO_TPS_ELEC, YOUPIN_ELEC_TO_TPS_ELEC
+		/**
+		 * 服务站转型天猫优品
+		 */
+		STATION_TO_YOUPIN, 
+		/**
+		 * 服务站转型电器合作店
+		 */
+		STATION_TO_YOUPIN_ELEC, 
+		/**
+		 * 服务站转型电器体验店
+		 */
+		STATION_TO_TPS_ELEC, 
+		/**
+		 * 天猫优品转型电器合作店
+		 */
+		YOUPIN_TO_YOUPIN_ELEC, 
+		/**
+		 * 天猫优品转型电器体验店
+		 */
+		YOUPIN_TO_TPS_ELEC, 
+		/**
+		 * 电器合作店转型电器体验店
+		 */
+		YOUPIN_ELEC_TO_TPS_ELEC
 	}
 
 	public static final StationTransInfoTypeEnum STATION_TO_YOUPIN = new StationTransInfoTypeEnum(
