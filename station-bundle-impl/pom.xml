@@ -479,6 +479,12 @@
 		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>ct-mdjxc-api.api</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>mtop-common-service</artifactId>
+					<groupId>com.taobao.wireless</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.common.division</groupId>
@@ -556,10 +562,10 @@
 			<groupId>com.alipay.insopenprod</groupId>
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.alibaba.boot</groupId>
-			<artifactId>mtop-spring-boot-starter</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.alibaba.boot</groupId>-->
+			<!--<artifactId>mtop-spring-boot-starter</artifactId>-->
+		<!--</dependency>-->
 		<!--<dependency>-->
 			<!--<groupId>com.taobao.wireless.mtop</groupId>-->
 			<!--<artifactId>mtop-pandora-hsf-agent</artifactId>-->
