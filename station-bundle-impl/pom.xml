@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -98,10 +98,10 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
 			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>redis.clients</groupId>-->
-					<!--<artifactId>jedis</artifactId>-->
-				<!--</exclusion>-->
+			<!--<exclusion>-->
+			<!--<groupId>redis.clients</groupId>-->
+			<!--<artifactId>jedis</artifactId>-->
+			<!--</exclusion>-->
 			<!--</exclusions>-->
 		</dependency>
 		<dependency>
@@ -151,10 +151,6 @@
 					<artifactId>tddl-sequence</artifactId>
 					<groupId>com.taobao.tddl</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>mtop-core-domain</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -202,10 +198,6 @@
 				<exclusion>
 					<artifactId>tddl-sequence</artifactId>
 					<groupId>com.taobao.tddl</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mtop-core-domain</artifactId>
-					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -479,18 +471,12 @@
 		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>ct-mdjxc-api.api</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>mtop-common-service</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
+		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId>
 			</dependency> -->
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
@@ -542,6 +528,10 @@
 			<groupId>com.taobao.tagcenter</groupId>
 			<artifactId>tagcenter-client</artifactId>
 		</dependency>
+		<!--<dependency> -->
+		<!--<groupId>com.taobao.configserver</groupId> -->
+		<!--<artifactId>config-client</artifactId> -->
+		<!--</dependency> -->
 		<dependency>
 			<groupId>com.taobao</groupId>
 			<artifactId>biz-base-lock</artifactId>
@@ -562,20 +552,6 @@
 			<groupId>com.alipay.insopenprod</groupId>
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.alibaba.boot</groupId>-->
-			<!--<artifactId>mtop-spring-boot-starter</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>com.taobao.wireless.mtop</groupId>-->
-			<!--<artifactId>mtop-pandora-hsf-agent</artifactId>-->
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<artifactId>asm</artifactId>-->
-					<!--<groupId>asm</groupId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
-		<!--</dependency>-->
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
