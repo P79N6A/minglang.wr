@@ -881,11 +881,11 @@
 				<artifactId>rdb-client2</artifactId>
 				<version>2.2.7</version>
 			</dependency>
-			<dependency>
-				<groupId>com.alipay.insopenprod</groupId>
-				<artifactId>insopenprod-common-service-facade</artifactId>
-				<version>1.0.0.20181022</version>
-			</dependency>
+			<!--<dependency>-->
+				<!--<groupId>com.alipay.insopenprod</groupId>-->
+				<!--<artifactId>insopenprod-common-service-facade</artifactId>-->
+				<!--<version>1.0.0.20181022</version>-->
+			<!--</dependency>-->
 		</dependencies>
 	</dependencyManagement>
 	<build>
