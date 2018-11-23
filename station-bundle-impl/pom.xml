@@ -556,20 +556,20 @@
 			<groupId>com.alipay.insopenprod</groupId>
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.alibaba.boot</groupId>-->
-			<!--<artifactId>mtop-spring-boot-starter</artifactId>-->
-		<!--</dependency>-->
 		<dependency>
-			<groupId>com.taobao.wireless.mtop</groupId>
-			<artifactId>mtop-pandora-hsf-agent</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>asm</artifactId>
-					<groupId>asm</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>mtop-spring-boot-starter</artifactId>
 		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.taobao.wireless.mtop</groupId>-->
+			<!--<artifactId>mtop-pandora-hsf-agent</artifactId>-->
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<artifactId>asm</artifactId>-->
+					<!--<groupId>asm</groupId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
+		<!--</dependency>-->
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
