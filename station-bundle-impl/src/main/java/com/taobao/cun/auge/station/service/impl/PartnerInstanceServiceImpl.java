@@ -2476,7 +2476,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     role.setCreator(transDto.getOperator());
                     role.setModifier(transDto.getOperator());
                     role.setOrgId(orgId);
-                    role.setEndTime(DateUtil.addDays(new Date(), 7));
+                    role.setEndTime(DateUtil.addDays(new Date(), 3));
                     role.setRoleName("LNG_LAT_MANAGER");
                     role.setUserId(transDto.getOperator());
                     role.setUserName(enhancedUser.getLastName());
