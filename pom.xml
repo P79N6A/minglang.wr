@@ -881,11 +881,21 @@
 				<artifactId>rdb-client2</artifactId>
 				<version>2.2.7</version>
 			</dependency>
-			<!--<dependency>-->
-				<!--<groupId>com.alipay.insopenprod</groupId>-->
-				<!--<artifactId>insopenprod-common-service-facade</artifactId>-->
-				<!--<version>1.0.0.20181022</version>-->
-			<!--</dependency>-->
+			<dependency>
+				<groupId>com.alipay.insopenprod</groupId>
+				<artifactId>insopenprod-common-service-facade</artifactId>
+				<version>1.0.0.20181022</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.boot</groupId>
+				<artifactId>mtop-spring-boot-starter</artifactId>
+				<version>2.0.0.SB2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.wireless.mtop</groupId>
+				<artifactId>mtop-pandora-hsf-agent</artifactId>
+				<version>1.0.4.9</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
