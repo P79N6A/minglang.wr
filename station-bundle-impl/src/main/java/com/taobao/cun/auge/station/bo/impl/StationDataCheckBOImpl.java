@@ -27,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -408,6 +409,10 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	}
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = Exception.class)
 	private void checkTrans(PartnerStationRel ca) {
+		StationTransInfo st   = stationTransInfoBO.getLastTransInfoByStationId(ca.getStationId());
+		if (st != null) {
+			return;
+		}
 		if ("WAIT_TRANS".equals(ca.getTransStatus())) {
 			saveTransInfo(ca);
 		}else if ("TRANS_ING".equals(ca.getTransStatus())) {
