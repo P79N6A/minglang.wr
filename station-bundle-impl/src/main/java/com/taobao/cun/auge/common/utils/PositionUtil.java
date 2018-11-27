@@ -24,7 +24,4 @@ public class PositionUtil {
 		return dFormat.format(b);
 	}
 
-	
-	
-	
 }

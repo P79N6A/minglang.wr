@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 /**
  * 合伙人实例表 转型状态
  * @author quanzhu.wangqz
@@ -74,6 +76,15 @@ public class PartnerInstanceTransStatusEnum  implements Serializable {
             return null;
         }
 		return mappings.get(code);
+	}
+
+	/**
+	 * 查看当前状态是否可以发起转型
+	 * @param code
+	 * @return
+	 */
+	public static boolean canCommitTrans(String code) {
+		return StringUtils.isEmpty(code) || PartnerInstanceTransStatusEnum.TRANS_DONE.code.equals(code);
 	}
 
 	@SuppressWarnings("unused")

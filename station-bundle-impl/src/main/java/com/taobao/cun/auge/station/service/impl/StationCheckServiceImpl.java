@@ -29,4 +29,11 @@ public class StationCheckServiceImpl implements StationCheckService{
 		stationDataCheckBO.checkAllWithCainiao(stationIds);
 		
 	}
+
+	@Override
+	public void checkAllWithTrans(List<Long> insIds) {
+		stationDataCheckBO.checkAllWithTrans(insIds);
+	}
+	
+	
 }

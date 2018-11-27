@@ -848,6 +848,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 					updateAsset.setUseAreaId(userAreaId);
 					updateAsset.setUserId(userId);
 					updateAsset.setUserName(userName);
+					updateAsset.setUseAreaType("STATION");
 					assetMapper.updateByPrimaryKeySelective(updateAsset);
 
 				} catch (Exception e) {
