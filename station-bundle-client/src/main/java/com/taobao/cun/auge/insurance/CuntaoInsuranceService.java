@@ -38,8 +38,7 @@ public interface CuntaoInsuranceService {
 	/**
 	 * 返回保险有效天数，与无线端约定
 	 * 0 ：表示未购买保险
-	 * 0-提醒时间:表示购买过保险单有效期在提醒时间内
-	 * 365：购买过保险且有效期超过提醒时间
+     * >0:距离保险止期的天数
 	 * @param taobaoUserId
 	 * @return
 	 */
