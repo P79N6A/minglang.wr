@@ -40,5 +40,8 @@ public interface CuntaoQualificationService {
     public Qualification queryLocalQualification(Long taobaoUserId);
 
     List<Qualification> queryHistoryQualification(Long taobaoUserId);
+    
+    
+    public void updateQualificationStatus(Long taobaoUserId,Integer status);
 
 }

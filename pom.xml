@@ -29,7 +29,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>4.2.9</ague.station.client.version>
+		<ague.station.client.version>4.3.4</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
@@ -158,7 +158,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-bundle.client</artifactId>
-				<version>3.4.5-SNAPSHOT</version>
+				<version>3.6.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao</groupId>
@@ -173,7 +173,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.2.48</version>
+				<version>1.2.50</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.platform.shared</groupId>
@@ -456,7 +456,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.1.24</version>
+				<version>1.1.45</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.external</groupId>

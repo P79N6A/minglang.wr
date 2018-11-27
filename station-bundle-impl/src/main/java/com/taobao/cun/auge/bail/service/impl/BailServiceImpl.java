@@ -206,14 +206,14 @@ public class BailServiceImpl implements BailService {
 		PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
-		if (instance == null || accountMoney == null
-				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
-			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
-			resultModel.setSuccess(true);
-			resultModel.setResult(Boolean.TRUE);
-			resultModel.setMessage("铺货保证金已解冻或铺货金未冻结");
-			return resultModel;
-		} else {
+//		if (instance == null || accountMoney == null
+//				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
+//			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
+//			resultModel.setSuccess(true);
+//			resultModel.setResult(Boolean.TRUE);
+//			resultModel.setMessage("铺货保证金已解冻或铺货金未冻结");
+//			return resultModel;
+//		} else {
 			Long taobaoUserId = instance.getTaobaoUserId();
 			try {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
@@ -254,7 +254,7 @@ public class BailServiceImpl implements BailService {
 				logger.error("unfreezeUserReplenishBail error instanceId:{}",
 						new Object[] { partnerInstanceId }, e);
 			}
-		}
+//		}
 		return resultModel;
 	}
 

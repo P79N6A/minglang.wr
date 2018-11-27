@@ -27,6 +27,8 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
+import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 
 /**
  * 合伙人实例查询服务
@@ -313,6 +315,20 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
+    
+    /**
+     * 根据id获得  业务类型
+     * @param instanceId
+     * @return
+     */
+	StationBizTypeEnum  getBizTypeByInstanceId(Long instanceId);
+
+	/**
+	 * 给icuntao使用,获得服务站待确认协议的转型信息,若已确认则返回null
+	 * @param taobaoUserId
+	 * @return
+	 */
+	StationTransInfoTypeEnum getWaitConfirmTransInfoTypeByTaobaoUserId(Long taobaoUserId);
     
 }
 
