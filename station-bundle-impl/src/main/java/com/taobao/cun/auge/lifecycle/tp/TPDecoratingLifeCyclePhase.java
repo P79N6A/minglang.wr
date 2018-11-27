@@ -399,35 +399,35 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
 	
-	private boolean hasRepublishBonds(Long taobaoUserId,PartnerInstanceDto rel,PartnerLifecycleDto lifecycle){
-	    /** 查询铺货保证金是否缴纳 */
-        CuntaoBailBizQueryDto queryDto = new CuntaoBailBizQueryDto();
-        queryDto.setTaobaoUserId(taobaoUserId);
-        queryDto.setUserTypeEnum(UserTypeEnum.STORE);
-        queryDto.setBailBizSceneEnum(BailBizSceneEnum.PARTNER_KAIYEBAO);
-        
-        CuntaoBailBaseQueryDto baseQuery = new CuntaoBailBizQueryDto();
-        baseQuery.setTaobaoUserId(taobaoUserId);
-        baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
-        ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
-        if (acc != null && !acc.isSuccess()) {
-            logger.info("querySignAccount", queryDto.getTaobaoUserId(), "", acc.getMessage());
-        }
-        String alipayId = acc.getResult().getAlipayId();
-        String alipayAccount = acc.getResult().getAlipayAccount();
-        queryDto.setAlipayId(alipayId);
-        ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
-        if (rm != null && !rm.isSuccess()) {
-            logger.info("queryUserAvailableAmount", queryDto.getTaobaoUserId(), "", acc.getMessage());
-            return false;
-        }
-        if(rm.getResult() > 0){
-            lifecycle.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
-            lifecycle.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
-            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,alipayAccount,alipayId);
-            return true;
-        }
-        return false;
-	}
+//	private boolean hasRepublishBonds(Long taobaoUserId,PartnerInstanceDto rel,PartnerLifecycleDto lifecycle){
+//	    /** 查询铺货保证金是否缴纳 */
+//        CuntaoBailBizQueryDto queryDto = new CuntaoBailBizQueryDto();
+//        queryDto.setTaobaoUserId(taobaoUserId);
+//        queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+//        queryDto.setBailBizSceneEnum(BailBizSceneEnum.PARTNER_KAIYEBAO);
+//        
+//        CuntaoBailBaseQueryDto baseQuery = new CuntaoBailBizQueryDto();
+//        baseQuery.setTaobaoUserId(taobaoUserId);
+//        baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
+//        ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
+//        if (acc != null && !acc.isSuccess()) {
+//            logger.info("querySignAccount", queryDto.getTaobaoUserId(), "", acc.getMessage());
+//        }
+//        String alipayId = acc.getResult().getAlipayId();
+//        String alipayAccount = acc.getResult().getAlipayAccount();
+//        queryDto.setAlipayId(alipayId);
+//        ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
+//        if (rm != null && !rm.isSuccess()) {
+//            logger.info("queryUserAvailableAmount", queryDto.getTaobaoUserId(), "", acc.getMessage());
+//            return false;
+//        }
+//        if(rm.getResult() > 0){
+//            lifecycle.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
+//            lifecycle.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
+//            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+//            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,alipayAccount,alipayId);
+//            return true;
+//        }
+//        return false;
+//	}
 }

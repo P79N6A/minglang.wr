@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.check.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +20,29 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
 import com.taobao.cun.order.fulfillment.common.Result;
 import com.taobao.cun.order.fulfillment.result.CtFulFillStockDTO;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBizQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailSignAccountDto;
+import com.taobao.cun.settle.bail.enums.BailBizSceneEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
 
 @Component("partnerInstanceChecker")
 public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceChecker.class);
+	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
@@ -54,6 +68,10 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	DiamondConfiguredProperties diamondConfiguredProperties;
 	@Autowired
 	StoreReadBO storeReadBO;
+	
+	@Autowired
+	private CuntaoNewBailService cuntaoNewBailService;
+	 
 	@Override
 	public void checkCloseApply(Long instanceId) {
 		// 查询实例是否存在，不存在会抛异常
@@ -90,6 +108,37 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 			 }
 			
 		}
+		
+		//
+		 try {
+			/** 大家电退仓欠款，不能退出，请*/
+			CuntaoBailBizQueryDto queryDto = new CuntaoBailBizQueryDto();
+			queryDto.setTaobaoUserId(instance.getTaobaoUserId());
+			queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+			queryDto.setBailBizSceneEnum(BailBizSceneEnum.GOODS_ORDER);
+			
+			CuntaoBailBaseQueryDto baseQuery = new CuntaoBailBizQueryDto();
+			baseQuery.setTaobaoUserId(instance.getTaobaoUserId());
+			baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
+			ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
+			if (acc != null && !acc.isSuccess()) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款:查询签约账户异常，请重试");
+			}
+			String alipayId = acc.getResult().getAlipayId();
+			queryDto.setAlipayId(alipayId);
+			ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
+			if (rm != null && !rm.isSuccess()) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款:查询可用余额异常，请重试");
+			}
+			if(rm.getResult() < 0){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款，不能退出。");
+			}
+		} catch (Exception e) {
+			logger.error("queryUserAvailableAmount error param:"+instance.getTaobaoUserId(),e);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款校验异常，不能退出。");
+		}
+        
+        
 		// 校验是否存在未结束的订单
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
