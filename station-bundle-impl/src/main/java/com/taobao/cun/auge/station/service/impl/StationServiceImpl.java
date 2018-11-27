@@ -218,8 +218,6 @@ public class StationServiceImpl implements StationService {
     @Override
     public boolean getStationInfoValidateRule(Long instanceId, StationDto station) {
         Assert.notNull(instanceId);
-        BeanValidator.validateWithThrowable(station);
-        //name && address base validate 
         StationValidator.nameFormatCheck(station.getName());
         //param reset need validate station contain name and address
         PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);

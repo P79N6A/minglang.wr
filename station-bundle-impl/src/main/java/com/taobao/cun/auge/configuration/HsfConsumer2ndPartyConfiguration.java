@@ -232,7 +232,7 @@ public class HsfConsumer2ndPartyConfiguration  {
 	}
 	
 	
-	@HSFConsumer(serviceVersion="${hsf.consumer.version.enhancedUserQueryService}",serviceGroup="HSF")
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.enhancedUserQueryService}",serviceGroup="${hsf.consumer.serviceGroup.enhancedUserQueryService}")
 	private EnhancedUserQueryService enhancedUserQueryService;
 	
 

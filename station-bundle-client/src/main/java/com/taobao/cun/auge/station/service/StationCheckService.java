@@ -18,4 +18,10 @@ public interface StationCheckService {
 	 * @param staitonId
 	 */
 	public void checkAllWithCainiao(List<Long> stationIds);
+	
+	/**
+	 * 转型数据初始化
+	 * @param staitonId
+	 */
+	public void checkAllWithTrans(List<Long> insIds);
 }
