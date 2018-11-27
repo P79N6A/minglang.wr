@@ -122,20 +122,20 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 			baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
 			ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
 			if (acc != null && !acc.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款:查询签约账户异常，请重试");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"铺货保证金有欠款:查询签约账户异常，请重试");
 			}
 			String alipayId = acc.getResult().getAlipayId();
 			queryDto.setAlipayId(alipayId);
 			ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
 			if (rm != null && !rm.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款:查询可用余额异常，请重试");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"铺货保证金有欠款:查询可用余额异常，请重试");
 			}
 			if(rm.getResult() < 0){
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"铺货保证金有欠款，需要村小二补缴后才能退出");
 			}
 		} catch (Exception e) {
 			logger.error("queryUserAvailableAmount error param:"+instance.getTaobaoUserId(),e);
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款校验异常，不能退出。");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"铺货保证金有欠款校验异常，不能退出。");
 		}
         
         
