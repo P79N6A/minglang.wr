@@ -131,7 +131,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款:查询可用余额异常，请重试");
 			}
 			if(rm.getResult() < 0){
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"大家电退仓欠款，不能退出。");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"铺货保证金有欠款，需要村小二补缴后才能退出");
 			}
 		} catch (Exception e) {
 			logger.error("queryUserAvailableAmount error param:"+instance.getTaobaoUserId(),e);
