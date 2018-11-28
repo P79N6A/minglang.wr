@@ -157,7 +157,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 }
                 //二.原始数据没有查询到则调用蚂蚁接口，判断是否买过保险
                 InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
-                    Lists.newArrayList("GUARANTEE"));
+                    Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
                 if (searchResult.isSuccess() && searchResult.getTotal() > 0) {
                     return true;
                 }
@@ -229,90 +229,60 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
      */
     @Override
     public Integer hasReInsurance(Long taobaoUserId) {
-        {
-            try {
-                if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
-                    return 0;
-                }
-                PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-                if (partnerInstance == null && !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
-                    //只有合伙人和淘帮手才强制买保险
-                    return 0;
-                }
-                // 查询新平台的保险数据
-                Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-                //查询未生效或在保障中的保单
-                InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
-                        Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
-                Date nowTime = new Date();
-                //1.新平台数据判断
-                if (searchResult != null && searchResult.isSuccess() && searchResult.getTotal() > 0) {
-                    for (InsPolicy policy : searchResult.getPolicys()) {
-                        int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
-                        if(nowTime.after(policy.getEffectStartTime()) && nowTime.before(policy.getEffectEndTime())&&DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())){
-                            //1.1保险有效期超过限定天数，返回有效天数
-                            return 0;
-                        }
-                        if (nowTime.after(policy.getEffectStartTime())
-                                && nowTime.before(policy.getEffectEndTime())
-                                && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
-                        ) {
-
-                            for (InsPolicy py : searchResult.getPolicys()) {
-                                if ( DateUtil.daysBetween(nowTime, py.getEffectStartTime()) <= durDate) {
-                                    // 1.2保单有效天数小于限定天数，但是已经续保,返回有效天数
-                                    return 0;
-                                }
-                            }
-                            //1.3 保单有效天数小于限定天数，且没有续保
-                            return durDate;
-                        }
-                    }
-                }
-
-                // 2.查询老平台保险数据
-                AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
-                        String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
-                if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
-                    for (InsPolicyDTO policy : insure.getModel()) {
-                        int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
-                        if (nowTime.after(policy.getEffectStartTime())
-                                && nowTime.before(policy.getEffectEndTime())
-                                && DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())){
-                            //2.1保险有效期超过限定天数，返回有效天数
-                            return 0;
-                        }
-                        if (nowTime.after(policy.getEffectStartTime())
-                                && nowTime.before(policy.getEffectEndTime())
-                                && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())) {
-                            for (InsPolicyDTO oldPy : insure.getModel()) {
-                                //2.2老平台数据单独判断:保单有效天数小于限定天数，但是老平台已经续保,返回有效天数
-                                //此处沿用原先老保单续保判断的逻辑
-                                if (oldPy.getEffectStartTime().after(policy.getEffectEndTime())) {
-                                    return 0;
-                                }
-                            }
-                            if (searchResult != null && searchResult.isSuccess() && searchResult.getTotal() > 0) {
-                                for (InsPolicy newPy : searchResult.getPolicys()) {
-                                    //2.3老、新台数据结合判断：保单有效天数小于限定天数，但是新平台已经续保,返回有效天数
-                                    if (DateUtil.daysBetween(nowTime,newPy.getEffectStartTime()) <= durDate) {
-                                        return 0;
-                                    }
-                                }
-                            }
-                            // 2.4保险有效期小于限定期，且没有续保
-                            return durDate;
-                        }
-                    }
-                }
-            }catch (Exception ex){
-                logger.error("query insurance effective day error,{taobaoUserId}",taobaoUserId,ex);
-                //异常当作买过保险处理
+        try {
+            if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(taobaoUserId)) {
                 return 0;
             }
-            //续保
+            PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+            if (partnerInstance == null && !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
+                //只有合伙人和淘帮手才强制买保险
+                return 0;
+            }
+            // 查询新平台的保险数据
+            Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+            //查询未生效或在保障中的保单
+            InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
+                    Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+            Date nowTime = new Date();
+
+            //1.新平台数据判断
+            if (searchResult != null && searchResult.isSuccess() && searchResult.getTotal() > 0) {
+                //因为是已买保险之后才会调用该接口
+                int maxDurDate = 0;
+                for (InsPolicy policy : searchResult.getPolicys()) {
+                    //找到距离保险止期最大的值
+                    maxDurDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policy.getEffectEndTime()):maxDurDate;
+                }
+                if(maxDurDate>insuranceExpiredDay){
+                    return 0 ;
+                }else{
+                    return maxDurDate;
+                }
+            }
+
+            // 2.查询老平台保险数据
+            AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
+                    String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
+            if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
+                //因为是已买保险之后才会调用该接口
+                int maxDurDate = 0;
+                for (InsPolicy policyDto : searchResult.getPolicys()) {
+                    //找到距离保险止期最大的值
+                    maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()):maxDurDate;
+                }
+                if(maxDurDate>insuranceExpiredDay){
+                    return 0 ;
+                }else{
+                    return maxDurDate;
+                }
+            }
+        }catch (Exception ex){
+            logger.error("query insurance effective day error,{taobaoUserId}",taobaoUserId,ex);
+            //异常当作买过保险处理
             return 0;
         }
+        //买过保险处理
+        return 0;
     }
 
     /**
@@ -345,65 +315,30 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
                     Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
             Date nowTime = new Date();
+
             //1.新平台数据判断
             if (searchResult != null && searchResult.isSuccess() && searchResult.getTotal() > 0) {
+                //约定给-10（事实上，此处可以给任意负整数）
+                int maxDurDate = -10;
                 for (InsPolicy policy : searchResult.getPolicys()) {
-                    int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
-                    if(nowTime.after(policy.getEffectStartTime()) && nowTime.before(policy.getEffectEndTime())&&DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())){
-                        //1.1保险有效期超过限定天数，返回有效天数
-                        return durDate;
-                    }
-                    if (nowTime.after(policy.getEffectStartTime())
-                            && nowTime.before(policy.getEffectEndTime())
-                            && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())
-                    ) {
-
-                        for (InsPolicy py : searchResult.getPolicys()) {
-                            if ( DateUtil.daysBetween(nowTime, py.getEffectStartTime()) <= durDate) {
-                                // 1.2保单有效天数小于限定天数，但是已经续保,返回有效天数
-                                return DateUtil.daysBetween(nowTime, py.getEffectEndTime());
-                            }
-                        }
-                        //1.3 保单有效天数小于限定天数，且没有续保
-                        return durDate;
-                    }
+                     //找到距离保险止期最大的
+                     maxDurDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policy.getEffectEndTime()):maxDurDate;
                 }
+                //<0，新平台的保险都过期了
+                return maxDurDate<0? 0 :maxDurDate;
             }
 
             // 2.查询老平台保险数据
             AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
                     String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
-                for (InsPolicyDTO policy : insure.getModel()) {
-                    int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime());
-                    if (nowTime.after(policy.getEffectStartTime())
-                            && nowTime.before(policy.getEffectEndTime())
-                            && DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())){
-                        //2.1保险有效期超过限定天数，返回有效天数
-                        return durDate;
-                    }
-                    if (nowTime.after(policy.getEffectStartTime())
-                            && nowTime.before(policy.getEffectEndTime())
-                            && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())) {
-                        for (InsPolicyDTO oldPy : insure.getModel()) {
-                            //2.2老平台数据单独判断:保单有效天数小于限定天数，但是老平台已经续保,返回有效天数
-                            //此处沿用原先老保单续保判断的逻辑
-                            if (oldPy.getEffectStartTime().after(policy.getEffectEndTime())) {
-                                return DateUtil.daysBetween(nowTime,oldPy.getEffectEndTime());
-                            }
-                        }
-                        if (searchResult != null && searchResult.isSuccess() && searchResult.getTotal() > 0) {
-                            for (InsPolicy newPy : searchResult.getPolicys()) {
-                                //2.3老、新台数据结合判断：保单有效天数小于限定天数，但是新平台已经续保,返回有效天数
-                                if (DateUtil.daysBetween(nowTime,newPy.getEffectStartTime()) <= durDate) {
-                                    return DateUtil.daysBetween(nowTime,newPy.getEffectEndTime());
-                                }
-                            }
-                        }
-                        // 2.4保险有效期小于限定期，且没有续保
-                        return durDate;
-                    }
+                //约定给-10（事实上，此处可以给任意负整数）
+                int maxDurDate = -10;
+                for (InsPolicyDTO policyDto : insure.getModel()) {
+                    maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()):maxDurDate;
                 }
+                //如果保单过期了，即maxDurDate<0
+                return maxDurDate<0? 0 :maxDurDate;
             }
         }catch (Exception ex){
             logger.error("query insurance effective day error,{taobaoUserId}",taobaoUserId,ex);
