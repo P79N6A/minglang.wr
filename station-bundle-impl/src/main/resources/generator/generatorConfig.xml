@@ -35,7 +35,8 @@
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
-
+         mvn mybatis-generator:generate
+         
 		<table tableName="attachement" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true"
 			enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
@@ -128,7 +129,11 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="station_trans_info" enableCountByExample="StationTransInfo" enableUpdateByExample="true"
+		<table tableName="asset_check_task" enableCountByExample="AssetCheckTask" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		<table tableName="asset_check_info" enableCountByExample="AssetCheckInfo" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
