@@ -380,4 +380,17 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		return qualis.stream().map(q -> buildQulification(q)).collect(Collectors.toList());
 
 	}
+
+	@Override
+	public void updateQualificationStatus(Long taobaoUserId,Integer status) {
+		logger.info("updateQualificationStatus taobaoUserId["+taobaoUserId+"]");
+		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if(cuntaoQualification == null) {
+			return;
+		}
+		cuntaoQualification.setStatus(status);
+		DomainUtils.beforeUpdate(cuntaoQualification, "system");
+		cuntaoQualificationBO.updateQualification(cuntaoQualification);
+		
+	}
 }

@@ -14,7 +14,7 @@ import com.alipay.insopenprod.common.service.facade.model.result.scene.InsPolicy
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.configuration.DiamondHelper;
+import com.taobao.cun.auge.configuration.DiamondFactory;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -59,16 +59,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
      * 村淘人身意外险编号
      */
     private final static String PAI_NO = "4025";
-
-    /**
-     * 保险白名单Group
-     */
-    private final static String WHITELIST_GROUP = "whiteList";
-
-    /**
-     * 保险白名单DataId
-     */
-    private final static String WHITELIST_DATAID = "insurance";
 
     private final static String SWITCH_OFF = "false";
 
@@ -140,7 +130,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
      * @return
      */
     private boolean isInFactoryAlipayList(Long taobaoId) {
-        return DiamondHelper.getConfig(WHITELIST_GROUP, WHITELIST_DATAID).contains(String.valueOf(taobaoId));
+        return DiamondFactory.getInsuranceDiamondConfig().contains(String.valueOf(taobaoId));
     }
 
     /**
