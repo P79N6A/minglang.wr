@@ -222,7 +222,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     /**
      * 村小二保险续签（新老平台查询兼容）
-     *
+     *0：表示购买过保险且日期大于限定日期
+     * >0:保险有效期天数
      * @param taobaoUserId
      * @return
      */
@@ -286,7 +287,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                                 && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())) {
                             for (InsPolicyDTO oldPy : insure.getModel()) {
                                 //2.2老平台数据单独判断:保单有效天数小于限定天数，但是老平台已经续保,返回有效天数
-                                if (DateUtil.daysBetween(nowTime,oldPy.getEffectStartTime()) <= durDate) {
+                                //此处沿用原先老保单续保判断的逻辑
+                                if (oldPy.getEffectStartTime().after(policy.getEffectEndTime())) {
                                     return 0;
                                 }
                             }
@@ -385,7 +387,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                             && !DateUtil.addDays(nowTime, insuranceExpiredDay).before(policy.getEffectEndTime())) {
                         for (InsPolicyDTO oldPy : insure.getModel()) {
                             //2.2老平台数据单独判断:保单有效天数小于限定天数，但是老平台已经续保,返回有效天数
-                            if (DateUtil.daysBetween(nowTime,oldPy.getEffectStartTime()) <= durDate) {
+                            //此处沿用原先老保单续保判断的逻辑
+                            if (oldPy.getEffectStartTime().after(policy.getEffectEndTime())) {
                                 return DateUtil.daysBetween(nowTime,oldPy.getEffectEndTime());
                             }
                         }
