@@ -28,6 +28,7 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
@@ -83,7 +84,9 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private AssetBO assetBO;
 	
-	
+    @Autowired
+    private StationTransInfoBO stationTransInfoBO;
+    
 	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点信息到服务中")
@@ -134,6 +137,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
             //如果转型状态为转型中，更新为已转型
             if(PartnerInstanceTransStatusEnum.TRANS_ING.equals(partnerInstanceDto.getTransStatusEnum())) {
             	 partnerInstanceBO.updateTransStatusByInstanceId(partnerInstanceDto.getId(), PartnerInstanceTransStatusEnum.TRANS_DONE, partnerInstanceDto.getOperator());
+            	 stationTransInfoBO.finishTrans(partnerInstanceDto.getStationId(), partnerInstanceDto.getOpenDate(), partnerInstanceDto.getOperator());
             }
            
         }

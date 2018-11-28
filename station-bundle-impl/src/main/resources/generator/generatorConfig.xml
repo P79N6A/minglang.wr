@@ -128,7 +128,7 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="union_newuser_order" enableCountByExample="UnionNewuserOrder" enableUpdateByExample="true"
+		<table tableName="station_trans_info" enableCountByExample="StationTransInfo" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>

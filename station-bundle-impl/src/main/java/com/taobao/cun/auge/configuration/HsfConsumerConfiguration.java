@@ -11,6 +11,7 @@ import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.data.PartnerInstanceLevelDataService;
+import com.taobao.cun.auge.ddy.service.DdyLbsQueryService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.service.CuntaoOrgService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -110,6 +111,10 @@ public class HsfConsumerConfiguration  {
 	
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.auge.inspectionService}",serviceGroup="HSF")
 	private InspectionService inspectionService;
+	
+	
+	@HSFConsumer(serviceVersion = "${spring.hsf.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private DdyLbsQueryService ddyLbsQueryService;
 	
 
 }
