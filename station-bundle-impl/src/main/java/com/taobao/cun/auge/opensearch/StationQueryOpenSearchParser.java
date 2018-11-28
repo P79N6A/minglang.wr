@@ -20,7 +20,9 @@ public class StationQueryOpenSearchParser implements OpenSearchParser {
                 reurnResult.setFindNum(result.getIntValue("viewtotal"));
                 reurnResult.setAllNum(result.getIntValue("total"));
                 reurnResult.setReturnNum(result.getIntValue("num"));
-                reurnResult.setSearchTime(result.getIntValue("searchtime"));
+                //reurnResult.setSearchTime(result.getIntValue("searchtime"));
+                //解决bug
+                reurnResult.setSearchTime(0);
                 reurnResult.setSuccess(true);
                 List<StationBuyerQueryListVo> returnList = new ArrayList<StationBuyerQueryListVo>();
                 JSONArray jsonArray = JSONArray.parseArray(result.getString("items"));
