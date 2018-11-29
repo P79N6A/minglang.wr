@@ -73,8 +73,20 @@ public class AssetCheckInfoDto extends PageQuery {
 	 * 状态
 	 */
     private String status;
+    /**
+     * 村点信息
+     */
+    private AssetCheckStationExtInfo stationExtInfo;
     
     
+	public AssetCheckStationExtInfo getStationExtInfo() {
+		return stationExtInfo;
+	}
+
+	public void setStationExtInfo(AssetCheckStationExtInfo stationExtInfo) {
+		this.stationExtInfo = stationExtInfo;
+	}
+
 	public String getAliNo() {
 		return aliNo;
 	}

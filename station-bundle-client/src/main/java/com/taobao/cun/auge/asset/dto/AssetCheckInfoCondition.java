@@ -11,6 +11,12 @@ import com.taobao.cun.auge.common.PageQuery;
 public class AssetCheckInfoCondition extends PageQuery {
 	
 	private static final long serialVersionUID = 1124965828102911518L;
+	
+	/**
+	 * 任务类型：AssetCheckTaskTaskTypeEnum 的code
+	 */
+	private String taskType;
+	
 	/**
 	 * 查询组织id
 	 */
@@ -39,6 +45,27 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 * 县组织ID
 	 */
 	private Long countyOrgId;
+	
+	/**
+	 *村小二淘宝账号
+	 */
+	private Long taobaoUserId;
+	
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
+	}
+
+	public String getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
+	}
 
 	public Long getOrgId() {
 		return orgId;

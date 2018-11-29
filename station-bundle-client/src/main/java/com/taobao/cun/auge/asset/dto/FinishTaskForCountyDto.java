@@ -3,14 +3,21 @@ package com.taobao.cun.auge.asset.dto;
 import java.util.Map;
 
 import com.taobao.cun.auge.common.OperatorDto;
-
+/**
+ * 县域完成盘点任务参数
+ * @author quanzhu.wangqz
+ *
+ */
 public class FinishTaskForCountyDto  extends OperatorDto{
 
 	private static final long serialVersionUID = -2643239573988241704L;
 	/**
+	 * 任务类型：AssetCheckTaskTaskTypeEnum 的code
+	 */
+	private String taskType;
+	/**
 	 * 实物资产无法找到
 	 * key:AssetCheckInfoCategoryTypeEnum 的code
-	 * @return
 	 */
 	private Map<String,Long> lostAsset;
 	/**
@@ -22,6 +29,14 @@ public class FinishTaskForCountyDto  extends OperatorDto{
 	 * 其他原因
 	 */
 	private String otherReason;
+	
+	
+	public String getTaskType() {
+		return taskType;
+	}
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
+	}
 	public Map<String, Long> getLostAsset() {
 		return lostAsset;
 	}
@@ -40,6 +55,4 @@ public class FinishTaskForCountyDto  extends OperatorDto{
 	public void setOtherReason(String otherReason) {
 		this.otherReason = otherReason;
 	}
-	
-	
 }
