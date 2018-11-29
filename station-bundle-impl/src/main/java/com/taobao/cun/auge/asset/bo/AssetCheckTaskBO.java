@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
+import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
 import com.taobao.cun.auge.common.PageDto;
 
 /**
@@ -33,12 +34,15 @@ public interface AssetCheckTaskBO {
 	
 	/**
 	 * 完结县点盘点任务
-	 * @param orgId
-	 * @param workNo
+	 * @param FinishTaskForCountyDto
 	 */
-	public void finishTaskForCounty(Long orgId,String workNo);
+	public void finishTaskForCounty(FinishTaskForCountyDto param);
 	
-	
+	/**
+	 * 盘点任务列表
+	 * @param param
+	 * @return
+	 */
     public PageDto<AssetCheckTaskDto> listTasks(AssetCheckTaskCondition  param);
 	
 	

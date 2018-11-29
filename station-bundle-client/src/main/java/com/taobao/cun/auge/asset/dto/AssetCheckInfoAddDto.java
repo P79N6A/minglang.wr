@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
 
+/**
+ * 盘点新增信息dto
+ * @author quanzhu.wangqz
+ *
+ */
 public class AssetCheckInfoAddDto  extends OperatorDto{
 	
 	private static final long serialVersionUID = 5369060510054072175L;
@@ -15,11 +20,18 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	 * 序列号
 	 */
 	String serialNo;
-	
+	/**
+	 * 资产类型
+	 */
 	String categoryType;
-	
+	/**
+	 * 盘点类型：AssetCheckInfoCheckTypeEnum
+	 */
 	String checkType;
 	
+	/**
+	 * 盘点附件
+	 */
 	List<String> images;
 
 	public String getAliNo() {

@@ -1265,73 +1265,73 @@ public class AssetCheckTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andReasonIsNull() {
-            addCriterion("reason is null");
+        public Criteria andOtherReasonIsNull() {
+            addCriterion("other_reason is null");
             return (Criteria) this;
         }
 
-        public Criteria andReasonIsNotNull() {
-            addCriterion("reason is not null");
+        public Criteria andOtherReasonIsNotNull() {
+            addCriterion("other_reason is not null");
             return (Criteria) this;
         }
 
-        public Criteria andReasonEqualTo(String value) {
-            addCriterion("reason =", value, "reason");
+        public Criteria andOtherReasonEqualTo(String value) {
+            addCriterion("other_reason =", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonNotEqualTo(String value) {
-            addCriterion("reason <>", value, "reason");
+        public Criteria andOtherReasonNotEqualTo(String value) {
+            addCriterion("other_reason <>", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonGreaterThan(String value) {
-            addCriterion("reason >", value, "reason");
+        public Criteria andOtherReasonGreaterThan(String value) {
+            addCriterion("other_reason >", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonGreaterThanOrEqualTo(String value) {
-            addCriterion("reason >=", value, "reason");
+        public Criteria andOtherReasonGreaterThanOrEqualTo(String value) {
+            addCriterion("other_reason >=", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonLessThan(String value) {
-            addCriterion("reason <", value, "reason");
+        public Criteria andOtherReasonLessThan(String value) {
+            addCriterion("other_reason <", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonLessThanOrEqualTo(String value) {
-            addCriterion("reason <=", value, "reason");
+        public Criteria andOtherReasonLessThanOrEqualTo(String value) {
+            addCriterion("other_reason <=", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonLike(String value) {
-            addCriterion("reason like", value, "reason");
+        public Criteria andOtherReasonLike(String value) {
+            addCriterion("other_reason like", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonNotLike(String value) {
-            addCriterion("reason not like", value, "reason");
+        public Criteria andOtherReasonNotLike(String value) {
+            addCriterion("other_reason not like", value, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonIn(List<String> values) {
-            addCriterion("reason in", values, "reason");
+        public Criteria andOtherReasonIn(List<String> values) {
+            addCriterion("other_reason in", values, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonNotIn(List<String> values) {
-            addCriterion("reason not in", values, "reason");
+        public Criteria andOtherReasonNotIn(List<String> values) {
+            addCriterion("other_reason not in", values, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonBetween(String value1, String value2) {
-            addCriterion("reason between", value1, value2, "reason");
+        public Criteria andOtherReasonBetween(String value1, String value2) {
+            addCriterion("other_reason between", value1, value2, "otherReason");
             return (Criteria) this;
         }
 
-        public Criteria andReasonNotBetween(String value1, String value2) {
-            addCriterion("reason not between", value1, value2, "reason");
+        public Criteria andOtherReasonNotBetween(String value1, String value2) {
+            addCriterion("other_reason not between", value1, value2, "otherReason");
             return (Criteria) this;
         }
 
@@ -1402,6 +1402,146 @@ public class AssetCheckTaskExample {
 
         public Criteria andStationExtInfoNotBetween(String value1, String value2) {
             addCriterion("station_ext_info not between", value1, value2, "stationExtInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetIsNull() {
+            addCriterion("lost_asset is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetIsNotNull() {
+            addCriterion("lost_asset is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetEqualTo(String value) {
+            addCriterion("lost_asset =", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetNotEqualTo(String value) {
+            addCriterion("lost_asset <>", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetGreaterThan(String value) {
+            addCriterion("lost_asset >", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetGreaterThanOrEqualTo(String value) {
+            addCriterion("lost_asset >=", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetLessThan(String value) {
+            addCriterion("lost_asset <", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetLessThanOrEqualTo(String value) {
+            addCriterion("lost_asset <=", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetLike(String value) {
+            addCriterion("lost_asset like", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetNotLike(String value) {
+            addCriterion("lost_asset not like", value, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetIn(List<String> values) {
+            addCriterion("lost_asset in", values, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetNotIn(List<String> values) {
+            addCriterion("lost_asset not in", values, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetBetween(String value1, String value2) {
+            addCriterion("lost_asset between", value1, value2, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andLostAssetNotBetween(String value1, String value2) {
+            addCriterion("lost_asset not between", value1, value2, "lostAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetIsNull() {
+            addCriterion("wait_back_asset is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetIsNotNull() {
+            addCriterion("wait_back_asset is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetEqualTo(String value) {
+            addCriterion("wait_back_asset =", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetNotEqualTo(String value) {
+            addCriterion("wait_back_asset <>", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetGreaterThan(String value) {
+            addCriterion("wait_back_asset >", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetGreaterThanOrEqualTo(String value) {
+            addCriterion("wait_back_asset >=", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetLessThan(String value) {
+            addCriterion("wait_back_asset <", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetLessThanOrEqualTo(String value) {
+            addCriterion("wait_back_asset <=", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetLike(String value) {
+            addCriterion("wait_back_asset like", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetNotLike(String value) {
+            addCriterion("wait_back_asset not like", value, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetIn(List<String> values) {
+            addCriterion("wait_back_asset in", values, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetNotIn(List<String> values) {
+            addCriterion("wait_back_asset not in", values, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetBetween(String value1, String value2) {
+            addCriterion("wait_back_asset between", value1, value2, "waitBackAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andWaitBackAssetNotBetween(String value1, String value2) {
+            addCriterion("wait_back_asset not between", value1, value2, "waitBackAsset");
             return (Criteria) this;
         }
     }

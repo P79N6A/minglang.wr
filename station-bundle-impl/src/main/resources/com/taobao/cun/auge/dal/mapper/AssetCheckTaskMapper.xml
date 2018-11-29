@@ -22,8 +22,10 @@
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="station_name" jdbcType="VARCHAR" property="stationName" />
     <result column="org_name" jdbcType="VARCHAR" property="orgName" />
-    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="other_reason" jdbcType="VARCHAR" property="otherReason" />
     <result column="station_ext_info" jdbcType="VARCHAR" property="stationExtInfo" />
+    <result column="lost_asset" jdbcType="VARCHAR" property="lostAsset" />
+    <result column="wait_back_asset" jdbcType="VARCHAR" property="waitBackAsset" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -98,7 +100,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, task_type, task_code, 
     task_status, checker_name, checker_id, checker_type, station_id, org_id, station_name, 
-    org_name, reason, station_ext_info
+    org_name, other_reason, station_ext_info, lost_asset, wait_back_asset
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.AssetCheckTaskExample" resultMap="BaseResultMap">
     <!--
@@ -160,13 +162,15 @@
       task_code, task_status, checker_name, 
       checker_id, checker_type, station_id, 
       org_id, station_name, org_name, 
-      reason, station_ext_info)
+      other_reason, station_ext_info, lost_asset, 
+      wait_back_asset)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{taskType,jdbcType=VARCHAR}, 
       #{taskCode,jdbcType=VARCHAR}, #{taskStatus,jdbcType=VARCHAR}, #{checkerName,jdbcType=VARCHAR}, 
       #{checkerId,jdbcType=VARCHAR}, #{checkerType,jdbcType=VARCHAR}, #{stationId,jdbcType=BIGINT}, 
       #{orgId,jdbcType=BIGINT}, #{stationName,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
-      #{reason,jdbcType=VARCHAR}, #{stationExtInfo,jdbcType=VARCHAR})
+      #{otherReason,jdbcType=VARCHAR}, #{stationExtInfo,jdbcType=VARCHAR}, #{lostAsset,jdbcType=VARCHAR}, 
+      #{waitBackAsset,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.AssetCheckTask">
     <!--
@@ -223,11 +227,17 @@
       <if test="orgName != null">
         org_name,
       </if>
-      <if test="reason != null">
-        reason,
+      <if test="otherReason != null">
+        other_reason,
       </if>
       <if test="stationExtInfo != null">
         station_ext_info,
+      </if>
+      <if test="lostAsset != null">
+        lost_asset,
+      </if>
+      <if test="waitBackAsset != null">
+        wait_back_asset,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -276,11 +286,17 @@
       <if test="orgName != null">
         #{orgName,jdbcType=VARCHAR},
       </if>
-      <if test="reason != null">
-        #{reason,jdbcType=VARCHAR},
+      <if test="otherReason != null">
+        #{otherReason,jdbcType=VARCHAR},
       </if>
       <if test="stationExtInfo != null">
         #{stationExtInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="lostAsset != null">
+        #{lostAsset,jdbcType=VARCHAR},
+      </if>
+      <if test="waitBackAsset != null">
+        #{waitBackAsset,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -339,11 +355,17 @@
       <if test="record.orgName != null">
         org_name = #{record.orgName,jdbcType=VARCHAR},
       </if>
-      <if test="record.reason != null">
-        reason = #{record.reason,jdbcType=VARCHAR},
+      <if test="record.otherReason != null">
+        other_reason = #{record.otherReason,jdbcType=VARCHAR},
       </if>
       <if test="record.stationExtInfo != null">
         station_ext_info = #{record.stationExtInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lostAsset != null">
+        lost_asset = #{record.lostAsset,jdbcType=VARCHAR},
+      </if>
+      <if test="record.waitBackAsset != null">
+        wait_back_asset = #{record.waitBackAsset,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -372,8 +394,10 @@
       org_id = #{record.orgId,jdbcType=BIGINT},
       station_name = #{record.stationName,jdbcType=VARCHAR},
       org_name = #{record.orgName,jdbcType=VARCHAR},
-      reason = #{record.reason,jdbcType=VARCHAR},
-      station_ext_info = #{record.stationExtInfo,jdbcType=VARCHAR}
+      other_reason = #{record.otherReason,jdbcType=VARCHAR},
+      station_ext_info = #{record.stationExtInfo,jdbcType=VARCHAR},
+      lost_asset = #{record.lostAsset,jdbcType=VARCHAR},
+      wait_back_asset = #{record.waitBackAsset,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -430,11 +454,17 @@
       <if test="orgName != null">
         org_name = #{orgName,jdbcType=VARCHAR},
       </if>
-      <if test="reason != null">
-        reason = #{reason,jdbcType=VARCHAR},
+      <if test="otherReason != null">
+        other_reason = #{otherReason,jdbcType=VARCHAR},
       </if>
       <if test="stationExtInfo != null">
         station_ext_info = #{stationExtInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="lostAsset != null">
+        lost_asset = #{lostAsset,jdbcType=VARCHAR},
+      </if>
+      <if test="waitBackAsset != null">
+        wait_back_asset = #{waitBackAsset,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -460,8 +490,10 @@
       org_id = #{orgId,jdbcType=BIGINT},
       station_name = #{stationName,jdbcType=VARCHAR},
       org_name = #{orgName,jdbcType=VARCHAR},
-      reason = #{reason,jdbcType=VARCHAR},
-      station_ext_info = #{stationExtInfo,jdbcType=VARCHAR}
+      other_reason = #{otherReason,jdbcType=VARCHAR},
+      station_ext_info = #{stationExtInfo,jdbcType=VARCHAR},
+      lost_asset = #{lostAsset,jdbcType=VARCHAR},
+      wait_back_asset = #{waitBackAsset,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
