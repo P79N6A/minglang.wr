@@ -323,12 +323,12 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 				}
 			} else {
 				result.setSuccess(true);
-				result.setModel(new ArrayList<StationOpenSearchDto>());
+				result.setModel(new ArrayList<>());
 			}
 		} catch (Exception e) {
-			logger.error("buildMtopResult Exception", e);
+			logger.error("{bizType} buildMtopResult Exception", "openSearch", e);
 			result.setSuccess(true);
-			result.setModel(new ArrayList<StationOpenSearchDto>());
+			result.setModel(new ArrayList<>());
 		}
 		return result;
 	}
