@@ -217,7 +217,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insRequest.setPageSize(20);
         //投放渠道，必填，村淘默认cuntao
         insRequest.setChannel("cuntao");
-        logger.info("查询参数insRequest"+insRequest.toString());
         return insPolicyApiFacade.search(insRequest);
     }
 
@@ -308,7 +307,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             }
             // 查询新平台的保险数据
             Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-            logger.info("idenNum = "+partner.getIdenNum());
             if (partner == null || StringUtils.isBlank(partner.getIdenNum())) {
                 //设置为没买保险
                 return 0;
@@ -317,17 +315,14 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
                     Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
             Date nowTime = new Date();
-            logger.info("searchResult = "+searchResult);
+            logger.info("查询新平台保险数据结果,taobaoUserId = {},searchResult = {}",taobaoUserId,searchResult);
             //1.新平台数据判断
             if (searchResult.isSuccess() && CollectionUtils.isNotEmpty(searchResult.getPolicys())) {
-                logger.info("新平台数据searchResult = "+searchResult);
-
                 //约定给-10（事实上，此处可以给任意负整数）
                 int maxDurDate = -10;
                 for (InsPolicy policy : searchResult.getPolicys()) {
                     //找到距离保险止期最大的
                     maxDurDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policy.getEffectEndTime()):maxDurDate;
-                    logger.info("新平台天数计算maxDurDate = "+maxDurDate);
                 }
                 //<0，新平台的保险都过期了
                 return maxDurDate<0? 0 :maxDurDate;
@@ -337,13 +332,12 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             // 2.查询老平台保险数据
             AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
                     String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
+            logger.info("查询老平台保险数据结果，taobaoUserId = {},insure = {}",taobaoUserId,insure);
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
-                logger.info("老平台数据insure = "+insure.getModel());
                 //约定给-10（事实上，此处可以给任意负整数）
                 int maxDurDate = -10;
                 for (InsPolicyDTO policyDto : insure.getModel()) {
                     maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()):maxDurDate;
-                    logger.info("老平台天数计算maxDurDate = "+maxDurDate);
                 }
                 //如果保单过期了，即maxDurDate<0
                 return maxDurDate<0? 0 :maxDurDate;
@@ -353,8 +347,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             //异常当作买过保险处理
             return 365;
         }
-        logger.info("走到最后========================");
-
         //没买过保险
         return 0;
     }
