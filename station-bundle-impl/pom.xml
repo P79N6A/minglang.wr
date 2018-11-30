@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -476,7 +476,7 @@
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
+		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId>
 			</dependency> -->
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
@@ -528,10 +528,6 @@
 			<groupId>com.taobao.tagcenter</groupId>
 			<artifactId>tagcenter-client</artifactId>
 		</dependency>
-		<!--<dependency> -->
-		<!--<groupId>com.taobao.configserver</groupId> -->
-		<!--<artifactId>config-client</artifactId> -->
-		<!--</dependency> -->
 		<dependency>
 			<groupId>com.taobao</groupId>
 			<artifactId>biz-base-lock</artifactId>
@@ -548,6 +544,11 @@
 			<groupId>com.taobao.rdb</groupId>
 			<artifactId>rdb-client2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alipay.insopenprod</groupId>
+			<artifactId>insopenprod-common-service-facade</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

@@ -59,6 +59,9 @@ public class DiamondConfiguredProperties {
 
     @Value("${inSure.switch}")
     private String inSureSwitch;
+
+    @Value("#{'${insurance.cp.codes}'.split(',')}")
+    private List<String> insureCpCodes;
     
     @Value("#{'${com.taobao.cun.admin.alipay.whitelist}'.split(',')}")
     private List<Long> insureWhiteListConfig;
@@ -350,4 +353,8 @@ public class DiamondConfiguredProperties {
 	public void setServiceAbilitySHRHCountyAuditActivityId(String serviceAbilitySHRHCountyAuditActivityId) {
 		this.serviceAbilitySHRHCountyAuditActivityId = serviceAbilitySHRHCountyAuditActivityId;
 	}
+
+    public List<String> getInsureCpCodes() {
+        return insureCpCodes;
+    }
 }
