@@ -568,6 +568,10 @@
 			<groupId>com.taobao.wireless.mtop</groupId>
 			<artifactId>mtop-pandora-hsf-agent</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.tbsession</groupId>
+			<artifactId>tbsession</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
