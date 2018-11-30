@@ -266,7 +266,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
                 //因为是已买保险之后才会调用该接口
                 int maxDurDate = 0;
-                for (InsPolicy policyDto : searchResult.getPolicys()) {
+                for (InsPolicyDTO policyDto : insure.getModel()) {
                     //找到距离保险止期最大的值
                     maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime())>maxDurDate?DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()):maxDurDate;
                 }
