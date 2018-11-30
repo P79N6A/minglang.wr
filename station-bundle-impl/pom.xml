@@ -151,14 +151,6 @@
 					<artifactId>tddl-sequence</artifactId>
 					<groupId>com.taobao.tddl</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>mtop-core-domain</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mtop-common-service</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -206,14 +198,6 @@
 				<exclusion>
 					<artifactId>tddl-sequence</artifactId>
 					<groupId>com.taobao.tddl</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mtop-core-domain</artifactId>
-					<groupId>com.taobao.wireless</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mtop-common-service</artifactId>
-					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -564,18 +548,7 @@
 			<groupId>com.alipay.insopenprod</groupId>
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.alibaba.boot</groupId>
-			<artifactId>mtop-spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.taobao.wireless.mtop</groupId>
-			<artifactId>mtop-pandora-hsf-agent</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.taobao.wireless</groupId>
-			<artifactId>mtop-common-service</artifactId>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
