@@ -897,9 +897,9 @@
 				<version>1.0.4.9</version>
 			</dependency>
 			<dependency>
-				<groupId>com.taobao.tbsession</groupId>
-				<artifactId>tbsession</artifactId>
-				<version>4.0.0.3</version>
+				<groupId>com.taobao.wireless</groupId>
+				<artifactId>mtop-common-service</artifactId>
+				<version>1.0.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

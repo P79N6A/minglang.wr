@@ -98,10 +98,10 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
 			<!--<exclusions>-->
-			<!--<exclusion>-->
-			<!--<groupId>redis.clients</groupId>-->
-			<!--<artifactId>jedis</artifactId>-->
-			<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>redis.clients</groupId>-->
+					<!--<artifactId>jedis</artifactId>-->
+				<!--</exclusion>-->
 			<!--</exclusions>-->
 		</dependency>
 		<dependency>
@@ -155,6 +155,10 @@
 					<artifactId>mtop-core-domain</artifactId>
 					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>mtop-common-service</artifactId>
+					<groupId>com.taobao.wireless</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -205,6 +209,10 @@
 				</exclusion>
 				<exclusion>
 					<artifactId>mtop-core-domain</artifactId>
+					<groupId>com.taobao.wireless</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>mtop-common-service</artifactId>
 					<groupId>com.taobao.wireless</groupId>
 				</exclusion>
 			</exclusions>
@@ -536,10 +544,6 @@
 			<groupId>com.taobao.tagcenter</groupId>
 			<artifactId>tagcenter-client</artifactId>
 		</dependency>
-		<!--<dependency> -->
-		<!--<groupId>com.taobao.configserver</groupId> -->
-		<!--<artifactId>config-client</artifactId> -->
-		<!--</dependency> -->
 		<dependency>
 			<groupId>com.taobao</groupId>
 			<artifactId>biz-base-lock</artifactId>
@@ -569,8 +573,8 @@
 			<artifactId>mtop-pandora-hsf-agent</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.taobao.tbsession</groupId>
-			<artifactId>tbsession</artifactId>
+			<groupId>com.taobao.wireless</groupId>
+			<artifactId>mtop-common-service</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
