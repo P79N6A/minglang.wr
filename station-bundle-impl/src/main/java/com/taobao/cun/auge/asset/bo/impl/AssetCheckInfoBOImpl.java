@@ -41,20 +41,20 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		AssetCheckInfo record = new AssetCheckInfo();
 		record.setAliNo(addDto.getAliNo());
-		record.setAssetType(assetType);
+		record.setAssetType(AssetCheckInfoCategoryTypeEnum.getAssetType(addDto.getCategoryType()));
 		record.setCategory(addDto.getCategoryType());
 		record.setAttFile(JSONObject.toJSONString(addDto.getImages()));
 		record.setCheckType(addDto.getCheckType());
 		record.setSerialNo(addDto.getSerialNo());
 		
 		if(OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())){
-			record.setCheckerAreaId(checkerAreaId);
-			record.setCheckerAreaName(checkerAreaName);
-			record.setCheckerAreaType(checkerAreaType);
-			record.setCheckerId(checkerId);
-			record.setCheckerName(checkerName);
-			record.setCheckTime(checkTime);
-			record.setCountyOrgId(countyOrgId);
+//			record.setCheckerAreaId(addDto.getOperatorOrgId());
+//			record.setCheckerAreaName(checkerAreaName);
+//			record.setCheckerAreaType(checkerAreaType);
+//			record.setCheckerId(checkerId);
+//			record.setCheckerName(checkerName);
+//			record.setCheckTime(checkTime);
+//			record.setCountyOrgId(countyOrgId);
 			
 		}
 		DomainUtils.beforeInsert(record, addDto.getOperator());
@@ -63,10 +63,6 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	}
 	
-	private String bulidAssetType(String category){
-		List<String> itList = new ArrayList<String>();
-		itList.add(AssetCheckInfoCategoryTypeEnum.)
-	}
 
 	@Override
 	public Boolean delCheckInfo(Long infoId, OperatorDto operator) {

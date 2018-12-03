@@ -75,8 +75,11 @@ public class AssetCheckInfoCategoryTypeEnum implements Serializable {
 		adminList.add(AssetCheckInfoCategoryTypeEnum.AIO.getCode());
 		adminList.add(AssetCheckInfoCategoryTypeEnum.MAIN.getCode());
 		if (itList.contains(category)) {
-			return 
+			return  AssetCheckInfoAssetTypeEnum.IT.getCode();
+		}else if (adminList.contains(category)) {
+			return  AssetCheckInfoAssetTypeEnum.ADMIN.getCode();
 		}
+		return null;
 	}
 	
 	public AssetCheckInfoCategoryTypeEnum(String code, String desc) {
