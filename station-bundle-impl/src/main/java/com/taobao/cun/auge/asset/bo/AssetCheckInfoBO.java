@@ -43,4 +43,11 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public PageDto<AssetCheckInfoDto> listInfo(AssetCheckInfoCondition  param);
+	
+	/**
+	 * 盘点信息
+	 * @param infoId
+	 * @return
+	 */
+	public AssetCheckInfoDto  getCheckInfoById(Long infoId);
 }

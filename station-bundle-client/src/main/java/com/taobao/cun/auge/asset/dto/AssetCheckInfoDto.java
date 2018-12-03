@@ -14,6 +14,8 @@ import com.taobao.cun.auge.common.PageQuery;
 public class AssetCheckInfoDto extends PageQuery {
 
 	private static final long serialVersionUID = 1124965828102911518L;
+	
+	private Long infoId;
 	/**
 	 * 大阿里编号
 	 */
@@ -78,7 +80,14 @@ public class AssetCheckInfoDto extends PageQuery {
      */
     private AssetCheckStationExtInfo stationExtInfo;
     
-    
+	public Long getInfoId() {
+		return infoId;
+	}
+
+	public void setInfoId(Long infoId) {
+		this.infoId = infoId;
+	}
+
 	public AssetCheckStationExtInfo getStationExtInfo() {
 		return stationExtInfo;
 	}

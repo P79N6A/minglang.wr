@@ -1475,63 +1475,73 @@ public class AssetCheckInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdIsNull() {
-            addCriterion("task_id is null");
+        public Criteria andTaskTypeIsNull() {
+            addCriterion("task_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdIsNotNull() {
-            addCriterion("task_id is not null");
+        public Criteria andTaskTypeIsNotNull() {
+            addCriterion("task_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdEqualTo(Long value) {
-            addCriterion("task_id =", value, "taskId");
+        public Criteria andTaskTypeEqualTo(String value) {
+            addCriterion("task_type =", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdNotEqualTo(Long value) {
-            addCriterion("task_id <>", value, "taskId");
+        public Criteria andTaskTypeNotEqualTo(String value) {
+            addCriterion("task_type <>", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdGreaterThan(Long value) {
-            addCriterion("task_id >", value, "taskId");
+        public Criteria andTaskTypeGreaterThan(String value) {
+            addCriterion("task_type >", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("task_id >=", value, "taskId");
+        public Criteria andTaskTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("task_type >=", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdLessThan(Long value) {
-            addCriterion("task_id <", value, "taskId");
+        public Criteria andTaskTypeLessThan(String value) {
+            addCriterion("task_type <", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdLessThanOrEqualTo(Long value) {
-            addCriterion("task_id <=", value, "taskId");
+        public Criteria andTaskTypeLessThanOrEqualTo(String value) {
+            addCriterion("task_type <=", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdIn(List<Long> values) {
-            addCriterion("task_id in", values, "taskId");
+        public Criteria andTaskTypeLike(String value) {
+            addCriterion("task_type like", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdNotIn(List<Long> values) {
-            addCriterion("task_id not in", values, "taskId");
+        public Criteria andTaskTypeNotLike(String value) {
+            addCriterion("task_type not like", value, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdBetween(Long value1, Long value2) {
-            addCriterion("task_id between", value1, value2, "taskId");
+        public Criteria andTaskTypeIn(List<String> values) {
+            addCriterion("task_type in", values, "taskType");
             return (Criteria) this;
         }
 
-        public Criteria andTaskIdNotBetween(Long value1, Long value2) {
-            addCriterion("task_id not between", value1, value2, "taskId");
+        public Criteria andTaskTypeNotIn(List<String> values) {
+            addCriterion("task_type not in", values, "taskType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaskTypeBetween(String value1, String value2) {
+            addCriterion("task_type between", value1, value2, "taskType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaskTypeNotBetween(String value1, String value2) {
+            addCriterion("task_type not between", value1, value2, "taskType");
             return (Criteria) this;
         }
 
@@ -1662,6 +1672,66 @@ public class AssetCheckInfoExample {
 
         public Criteria andModelNotBetween(String value1, String value2) {
             addCriterion("model not between", value1, value2, "model");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdIsNull() {
+            addCriterion("asset_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdIsNotNull() {
+            addCriterion("asset_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdEqualTo(Long value) {
+            addCriterion("asset_id =", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdNotEqualTo(Long value) {
+            addCriterion("asset_id <>", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdGreaterThan(Long value) {
+            addCriterion("asset_id >", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("asset_id >=", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdLessThan(Long value) {
+            addCriterion("asset_id <", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdLessThanOrEqualTo(Long value) {
+            addCriterion("asset_id <=", value, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdIn(List<Long> values) {
+            addCriterion("asset_id in", values, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdNotIn(List<Long> values) {
+            addCriterion("asset_id not in", values, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdBetween(Long value1, Long value2) {
+            addCriterion("asset_id between", value1, value2, "assetId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetIdNotBetween(Long value1, Long value2) {
+            addCriterion("asset_id not between", value1, value2, "assetId");
             return (Criteria) this;
         }
     }
