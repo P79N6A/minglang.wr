@@ -6,9 +6,9 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
-import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.result.Result;
 
 /**
  * 资产盘点手机服务
@@ -21,44 +21,44 @@ public interface AssetCheckMobileService {
 	 * 完结站点盘点任务
 	 * @param taobaoUserId
 	 */
-	public ResultModel<Boolean> finishTaskForStation(Long taobaoUserId);
+	public Result<Boolean> finishTaskForStation(Long taobaoUserId);
 	
 	/**
 	 * 完结县点盘点任务
 	 * @param FinishTaskForCountyDto
 	 */
-	public ResultModel<Boolean> finishTaskForCounty(FinishTaskForCountyDto param);
+	public Result<Boolean> finishTaskForCounty(FinishTaskForCountyDto param);
 	
 	/**
 	 * 新增盘点信息
 	 * @param addDto
 	 */
-	public ResultModel<Boolean> addCheckInfo(AssetCheckInfoAddDto addDto);
+	public Result<Boolean> addCheckInfo(AssetCheckInfoAddDto addDto);
 	
 	/**
 	 * 删除盘点信息
 	 * @param infoId
 	 * @param operator
 	 */
-	public ResultModel<Boolean> delCheckInfo(Long infoId,OperatorDto operator);
+	public Result<Boolean> delCheckInfo(Long infoId,OperatorDto operator);
 	
 	/**
 	 * 盘点信息列表
 	 * @param param
 	 * @return
 	 */
-	public ResultModel<PageDto<AssetCheckInfoDto>> listInfo(AssetCheckInfoCondition  param);
+	public Result<PageDto<AssetCheckInfoDto>> listInfo(AssetCheckInfoCondition  param);
 	/**
 	 * 县盘点总数
 	 * @param countyOrgId
 	 * @return
 	 */
-	public ResultModel<CountyCheckCountDto> getCountyCheckCount(Long countyOrgId);
+	public Result<CountyCheckCountDto> getCountyCheckCount(Long countyOrgId);
 	/**
 	 * 县跟踪盘点总数
 	 * @param countyOrgId
 	 * @return
 	 */
-	public ResultModel<CountyFollowCheckCountDto> getCountyFollowCheckCount(Long countyOrgId);
+	public Result<CountyFollowCheckCountDto> getCountyFollowCheckCount(Long countyOrgId);
 	
 }
