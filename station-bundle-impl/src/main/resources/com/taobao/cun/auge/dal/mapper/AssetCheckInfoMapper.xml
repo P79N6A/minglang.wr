@@ -29,6 +29,7 @@
     <result column="county_org_id" jdbcType="BIGINT" property="countyOrgId" />
     <result column="model" jdbcType="VARCHAR" property="model" />
     <result column="asset_id" jdbcType="BIGINT" property="assetId" />
+    <result column="back_reason" jdbcType="VARCHAR" property="backReason" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -103,7 +104,8 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, ali_no, serial_no, category, 
     check_type, checker_name, checker_id, checker_area_type, checker_area_id, checker_area_name, 
-    check_time, att_file, status, asset_type, task_type, county_org_id, model, asset_id
+    check_time, att_file, status, asset_type, task_type, county_org_id, model, asset_id, 
+    back_reason
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.AssetCheckInfoExample" resultMap="BaseResultMap">
     <!--
@@ -167,7 +169,7 @@
       checker_area_id, checker_area_name, check_time, 
       att_file, status, asset_type, 
       task_type, county_org_id, model, 
-      asset_id)
+      asset_id, back_reason)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{aliNo,jdbcType=VARCHAR}, 
       #{serialNo,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{checkType,jdbcType=VARCHAR}, 
@@ -175,7 +177,7 @@
       #{checkerAreaId,jdbcType=BIGINT}, #{checkerAreaName,jdbcType=VARCHAR}, #{checkTime,jdbcType=TIMESTAMP}, 
       #{attFile,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, #{assetType,jdbcType=VARCHAR}, 
       #{taskType,jdbcType=VARCHAR}, #{countyOrgId,jdbcType=BIGINT}, #{model,jdbcType=VARCHAR}, 
-      #{assetId,jdbcType=BIGINT})
+      #{assetId,jdbcType=BIGINT}, #{backReason,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.AssetCheckInfo">
     <!--
@@ -253,6 +255,9 @@
       <if test="assetId != null">
         asset_id,
       </if>
+      <if test="backReason != null">
+        back_reason,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -320,6 +325,9 @@
       </if>
       <if test="assetId != null">
         #{assetId,jdbcType=BIGINT},
+      </if>
+      <if test="backReason != null">
+        #{backReason,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -399,6 +407,9 @@
       <if test="record.assetId != null">
         asset_id = #{record.assetId,jdbcType=BIGINT},
       </if>
+      <if test="record.backReason != null">
+        back_reason = #{record.backReason,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -432,7 +443,8 @@
       task_type = #{record.taskType,jdbcType=VARCHAR},
       county_org_id = #{record.countyOrgId,jdbcType=BIGINT},
       model = #{record.model,jdbcType=VARCHAR},
-      asset_id = #{record.assetId,jdbcType=BIGINT}
+      asset_id = #{record.assetId,jdbcType=BIGINT},
+      back_reason = #{record.backReason,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -510,6 +522,9 @@
       <if test="assetId != null">
         asset_id = #{assetId,jdbcType=BIGINT},
       </if>
+      <if test="backReason != null">
+        back_reason = #{backReason,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -540,7 +555,8 @@
       task_type = #{taskType,jdbcType=VARCHAR},
       county_org_id = #{countyOrgId,jdbcType=BIGINT},
       model = #{model,jdbcType=VARCHAR},
-      asset_id = #{assetId,jdbcType=BIGINT}
+      asset_id = #{assetId,jdbcType=BIGINT},
+      back_reason = #{backReason,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

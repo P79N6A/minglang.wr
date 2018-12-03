@@ -1734,6 +1734,76 @@ public class AssetCheckInfoExample {
             addCriterion("asset_id not between", value1, value2, "assetId");
             return (Criteria) this;
         }
+
+        public Criteria andBackReasonIsNull() {
+            addCriterion("back_reason is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonIsNotNull() {
+            addCriterion("back_reason is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonEqualTo(String value) {
+            addCriterion("back_reason =", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonNotEqualTo(String value) {
+            addCriterion("back_reason <>", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonGreaterThan(String value) {
+            addCriterion("back_reason >", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonGreaterThanOrEqualTo(String value) {
+            addCriterion("back_reason >=", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonLessThan(String value) {
+            addCriterion("back_reason <", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonLessThanOrEqualTo(String value) {
+            addCriterion("back_reason <=", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonLike(String value) {
+            addCriterion("back_reason like", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonNotLike(String value) {
+            addCriterion("back_reason not like", value, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonIn(List<String> values) {
+            addCriterion("back_reason in", values, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonNotIn(List<String> values) {
+            addCriterion("back_reason not in", values, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonBetween(String value1, String value2) {
+            addCriterion("back_reason between", value1, value2, "backReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackReasonNotBetween(String value1, String value2) {
+            addCriterion("back_reason not between", value1, value2, "backReason");
+            return (Criteria) this;
+        }
     }
 
     /**
