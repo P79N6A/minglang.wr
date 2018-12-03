@@ -16,6 +16,11 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 * 任务类型：AssetCheckTaskTaskTypeEnum 的code
 	 */
 	private String taskType;
+
+	/**
+	 * 盘点人所在区域
+	 */
+	private String checkerAreaType;
 	
 	/**
 	 * 查询组织id
@@ -123,4 +128,11 @@ public class AssetCheckInfoCondition extends PageQuery {
 		this.countyOrgId = countyOrgId;
 	}
 
+	public String getCheckerAreaType() {
+		return checkerAreaType;
+	}
+
+	public void setCheckerAreaType(String checkerAreaType) {
+		this.checkerAreaType = checkerAreaType;
+	}
 }
