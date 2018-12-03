@@ -40,4 +40,8 @@ public interface AssetCheckService {
 	 */
 	public void confirmForIt(Long infoId,String aliNo);
 	
+	/**
+	 * 资产业务表 待盘点IT 资产数据
+	 */
+	public PageDto<CuntaoAssetDto> listAssetToChecking(Long countyOrgId);
 }
