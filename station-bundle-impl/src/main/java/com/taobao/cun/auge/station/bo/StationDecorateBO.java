@@ -3,10 +3,12 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import com.taobao.cun.auge.station.dto.StationDecorateFeedBackDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 
@@ -125,7 +127,16 @@ public interface StationDecorateBO {
  	 * @param stationDecorateDto
  	 * @return
  	 */
+ 	@Deprecated
  	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto);
+
+    /**
+     * 上传站点装修反馈信息(新版)
+     * @param stationId
+     * @param approveResultEnum
+     * @return
+     */
+    Long uploadStationDecorateFeedback(StationDecorateFeedBackDto stationDecorateFeedBackDto);
  	
  	/**
  	 * 审核村点装修反馈信息
@@ -143,4 +154,10 @@ public interface StationDecorateBO {
  	 */
  	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 
+	/**
+	 * 根据taobaoUserId查询装修反馈信息
+	 * @param taobaoUserId
+	 * @return
+	 */
+	ResultModel<StationDecorateFeedBackDto> queryStationDecorateFeedBackDtoByUserId(Long taobaoUserId);
 }

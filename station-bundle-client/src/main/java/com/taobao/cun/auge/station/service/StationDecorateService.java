@@ -3,12 +3,8 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
-import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.client.result.ResultModel;
+import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 
@@ -179,7 +175,22 @@ public interface StationDecorateService {
  	 * @return
  	 */
  	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto);
- 	
+
+
+	/**
+	 * 上传站点装修反馈信息(无线专用)
+	 * @param stationDecorateFeedBackDto
+	 * @return
+	 */
+	ResultModel<Boolean> uploadStationDecorateCheckForMobile(StationDecorateFeedBackDto stationDecorateFeedBackDto);
+
+	/**
+	 * 上传站点装修反馈信息(无线专用)
+	 * @param stationId 站点id
+	 * @return
+	 */
+	ResultModel<StationDecorateFeedBackDto> getStationDecorateFeedBackDtoByUserId(Long taobaoUserId);
+
  	/**
  	 * 审核村点装修反馈信息
  	 * @param stationId
