@@ -2,6 +2,8 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 /**
@@ -19,6 +21,7 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	/**
 	 * 序列号
 	 */
+	@NotNull(message = "serialNo not null")
 	String serialNo;
 	/**
 	 * 资产类型
@@ -27,6 +30,7 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	/**
 	 * 盘点类型：AssetCheckInfoCheckTypeEnum
 	 */
+	@NotNull(message = "checkType not null")
 	String checkType;
 	
 	/**
