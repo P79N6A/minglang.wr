@@ -3,8 +3,11 @@ package com.taobao.cun.auge.asset.bo;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
+import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
+import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.result.Result;
 
 /**
  * 盘点明细 基础服务
@@ -16,20 +19,20 @@ public interface AssetCheckInfoBO {
 	 * 新增盘点信息
 	 * @param addDto
 	 */
-	public void addCheckInfo(AssetCheckInfoAddDto addDto);
+	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto);
 	
 	/**
 	 * 删除盘点信息
 	 * @param infoId
 	 * @param operator
 	 */
-	public void delCheckInfo(Long infoId,OperatorDto operator);
+	public Boolean delCheckInfo(Long infoId,OperatorDto operator);
 	/**
 	 * 总部人员确认盘点信息
 	 * @param infoId
 	 * @param operator
 	 */
-	public void confrimCheckInfo(Long infoId,OperatorDto operator);
+	public Boolean confrimCheckInfo(Long infoId,OperatorDto operator);
 	
 	/**
 	 * 盘点信息列表
@@ -50,4 +53,17 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public AssetCheckInfoDto  getCheckInfoById(Long infoId);
+	
+	/**
+	 * 县盘点总数
+	 * @param countyOrgId
+	 * @return
+	 */
+	public CountyCheckCountDto getCountyCheckCount(Long countyOrgId);
+	/**
+	 * 县跟踪盘点总数
+	 * @param countyOrgId
+	 * @return
+	 */
+	public CountyFollowCheckCountDto getCountyFollowCheckCount(Long countyOrgId);
 }

@@ -24,7 +24,7 @@ public interface AssetCheckTaskBO {
 	 * 完结站点盘点任务
 	 * @param taobaoUserId
 	 */
-	public void finishTaskForStation(Long taobaoUserId);
+	public Boolean finishTaskForStation(Long taobaoUserId);
 	
 	/**
 	 * 初始化县点盘点任务
@@ -36,7 +36,7 @@ public interface AssetCheckTaskBO {
 	 * 完结县点盘点任务
 	 * @param FinishTaskForCountyDto
 	 */
-	public void finishTaskForCounty(FinishTaskForCountyDto param);
+	public Boolean finishTaskForCounty(FinishTaskForCountyDto param);
 	
 	/**
 	 * 盘点任务列表

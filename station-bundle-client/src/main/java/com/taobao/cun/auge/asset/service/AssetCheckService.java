@@ -31,18 +31,13 @@ public interface AssetCheckService {
 	public PageDto<AssetCheckInfoDto> listInfoForOrg(AssetCheckInfoCondition  param);
 	
 	/**
-	 * 盘点信息
-	 * @param infoId
-	 * @return
-	 */
-	public AssetCheckInfoDto  getCheckInfoById(Long infoId); 
-	
-	/**
-	 * 批量盘点
+	 * 行政资产批量确认
 	 * @param ids
 	 */
-	public void check(List<Long> ids,OperatorDto ope);
-	
-	public void modifyAsset();
+	public void confirmForXz(List<Long> infoIds,Long countyOrgId,String categoryType,OperatorDto ope);
+	/**
+	 * it资产确认
+	 */
+	public void confirmForIt(Long infoId,String aliNo);
 	
 }
