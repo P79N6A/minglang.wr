@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 
 /**
  * 盘点任务 基础服务
@@ -44,6 +45,21 @@ public interface AssetCheckTaskBO {
 	 * @return
 	 */
     public PageDto<AssetCheckTaskDto> listTasks(AssetCheckTaskCondition  param);
+    
+    /**
+     * 县盘点任务
+     * @param orgId
+     * @param taskType
+     * @return
+     */
+    public AssetCheckTask  getTaskForCounty(Long orgId,String taskType);
+    
+    /**
+     * 村盘点任务
+     * @param taobaoUserId
+     * @return
+     */
+    public AssetCheckTask  getTaskForStation(String taobaoUserId);
 	
 	
 }

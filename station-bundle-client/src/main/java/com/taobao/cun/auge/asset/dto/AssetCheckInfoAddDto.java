@@ -24,7 +24,7 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	@NotNull(message = "serialNo not null")
 	String serialNo;
 	/**
-	 * 资产类型
+	 * 资产类型 AssetCheckInfoCategoryTypeEnum
 	 */
 	String categoryType;
 	/**

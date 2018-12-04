@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.buc.api.EnhancedUserQueryService;
+import com.alibaba.buc.api.exception.BucException;
+import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
@@ -26,6 +29,10 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 @Component
 public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	
+	
+	@Autowired
+	private EnhancedUserQueryService enhancedUserQueryService;
+	   
 	@Autowired
 	private AssetCheckTaskMapper assetCheckTaskMapper;
 	@Override
@@ -67,19 +74,19 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 
 	@Override
 	public Boolean finishTaskForCounty(FinishTaskForCountyDto param) {
-		AssetCheckTaskExample example = new AssetCheckTaskExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andCheckerIdEqualTo(param.getOperator());
-		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.name());
-		criteria.andTaskTypeEqualTo(param.getTaskType());
-		AssetCheckTask at = ResultUtils.selectOne(assetCheckTaskMapper.selectByExample(example));
-		
+		AssetCheckTask at = getTaskForCounty(param.getOperatorOrgId(),param.getTaskType());
 		if (at == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"未查询到当前县点盘点任务");
 		}
 		String status = at.getTaskStatus();
 		at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DONE.getCode());
+		at.setCheckerId(param.getOperator());
+		try {
+			EnhancedUser enhancedUser = enhancedUserQueryService.getUser(param.getOperator());
+			at.setCheckerName(enhancedUser.getLastName());
+		} catch (BucException e) {
+		}
+		
 		at.setLostAsset(JSONObject.toJSONString(param.getLostAsset()));
 		at.setWaitBackAsset(JSONObject.toJSONString(param.getWaitBackAsset()));
 		at.setOtherReason(param.getOtherReason());
@@ -95,6 +102,30 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	public PageDto<AssetCheckTaskDto> listTasks(AssetCheckTaskCondition param) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public AssetCheckTask getTaskForCounty(Long orgId, String taskType) {
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOrgIdEqualTo(orgId);
+		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.name());
+		criteria.andTaskTypeEqualTo(taskType);
+		return ResultUtils.selectOne(assetCheckTaskMapper.selectByExample(example));
+	}
+
+
+	@Override
+	public AssetCheckTask getTaskForStation(String taobaoUserId) {
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerIdEqualTo(taobaoUserId);
+		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.STATION.name());
+		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+		return ResultUtils.selectOne(assetCheckTaskMapper.selectByExample(example));
 	}
 
 }
