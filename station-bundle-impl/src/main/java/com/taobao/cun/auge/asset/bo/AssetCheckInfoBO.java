@@ -7,7 +7,7 @@ import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.dal.domain.AssetCheckInfo;
 
 /**
  * 盘点明细 基础服务
@@ -66,4 +66,11 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public CountyFollowCheckCountDto getCountyFollowCheckCount(Long countyOrgId);
+	
+	/**
+	 * 盘点信息
+	 * @param infoId
+	 * @return
+	 */
+	public AssetCheckInfo  getCheckInfoBySerialNo(String serialNo);
 }

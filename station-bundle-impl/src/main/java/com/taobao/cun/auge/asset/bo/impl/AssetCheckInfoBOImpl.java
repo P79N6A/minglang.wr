@@ -10,6 +10,7 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckInfoBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
@@ -18,12 +19,17 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetCheckInfo;
+import com.taobao.cun.auge.dal.domain.AssetCheckInfoExample;
+import com.taobao.cun.auge.dal.domain.AssetCheckInfoExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 import com.taobao.cun.auge.dal.mapper.AssetCheckInfoMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -42,6 +48,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	@Autowired
 	private AssetCheckTaskBO assetCheckTaskBO;
 	
+	@Autowired
+	private AssetBO assetBO;
+	
 	@Override
 	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto) {
 		Objects.requireNonNull(addDto, "参数不能为空");
@@ -51,6 +60,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				!OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())){
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"盘点人必须是村小二,或者县小二");
 		}
+		validateParam(addDto);
 		AssetCheckInfo record = new AssetCheckInfo();
 		record.setAliNo(addDto.getAliNo());
 		record.setAssetType(AssetCheckInfoCategoryTypeEnum.getAssetType(addDto.getCategoryType()));
@@ -59,6 +69,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		record.setCheckType(addDto.getCheckType());
 		record.setSerialNo(addDto.getSerialNo());
 		record.setCheckTime(new Date());
+		record.setStatus(AssetCheckInfoStatusEnum.CHECKED.getCode());
 		if(OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())){//县盘点
 			record.setCheckerAreaId(addDto.getOperatorOrgId());
 			record.setCheckerAreaName(assetCheckTaskBO.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode()).getOrgName());
@@ -66,7 +77,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			record.setCheckerId(addDto.getOperator());
 			record.setCheckerName(getWorkerName(addDto.getOperator()));
 			record.setCountyOrgId(addDto.getOperatorOrgId());
-		}else  if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())) {//村盘点
+		}else  if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {//村盘点
+			validateAddStation(addDto);
 			AssetCheckTask  at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
 			record.setCheckerAreaId(at.getStationId());
 			record.setCheckerAreaName(at.getStationName());
@@ -81,6 +93,40 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	}
 	
+	private void validateParam(AssetCheckInfoAddDto addDto) {
+		if (addDto.getSerialNo() == null) {
+			return;
+		}
+		//序列号，TD码规则校验
+		//序列号存在校验
+		AssetCheckInfo ai = getCheckInfoBySerialNo(addDto.getSerialNo());
+		if (ai!= null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前序列号["+addDto.getSerialNo()+"]已提交盘点信息");
+		}
+		
+		Asset a = assetBO.getAssetBySerialNo(addDto.getSerialNo());
+		if (a == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前序列号["+addDto.getSerialNo()+"]线上不存在，请操作异常盘点");
+		}
+		
+	}
+
+	private void validateAddStation(AssetCheckInfoAddDto addDto) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCategoryEqualTo(addDto.getCategoryType());
+		criteria.andCheckerIdEqualTo(addDto.getOperator());
+		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		AssetCheckInfo ai = ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
+		if (ai != null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前类型["+AssetCheckInfoCategoryTypeEnum.valueof(addDto.getCategoryType()).getDesc()
+					+"]资产已提交盘点信息");
+
+		}
+		
+	}
+
 	private String getWorkerName(String workNo){
 		try {
 			EnhancedUser enhancedUser = enhancedUserQueryService.getUser(workNo);
@@ -131,6 +177,15 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	public CountyFollowCheckCountDto getCountyFollowCheckCount(Long countyOrgId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public AssetCheckInfo getCheckInfoBySerialNo(String serialNo) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andSerialNoEqualTo(serialNo);
+		return  ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
 	}
 
 }
