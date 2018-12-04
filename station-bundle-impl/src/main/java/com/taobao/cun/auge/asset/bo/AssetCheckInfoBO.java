@@ -32,7 +32,7 @@ public interface AssetCheckInfoBO {
 	 * @param infoId
 	 * @param operator
 	 */
-	public Boolean confrimCheckInfo(Long infoId,OperatorDto operator);
+	public Boolean confrimCheckInfo(Long infoId,String aliNo,OperatorDto operator);
 	
 	/**
 	 * 盘点信息列表
@@ -52,7 +52,7 @@ public interface AssetCheckInfoBO {
 	 * @param infoId
 	 * @return
 	 */
-	public AssetCheckInfoDto  getCheckInfoById(Long infoId);
+	public AssetCheckInfo  getCheckInfoById(Long infoId);
 	
 	/**
 	 * 县盘点总数

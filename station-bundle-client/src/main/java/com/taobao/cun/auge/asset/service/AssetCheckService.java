@@ -38,7 +38,7 @@ public interface AssetCheckService {
 	/**
 	 * it资产确认
 	 */
-	public void confirmForIt(Long infoId,String aliNo);
+	public void confirmForIt(Long infoId,String aliNo,OperatorDto ope);
 	
 	/**
 	 * 资产业务表 待盘点IT 资产数据

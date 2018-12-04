@@ -20,6 +20,7 @@ import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -139,14 +140,41 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	@Override
 	public Boolean delCheckInfo(Long infoId, OperatorDto operator) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetCheckInfo ai = getCheckInfoById(infoId);
+		if (ai == null) {
+			return Boolean.TRUE;
+		}
+		if (AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())||
+				AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该资产盘点信息总部已确认，不能删除");
+		}
+		DomainUtils.beforeDelete(ai, operator.getOperator());
+		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
+		return Boolean.TRUE;
 	}
 
 	@Override
-	public Boolean confrimCheckInfo(Long infoId, OperatorDto operator) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean confrimCheckInfo(Long infoId ,String aliNo,OperatorDto operator) {
+		AssetCheckInfo ai = getCheckInfoById(infoId);
+		if (ai == null) {
+			return Boolean.TRUE;
+		}
+		if (!AssetCheckInfoStatusEnum.TASK_DONE.getCode().equals(ai.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该资产盘点信息不能操作确认");
+		}
+		//
+		Asset a = assetBO.getAssetByAliNo(aliNo);
+		if (a == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]查询不到资产信息");
+		}
+		if(AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]已盘点");
+		}
+		//assetBO.checkAsset(checkDto);
+		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
+		DomainUtils.beforeUpdate(ai, operator.getOperator());
+		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -162,9 +190,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
-	public AssetCheckInfoDto getCheckInfoById(Long infoId) {
-		// TODO Auto-generated method stub
-		return null;
+	public AssetCheckInfo getCheckInfoById(Long infoId) {
+		return assetCheckInfoMapper.selectByPrimaryKey(infoId);
 	}
 
 	@Override
