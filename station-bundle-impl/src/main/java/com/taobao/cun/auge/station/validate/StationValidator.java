@@ -111,7 +111,7 @@ public final class StationValidator {
 			return;
 		}
 		Address address = stationDto.getAddress();
-		addressFormatCheck(address);
+		addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
 	}
 	
 	public static void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
@@ -120,7 +120,7 @@ public final class StationValidator {
 		}
 		Address address = stationDto.getAddress();
 		//村地址基础校验
-		addressFormatCheck(address);
+		addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
 
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
@@ -140,7 +140,7 @@ public final class StationValidator {
 	public static void validateStationInfo(StationDto stationDto) {
 		Address address = stationDto.getAddress();
 		//村地址基础校验
-        addressFormatCheck(address);
+        addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
         
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
@@ -218,11 +218,14 @@ public final class StationValidator {
      * @param address 必填
      * @return
      */
-    public static boolean addressFormatCheck(Address address){
+    public static boolean addressFormatCheck(Address address,String isOnTwon){
         //校验详细地址内容规范
     	addressDetailFormatCheck(address);
         //校验行政地址内容规范
-        villageFormatCheck(address);
+    	if("y".equals(isOnTwon) || StringUtils.isNotEmpty(address.getVillageDetail())) {
+    		villageFormatCheck(address);
+    	}
+        
         
         return true;
     }
