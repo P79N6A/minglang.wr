@@ -46,7 +46,7 @@ public interface AssetCheckService {
 	public PageDto<CuntaoAssetDto> listAssetToChecking(Long countyOrgId);
 	
 	/**
-	 * 资产业务表 待盘点IT 资产数据
+	 * 资产业务表 待盘点的特定资产总数
 	 */
-	public Long getWaitCheckAsset(String categoryType,Long countyOrgId);
+	public Integer getWaitCheckAsset(String categoryType,Long countyOrgId);
 }
