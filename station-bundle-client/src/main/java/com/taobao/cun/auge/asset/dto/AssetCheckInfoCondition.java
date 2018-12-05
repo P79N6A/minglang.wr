@@ -31,6 +31,10 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 */
 	private String aliNo;
 	/**
+	 * 序列号
+	 */
+	private String serialNo;
+	/**
 	 * 资产大类型
 	 */
 	private String assetType;
@@ -56,6 +60,14 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 */
 	private Long taobaoUserId;
 	
+	public String getSerialNo() {
+		return serialNo;
+	}
+
+	public void setSerialNo(String serialNo) {
+		this.serialNo = serialNo;
+	}
+
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}

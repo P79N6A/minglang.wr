@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +13,8 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckInfoBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
@@ -31,6 +32,7 @@ import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetCheckInfo;
@@ -42,9 +44,14 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
+import net.sf.cglib.beans.BeanCopier;
+
 @Component
 public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
-	
+
+	private static BeanCopier assetCheckInfoVo2DtoCopier = BeanCopier.create(AssetCheckInfo.class, AssetCheckInfoDto.class, false);
+
+
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
 	
@@ -189,14 +196,56 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	@Override
 	public PageDto<AssetCheckInfoDto> listInfoForOrg(AssetCheckInfoCondition param) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
+		if (param.getOrgId() != null) {
+			criteria.andCountyOrgIdEqualTo(param.getOrgId());
+		}
+		if (param.getAliNo() != null) {
+			criteria.andAliNoEqualTo(param.getAliNo());
+		}
+		if (param.getSerialNo() != null) {
+			criteria.andSerialNoEqualTo(param.getSerialNo());
+		}
+		//checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
+		//checkType 为null 表示查询“异常提报”和“正常提报”
+		if(param.getCheckType() != null){
+			criteria.andCheckTypeEqualTo(param.getCheckType());
+		}
+		criteria.andCategoryEqualTo(param.getCategoryType());
+		example.setOrderByClause("id desc");
+		PageHelper.startPage(param.getPageNum(), param.getPageSize());
+		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>)assetCheckInfoMapper.selectByExample(example);
+		List<AssetCheckInfoDto> targetList = page.getResult().stream().map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
+		return PageDtoUtil.success(page, targetList);
+	}
+
+	private AssetCheckInfoDto assetCheckInfo2Dto(AssetCheckInfo assetCheckInfo){
+		AssetCheckInfoDto assetCheckInfoDto = new AssetCheckInfoDto();
+		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo,assetCheckInfoDto,null);
+		return assetCheckInfoDto;
 	}
 
 	@Override
 	public PageDto<AssetCheckInfoDto> listInfo(AssetCheckInfoCondition param) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
+		criteria.andCountyOrgIdEqualTo(param.getOrgId());
+		//checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
+		//checkType 为null 表示查询“异常提报”和“正常提报”
+		if(param.getCheckType() != null){
+			criteria.andCheckTypeEqualTo(param.getCheckType());
+		}
+		criteria.andCategoryEqualTo(param.getCategoryType());
+		example.setOrderByClause("id desc");
+		PageHelper.startPage(param.getPageNum(), param.getPageSize());
+		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>)assetCheckInfoMapper.selectByExample(example);
+		List<AssetCheckInfoDto> targetList = page.getResult().stream().map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
+		return PageDtoUtil.success(page, targetList);
 	}
 
 	@Override
