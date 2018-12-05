@@ -1,7 +1,12 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import net.sf.cglib.beans.BeanCopier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +33,9 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component
 public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
-	
-	
+
+	private static BeanCopier assetCheckTaskVo2DtoCopier = BeanCopier.create(AssetCheckTask.class, AssetCheckTaskDto.class, false);
+
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
 	   
@@ -100,10 +106,24 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 
 	@Override
 	public PageDto<AssetCheckTaskDto> listTasks(AssetCheckTaskCondition param) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTaskTypeEqualTo(param.getTaskType());
+		criteria.andOrgNameEqualTo(param.getOrgName());
+		criteria.andStationNameEqualTo(param.getStationName());
+		example.setOrderByClause("id desc");
+		PageHelper.startPage(param.getPageNum(), param.getPageSize());
+		Page<AssetCheckTask> page = (Page<AssetCheckTask>)assetCheckTaskMapper.selectByExample(example);
+		List<AssetCheckTaskDto> targetList = page.getResult().stream().map(assetCheckTask -> assetCheckTask2Dto(assetCheckTask)).collect(Collectors.toList());
+		return PageDtoUtil.success(page, targetList);
 	}
 
+	private  AssetCheckTaskDto assetCheckTask2Dto(AssetCheckTask assetCheckTask){
+		AssetCheckTaskDto assetCheckTaskDto = new AssetCheckTaskDto();
+		assetCheckTaskVo2DtoCopier.copy(assetCheckTask,assetCheckTaskDto,null);
+		return assetCheckTaskDto;
+	}
 
 	@Override
 	public AssetCheckTask getTaskForCounty(Long orgId, String taskType) {
