@@ -254,7 +254,7 @@ public final class StationValidator {
         //行政村后缀和全称验证
         for(String endWord : villageDeatilValidEndWord) {
         	
-        	if(StringUtils.endsWith(address.getVillageDetail(), endWord) && !address.getVillageDetail().equals(endWord)) {
+        	if(StringUtils.endsWith(address.getVillageDetail(), endWord) && !villageDeatilValidEndWord.contains(endWord)) {
         		isOk = true;
         		break;
         	}
