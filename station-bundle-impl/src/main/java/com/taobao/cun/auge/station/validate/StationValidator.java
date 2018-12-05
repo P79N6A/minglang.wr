@@ -252,7 +252,7 @@ public final class StationValidator {
         
         //行政村后缀和全称验证
         for(String endWord : villageDeatilValidEndWord) {
-        	if(StringUtils.endsWith(address.getVillageDetail(), endWord) || address.getVillageDetail().equals(endWord)) {
+        	if(!StringUtils.endsWith(address.getVillageDetail(), endWord) || address.getVillageDetail().equals(endWord)) {
         		throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不符合行政标准");
         	}
         }
