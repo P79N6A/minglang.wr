@@ -90,11 +90,11 @@ public interface AssetCheckInfoBO {
 	 */
 	public AssetCheckInfo  getCheckInfoBySerialNo(String serialNo);
 	/**
-	 * 总部确认行政资产
+	 * 总部确认资产 批量
 	 * @param infoIds
 	 * @param countyOrgId
 	 * @param categoryType
 	 * @param ope
 	 */
-	public void confirmForXz(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope);
+	public void confirmSelect(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope);
 }

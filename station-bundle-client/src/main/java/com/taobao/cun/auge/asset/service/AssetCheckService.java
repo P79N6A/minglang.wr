@@ -32,14 +32,14 @@ public interface AssetCheckService {
 	public PageDto<AssetCheckInfoDto> listInfoForOrg(AssetCheckInfoCondition  param);
 	
 	/**
-	 * 行政资产批量确认
+	 * 资产批量确认
 	 * @param ids
 	 */
-	public void confirmForXz(List<Long> infoIds,Long countyOrgId,String categoryType,OperatorDto ope);
+	public void confirmSelect(List<Long> infoIds,Long countyOrgId,String categoryType,OperatorDto ope);
 	/**
-	 * it资产确认
+	 * 单个资产确认
 	 */
-	public void confirmForIt(Long infoId,String aliNo,OperatorDto ope);
+	public void confirmOne(Long infoId,String aliNo,OperatorDto ope);
 	
 	/**
 	 * 资产业务表 待盘点IT 资产数据

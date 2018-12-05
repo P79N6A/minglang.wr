@@ -353,7 +353,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
-	public void confirmForXz(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
+	public void confirmSelect(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
 		if (CollectionUtils.isEmpty(infoIds)) {
 			return;
 		}

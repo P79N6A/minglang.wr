@@ -46,12 +46,12 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 	}
 
 	@Override
-	public void confirmForXz(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
-		assetCheckInfoBO.confirmForXz(infoIds, countyOrgId, categoryType, ope);
+	public void confirmSelect(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
+		assetCheckInfoBO.confirmSelect(infoIds, countyOrgId, categoryType, ope);
 	}
 
 	@Override
-	public void confirmForIt(Long infoId, String aliNo, OperatorDto ope) {
+	public void confirmOne(Long infoId, String aliNo, OperatorDto ope) {
 		assetCheckInfoBO.confrimCheckInfo(infoId, aliNo, ope);
 
 	}
