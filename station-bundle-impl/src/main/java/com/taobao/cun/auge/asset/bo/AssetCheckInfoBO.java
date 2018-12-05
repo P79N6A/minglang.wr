@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.asset.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
@@ -87,4 +89,12 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public AssetCheckInfo  getCheckInfoBySerialNo(String serialNo);
+	/**
+	 * 总部确认行政资产
+	 * @param infoIds
+	 * @param countyOrgId
+	 * @param categoryType
+	 * @param ope
+	 */
+	public void confirmForXz(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope);
 }

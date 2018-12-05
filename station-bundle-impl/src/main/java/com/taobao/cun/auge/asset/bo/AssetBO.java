@@ -251,11 +251,38 @@ public interface AssetBO {
 
     public void sendAppMessage(AssetAppMessageDto appMessageDto);
     
+    /**
+     * 根据序列号查询资产
+     * @param serialNo
+     * @return
+     */
     public Asset getAssetBySerialNo(String serialNo);
-    
+    /**
+     * 总部确认盘点资产
+     * @param assetId
+     * @param operator
+     */
     public void confirmForZb(Long assetId,String operator);
-    
+    /**
+     * 系统自动确认村点盘点资产
+     * @param a
+     * @param stationId
+     * @param checkerId
+     * @param checkerName
+     * @return
+     */
     public Boolean confrimCheckInfoForSystemToStation(Asset a,Long stationId, String checkerId,String checkerName);
-    
+    /**
+     * 系统自动确认县点盘点资产
+     * @param a
+     * @return
+     */
     public Boolean confrimCheckInfoForSystemToCounty(Asset a);
+    /**
+     * 查询指定类型的资产
+     * @param categoryType
+     * @param countyOrgId
+     * @return
+     */
+    public List<Asset> getWaitCheckAsset(String categoryType, Long countyOrgId);
 }

@@ -58,22 +58,22 @@ public class AssetCheckInfoCategoryTypeEnum implements Serializable {
 	}
 	
 	public static String getAssetType(String category){
-		List<String> itList = new ArrayList<String>();
-		itList.add(AssetCheckInfoCategoryTypeEnum.SHAFA.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.KONGTIAO.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.ZUHEYINXIANG.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.WEIBOLU.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.BINGXIANG.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.XUNLUOJI.getCode());
-		itList.add(AssetCheckInfoCategoryTypeEnum.YINXIANG.getCode());
-		
 		List<String> adminList = new ArrayList<String>();
-		adminList.add(AssetCheckInfoCategoryTypeEnum.PRINTER.getCode());
-		adminList.add(AssetCheckInfoCategoryTypeEnum.TV.getCode());
-		adminList.add(AssetCheckInfoCategoryTypeEnum.PROJECTOR.getCode());
-		adminList.add(AssetCheckInfoCategoryTypeEnum.DISPLAY.getCode());
-		adminList.add(AssetCheckInfoCategoryTypeEnum.AIO.getCode());
-		adminList.add(AssetCheckInfoCategoryTypeEnum.MAIN.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.SHAFA.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.KONGTIAO.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.ZUHEYINXIANG.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.WEIBOLU.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.BINGXIANG.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.XUNLUOJI.getCode());
+		adminList.add(AssetCheckInfoCategoryTypeEnum.YINXIANG.getCode());
+		
+		List<String> itList = new ArrayList<String>();
+		itList.add(AssetCheckInfoCategoryTypeEnum.PRINTER.getCode());
+		itList.add(AssetCheckInfoCategoryTypeEnum.TV.getCode());
+		itList.add(AssetCheckInfoCategoryTypeEnum.PROJECTOR.getCode());
+		itList.add(AssetCheckInfoCategoryTypeEnum.DISPLAY.getCode());
+		itList.add(AssetCheckInfoCategoryTypeEnum.AIO.getCode());
+		itList.add(AssetCheckInfoCategoryTypeEnum.MAIN.getCode());
 		if (itList.contains(category)) {
 			return  AssetCheckInfoAssetTypeEnum.IT.getCode();
 		}else if (adminList.contains(category)) {

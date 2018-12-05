@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.taobao.cun.auge.common.utils.PageDtoUtil;
-import net.sf.cglib.beans.BeanCopier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +13,8 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetCheckInfoBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckStationExtInfo;
@@ -26,6 +26,7 @@ import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample;
@@ -36,17 +37,21 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetCheckTaskMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
+import net.sf.cglib.beans.BeanCopier;
+
 @Component
 public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 
 	private static BeanCopier assetCheckTaskVo2DtoCopier = BeanCopier.create(AssetCheckTask.class, AssetCheckTaskDto.class, false);
+	private static final Logger logger = LoggerFactory.getLogger(AssetCheckTaskBO.class);
 
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
@@ -61,7 +66,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
     @Autowired
     PartnerBO partnerBO;
     @Autowired
-    CountyStationBO countyStationBO;
+    private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
     
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
@@ -78,13 +84,13 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			}
 			Station s = stationBO.getStationById(rel.getStationId());
 			Partner p = partnerBO.getPartnerById(rel.getPartnerId());
-			CountyStation countyStation = countyStationBO.getCountyStationByOrgId(s.getApplyOrg());
+			CuntaoOrgDto o = cuntaoOrgServiceClient.getCuntaoOrg(s.getApplyOrg());
 			AssetCheckTask r = new AssetCheckTask();
 			r.setCheckerId(String.valueOf(taobaoUserId));
 			r.setCheckerName(p.getName());
 			r.setCheckerType(AssetUseAreaTypeEnum.STATION.name());
 			r.setOrgId(s.getApplyOrg());
-			r.setOrgName(countyStation.getName());
+			r.setOrgName(o.getName());
 			r.setStationExtInfo(bulideStationExtInfo(s,p,rel));
 			r.setStationId(rel.getStationId());
 			r.setStationName(s.getName());
@@ -94,8 +100,6 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			DomainUtils.beforeInsert(r, "SYSTEM");
 			assetCheckTaskMapper.insert(r);
 		}
-		
-		
 	}
 	
 	private String bulideStationExtInfo(Station s,Partner p,PartnerStationRel rel) {
@@ -145,10 +149,64 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	}
 
 	@Override
-	public void initTaskForCounty(List<Long> orgId) {
-		// TODO Auto-generated method stub
-
+	public void initTaskForCounty(List<Long> orgIds) {
+		orgIds.stream().distinct().forEach(item->initTaskForCounty(item));
 	}
+	
+    private void initTaskForCounty(Long orgId) {
+    	try {
+			CuntaoOrgDto o = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
+			if (o == null) {
+				return;
+			}
+			
+			AssetCheckTask at = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
+			if (at != null) {
+				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
+				DomainUtils.beforeUpdate(at, "SYSTEM");
+				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+			}else {
+				AssetCheckTask r = new AssetCheckTask();
+				//r.setCheckerId(String.valueOf(taobaoUserId));
+				//r.setCheckerName(p.getName());
+				r.setCheckerType(AssetUseAreaTypeEnum.COUNTY.name());
+				r.setOrgId(orgId);
+				r.setOrgName(o.getName());
+				//r.setStationExtInfo(bulideStationExtInfo(s,p,rel));
+				//r.setStationId(rel.getStationId());
+				//r.setStationName(s.getName());
+				//r.setTaskCode(taskCode);
+				r.setTaskStatus(AssetCheckTaskTaskStatusEnum.TODO.getCode());
+				r.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
+				DomainUtils.beforeInsert(r, "SYSTEM");
+				assetCheckTaskMapper.insert(r);
+			}
+			
+			AssetCheckTask f = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
+			if (f != null) {
+				f.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
+				DomainUtils.beforeUpdate(at, "SYSTEM");
+				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+			}else {
+				AssetCheckTask r1 = new AssetCheckTask();
+				//r.setCheckerId(String.valueOf(taobaoUserId));
+				//r.setCheckerName(p.getName());
+				r1.setCheckerType(AssetUseAreaTypeEnum.COUNTY.name());
+				r1.setOrgId(orgId);
+				r1.setOrgName(o.getName());
+				//r.setStationExtInfo(bulideStationExtInfo(s,p,rel));
+				//r.setStationId(rel.getStationId());
+				//r.setStationName(s.getName());
+				//r.setTaskCode(taskCode);
+				r1.setTaskStatus(AssetCheckTaskTaskStatusEnum.TODO.getCode());
+				r1.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
+				DomainUtils.beforeInsert(r1, "SYSTEM");
+				assetCheckTaskMapper.insert(r1);
+			}
+		} catch (Exception e) {
+			logger.error("initTaskForCounty error,param:"+orgId,e);
+		}
+    }
 
 	@Override
 	public Boolean finishTaskForCounty(FinishTaskForCountyDto param) {

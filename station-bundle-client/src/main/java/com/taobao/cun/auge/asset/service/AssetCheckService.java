@@ -49,4 +49,10 @@ public interface AssetCheckService {
 	 * 资产业务表 待盘点的特定资产总数
 	 */
 	public Integer getWaitCheckAsset(String categoryType,Long countyOrgId);
+	
+	/**
+	 * 初始化县域盘点任务
+	 * @param orgIds
+	 */
+    public void initTaskForCounty(List<Long> orgIds);
 }

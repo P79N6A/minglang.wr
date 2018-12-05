@@ -60,6 +60,9 @@ import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoAssetTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
@@ -2038,5 +2041,29 @@ public class AssetBOImpl implements AssetBO {
 		} catch (Exception e) {
 		}
 	return true;
+	}
+
+	@Override
+	public List<Asset>  getWaitCheckAsset(String categoryType, Long countyOrgId) {
+		AssetExample example = new AssetExample();
+		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		bulidParam(categoryType,criteria);
+		return assetMapper.selectByExample(example);
+		
+	}
+	
+	private void bulidParam(String categoryType,com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria){
+		String t = AssetCheckInfoCategoryTypeEnum.getAssetType(categoryType);
+		if (t == null){
+			return;
+		}
+		if (t != null && AssetCheckInfoAssetTypeEnum.IT.getCode().equals(t)) {
+			criteria.andCategoryEqualTo(categoryType);
+		}else {
+			criteria.andModelEqualTo(AssetCheckInfoCategoryTypeEnum.valueof(categoryType).getDesc()).andCategoryEqualTo("ADMINISTRATION");
+		}
 	}
 }

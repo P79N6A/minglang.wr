@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,29 +50,29 @@ import net.sf.cglib.beans.BeanCopier;
 @Component
 public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
-	private static BeanCopier assetCheckInfoVo2DtoCopier = BeanCopier.create(AssetCheckInfo.class, AssetCheckInfoDto.class, false);
-
+	private static BeanCopier assetCheckInfoVo2DtoCopier = BeanCopier.create(AssetCheckInfo.class,
+			AssetCheckInfoDto.class, false);
 
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
-	
+
 	@Autowired
 	private AssetCheckInfoMapper assetCheckInfoMapper;
-	
+
 	@Autowired
 	private AssetCheckTaskBO assetCheckTaskBO;
-	
+
 	@Autowired
 	private AssetBO assetBO;
-	
+
 	@Override
 	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto) {
 		Objects.requireNonNull(addDto, "参数不能为空");
 		Objects.requireNonNull(addDto.getSerialNo(), "序列号不能为空");
 		Objects.requireNonNull(addDto.getCheckType(), "盘点类型不能为空");
-		if (!OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType()) && 
-				!OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())){
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"盘点人必须是村小二,或者县小二");
+		if (!OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())
+				&& !OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "盘点人必须是村小二,或者县小二");
 		}
 		validateParam(addDto);
 		AssetCheckInfo record = new AssetCheckInfo();
@@ -83,16 +84,18 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		record.setSerialNo(addDto.getSerialNo());
 		record.setCheckTime(new Date());
 		record.setStatus(AssetCheckInfoStatusEnum.CHECKED.getCode());
-		if(OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())){//县盘点
+		if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())) {// 县盘点
 			record.setCheckerAreaId(addDto.getOperatorOrgId());
-			record.setCheckerAreaName(assetCheckTaskBO.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode()).getOrgName());
+			record.setCheckerAreaName(assetCheckTaskBO
+					.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode())
+					.getOrgName());
 			record.setCheckerAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
 			record.setCheckerId(addDto.getOperator());
 			record.setCheckerName(getWorkerName(addDto.getOperator()));
 			record.setCountyOrgId(addDto.getOperatorOrgId());
-		}else  if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {//村盘点
+		} else if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {// 村盘点
 			validateAddStation(addDto);
-			AssetCheckTask  at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
+			AssetCheckTask at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
 			record.setCheckerAreaId(at.getStationId());
 			record.setCheckerAreaName(at.getStationName());
 			record.setCheckerAreaType(AssetUseAreaTypeEnum.STATION.getCode());
@@ -105,23 +108,25 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		return null;
 
 	}
-	
+
 	private void validateParam(AssetCheckInfoAddDto addDto) {
 		if (addDto.getSerialNo() == null) {
 			return;
 		}
-		//序列号，TD码规则校验
-		//序列号存在校验
+		// 序列号，TD码规则校验
+		// 序列号存在校验
 		AssetCheckInfo ai = getCheckInfoBySerialNo(addDto.getSerialNo());
-		if (ai!= null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前序列号["+addDto.getSerialNo()+"]已提交盘点信息");
+		if (ai != null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+					"当前序列号[" + addDto.getSerialNo() + "]已提交盘点信息");
 		}
-		
+
 		Asset a = assetBO.getAssetBySerialNo(addDto.getSerialNo());
 		if (a == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前序列号["+addDto.getSerialNo()+"]线上不存在，请操作异常盘点");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
 		}
-		
+
 	}
 
 	private void validateAddStation(AssetCheckInfoAddDto addDto) {
@@ -133,14 +138,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		AssetCheckInfo ai = ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
 		if (ai != null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"当前类型["+AssetCheckInfoCategoryTypeEnum.valueof(addDto.getCategoryType()).getDesc()
-					+"]资产已提交盘点信息");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "当前类型["
+					+ AssetCheckInfoCategoryTypeEnum.valueof(addDto.getCategoryType()).getDesc() + "]资产已提交盘点信息");
 
 		}
-		
+
 	}
 
-	private String getWorkerName(String workNo){
+	private String getWorkerName(String workNo) {
 		try {
 			EnhancedUser enhancedUser = enhancedUserQueryService.getUser(workNo);
 			return enhancedUser.getLastName();
@@ -148,7 +153,6 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		return null;
 	}
-	
 
 	@Override
 	public Boolean delCheckInfo(Long infoId, OperatorDto operator) {
@@ -156,9 +160,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (ai == null) {
 			return Boolean.TRUE;
 		}
-		if (AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())||
-				AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该资产盘点信息总部已确认，不能删除");
+		if (AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+				|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该资产盘点信息总部已确认，不能删除");
 		}
 		DomainUtils.beforeDelete(ai, operator.getOperator());
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
@@ -166,27 +170,28 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
-	public Boolean confrimCheckInfo(Long infoId ,String aliNo,OperatorDto operator) {
+	public Boolean confrimCheckInfo(Long infoId, String aliNo, OperatorDto operator) {
 		AssetCheckInfo ai = getCheckInfoById(infoId);
 		if (ai == null) {
 			return Boolean.TRUE;
 		}
 		if (!AssetCheckInfoStatusEnum.TASK_DONE.getCode().equals(ai.getStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该资产盘点信息不能操作确认");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该资产盘点信息不能操作确认");
 		}
 		//
 		Asset a = assetBO.getAssetByAliNo(aliNo);
 		if (a == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]查询不到资产信息");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该阿里编号[" + aliNo + "]查询不到资产信息");
 		}
-		if(AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]已盘点");
+		if (AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该阿里编号[" + aliNo + "]已盘点");
 		}
 		if (!ai.getCountyOrgId().equals(a.getOwnerOrgId())) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]所属县域和当前信息["+infoId+"]不同，不能确认");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+					"该阿里编号[" + aliNo + "]所属县域和当前信息[" + infoId + "]不同，不能确认");
 		}
-		
-		assetBO.confirmForZb(a.getId(),operator.getOperator());
+
+		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
 		DomainUtils.beforeUpdate(ai, operator.getOperator());
@@ -209,22 +214,23 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (param.getSerialNo() != null) {
 			criteria.andSerialNoEqualTo(param.getSerialNo());
 		}
-		//checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
-		//checkType 为null 表示查询“异常提报”和“正常提报”
-		if(param.getCheckType() != null){
+		// checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
+		// checkType 为null 表示查询“异常提报”和“正常提报”
+		if (param.getCheckType() != null) {
 			criteria.andCheckTypeEqualTo(param.getCheckType());
 		}
 		criteria.andCategoryEqualTo(param.getCategoryType());
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
-		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>)assetCheckInfoMapper.selectByExample(example);
-		List<AssetCheckInfoDto> targetList = page.getResult().stream().map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
+		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>) assetCheckInfoMapper.selectByExample(example);
+		List<AssetCheckInfoDto> targetList = page.getResult().stream()
+				.map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
 		return PageDtoUtil.success(page, targetList);
 	}
 
-	private AssetCheckInfoDto assetCheckInfo2Dto(AssetCheckInfo assetCheckInfo){
+	private AssetCheckInfoDto assetCheckInfo2Dto(AssetCheckInfo assetCheckInfo) {
 		AssetCheckInfoDto assetCheckInfoDto = new AssetCheckInfoDto();
-		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo,assetCheckInfoDto,null);
+		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo, assetCheckInfoDto, null);
 		return assetCheckInfoDto;
 	}
 
@@ -235,16 +241,17 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
 		criteria.andCountyOrgIdEqualTo(param.getOrgId());
-		//checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
-		//checkType 为null 表示查询“异常提报”和“正常提报”
-		if(param.getCheckType() != null){
+		// checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
+		// checkType 为null 表示查询“异常提报”和“正常提报”
+		if (param.getCheckType() != null) {
 			criteria.andCheckTypeEqualTo(param.getCheckType());
 		}
 		criteria.andCategoryEqualTo(param.getCategoryType());
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
-		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>)assetCheckInfoMapper.selectByExample(example);
-		List<AssetCheckInfoDto> targetList = page.getResult().stream().map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
+		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>) assetCheckInfoMapper.selectByExample(example);
+		List<AssetCheckInfoDto> targetList = page.getResult().stream()
+				.map(assetCheckInfo -> assetCheckInfo2Dto(assetCheckInfo)).collect(Collectors.toList());
 		return PageDtoUtil.success(page, targetList);
 	}
 
@@ -271,11 +278,11 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andSerialNoEqualTo(serialNo);
-		return  ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
+		return ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
 	}
 
 	@Override
-	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId,String checkerName) {
+	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId, String checkerName) {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
@@ -287,26 +294,28 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：盘点资产必须为1台电视,1台显示器,1台主机");
 		}
-		for(AssetCheckInfo ai:aiList) {
-			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {//正常提报
-				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus()) ||AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus())) &&
-						ai.getAssetId() != null) {//已确认 直接返回
+		for (AssetCheckInfo ai : aiList) {
+			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
+				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+						|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
+						&& ai.getAssetId() != null) {// 已确认 直接返回
 					continue;
 				}
 				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
-					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))&& a.getUseAreaId().equals(ai.getCountyOrgId())) {//同县
+					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))
+							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToStation(a, stationId, checkerId, checkerName);
-						confirmBySystem(ai.getId(),a.getId(),checkerId);
+						confirmBySystem(ai.getId(), a.getId(), checkerId);
 					}
-					
+
 				}
 			}
 		}
 		return Boolean.TRUE;
 	}
-	
-	private void  confirmBySystem(Long aiId,Long assetId,String operator){
+
+	private void confirmBySystem(Long aiId, Long assetId, String operator) {
 		AssetCheckInfo ai = new AssetCheckInfo();
 		ai.setAssetId(assetId);
 		ai.setId(aiId);
@@ -324,18 +333,52 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
 		criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
 		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
-		for(AssetCheckInfo ai:aiList) {
-			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {//正常提报
+		for (AssetCheckInfo ai : aiList) {
+			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
 				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
-					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))&& a.getUseAreaId().equals(ai.getCountyOrgId())) {//同县
+					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))
+							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToCounty(a);
-						confirmBySystem(ai.getId(),a.getId(),operator);
+						confirmBySystem(ai.getId(), a.getId(), operator);
 					}
 				}
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void confirmForXz(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
+		if (CollectionUtils.isEmpty(infoIds)) {
+			return;
+		}
+		List<Asset> assets = assetBO.getWaitCheckAsset(categoryType, countyOrgId);
+		if (CollectionUtils.isNotEmpty(assets)) {
+			if (assets.size() >= infoIds.size()) {
+				for (int i = 0; i < infoIds.size(); i++) {
+					confirmForXzByZb(infoIds, ope, assets, i);
+				}
+			} else {
+				for (int i = 0; i < assets.size(); i++) {
+					confirmForXzByZb(infoIds, ope, assets, i);
+				}
+			}
+		}
+
+	}
+
+	private void confirmForXzByZb(List<Long> infoIds, OperatorDto ope, List<Asset> assets, int i) {
+		Long infoId = infoIds.get(i);
+		Asset a = assets.get(i);
+		assetBO.confirmForZb(a.getId(), ope.getOperator());
+
+		AssetCheckInfo ai = new AssetCheckInfo();
+		ai.setId(infoId);
+		ai.setAssetId(a.getId());
+		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
+		DomainUtils.beforeUpdate(ai, ope.getOperator());
+		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 	}
 
 }
