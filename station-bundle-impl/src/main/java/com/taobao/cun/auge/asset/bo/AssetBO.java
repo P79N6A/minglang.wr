@@ -252,4 +252,10 @@ public interface AssetBO {
     public void sendAppMessage(AssetAppMessageDto appMessageDto);
     
     public Asset getAssetBySerialNo(String serialNo);
+    
+    public void confirmForZb(Long assetId,String operator);
+    
+    public Boolean confrimCheckInfoForSystemToStation(Asset a,Long stationId, String checkerId,String checkerName);
+    
+    public Boolean confrimCheckInfoForSystemToCounty(Asset a);
 }

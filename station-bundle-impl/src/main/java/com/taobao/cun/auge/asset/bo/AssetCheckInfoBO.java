@@ -35,6 +35,20 @@ public interface AssetCheckInfoBO {
 	public Boolean confrimCheckInfo(Long infoId,String aliNo,OperatorDto operator);
 	
 	/**
+	 * 系统确认村点盘点信息
+	 * @param infoId
+	 * @param operator
+	 */
+	public Boolean confrimCheckInfoForSystemToStation(Long stationId,String checkerId,String checkerName);
+	
+	/**
+	 * 系统确认县点盘点信息
+	 * @param infoId
+	 * @param operator
+	 */
+	public Boolean confrimCheckInfoForSystemToCounty(Long countyOrgId, String operator);
+	
+	/**
 	 * 盘点信息列表
 	 * @param param
 	 * @return

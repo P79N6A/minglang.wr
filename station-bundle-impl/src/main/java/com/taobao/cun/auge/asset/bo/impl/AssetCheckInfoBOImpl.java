@@ -1,8 +1,12 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
@@ -170,7 +175,12 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if(AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]已盘点");
 		}
-		//assetBO.checkAsset(checkDto);
+		if (!ai.getCountyOrgId().equals(a.getOwnerOrgId())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该阿里编号["+aliNo+"]所属县域和当前信息["+infoId+"]不同，不能确认");
+		}
+		
+		assetBO.confirmForZb(a.getId(),operator.getOperator());
+		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
 		DomainUtils.beforeUpdate(ai, operator.getOperator());
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
@@ -213,6 +223,70 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andSerialNoEqualTo(serialNo);
 		return  ResultUtils.selectOne(assetCheckInfoMapper.selectByExample(example));
+	}
+
+	@Override
+	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId,String checkerName) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaIdEqualTo(stationId);
+		criteria.andCheckerIdEqualTo(checkerId);
+		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
+		List<String> categoryList = aiList.stream().map(AssetCheckInfo::getCategory).collect(Collectors.toList());
+		if (!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：盘点资产必须为1台电视,1台显示器,1台主机");
+		}
+		for(AssetCheckInfo ai:aiList) {
+			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {//正常提报
+				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus()) ||AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus())) &&
+						ai.getAssetId() != null) {//已确认 直接返回
+					continue;
+				}
+				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
+					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
+					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))&& a.getUseAreaId().equals(ai.getCountyOrgId())) {//同县
+						assetBO.confrimCheckInfoForSystemToStation(a, stationId, checkerId, checkerName);
+						confirmBySystem(ai.getId(),a.getId(),checkerId);
+					}
+					
+				}
+			}
+		}
+		return Boolean.TRUE;
+	}
+	
+	private void  confirmBySystem(Long aiId,Long assetId,String operator){
+		AssetCheckInfo ai = new AssetCheckInfo();
+		ai.setAssetId(assetId);
+		ai.setId(aiId);
+		ai.setStatus(AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode());
+		DomainUtils.beforeUpdate(ai, operator);
+		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
+	}
+
+	@Override
+	public Boolean confrimCheckInfoForSystemToCounty(Long countyOrgId, String operator) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaIdEqualTo(countyOrgId);
+		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
+		criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
+		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
+		for(AssetCheckInfo ai:aiList) {
+			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {//正常提报
+				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
+					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
+					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))&& a.getUseAreaId().equals(ai.getCountyOrgId())) {//同县
+						assetBO.confrimCheckInfoForSystemToCounty(a);
+						confirmBySystem(ai.getId(),a.getId(),operator);
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

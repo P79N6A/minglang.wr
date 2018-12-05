@@ -13,6 +13,17 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.it.asset.api.Attachment;
 import com.alibaba.it.asset.api.CuntaoApiService;
@@ -20,7 +31,6 @@ import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 import com.alibaba.it.asset.api.dto.AssetTransDto;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -57,6 +67,7 @@ import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
@@ -111,27 +122,17 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
-import com.taobao.cun.crius.event.ExtEvent;
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 @Component
 public class AssetBOImpl implements AssetBO {
 
+	
 	private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
 
 	private final Long inAccountUserId = 2631673100L;
@@ -1937,5 +1938,105 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andSerialNoEqualTo(serialNo);
 		return ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
+	}
+
+	@Override
+	public void confirmForZb(Long assetId, String operator) {
+		Asset record = new Asset();
+		DomainUtils.beforeUpdate(record, operator);
+		record.setCheckStatus(AssetCheckStatusEnum.CHECKED.getCode());
+		record.setCheckTime(new Date());
+		record.setId(assetId);
+		assetMapper.updateByPrimaryKeySelective(record);
+	}
+	
+	@Override
+	public Boolean confrimCheckInfoForSystemToStation(Asset a,Long stationId, String checkerId,String checkerName) {
+			try {
+				finishIncomeRollout(a);
+				Asset updateAsset = new Asset();
+				DomainUtils.beforeUpdate(updateAsset, "sys");
+				updateAsset.setId(a.getId());
+				updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+				updateAsset.setUseAreaId(stationId);
+				updateAsset.setUserId(checkerId);
+				updateAsset.setUserName(checkerName);
+				updateAsset.setUseAreaType("STATION");
+				updateAsset.setCheckStatus(AssetCheckStatusEnum.CHECKED.getCode());
+				updateAsset.setCheckTime(new Date());
+				assetMapper.updateByPrimaryKeySelective(updateAsset);
+			} catch (Exception e) {
+			}
+		return true;
+	}
+
+	private void finishIncomeRollout(Asset a) {
+		if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())){
+			try {
+				String workId = LoginIdConverter.convertTo6Bit(a.getOwnerWorkno());
+				AssetTransDto transDto = new AssetTransDto();
+				transDto.setAssetCode(a.getAliNo());
+				transDto.setOwner(workId);
+				transDto.setUser(workId);
+				transDto.setVoucherId("obtainAsset" + a.getAliNo());
+				transDto.setWorkId(workId);
+				transDto.setGroupCode(GROUP_CODE);
+				AssetApiResultDO<Boolean> result = cuntaoApiService.assetObtain(Collections.singletonList(transDto));
+				if (!result.isSuccess() || !result.getResult()) {
+					logger.error("{bizType}, finishIncomeRollout.obtainItAsset error,{errorMsg} ", "assetError", result.getErrorMsg());
+				}
+			} catch (Exception e) {
+				logger.error("{bizType}, finishIncomeRollout.obtainItAsset error,{errorMsg} ", "assetError", e);
+			}
+		}
+		if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())
+				|| a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
+				a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
+			Long assetId1 = a.getId();
+			// 如果有入库单 检查 是否删除入库单
+			AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId1);
+			if (detail != null) {
+				assetRolloutIncomeDetailBO.signAsset(detail.getId(), "system");
+				Long incomeId = detail.getIncomeId();
+				Long rolloutId = detail.getRolloutId();
+				if (incomeId != null) {
+					// 更新出入库单状态
+					if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
+						assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, "system");
+					} else {
+						assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, "system");
+					}
+				}
+				if (rolloutId != null) {
+					if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
+						assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE,
+								"system");
+					} else {
+						assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, "system");
+					}
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public Boolean confrimCheckInfoForSystemToCounty(Asset a) {
+		try {
+			finishIncomeRollout(a);
+			Asset updateAsset = new Asset();
+			DomainUtils.beforeUpdate(updateAsset, "sys");
+			updateAsset.setId(a.getId());
+			updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+			updateAsset.setUseAreaId(a.getOwnerOrgId());
+			updateAsset.setUserId(a.getOwnerWorkno());
+			updateAsset.setUserName(a.getOwnerName());
+			updateAsset.setUseAreaType("COUNTY");
+			updateAsset.setCheckStatus(AssetCheckStatusEnum.CHECKED.getCode());
+			updateAsset.setCheckTime(new Date());
+			assetMapper.updateByPrimaryKeySelective(updateAsset);
+		} catch (Exception e) {
+		}
+	return true;
 	}
 }

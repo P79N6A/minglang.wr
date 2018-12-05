@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,9 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.asset.bo.AssetCheckInfoBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
+import com.taobao.cun.auge.asset.dto.AssetCheckStationExtInfo;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
@@ -22,23 +25,88 @@ import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample.Criteria;
+import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetCheckTaskMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.CountyStationBO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component
 public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
-	
-	
 	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
-	   
 	@Autowired
 	private AssetCheckTaskMapper assetCheckTaskMapper;
+	@Autowired
+	private AssetCheckInfoBO assetCheckInfoBO;
+    @Autowired
+    PartnerInstanceBO partnerInstanceBO;
+    @Autowired
+    StationBO stationBO;
+    @Autowired
+    PartnerBO partnerBO;
+    @Autowired
+    CountyStationBO countyStationBO;
+    
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
-		// TODO Auto-generated method stub
-
+		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
+		if (at != null && !at.getTaskCode().equals(taskCode)) {
+			at.setTaskCode(taskCode);
+			at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
+			DomainUtils.beforeUpdate(at, String.valueOf(taobaoUserId));
+			assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+		}else {
+			PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (rel == null) {
+				return;
+			}
+			Station s = stationBO.getStationById(rel.getStationId());
+			Partner p = partnerBO.getPartnerById(rel.getPartnerId());
+			CountyStation countyStation = countyStationBO.getCountyStationByOrgId(s.getApplyOrg());
+			AssetCheckTask r = new AssetCheckTask();
+			r.setCheckerId(String.valueOf(taobaoUserId));
+			r.setCheckerName(p.getName());
+			r.setCheckerType(AssetUseAreaTypeEnum.STATION.name());
+			r.setOrgId(s.getApplyOrg());
+			r.setOrgName(countyStation.getName());
+			r.setStationExtInfo(bulideStationExtInfo(s,p,rel));
+			r.setStationId(rel.getStationId());
+			r.setStationName(s.getName());
+			r.setTaskCode(taskCode);
+			r.setTaskStatus(AssetCheckTaskTaskStatusEnum.TODO.getCode());
+			r.setTaskType(taskType);
+			DomainUtils.beforeInsert(r, "SYSTEM");
+			assetCheckTaskMapper.insert(r);
+		}
+		
+		
+	}
+	
+	private String bulideStationExtInfo(Station s,Partner p,PartnerStationRel rel) {
+		AssetCheckStationExtInfo e = new AssetCheckStationExtInfo();
+		StringBuilder add = new StringBuilder();
+		if (StringUtils.isNotEmpty(s.getTownDetail())) {
+			add.append(s.getTownDetail());
+		}
+		if (StringUtils.isNotEmpty(s.getVillageDetail())) {
+			add.append(s.getVillageDetail());
+		}
+		add.append(s.getAddress());
+		e.setAddress(add.toString());
+		e.setPartnerName(p.getName());
+		e.setPhone(p.getMobile());
+		e.setStateDesc(PartnerInstanceStateEnum.valueof(rel.getState()).getDesc());
+		e.setStationName(s.getName());
+		e.setStationNum(s.getStationNum());
+		return JSONObject.toJSONString(e);
 	}
 	
 
@@ -59,11 +127,13 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DONE.getCode());
 		DomainUtils.beforeUpdate(at, String.valueOf(taobaoUserId));
 		assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+		
+		//系统确认
+		assetCheckInfoBO.confrimCheckInfoForSystemToStation(at.getStationId(), String.valueOf(taobaoUserId),at.getCheckerName());
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
 			//TODO:结束运营任务
 		}
 		return Boolean.TRUE;
-
 	}
 
 	@Override
@@ -87,11 +157,17 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		} catch (BucException e) {
 		}
 		
-		at.setLostAsset(JSONObject.toJSONString(param.getLostAsset()));
-		at.setWaitBackAsset(JSONObject.toJSONString(param.getWaitBackAsset()));
-		at.setOtherReason(param.getOtherReason());
+		if (AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(param.getTaskType())) {
+			at.setLostAsset(JSONObject.toJSONString(param.getLostAsset()));
+			at.setWaitBackAsset(JSONObject.toJSONString(param.getWaitBackAsset()));
+			at.setOtherReason(param.getOtherReason());
+		}
 		DomainUtils.beforeUpdate(at, param.getOperator());
 		assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+		
+		if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(param.getTaskType())) {
+			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
+		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
 			//TODO:结束流程任务
 		}

@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.asset.enums;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,6 +60,14 @@ public class AssetCheckInfoStatusEnum implements Serializable {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+	
+	public static List<String> getCanConfirmList(){
+		List<String> s = new ArrayList<String>();
+		s.add(CHECKED.getCode());
+		s.add(TASK_DONE.getCode());
+		s.add(ZB_BACK.getCode());
+		return s;
 	}
 
 	public static AssetCheckInfoStatusEnum valueof(String code) {
