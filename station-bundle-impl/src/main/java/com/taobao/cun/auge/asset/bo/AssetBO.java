@@ -285,4 +285,12 @@ public interface AssetBO {
      * @return
      */
     public List<Asset> getWaitCheckAsset(String categoryType, Long countyOrgId);
+    /**
+     * 获得盘点中的数据
+     * @param countyOrgId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
 }

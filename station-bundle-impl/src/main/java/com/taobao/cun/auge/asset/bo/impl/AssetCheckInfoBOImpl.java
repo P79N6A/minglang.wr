@@ -29,6 +29,7 @@ import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -183,8 +184,11 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (a == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该阿里编号[" + aliNo + "]查询不到资产信息");
 		}
+		if (AssetStatusEnum.SCRAP.getCode().equals(a.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该资产[" + aliNo + "]已报废，不能盘点");
+		}
 		if (AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该阿里编号[" + aliNo + "]已盘点");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该资产[" + aliNo + "]已盘点");
 		}
 		if (!ai.getCountyOrgId().equals(a.getOwnerOrgId())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,

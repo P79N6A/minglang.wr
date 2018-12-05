@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 
@@ -43,7 +44,7 @@ public interface AssetCheckService {
 	/**
 	 * 资产业务表 待盘点IT 资产数据
 	 */
-	public PageDto<CuntaoAssetDto> listAssetToChecking(Long countyOrgId);
+	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 资产业务表 待盘点的特定资产总数

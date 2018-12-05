@@ -1939,7 +1939,7 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public Asset getAssetBySerialNo(String serialNo) {
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andSerialNoEqualTo(serialNo);
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andSerialNoEqualTo(serialNo).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());;
 		return ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 	}
 
@@ -2050,6 +2050,7 @@ public class AssetBOImpl implements AssetBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andOwnerOrgIdEqualTo(countyOrgId);
 		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
 		bulidParam(categoryType,criteria);
 		return assetMapper.selectByExample(example);
 		
@@ -2065,5 +2066,23 @@ public class AssetBOImpl implements AssetBO {
 		}else {
 			criteria.andModelEqualTo(AssetCheckInfoCategoryTypeEnum.valueof(categoryType).getDesc()).andCategoryEqualTo("ADMINISTRATION");
 		}
+	}
+
+	@Override
+	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId, Integer pageNum, Integer pageSize) {
+		AssetExtExample example = new AssetExtExample();
+		AssetExtExample.Criteria cri = example.createCriteria();
+		cri.andIsDeletedEqualTo("n");
+		cri.andOwnerOrgIdEqualTo(countyOrgId);
+		cri.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		cri.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+
+		example.setOrderByClause("a.gmt_modified desc");
+		PageHelper.startPage(pageNum, pageSize);
+		Page<Asset> page = (Page<Asset>)assetMapper.selectByExample(example);
+		
+		
+		List<AssetDetailDto> targetList = page.stream().map(this::buildAssetDetail).collect(Collectors.toList());;
+		return PageDtoUtil.success(page, targetList);
 	}
 }

@@ -15,6 +15,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.Asset;
@@ -56,9 +57,8 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 	}
 
 	@Override
-	public PageDto<CuntaoAssetDto> listAssetToChecking(Long countyOrgId) {
-		// TODO Auto-generated method stub
-		return null;
+	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize) {
+		return assetBO.listAssetToChecking(countyOrgId, pageNum, pageSize);
 	}
 
 	@Override
