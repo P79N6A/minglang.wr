@@ -75,7 +75,7 @@ public class UmLifeCycleValidator {
         checkStationNameDuplicate(null, stationName, address.getProvince());
 
         //校验地址字符长度等
-        StationValidator.addressFormatCheck(address,null);
+        StationValidator.addressFormatCheck(address);
         //校验合作店地址是否包含违禁词
         checkAdressKfc(address.getAddressDetail());
         //校验优盟店地址中是否包含优盟姓名
@@ -116,7 +116,7 @@ public class UmLifeCycleValidator {
             checkStationNameDuplicate(updateDto.getStationId(), stationName, address.getProvince());
         }
         //地址变更后，校验新的地址，字符长度校验
-        StationValidator.addressFormatCheck(address,null);
+        StationValidator.addressFormatCheck(address);
         //校验合作店地址是否包含违禁词
         checkAdressKfc(address.getAddressDetail());
 

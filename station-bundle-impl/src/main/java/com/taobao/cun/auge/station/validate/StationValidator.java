@@ -111,7 +111,7 @@ public final class StationValidator {
 			return;
 		}
 		Address address = stationDto.getAddress();
-		addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
+		addressFormatCheck(address);
 	}
 	
 	public static void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
@@ -120,7 +120,7 @@ public final class StationValidator {
 		}
 		Address address = stationDto.getAddress();
 		//村地址基础校验
-		addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
+		addressFormatCheck(address);
 
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
@@ -140,7 +140,7 @@ public final class StationValidator {
 	public static void validateStationInfo(StationDto stationDto) {
 		Address address = stationDto.getAddress();
 		//村地址基础校验
-        addressFormatCheck(address,stationDto.getPartnerInstanceIsOnTown().getCode());
+        addressFormatCheck(address);
         
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
@@ -218,15 +218,13 @@ public final class StationValidator {
      * @param address 必填
      * @return
      */
-    public static boolean addressFormatCheck(Address address,String isOnTwon){
+    public static boolean addressFormatCheck(Address address){
         //校验详细地址内容规范
     	addressDetailFormatCheck(address);
+    	
         //校验行政地址内容规范
-    	if("y".equals(isOnTwon) || StringUtils.isNotEmpty(address.getVillageDetail())) {
-    		villageFormatCheck(address);
-    	}
-        
-        
+    	villageFormatCheck(address);
+
         return true;
     }
     
@@ -242,8 +240,9 @@ public final class StationValidator {
         if (address == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能为空");
         }
-        else if(StringUtils.isEmpty(address.getVillageDetail())) {
-        	throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村不能为空");
+       
+        if(StringUtils.isEmpty(address.getVillageDetail())) {
+        	return true;
         }
         
         //特殊符号校验

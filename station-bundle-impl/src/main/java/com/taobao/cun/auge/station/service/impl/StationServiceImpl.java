@@ -224,7 +224,7 @@ public class StationServiceImpl implements StationService {
         if(station.getAddress() != null){
         	Address add = station.getAddress();
         	add.setProvince(ins.getStationDto().getAddress().getProvince());
-            StationValidator.addressFormatCheck(add,station.getPartnerInstanceIsOnTown().getCode());
+            StationValidator.addressFormatCheck(add);
           
         }else{
             Address add = new Address();
