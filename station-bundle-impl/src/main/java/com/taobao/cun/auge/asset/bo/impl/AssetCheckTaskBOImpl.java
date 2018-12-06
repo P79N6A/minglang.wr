@@ -50,6 +50,7 @@ import net.sf.cglib.beans.BeanCopier;
 @Component
 public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 
+	
 	private static BeanCopier assetCheckTaskVo2DtoCopier = BeanCopier.create(AssetCheckTask.class, AssetCheckTaskDto.class, false);
 	private static final Logger logger = LoggerFactory.getLogger(AssetCheckTaskBO.class);
 
@@ -282,6 +283,30 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.STATION.name());
 		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
 		return ResultUtils.selectOne(assetCheckTaskMapper.selectByExample(example));
+	}
+
+	@Override
+	public Integer getWaitCheckStationCount(Long countyOrgId) {
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOrgIdEqualTo(countyOrgId);
+		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.STATION.name());
+		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+		criteria.andTaskStatusNotEqualTo(AssetCheckTaskTaskStatusEnum.DONE.getCode());
+		return assetCheckTaskMapper.selectByExample(example).size();
+	}
+
+	@Override
+	public Integer getDoneCheckStationCount(Long countyOrgId) {
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOrgIdEqualTo(countyOrgId);
+		criteria.andCheckerTypeEqualTo(AssetUseAreaTypeEnum.STATION.name());
+		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+		criteria.andTaskStatusEqualTo(AssetCheckTaskTaskStatusEnum.DONE.getCode());
+		return assetCheckTaskMapper.selectByExample(example).size();
 	}
 
 }

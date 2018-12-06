@@ -2086,27 +2086,39 @@ public class AssetBOImpl implements AssetBO {
 		return PageDtoUtil.success(page, targetList);
 	}
 
-//	@Override
-//	public Integer getWaitCheckAssetForIt(Long countyOrgId) {
-//		AssetExample example = new AssetExample();
-//		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
-//		criteria.andIsDeletedEqualTo("n");
-//		criteria.andOwnerOrgIdEqualTo(countyOrgId);
-//		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
-//		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
-//		criteria.andCategoryNotEqualTo("ADMINISTRATION");
-//		return assetMapper.countByExample(example);
-//	}
-//
-//	@Override
-//	public Integer getWaitCheckAssetForXz(Long countyOrgId) {
-//		AssetExample example = new AssetExample();
-//		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
-//		criteria.andIsDeletedEqualTo("n");
-//		criteria.andOwnerOrgIdEqualTo(countyOrgId);
-//		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
-//		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
-//		criteria.andCategoryEqualTo("ADMINISTRATION");
-//		return assetMapper.countByExample(example);
-//	}
+	@Override
+	public Integer getCheckAssetForIt(Long countyOrgId) {
+		AssetExample example = new AssetExample();
+		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+		//criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		criteria.andCategoryNotEqualTo("ADMINISTRATION");
+		return assetMapper.countByExample(example);
+	}
+
+	@Override
+	public Integer getCheckAssetForXz(Long countyOrgId) {
+		AssetExample example = new AssetExample();
+		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+		//criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		criteria.andCategoryEqualTo("ADMINISTRATION");
+		return assetMapper.countByExample(example);
+	}
+	
+	@Override
+	public List<Asset> getCheckAsset(Long countyOrgId) {
+		AssetExample example = new AssetExample();
+		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+		//criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		//criteria.andCategoryEqualTo("ADMINISTRATION");
+		return assetMapper.selectByExample(example);
+	}
 }

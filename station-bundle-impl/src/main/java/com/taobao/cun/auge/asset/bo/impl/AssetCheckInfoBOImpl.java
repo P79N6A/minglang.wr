@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -269,7 +270,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	@Override
 	public CountyCheckCountDto getCountyCheckCount(Long countyOrgId) {
 		CountyCheckCountDto cd = new CountyCheckCountDto();
-		List<AssetCheckInfo> iList = getInfoByCountyOrgId(countyOrgId);
+		List<AssetCheckInfo> iList = getInfoByCountyOrgIdToCountyCheck(countyOrgId);
 		if (CollectionUtils.isEmpty(iList)) {
 			return cd;
 		}
@@ -293,8 +294,62 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	@Override
 	public CountyFollowCheckCountDto getCountyFollowCheckCount(Long countyOrgId) {
-		// TODO Auto-generated method stub
-		return null;
+		CountyFollowCheckCountDto fDto = new CountyFollowCheckCountDto();
+		Long doneCount = 0L;
+		List<AssetCheckInfo> l = getInfoByCountyOrgId(countyOrgId);
+		if (CollectionUtils.isNotEmpty(l)) {
+			doneCount = new Long(l.size());
+		}
+		List<Asset> a = assetBO.getCheckAsset(countyOrgId);
+		Long count = new Long(a.size());
+		Long doing = count - doneCount;
+		fDto.setDoneCount(doneCount);
+		fDto.setDoingCount(doing < 0 ? 0 : doing);
+		Map<String, Long> aDtail = new HashMap<String, Long>();
+		for (Asset b : a) {
+			String categroyType = bulidCategoryType(b.getModel(), b.getCategory());
+			if (aDtail.get(categroyType) != null) {
+				aDtail.put(categroyType, aDtail.get(categroyType) + 1L);
+			} else {
+				aDtail.put(categroyType, 1L);
+			}
+		}
+		if (doneCount > 0) {
+			Map<String, Long> dDtail = l.stream()
+					.collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting()));
+			fDto.setDoneDetail(dDtail);
+			for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
+				if (dDtail.get(entry.getKey()) != null) {
+					Long sub = entry.getValue() - dDtail.get(entry.getKey());
+					aDtail.put(entry.getKey(), sub < 0 ? 0L : sub);
+				}
+			}
+		}
+		fDto.setDoingDetail(aDtail);
+		fDto.setDoingStationCount(new Long(assetCheckTaskBO.getWaitCheckStationCount(countyOrgId)));
+		fDto.setDoneStationCount(new Long(assetCheckTaskBO.getDoneCheckStationCount(countyOrgId)));
+		return fDto;
+	}
+
+	private String bulidCategoryType(String model, String category) {
+		if ("ADMINISTRATION".equals(category)) {
+			if (AssetCheckInfoCategoryTypeEnum.SHAFA.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.SHAFA.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.KONGTIAO.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.KONGTIAO.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.ZUHEYINXIANG.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.ZUHEYINXIANG.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.WEIBOLU.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.WEIBOLU.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.BINGXIANG.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.BINGXIANG.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.XUNLUOJI.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.XUNLUOJI.getCode();
+			} else if (AssetCheckInfoCategoryTypeEnum.YINXIANG.getDesc().equals(model)) {
+				return AssetCheckInfoCategoryTypeEnum.YINXIANG.getCode();
+			}
+		}
+		return category;
 	}
 
 	@Override
@@ -412,8 +467,16 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andCheckerAreaIdEqualTo(countyOrgId);
+		return assetCheckInfoMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<AssetCheckInfo> getInfoByCountyOrgIdToCountyCheck(Long countyOrgId) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaIdEqualTo(countyOrgId);
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
-		// criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
 		return assetCheckInfoMapper.selectByExample(example);
 	}
 

@@ -60,6 +60,11 @@ public interface AssetCheckTaskBO {
      * @return
      */
     public AssetCheckTask  getTaskForStation(String taobaoUserId);
+    
+    public Integer getWaitCheckStationCount(Long countyOrgId);
+    
+    public Integer getDoneCheckStationCount(Long countyOrgId);
+
 	
 	
 }

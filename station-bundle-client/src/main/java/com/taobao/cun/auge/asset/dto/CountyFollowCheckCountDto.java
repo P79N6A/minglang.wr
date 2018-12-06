@@ -14,7 +14,7 @@ public class CountyFollowCheckCountDto implements Serializable{
 	/**
 	 * 已盘总数
 	 */
-	private Long doneCount;
+	private Long doneCount =0L;
 	
 	/**
 	 * 未盘总数

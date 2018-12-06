@@ -99,7 +99,13 @@ public interface AssetCheckInfoBO {
 	public void confirmSelect(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope);
 	
 	/**
-	 * 县点盘点列表
+	 * 县点盘点列表(县盘点)
+	 * @param countyOrgId
+	 * @return
+	 */
+	public List<AssetCheckInfo> getInfoByCountyOrgIdToCountyCheck(Long countyOrgId);
+	/**
+	 * 县点盘点列表(县盘点+村盘点)
 	 * @param countyOrgId
 	 * @return
 	 */
