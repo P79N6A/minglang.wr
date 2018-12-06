@@ -17,21 +17,6 @@ public class AssetCheckTaskDto implements Serializable{
 
 	private Long id;
 
-
-	private Date gmtCreate;
-
-
-	private Date gmtModified;
-
-	private String creator;
-
-
-	private String modifier;
-
-
-	private String isDeleted;
-
-
 	private String taskType;
 
 
@@ -56,11 +41,14 @@ public class AssetCheckTaskDto implements Serializable{
 
 	private String otherReason;
 
-	private String stationExtInfo;
-
 	private String lostAsset;
 
 	private String waitBackAsset;
+	
+	/**
+     * 村点信息
+     */
+    private AssetCheckStationExtInfo stationExtInfo;
 
 	public Long getId() {
 		return id;
@@ -70,44 +58,12 @@ public class AssetCheckTaskDto implements Serializable{
 		this.id = id;
 	}
 
-	public Date getGmtCreate() {
-		return gmtCreate;
+	public AssetCheckStationExtInfo getStationExtInfo() {
+		return stationExtInfo;
 	}
 
-	public void setGmtCreate(Date gmtCreate) {
-		this.gmtCreate = gmtCreate;
-	}
-
-	public Date getGmtModified() {
-		return gmtModified;
-	}
-
-	public void setGmtModified(Date gmtModified) {
-		this.gmtModified = gmtModified;
-	}
-
-	public String getCreator() {
-		return creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	public String getModifier() {
-		return modifier;
-	}
-
-	public void setModifier(String modifier) {
-		this.modifier = modifier;
-	}
-
-	public String getIsDeleted() {
-		return isDeleted;
-	}
-
-	public void setIsDeleted(String isDeleted) {
-		this.isDeleted = isDeleted;
+	public void setStationExtInfo(AssetCheckStationExtInfo stationExtInfo) {
+		this.stationExtInfo = stationExtInfo;
 	}
 
 	public String getTaskType() {
@@ -198,13 +154,6 @@ public class AssetCheckTaskDto implements Serializable{
 		this.otherReason = otherReason;
 	}
 
-	public String getStationExtInfo() {
-		return stationExtInfo;
-	}
-
-	public void setStationExtInfo(String stationExtInfo) {
-		this.stationExtInfo = stationExtInfo;
-	}
 
 	public String getLostAsset() {
 		return lostAsset;
@@ -226,11 +175,6 @@ public class AssetCheckTaskDto implements Serializable{
 	public String toString() {
 		return "AssetCheckTaskDto{" +
 				"id=" + id +
-				", gmtCreate=" + gmtCreate +
-				", gmtModified=" + gmtModified +
-				", creator='" + creator + '\'' +
-				", modifier='" + modifier + '\'' +
-				", isDeleted='" + isDeleted + '\'' +
 				", taskType='" + taskType + '\'' +
 				", taskCode='" + taskCode + '\'' +
 				", taskStatus='" + taskStatus + '\'' +

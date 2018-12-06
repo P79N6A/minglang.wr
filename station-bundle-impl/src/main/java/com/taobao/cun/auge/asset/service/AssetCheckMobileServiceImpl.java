@@ -11,9 +11,11 @@ import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
+import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
 import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
+import com.taobao.cun.auge.asset.dto.QueryStationTaskCondition;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
@@ -129,5 +131,11 @@ public class AssetCheckMobileServiceImpl implements AssetCheckMobileService {
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
+	}
+
+	@Override
+	public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

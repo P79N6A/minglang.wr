@@ -75,10 +75,7 @@ public class AssetCheckInfoDto extends PageQuery {
 	 * 状态
 	 */
     private String status;
-    /**
-     * 村点信息
-     */
-    private AssetCheckStationExtInfo stationExtInfo;
+ 
     
 	public Long getInfoId() {
 		return infoId;
@@ -86,14 +83,6 @@ public class AssetCheckInfoDto extends PageQuery {
 
 	public void setInfoId(Long infoId) {
 		this.infoId = infoId;
-	}
-
-	public AssetCheckStationExtInfo getStationExtInfo() {
-		return stationExtInfo;
-	}
-
-	public void setStationExtInfo(AssetCheckStationExtInfo stationExtInfo) {
-		this.stationExtInfo = stationExtInfo;
 	}
 
 	public String getAliNo() {

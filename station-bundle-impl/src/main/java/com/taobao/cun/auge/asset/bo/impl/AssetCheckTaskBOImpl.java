@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckStationExtInfo;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
+import com.taobao.cun.auge.asset.dto.QueryStationTaskCondition;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
@@ -259,6 +261,10 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	private  AssetCheckTaskDto assetCheckTask2Dto(AssetCheckTask assetCheckTask){
 		AssetCheckTaskDto assetCheckTaskDto = new AssetCheckTaskDto();
 		assetCheckTaskVo2DtoCopier.copy(assetCheckTask,assetCheckTaskDto,null);
+		if (StringUtils.isNotEmpty(assetCheckTask.getStationExtInfo())) {
+			assetCheckTaskDto.setStationExtInfo(JSONObject.parseObject(assetCheckTask.getStationExtInfo(), AssetCheckStationExtInfo.class));
+		}
+	
 		return assetCheckTaskDto;
 	}
 
@@ -307,6 +313,27 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
 		criteria.andTaskStatusEqualTo(AssetCheckTaskTaskStatusEnum.DONE.getCode());
 		return assetCheckTaskMapper.selectByExample(example).size();
+	}
+
+	@Override
+	public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param) {
+		Objects.requireNonNull(param, "参数不能为空");
+		Objects.requireNonNull(param.getCountyOrgId(), "参数不能为空");
+		AssetCheckTaskExample example = new AssetCheckTaskExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTaskTypeEqualTo(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+		criteria.andOrgIdEqualTo(param.getCountyOrgId());
+		if ("y".equals(param.getIsDone())) {
+			criteria.andTaskStatusEqualTo(AssetCheckTaskTaskStatusEnum.DONE.getCode());
+		}else {
+			criteria.andTaskStatusNotEqualTo(AssetCheckTaskTaskStatusEnum.DONE.getCode());
+		}
+		example.setOrderByClause("id desc");
+		PageHelper.startPage(param.getPageNum(), param.getPageSize());
+		Page<AssetCheckTask> page = (Page<AssetCheckTask>)assetCheckTaskMapper.selectByExample(example);
+		List<AssetCheckTaskDto> targetList = page.getResult().stream().map(assetCheckTask -> assetCheckTask2Dto(assetCheckTask)).collect(Collectors.toList());
+		return PageDtoUtil.success(page, targetList);
 	}
 
 }

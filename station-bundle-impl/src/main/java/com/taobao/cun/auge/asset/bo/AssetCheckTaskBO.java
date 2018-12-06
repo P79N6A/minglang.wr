@@ -5,6 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
+import com.taobao.cun.auge.asset.dto.QueryStationTaskCondition;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 
@@ -60,11 +61,23 @@ public interface AssetCheckTaskBO {
      * @return
      */
     public AssetCheckTask  getTaskForStation(String taobaoUserId);
-    
+    /**
+     * 未完成盘点 村点数
+     * @param countyOrgId
+     * @return
+     */
     public Integer getWaitCheckStationCount(Long countyOrgId);
-    
+	 /**
+	  * 完成盘点 村点数
+	  * @param countyOrgId
+	  * @return
+	  */
     public Integer getDoneCheckStationCount(Long countyOrgId);
-
-	
-	
+    
+    /**
+     * 存点盘点状况列表
+     * @param param
+     * @return
+     */
+    public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param)
 }
