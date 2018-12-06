@@ -134,8 +134,16 @@ public class AssetCheckMobileServiceImpl implements AssetCheckMobileService {
 	}
 
 	@Override
-	public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PageDto<AssetCheckTaskDto>> listTasks(QueryStationTaskCondition param) {
+		try {
+			return Result.of(assetCheckTaskBO.listTasks(param));
+		} catch (AugeBusinessException e1) {
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, null, e1.getMessage());
+			return Result.of(errorInfo);
+		}catch (Exception e) {
+			logger.error("AssetCheckMobileService.listTasks error! param:"+ JSON.toJSONString(param), e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
 	}
 }

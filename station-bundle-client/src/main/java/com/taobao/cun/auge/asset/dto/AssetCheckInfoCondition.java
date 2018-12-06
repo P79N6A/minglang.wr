@@ -11,11 +11,6 @@ import com.taobao.cun.auge.common.PageQuery;
 public class AssetCheckInfoCondition extends PageQuery {
 	
 	private static final long serialVersionUID = 1124965828102911518L;
-	
-	/**
-	 * 任务类型：AssetCheckTaskTaskTypeEnum 的code
-	 */
-	private String taskType;
 
 	/**
 	 * 盘点人所在区域
@@ -46,14 +41,6 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 * 盘点类型
 	 */
 	private String checkType;
-	/**
-	 * 是否全匹配
-	 */
-	private String isMatch;
-	/**
-	 * 县组织ID
-	 */
-	private Long countyOrgId;
 	
 	/**
 	 *村小二淘宝账号
@@ -74,14 +61,6 @@ public class AssetCheckInfoCondition extends PageQuery {
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
-	}
-
-	public String getTaskType() {
-		return taskType;
-	}
-
-	public void setTaskType(String taskType) {
-		this.taskType = taskType;
 	}
 
 	public Long getOrgId() {
@@ -122,22 +101,6 @@ public class AssetCheckInfoCondition extends PageQuery {
 
 	public void setCheckType(String checkType) {
 		this.checkType = checkType;
-	}
-
-	public String getIsMatch() {
-		return isMatch;
-	}
-
-	public void setIsMatch(String isMatch) {
-		this.isMatch = isMatch;
-	}
-
-	public Long getCountyOrgId() {
-		return countyOrgId;
-	}
-
-	public void setCountyOrgId(Long countyOrgId) {
-		this.countyOrgId = countyOrgId;
 	}
 
 	public String getCheckerAreaType() {

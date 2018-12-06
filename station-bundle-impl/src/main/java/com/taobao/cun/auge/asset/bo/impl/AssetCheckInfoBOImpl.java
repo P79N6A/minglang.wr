@@ -246,14 +246,22 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
-		criteria.andCountyOrgIdEqualTo(param.getOrgId());
+		if (param.getOrgId() != null) {
+			criteria.andCheckerAreaIdEqualTo(param.getOrgId());
+			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
+		}
 		// checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
 		// checkType 为null 表示查询“异常提报”和“正常提报”
 		if (param.getCheckType() != null) {
 			criteria.andCheckTypeEqualTo(param.getCheckType());
 		}
+		if (param.getCategoryType() != null) {
 		criteria.andCategoryEqualTo(param.getCategoryType());
+		}
+		if (param.getTaobaoUserId() != null) {
+			criteria.andCheckerIdEqualTo(String.valueOf(param.getTaobaoUserId()));
+			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
 		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>) assetCheckInfoMapper.selectByExample(example);

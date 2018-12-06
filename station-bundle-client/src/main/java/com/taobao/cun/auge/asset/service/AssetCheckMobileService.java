@@ -68,6 +68,6 @@ public interface AssetCheckMobileService {
 	 * @param param
 	 * @return
 	 */
-    public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition  param);
+    public Result<PageDto<AssetCheckTaskDto>> listTasks(QueryStationTaskCondition  param);
 	
 }
