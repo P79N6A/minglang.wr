@@ -12,6 +12,10 @@ public class CountyCheckCountDto implements Serializable{
 
 	private static final long serialVersionUID = 4562158628905291847L;
 	/**
+	 *   已盘总数
+	 */
+	private Long doneCount = 0L;
+	/**
 	 * it资产已盘总数
 	 */
 	private Long itDoneCount;
@@ -27,14 +31,12 @@ public class CountyCheckCountDto implements Serializable{
 	 * 行政资产已盘详情 key:AssetCheckInfoCategoryTypeEnum 的code value:总数
 	 */
 	private Map<String,Long> adminDoneDetailt;
-	/**
-	 * it资产未盘总数
-	 */
-	private Long itDoingCount;
-	/**
-	 * 行政资产未盘总数
-	 */
-	private Long adminDoingCount;
+	public Long getDoneCount() {
+		return doneCount;
+	}
+	public void setDoneCount(Long doneCount) {
+		this.doneCount = doneCount;
+	}
 	public Long getItDoneCount() {
 		return itDoneCount;
 	}
@@ -59,16 +61,5 @@ public class CountyCheckCountDto implements Serializable{
 	public void setAdminDoneDetailt(Map<String, Long> adminDoneDetailt) {
 		this.adminDoneDetailt = adminDoneDetailt;
 	}
-	public Long getItDoingCount() {
-		return itDoingCount;
-	}
-	public void setItDoingCount(Long itDoingCount) {
-		this.itDoingCount = itDoingCount;
-	}
-	public Long getAdminDoingCount() {
-		return adminDoingCount;
-	}
-	public void setAdminDoingCount(Long adminDoingCount) {
-		this.adminDoingCount = adminDoingCount;
-	}
+	
 }

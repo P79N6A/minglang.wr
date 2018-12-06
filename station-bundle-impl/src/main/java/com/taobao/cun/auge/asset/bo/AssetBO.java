@@ -293,4 +293,17 @@ public interface AssetBO {
      * @return
      */
     public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
+    
+//    /**
+//     * 查询待盘点it资产
+//     * @param countyOrgId
+//     * @return
+//     */
+//    public Integer getWaitCheckAssetForIt(Long countyOrgId);
+//    /**
+//     * 查询待盘点行政资产
+//     * @param countyOrgId
+//     * @return
+//     */
+//    public Integer getWaitCheckAssetForXz(Long countyOrgId);
 }

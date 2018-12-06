@@ -2085,4 +2085,28 @@ public class AssetBOImpl implements AssetBO {
 		List<AssetDetailDto> targetList = page.stream().map(this::buildAssetDetail).collect(Collectors.toList());;
 		return PageDtoUtil.success(page, targetList);
 	}
+
+//	@Override
+//	public Integer getWaitCheckAssetForIt(Long countyOrgId) {
+//		AssetExample example = new AssetExample();
+//		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+//		criteria.andIsDeletedEqualTo("n");
+//		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+//		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+//		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+//		criteria.andCategoryNotEqualTo("ADMINISTRATION");
+//		return assetMapper.countByExample(example);
+//	}
+//
+//	@Override
+//	public Integer getWaitCheckAssetForXz(Long countyOrgId) {
+//		AssetExample example = new AssetExample();
+//		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
+//		criteria.andIsDeletedEqualTo("n");
+//		criteria.andOwnerOrgIdEqualTo(countyOrgId);
+//		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+//		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+//		criteria.andCategoryEqualTo("ADMINISTRATION");
+//		return assetMapper.countByExample(example);
+//	}
 }

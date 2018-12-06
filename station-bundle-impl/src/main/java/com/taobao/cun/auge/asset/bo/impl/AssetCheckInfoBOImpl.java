@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
+import com.taobao.cun.auge.asset.enums.AssetCheckInfoAssetTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
@@ -266,8 +268,27 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	@Override
 	public CountyCheckCountDto getCountyCheckCount(Long countyOrgId) {
-		// TODO Auto-generated method stub
-		return null;
+		CountyCheckCountDto cd = new CountyCheckCountDto();
+		List<AssetCheckInfo> iList = getInfoByCountyOrgId(countyOrgId);
+		if (CollectionUtils.isEmpty(iList)) {
+			return cd;
+		}
+		cd.setDoneCount(new Long(iList.size()));
+		List<AssetCheckInfo> itList = iList.stream()
+				.filter(item -> AssetCheckInfoAssetTypeEnum.IT.getCode()
+						.equals(AssetCheckInfoCategoryTypeEnum.getAssetType(item.getCategory())))
+				.collect(Collectors.toList());
+		cd.setItDoneCount(new Long(itList.size()));
+		List<AssetCheckInfo> adminList = iList.stream()
+				.filter(item -> AssetCheckInfoAssetTypeEnum.ADMIN.getCode()
+						.equals(AssetCheckInfoCategoryTypeEnum.getAssetType(item.getCategory())))
+				.collect(Collectors.toList());
+		cd.setAdminDoneCount(new Long(adminList.size()));
+		cd.setItDoneDetail(
+				itList.stream().collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting())));
+		cd.setAdminDoneDetailt(
+				adminList.stream().collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting())));
+		return cd;
 	}
 
 	@Override
@@ -383,6 +404,17 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
 		DomainUtils.beforeUpdate(ai, ope.getOperator());
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
+	}
+
+	@Override
+	public List<AssetCheckInfo> getInfoByCountyOrgId(Long countyOrgId) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerAreaIdEqualTo(countyOrgId);
+		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
+		// criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
+		return assetCheckInfoMapper.selectByExample(example);
 	}
 
 }
