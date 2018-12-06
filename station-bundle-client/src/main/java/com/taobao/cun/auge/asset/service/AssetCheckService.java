@@ -56,4 +56,9 @@ public interface AssetCheckService {
 	 * @param orgIds
 	 */
     public void initTaskForCounty(List<Long> orgIds);
+    
+    /**
+	 * 单个资产打回
+	 */
+	public void backOne(Long infoId,String reason,OperatorDto ope);
 }

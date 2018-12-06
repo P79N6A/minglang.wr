@@ -130,6 +130,12 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
 					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
 		}
+		//TODO:ddfgdfgd
+		if (a == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
+		}
+		
 
 	}
 

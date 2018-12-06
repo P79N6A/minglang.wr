@@ -64,7 +64,7 @@ public interface AssetCheckMobileService {
 	public Result<CountyFollowCheckCountDto> getCountyFollowCheckCount(Long countyOrgId);
 	
 	/**
-	 * 盘点任务列表
+	 * 村盘点任务列表
 	 * @param param
 	 * @return
 	 */
