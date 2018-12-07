@@ -246,6 +246,11 @@ public final class StationValidator {
         }
         
         //特殊符号校验
+        if (address.getVillageDetail().length() > 30) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不能超过30");
+        }
+        
+        //特殊符号校验
         if ( !isSpecialStr(address.getVillageDetail(),RULE_REGEX_ADDRESS)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"所属行政村不可含有特殊字符");
         }
