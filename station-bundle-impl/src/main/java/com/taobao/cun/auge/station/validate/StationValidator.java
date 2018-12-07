@@ -246,8 +246,8 @@ public final class StationValidator {
         }
         
         //特殊符号校验
-        if (address.getVillageDetail().length() > 30) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不能超过30");
+        if (address.getVillageDetail().length() > 20) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不能超过20");
         }
         
         //特殊符号校验
