@@ -71,7 +71,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	@Autowired
 	private AssetBO assetBO;
 
-	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto) {
 		Objects.requireNonNull(addDto, "参数不能为空");
@@ -166,7 +166,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		return null;
 	}
-
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean delCheckInfo(Long infoId, OperatorDto operator) {
 		AssetCheckInfo ai = getCheckInfoById(infoId);
@@ -181,7 +181,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 		return Boolean.TRUE;
 	}
-
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean confrimCheckInfo(Long infoId, String aliNo, OperatorDto operator) {
 		AssetCheckInfo ai = getCheckInfoById(infoId);
@@ -214,7 +214,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 		return Boolean.TRUE;
 	}
-
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void backOne(Long infoId, String reason, OperatorDto ope) {
 		AssetCheckInfo acInfo = getCheckInfoById(infoId);
@@ -393,7 +393,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId, String checkerName) {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
@@ -435,7 +435,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		DomainUtils.beforeUpdate(ai, operator);
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean confrimCheckInfoForSystemToCounty(Long countyOrgId, String operator) {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
@@ -459,7 +460,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		return null;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void confirmSelect(List<Long> infoIds, Long countyOrgId, String categoryType, OperatorDto ope) {
 		if (CollectionUtils.isEmpty(infoIds)) {

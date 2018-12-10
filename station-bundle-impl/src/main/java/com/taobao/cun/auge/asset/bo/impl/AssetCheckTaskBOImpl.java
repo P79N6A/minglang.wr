@@ -33,7 +33,6 @@ import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample.Criteria;
-import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -46,6 +45,9 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.task.dto.TaskInteractionDto;
+import com.taobao.cun.auge.task.dto.TaskInteractionExecuteDto;
+import com.taobao.cun.auge.task.service.TaskElementService;
 
 import net.sf.cglib.beans.BeanCopier;
 
@@ -63,15 +65,15 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	@Autowired
 	private AssetCheckInfoBO assetCheckInfoBO;
     @Autowired
-    PartnerInstanceBO partnerInstanceBO;
+    private PartnerInstanceBO partnerInstanceBO;
     @Autowired
-    StationBO stationBO;
+    private StationBO stationBO;
     @Autowired
-    PartnerBO partnerBO;
+    private PartnerBO partnerBO;
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
-
-    
+    @Autowired
+    private TaskElementService taskElementService;
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
@@ -146,7 +148,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		//系统确认
 		assetCheckInfoBO.confrimCheckInfoForSystemToStation(at.getStationId(), String.valueOf(taobaoUserId),at.getCheckerName());
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
-			//TODO:结束运营任务
+			TaskInteractionExecuteDto o = JSONObject.parseObject(at.getTaskCode(),TaskInteractionExecuteDto.class);
+			taskElementService.executeInteraction(o);
 		}
 		return Boolean.TRUE;
 	}
