@@ -255,7 +255,17 @@ public class ProcessProcessor {
                 dto.setId(businessId);
                 dto.copyOperatorDto(OperatorDto.defaultOperator());
                 stationDecorateService.auditDecorationDecision(dto);
-            }
+            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
+				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				ProcessApproveResultEnum decorationDesignAuditResult = null;
+				if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)){
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+				}else if(ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+				}
+				String desc = ob.getString("taskRemark");
+				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
+			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
 			// 任务被激活
@@ -340,18 +350,7 @@ public class ProcessProcessor {
 					sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
 					serviceAbilityDecisionService.auditSHRH(sddDto);
 				}
-            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
-				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
-				String resultCode = ob.getString("result");
-				ProcessApproveResultEnum decorationDesignAuditResult = null;
-				if("拒绝".equals(resultCode)){
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
-				}else{
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
-				}
-				String desc = ob.getString("taskRemark");
-				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
-			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
+            }else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
 				String taskId = ob.getString("taskId");
 				CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
