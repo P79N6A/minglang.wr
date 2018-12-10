@@ -75,4 +75,10 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 		assetCheckTaskBO.initTaskForCounty(orgIds);
 	}
 
+	@Override
+	public void backOne(Long infoId, String reason, OperatorDto ope) {
+		assetCheckInfoBO.backOne(infoId, reason, ope);
+
+	}
+
 }

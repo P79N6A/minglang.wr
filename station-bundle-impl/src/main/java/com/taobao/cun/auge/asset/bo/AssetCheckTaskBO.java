@@ -79,5 +79,5 @@ public interface AssetCheckTaskBO {
      * @param param
      * @return
      */
-    public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param)
+    public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param);
 }

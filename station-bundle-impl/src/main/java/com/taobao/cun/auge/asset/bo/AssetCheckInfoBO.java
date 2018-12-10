@@ -110,4 +110,12 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public List<AssetCheckInfo> getInfoByCountyOrgId(Long countyOrgId);
+
+	/**
+	 * 单个资产打回
+	 * @param infoId
+	 * @param reason
+	 * @param ope
+	 */
+    void backOne(Long infoId, String reason, OperatorDto ope);
 }

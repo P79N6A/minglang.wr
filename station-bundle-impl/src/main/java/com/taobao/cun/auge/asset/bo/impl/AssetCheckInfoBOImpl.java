@@ -50,6 +50,8 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 import net.sf.cglib.beans.BeanCopier;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
@@ -213,14 +215,26 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
+	public void backOne(Long infoId, String reason, OperatorDto ope) {
+		AssetCheckInfo acInfo = getCheckInfoById(infoId);
+		if (AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(acInfo.getStatus())
+				|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(acInfo.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "该资产盘点信息总部已确认，不能打回");
+		}
+		acInfo.setStatus(AssetCheckInfoStatusEnum.ZB_BACK.getCode());
+		acInfo.setBackReason(reason);
+		DomainUtils.beforeUpdate(acInfo, ope.getOperator());
+		assetCheckInfoMapper.updateByPrimaryKeySelective(acInfo);
+
+	}
+
+	@Override
 	public PageDto<AssetCheckInfoDto> listInfoForOrg(AssetCheckInfoCondition param) {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
-		if (param.getOrgId() != null) {
-			criteria.andCountyOrgIdEqualTo(param.getOrgId());
-		}
+		criteria.andCountyOrgIdEqualTo(param.getOrgId());
 		if (param.getAliNo() != null) {
 			criteria.andAliNoEqualTo(param.getAliNo());
 		}
@@ -232,7 +246,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (param.getCheckType() != null) {
 			criteria.andCheckTypeEqualTo(param.getCheckType());
 		}
-		criteria.andCategoryEqualTo(param.getCategoryType());
+		if(param.getCategoryType() != null){
+			criteria.andCategoryEqualTo(param.getCategoryType());
+		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
 		Page<AssetCheckInfo> page = (Page<AssetCheckInfo>) assetCheckInfoMapper.selectByExample(example);
@@ -262,7 +278,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			criteria.andCheckTypeEqualTo(param.getCheckType());
 		}
 		if (param.getCategoryType() != null) {
-		criteria.andCategoryEqualTo(param.getCategoryType());
+			criteria.andCategoryEqualTo(param.getCategoryType());
 		}
 		if (param.getTaobaoUserId() != null) {
 			criteria.andCheckerIdEqualTo(String.valueOf(param.getTaobaoUserId()));
@@ -376,6 +392,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId, String checkerName) {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
@@ -385,7 +402,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
 		List<String> categoryList = aiList.stream().map(AssetCheckInfo::getCategory).collect(Collectors.toList());
-		if (!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))) {
+		if (!(categoryList.contains("TV") || !categoryList.contains("MAIN") || !categoryList.contains("DISPLAY"))) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：盘点资产必须为1台电视,1台显示器,1台主机");
 		}
 		for (AssetCheckInfo ai : aiList) {
@@ -483,6 +500,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaIdEqualTo(countyOrgId);
 		return assetCheckInfoMapper.selectByExample(example);
 	}
+
 
 	@Override
 	public List<AssetCheckInfo> getInfoByCountyOrgIdToCountyCheck(Long countyOrgId) {
