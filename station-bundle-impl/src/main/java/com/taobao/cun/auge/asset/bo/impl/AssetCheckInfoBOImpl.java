@@ -71,6 +71,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	@Autowired
 	private AssetBO assetBO;
 
+	
 	@Override
 	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto) {
 		Objects.requireNonNull(addDto, "参数不能为空");

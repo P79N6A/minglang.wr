@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -35,7 +36,7 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	/**
 	 * 盘点附件
 	 */
-	List<String> images;
+	List<Map<String,List<String>>> images;
 
 	public String getAliNo() {
 		return aliNo;
@@ -69,11 +70,11 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 		this.checkType = checkType;
 	}
 
-	public List<String> getImages() {
+	public List<Map<String, List<String>>> getImages() {
 		return images;
 	}
 
-	public void setImages(List<String> images) {
+	public void setImages(List<Map<String, List<String>>> images) {
 		this.images = images;
 	}
 }
