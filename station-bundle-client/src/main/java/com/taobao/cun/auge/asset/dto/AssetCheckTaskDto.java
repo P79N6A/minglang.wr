@@ -14,35 +14,63 @@ public class AssetCheckTaskDto implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 7771666556620868874L;
-
+	/**
+     * 主键ID
+     */
 	private Long id;
-
+	/**
+     * 任务类型
+     */
 	private String taskType;
-
-
+	
+	/**
+     * 任务code
+     */
 	private String taskCode;
 
-
+	/**
+     * 任务状态
+     */
 	private String taskStatus;
-
+	/**
+     * 盘点人名字
+     */
 	private String checkerName;
-
+	/**
+     * 盘点人ID
+     */
 	private String checkerId;
-
+	/**
+     * 盘点人类型
+     */
 	private String checkerType;
-
+	/**
+     * 村ID
+     */
 	private Long stationId;
-
+	/**
+     * 县组织ID
+     */
 	private Long orgId;
-
+	/**
+     * 县ID
+     */
 	private String stationName;
-
+	/**
+     * 县名称
+     */
 	private String orgName;
-
+	/**
+     * 其他原因
+     */
 	private String otherReason;
-
+	/**
+     * 遗失资产
+     */
 	private String lostAsset;
-
+	/**
+     * 待回收资产
+     */
 	private String waitBackAsset;
 	
 	/**
