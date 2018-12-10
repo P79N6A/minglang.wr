@@ -5,7 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
-import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
+import com.taobao.cun.auge.asset.dto.CheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -75,7 +75,7 @@ public interface AssetCheckInfoBO {
 	 * @param countyOrgId
 	 * @return
 	 */
-	public CountyCheckCountDto getCountyCheckCount(Long countyOrgId);
+	public CheckCountDto getCountyCheckCount(Long countyOrgId);
 	/**
 	 * 县跟踪盘点总数
 	 * @param countyOrgId

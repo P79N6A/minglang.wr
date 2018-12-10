@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * 县盘点总数信息
+ * 县村盘点总数信息
  * @author quanzhu.wangqz
  *
  */
-public class CountyCheckCountDto implements Serializable{
+public class CheckCountDto implements Serializable{
 
 	private static final long serialVersionUID = 4562158628905291847L;
 	/**

@@ -12,7 +12,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
-import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
+import com.taobao.cun.auge.asset.dto.CheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
 import com.taobao.cun.auge.asset.dto.QueryStationTaskCondition;
@@ -106,14 +106,18 @@ public class AssetCheckMobileServiceImpl implements AssetCheckMobileService {
 	}
 
 	@Override
-	public Result<CountyCheckCountDto> getCountyCheckCount(Long countyOrgId) {
+	public Result<CheckCountDto> getCheckCount(OperatorDto operator) {
+//		
+//		if () {
+//			
+//		}
 		try {
-			return Result.of(assetCheckInfoBO.getCountyCheckCount(countyOrgId));
+			return Result.of(assetCheckInfoBO.getCountyCheckCount(operator.getOperatorOrgId()));
 		} catch (AugeBusinessException e1) {
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, null, e1.getMessage());
 			return Result.of(errorInfo);
 		}catch (Exception e) {
-			logger.error("AssetCheckMobileService.getCountyCheckCount error! param:"+ countyOrgId, e);
+			logger.error("AssetCheckMobileService.getCountyCheckCount error! param:"+ JSON.toJSONString(operator), e);
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}

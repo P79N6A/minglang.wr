@@ -4,7 +4,7 @@ import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckTaskDto;
-import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
+import com.taobao.cun.auge.asset.dto.CheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.dto.FinishTaskForCountyDto;
 import com.taobao.cun.auge.asset.dto.QueryStationTaskCondition;
@@ -51,11 +51,11 @@ public interface AssetCheckMobileService {
 	 */
 	public Result<PageDto<AssetCheckInfoDto>> listInfo(AssetCheckInfoCondition  param);
 	/**
-	 * 县盘点总数
+	 * 县、村盘点总数
 	 * @param countyOrgId
 	 * @return
 	 */
-	public Result<CountyCheckCountDto> getCountyCheckCount(Long countyOrgId);
+	public Result<CheckCountDto> getCheckCount(OperatorDto operator);
 	/**
 	 * 县跟踪盘点总数
 	 * @param countyOrgId

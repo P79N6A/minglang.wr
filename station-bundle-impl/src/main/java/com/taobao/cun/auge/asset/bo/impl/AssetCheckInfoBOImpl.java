@@ -24,7 +24,7 @@ import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoAddDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoCondition;
 import com.taobao.cun.auge.asset.dto.AssetCheckInfoDto;
-import com.taobao.cun.auge.asset.dto.CountyCheckCountDto;
+import com.taobao.cun.auge.asset.dto.CheckCountDto;
 import com.taobao.cun.auge.asset.dto.CountyFollowCheckCountDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoAssetTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
@@ -298,8 +298,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	}
 
 	@Override
-	public CountyCheckCountDto getCountyCheckCount(Long countyOrgId) {
-		CountyCheckCountDto cd = new CountyCheckCountDto();
+	public CheckCountDto getCountyCheckCount(Long countyOrgId) {
+		CheckCountDto cd = new CheckCountDto();
 		List<AssetCheckInfo> iList = getInfoByCountyOrgIdToCountyCheck(countyOrgId);
 		if (CollectionUtils.isEmpty(iList)) {
 			return cd;
