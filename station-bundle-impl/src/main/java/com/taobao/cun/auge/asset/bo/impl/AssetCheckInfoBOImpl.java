@@ -77,8 +77,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Objects.requireNonNull(addDto, "参数不能为空");
 		Objects.requireNonNull(addDto.getSerialNo(), "序列号不能为空");
 		Objects.requireNonNull(addDto.getCheckType(), "盘点类型不能为空");
-		if (!OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())
-				&& !OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {
+		if (!OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType().getCode())
+				&& !OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType().getCode())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "盘点人必须是村小二,或者县小二");
 		}
 		validateParam(addDto);
