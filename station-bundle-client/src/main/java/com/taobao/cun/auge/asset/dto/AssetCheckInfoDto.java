@@ -20,6 +20,11 @@ public class AssetCheckInfoDto extends PageQuery {
 	 * 大阿里编号
 	 */
 	private String aliNo;
+	
+	/**
+	 * 序列号
+	 */
+	private String serialNo;
 	/**
 	 * 资产大类型
 	 */
@@ -75,8 +80,15 @@ public class AssetCheckInfoDto extends PageQuery {
 	 * 状态
 	 */
     private String status;
- 
     
+	public String getSerialNo() {
+		return serialNo;
+	}
+
+	public void setSerialNo(String serialNo) {
+		this.serialNo = serialNo;
+	}
+
 	public Long getInfoId() {
 		return infoId;
 	}

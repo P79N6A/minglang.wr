@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
+import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.task.dto.TaskInteractionDto;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
@@ -22,7 +23,7 @@ public class AssetCheckTaskListener implements EventListener {
 		if (event.getValue() instanceof String) {
 			String event1 =  (String)event.getValue();
 			TaskInteractionDto o = JSONObject.parseObject(event1,TaskInteractionDto.class);
-			assetCheckTaskBO.initTaskForStation(o.getBusiType(), event1, Long.parseLong(o.getUserId()));
+			assetCheckTaskBO.initTaskForStation(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode(), event1, Long.parseLong(o.getUserId()));
 		} 
 	}
 }
