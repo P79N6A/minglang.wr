@@ -47,6 +47,11 @@ public interface AssetCheckService {
 	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
 	
 	/**
+	 * 资产业务表 待盘点IT 资产数据
+	 */
+	public PageDto<AssetDetailDto> listAssetForStation(Long stationId,Integer pageNum,Integer pageSize);
+	
+	/**
 	 * 资产业务表 待盘点的特定资产总数
 	 */
 	public Integer getWaitCheckAsset(String categoryType,Long countyOrgId);

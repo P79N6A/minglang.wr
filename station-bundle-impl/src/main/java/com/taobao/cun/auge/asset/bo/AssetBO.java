@@ -293,6 +293,14 @@ public interface AssetBO {
      * @return
      */
     public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
+    /**
+     * 获得盘点中的数据
+     * @param countyOrgId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageDto<AssetDetailDto> listAssetToCheckingForStation(Long stationId, Integer pageNum, Integer pageSize);
     
     /**
      * 查询it资产总数

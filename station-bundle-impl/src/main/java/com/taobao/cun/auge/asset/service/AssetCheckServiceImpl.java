@@ -60,6 +60,10 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize) {
 		return assetBO.listAssetToChecking(countyOrgId, pageNum, pageSize);
 	}
+	@Override
+	public PageDto<AssetDetailDto> listAssetToCheckingForStation(Long stationId, Integer pageNum, Integer pageSize) {
+		return assetBO.listAssetToCheckingForStation(stationId, pageNum, pageSize);
+	}
 
 	@Override
 	public Integer getWaitCheckAsset(String categoryType, Long countyOrgId) {
@@ -80,5 +84,7 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 		assetCheckInfoBO.backOne(infoId, reason, ope);
 
 	}
+
+	
 
 }
