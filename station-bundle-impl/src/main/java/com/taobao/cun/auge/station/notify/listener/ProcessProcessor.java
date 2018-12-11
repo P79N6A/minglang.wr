@@ -348,10 +348,10 @@ public class ProcessProcessor {
 				String desc = ob.getString("taskRemark");
 				ProcessApproveResultEnum decorationDesignAuditResult = null;
 				if("拒绝".equals(resultCode)){
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
-				}else{
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
-				}
+                    decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+                }else{
+                    decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+                }
 				if(diamondConfiguredProperties.getDecorateDesignCountyAuditActivityId().equals(task.getActivityId())){
 					//县小二审核
 					stationDecorateService.auditStationDecorateDesignByCounty(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
