@@ -453,6 +453,25 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	}
 
 	@Override
+	public void auditStationDecorateDesignByCounty(Long stationId, ProcessApproveResultEnum approveResultEnum, String auditOpinion) {
+		StationDecorate record= this.getStationDecorateByStationId(stationId);
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setDesignAuditStatus(approveResultEnum.getCode());
+		updateRecord.setDesignAuditOpinion(auditOpinion);
+		updateRecord.setGmtModified(new Date());
+		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
+			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_DESIGN_AUDIT.getCode());
+		}else{
+			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
+			updateRecord.setAuditOpinion(auditOpinion);
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+
+	}
+
+
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto) {
 		StationDecorate record = this.getStationDecorateByStationId(stationDecorateCheckDto.getStationId());

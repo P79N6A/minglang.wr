@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -624,11 +625,20 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		return result;
 	}
 
+
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,
 			String auditOpinion) {
 		stationDecorateBO.auditStationDecorateDesign(stationId, approveResultEnum, auditOpinion);
+	}
+
+
+	@Override
+	public void auditStationDecorateDesignByCounty(Long stationId, ProcessApproveResultEnum approveResultEnum,
+										   String auditOpinion) {
+		stationDecorateBO.auditStationDecorateDesignByCounty(stationId, approveResultEnum, auditOpinion);
 	}
 
 	@Override

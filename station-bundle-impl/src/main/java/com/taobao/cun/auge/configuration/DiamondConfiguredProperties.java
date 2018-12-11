@@ -117,7 +117,10 @@ public class DiamondConfiguredProperties {
     
     @Value("${decorateCountyAuditActivityId}")
     private String decorateCountyAuditActivityId;
-    
+
+    @Value("${decorate.design.county.audit.activity.id}")
+    private String decorateDesignCountyAuditActivityId;
+
     //供应商Id,村淘自营门店对应uic的userId为3405569954
     @Value("${supplierTbId}")
     private Long supplierTbId;
@@ -296,7 +299,15 @@ public class DiamondConfiguredProperties {
 		this.canConfirmStationOpeningProtocolList = canConfirmStationOpeningProtocolList;
 	}
 
-	public String getStoreImagePerfix() {
+    public String getDecorateDesignCountyAuditActivityId() {
+        return decorateDesignCountyAuditActivityId;
+    }
+
+    public void setDecorateDesignCountyAuditActivityId(String decorateDesignCountyAuditActivityId) {
+        this.decorateDesignCountyAuditActivityId = decorateDesignCountyAuditActivityId;
+    }
+
+    public String getStoreImagePerfix() {
 		return storeImagePerfix;
 	}
 

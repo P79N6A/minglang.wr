@@ -168,8 +168,17 @@ public interface StationDecorateService {
  	 * @return
  	 */
  	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion);
- 	
- 	/**
+
+	/**
+	 * 审核村点装修设计县小二审核
+	 * @param stationId
+	 * @param approveResultEnum
+	 * @return
+	 */
+	public void auditStationDecorateDesignByCounty(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+
+
+	/**
  	 * 上传站点装修反馈信息
  	 * @param stationDecorateDto
  	 * @return
