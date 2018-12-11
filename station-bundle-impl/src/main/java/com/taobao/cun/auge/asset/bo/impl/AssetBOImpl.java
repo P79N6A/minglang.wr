@@ -2075,7 +2075,8 @@ public class AssetBOImpl implements AssetBO {
 		cri.andIsDeletedEqualTo("n");
 		cri.andOwnerOrgIdEqualTo(countyOrgId);
 		cri.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
-		cri.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		//cri.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		cri.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
 
 		example.setOrderByClause("a.gmt_modified desc");
 		PageHelper.startPage(pageNum, pageSize);
@@ -2085,6 +2086,27 @@ public class AssetBOImpl implements AssetBO {
 		List<AssetDetailDto> targetList = page.stream().map(this::buildAssetDetail).collect(Collectors.toList());;
 		return PageDtoUtil.success(page, targetList);
 	}
+	
+	@Override
+	public PageDto<AssetDetailDto> listAssetToCheckingForStation(Long stationId, Integer pageNum, Integer pageSize) {
+		AssetExtExample example = new AssetExtExample();
+		AssetExtExample.Criteria cri = example.createCriteria();
+		cri.andIsDeletedEqualTo("n");
+		cri.andUseAreaIdEqualTo(stationId);
+		cri.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		//cri.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		cri.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		
+
+		example.setOrderByClause("a.gmt_modified desc");
+		PageHelper.startPage(pageNum, pageSize);
+		Page<Asset> page = (Page<Asset>)assetMapper.selectByExample(example);
+		
+		
+		List<AssetDetailDto> targetList = page.stream().map(this::buildAssetDetail).collect(Collectors.toList());;
+		return PageDtoUtil.success(page, targetList);
+	}
+	
 
 	@Override
 	public Integer getCheckAssetForIt(Long countyOrgId) {
