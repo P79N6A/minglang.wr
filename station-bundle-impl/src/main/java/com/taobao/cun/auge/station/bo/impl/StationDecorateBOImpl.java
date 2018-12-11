@@ -660,6 +660,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			PartnerStationRel prtnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			Station station = stationBO.getStationById(prtnerInstance.getStationId());
 			StationDecorate stationDecorate = getStationDecorateByStationId(prtnerInstance.getStationId());
+			feedBackDto.setStatus(stationDecorate.getStatus());
+			feedBackDto.setAuditOption(stationDecorate.getAuditOpinion());
 			List<AttachmentDto> attachmentList = criusAttachmentService.getAttachmentList(stationDecorate.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
 			feedBackDto.setFeedbackInsidePhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE));
 			feedBackDto.setFeedbackOutsidePhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE));

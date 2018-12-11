@@ -28,6 +28,16 @@ public class StationDecorateFeedBackDto implements Serializable {
     private String stationNum;
 
     /**
+     * 站点状态
+     */
+    private String status;
+
+    /**
+     * 审核意见
+     */
+    private String auditOption;
+
+    /**
      * 反馈的室外全景图url
      */
     private List<FileUploadDto> feedbackOutsidePhoto;
@@ -89,6 +99,22 @@ public class StationDecorateFeedBackDto implements Serializable {
 
     public void setStationNum(String stationNum) {
         this.stationNum = stationNum;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAuditOption() {
+        return auditOption;
+    }
+
+    public void setAuditOption(String auditOption) {
+        this.auditOption = auditOption;
     }
 
     public List<FileUploadDto> getFeedbackOutsidePhoto() {
@@ -155,20 +181,5 @@ public class StationDecorateFeedBackDto implements Serializable {
         this.operator = operator;
     }
 
-    @Override
-    public String toString() {
-        return "StationDecorateFeedBackDto{" +
-                "stationId=" + stationId +
-                ", stationName='" + stationName + '\'' +
-                ", stationNum='" + stationNum + '\'' +
-                ", feedbackOutsidePhoto=" + feedbackOutsidePhoto +
-                ", feedbackDoorPhoto=" + feedbackDoorPhoto +
-                ", feedbackWallDeskPhoto=" + feedbackWallDeskPhoto +
-                ", feedbackInsidePhoto=" + feedbackInsidePhoto +
-                ", feedbackMaterielPhoto=" + feedbackMaterielPhoto +
-                ", feedbackInsideVideo=" + feedbackInsideVideo +
-                ", feedbackOutsideVideo=" + feedbackOutsideVideo +
-                ", operator='" + operator + '\'' +
-                '}';
-    }
+
 }
