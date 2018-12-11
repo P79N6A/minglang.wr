@@ -45,10 +45,14 @@ public interface AssetCheckService {
 	 * 资产业务表 待盘点IT 资产数据
 	 */
 	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
-	
-	/**
-	 * 资产业务表 待盘点IT 资产数据
-	 */
+
+
+	public PageDto<AssetDetailDto> listAssetToCheckingForStation(Long stationId, Integer pageNum, Integer pageSize) ;
+
+
+		/**
+         * 资产业务表 待盘点IT 资产数据
+         */
 	public PageDto<AssetDetailDto> listAssetForStation(Long stationId,Integer pageNum,Integer pageSize);
 	
 	/**
