@@ -36,7 +36,7 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 	/**
 	 * 盘点附件
 	 */
-	List<Map<String,List<String>>> images;
+	Map<String,List<String>> images;
 
 	public String getAliNo() {
 		return aliNo;
@@ -70,11 +70,11 @@ public class AssetCheckInfoAddDto  extends OperatorDto{
 		this.checkType = checkType;
 	}
 
-	public List<Map<String, List<String>>> getImages() {
+	public Map<String, List<String>> getImages() {
 		return images;
 	}
 
-	public void setImages(List<Map<String, List<String>>> images) {
+	public void setImages(Map<String, List<String>> images) {
 		this.images = images;
 	}
 }
