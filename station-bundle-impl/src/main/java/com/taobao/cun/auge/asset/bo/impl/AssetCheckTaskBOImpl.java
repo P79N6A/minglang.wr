@@ -251,9 +251,15 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		AssetCheckTaskExample example = new AssetCheckTaskExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andTaskTypeEqualTo(param.getTaskType());
-		criteria.andOrgNameEqualTo(param.getOrgName());
-		criteria.andStationNameEqualTo(param.getStationName());
+		if(StringUtils.isNotEmpty(param.getTaskType())) {
+			criteria.andTaskTypeEqualTo(param.getTaskType());
+		}
+		if(StringUtils.isNotEmpty(param.getOrgName())) {
+			criteria.andOrgNameEqualTo(param.getOrgName());
+		}
+		if(StringUtils.isNotEmpty(param.getStationName())) {
+			criteria.andStationNameEqualTo(param.getStationName());
+		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
 		Page<AssetCheckTask> page = (Page<AssetCheckTask>)assetCheckTaskMapper.selectByExample(example);
