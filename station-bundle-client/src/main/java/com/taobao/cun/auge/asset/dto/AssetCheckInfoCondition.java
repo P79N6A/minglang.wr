@@ -47,6 +47,34 @@ public class AssetCheckInfoCondition extends PageQuery {
 	 */
 	private Long taobaoUserId;
 	
+	/**
+	 * 盘点人所属区域id
+	 */
+	private Long checkerAreaId;
+	
+	/**
+	 * 状态
+	 */
+	private String status;
+	
+	
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Long getCheckerAreaId() {
+		return checkerAreaId;
+	}
+
+	public void setCheckerAreaId(Long checkerAreaId) {
+		this.checkerAreaId = checkerAreaId;
+	}
+
 	public String getSerialNo() {
 		return serialNo;
 	}
