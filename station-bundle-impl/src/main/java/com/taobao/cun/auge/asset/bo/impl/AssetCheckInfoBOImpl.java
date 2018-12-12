@@ -234,8 +234,15 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
+		if (param.getCheckerAreaType() != null) {
 		criteria.andCheckerAreaTypeEqualTo(param.getCheckerAreaType());
-		criteria.andCountyOrgIdEqualTo(param.getOrgId());
+		}
+		if (param.getCheckerAreaId() != null) {
+			criteria.andCheckerAreaIdEqualTo(param.getCheckerAreaId());
+			}
+		if (param.getOrgId() != null) {
+			criteria.andCountyOrgIdEqualTo(param.getOrgId());
+		}
 		if (param.getAliNo() != null) {
 			criteria.andAliNoEqualTo(param.getAliNo());
 		}
@@ -249,6 +256,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		if(param.getCategoryType() != null){
 			criteria.andCategoryEqualTo(param.getCategoryType());
+		}
+		if(param.getStatus() != null){
+			criteria.andStatusEqualTo(param.getStatus());
 		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
