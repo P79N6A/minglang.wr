@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetCheckTaskMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.dto.CuntaoUserRole;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -50,6 +52,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.task.dto.TaskInteractionExecuteDto;
 import com.taobao.cun.auge.task.service.TaskElementService;
+import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 
 import net.sf.cglib.beans.BeanCopier;
 
@@ -79,6 +82,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
     
 	@Autowired
 	private ProcessService processService;
+	
+    @Autowired
+    private CuntaoUserRoleService cuntaoUserRoleService;
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
@@ -170,7 +176,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			if (o == null) {
 				return;
 			}
-			
+			 //县负责人
+            List<CuntaoUserRole> userRoles = cuntaoUserRoleService.getCuntaoUserRoles(orgId, "COUNTY_LEADER_AUDIT");
+            
 			AssetCheckTask at = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			if (at != null) {
 				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
@@ -178,8 +186,11 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
 			}else {
 				AssetCheckTask r = new AssetCheckTask();
-				//r.setCheckerId(String.valueOf(taobaoUserId));
-				//r.setCheckerName(p.getName());
+				if (CollectionUtils.isNotEmpty(userRoles)) {
+					r.setCheckerId(userRoles.get(0).getUserId());
+					r.setCheckerName(userRoles.get(0).getUserName());
+				}
+				
 				r.setCheckerType(AssetUseAreaTypeEnum.COUNTY.name());
 				r.setOrgId(orgId);
 				r.setOrgName(o.getName());
@@ -209,8 +220,10 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
 			}else {
 				AssetCheckTask r1 = new AssetCheckTask();
-				//r.setCheckerId(String.valueOf(taobaoUserId));
-				//r.setCheckerName(p.getName());
+				if (CollectionUtils.isNotEmpty(userRoles)) {
+					r1.setCheckerId(userRoles.get(0).getUserId());
+					r1.setCheckerName(userRoles.get(0).getUserName());
+				}
 				r1.setCheckerType(AssetUseAreaTypeEnum.COUNTY.name());
 				r1.setOrgId(orgId);
 				r1.setOrgName(o.getName());
