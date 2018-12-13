@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeInfoDto;
 import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
 
 /**
@@ -51,4 +52,12 @@ public interface EmployeeReadService {
 	 * @return
 	 */
 	Result<List<CuntaoEmployeeDto>> queryStoreEmployeeByIdentifier(Long stationId,CuntaoEmployeeIdentifier identifier);
+	
+	
+	/**
+	 * 根据taobaoUserId查询门店员工(含历史所有数据)
+	 * @param stationId
+	 * @return
+	 */
+	Result<List<CuntaoEmployeeInfoDto>> queryVendorEmployeeByTaobaoUserIdForBx(Long taobaoUserId);
 }

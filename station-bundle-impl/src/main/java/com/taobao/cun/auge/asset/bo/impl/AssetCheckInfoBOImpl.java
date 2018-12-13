@@ -11,6 +11,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
@@ -31,6 +33,7 @@ import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
@@ -50,8 +53,6 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 import net.sf.cglib.beans.BeanCopier;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
@@ -75,32 +76,45 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	@Override
 	public Boolean addCheckInfo(AssetCheckInfoAddDto addDto) {
 		Objects.requireNonNull(addDto, "参数不能为空");
-		Objects.requireNonNull(addDto.getSerialNo(), "序列号不能为空");
 		Objects.requireNonNull(addDto.getCheckType(), "盘点类型不能为空");
+		Objects.requireNonNull(addDto.getCategoryType(), "资产类型不能为空");
 		if (!OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType().getCode())
 				&& !OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType().getCode())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "盘点人必须是村小二,或者县小二");
 		}
 		validateParam(addDto);
 		AssetCheckInfo record = new AssetCheckInfo();
-		record.setAliNo(addDto.getAliNo());
+		if (StringUtils.isNotEmpty(addDto.getAliNo())) {
+			record.setAliNo(addDto.getAliNo());
+		}
 		record.setAssetType(AssetCheckInfoCategoryTypeEnum.getAssetType(addDto.getCategoryType()));
 		record.setCategory(addDto.getCategoryType());
-		record.setAttFile(JSONObject.toJSONString(addDto.getImages()));
+		if (addDto.getImages() != null && addDto.getImages().size()>0) {
+			record.setAttFile(JSONObject.toJSONString(addDto.getImages()));
+		}
 		record.setCheckType(addDto.getCheckType());
-		record.setSerialNo(addDto.getSerialNo());
+		if (StringUtils.isNotEmpty(addDto.getSerialNo())) {
+			record.setSerialNo(addDto.getSerialNo());
+		}
+		
 		record.setCheckTime(new Date());
 		record.setStatus(AssetCheckInfoStatusEnum.CHECKED.getCode());
-		if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType())) {// 县盘点
+		if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType().getCode())) {// 县盘点
+			AssetCheckTask t = assetCheckTaskBO.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			record.setCheckerAreaId(addDto.getOperatorOrgId());
-			record.setCheckerAreaName(assetCheckTaskBO
-					.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode())
-					.getOrgName());
+			record.setCheckerAreaName(
+					t.getOrgName());
 			record.setCheckerAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
 			record.setCheckerId(addDto.getOperator());
 			record.setCheckerName(getWorkerName(addDto.getOperator()));
 			record.setCountyOrgId(addDto.getOperatorOrgId());
-		} else if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType())) {// 村盘点
+			record.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
+			
+			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(t.getTaskStatus())) {
+				assetCheckTaskBO.doingTask(t.getId());
+			}
+			
+		} else if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType().getCode())) {// 村盘点
 			validateAddStation(addDto);
 			AssetCheckTask at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
 			record.setCheckerAreaId(at.getStationId());
@@ -109,10 +123,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			record.setCheckerId(addDto.getOperator());
 			record.setCheckerName(at.getCheckerName());
 			record.setCountyOrgId(at.getOrgId());
+			record.setTaskType(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(at.getTaskStatus())) {
+				assetCheckTaskBO.doingTask(at.getId());
+			}
 		}
 		DomainUtils.beforeInsert(record, addDto.getOperator());
 		assetCheckInfoMapper.insert(record);
-		return null;
+		return Boolean.TRUE;
 
 	}
 

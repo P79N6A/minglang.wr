@@ -80,4 +80,12 @@ public interface AssetCheckTaskBO {
      * @return
      */
     public PageDto<AssetCheckTaskDto> listTasks(QueryStationTaskCondition param);
+    
+    /**
+     * 变更任务状态为进行中
+     * @param orgId
+     * @param taobaoUserId
+     * @param taskType
+     */
+    public void doingTask(Long taskId);
 }

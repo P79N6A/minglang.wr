@@ -381,4 +381,13 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		return PageDtoUtil.success(page, targetList);
 	}
 
+	@Override
+	public void doingTask(Long taskId) {
+		AssetCheckTask t =new AssetCheckTask();
+		t.setId(taskId);
+		t.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
+		DomainUtils.beforeUpdate(t, "SYSTEM");
+		assetCheckTaskMapper.updateByPrimaryKeySelective(t);
+	}
+
 }
