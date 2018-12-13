@@ -7,11 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.client.result.ResultModel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.service.ProcessService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.github.pagehelper.PageHelper;
@@ -40,15 +48,6 @@ import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
-import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
-import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.operator.OperatorTypeEnum;
 
@@ -70,6 +69,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
     AttachmentService criusAttachmentService;
 	@Autowired
 	StationDecorateOrderBO stationDecorateOrderBO;
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
+	@Autowired
+	ProcessService processService;
 	
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
@@ -439,6 +442,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setId(record.getId());
 		updateRecord.setDesignAuditStatus(approveResultEnum.getCode());
 		updateRecord.setDesignAuditOpinion(auditOpinion);
+		updateRecord.setGmtModified(new Date());
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode());
 		}else{
@@ -449,6 +453,26 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	}
 
 	@Override
+	public void auditStationDecorateDesignByCounty(Long stationId, ProcessApproveResultEnum approveResultEnum, String auditOpinion) {
+		StationDecorate record= this.getStationDecorateByStationId(stationId);
+		StationDecorate updateRecord = new StationDecorate();
+		updateRecord.setId(record.getId());
+		updateRecord.setDesignAuditStatus(approveResultEnum.getCode());
+		updateRecord.setDesignAuditOpinion(auditOpinion);
+		updateRecord.setGmtModified(new Date());
+		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
+			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_DESIGN_AUDIT.getCode());
+		}else{
+			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
+			updateRecord.setAuditOpinion(auditOpinion);
+		}
+		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
+
+	}
+
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto) {
 		StationDecorate record = this.getStationDecorateByStationId(stationDecorateCheckDto.getStationId());
 		if(record == null){
@@ -492,13 +516,111 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		return updateRecord.getId();
 	}
 
-	@Override
+    @Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Long uploadStationDecorateFeedback(StationDecorateFeedBackDto stationDecorateFeedBackDto) {
+        StationDecorate record = this.getStationDecorateByStationId(stationDecorateFeedBackDto.getStationId());
+        if(record == null){
+            return null;
+        }
+        if(!"APPROVE_PASS".equals(record.getDesignAuditStatus())){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修设计图纸未审核完成");
+        }
+        StationDecorate stationDecorate  = new StationDecorate();
+        DomainUtils.beforeUpdate(stationDecorate, stationDecorateFeedBackDto.getOperator());
+        stationDecorate.setId(record.getId());
+        stationDecorate.setCheckAuditStatus(StationDecorateStatusEnum.WAIT_CHECK_AUDIT.getCode());
+        stationDecorate.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
+        com.taobao.cun.common.operator.OperatorDto  operatorDto = new com.taobao.cun.common.operator.OperatorDto();
+        operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		operatorDto.setOperator(stationDecorateFeedBackDto.getOperator());
+
+
+		if(stationDecorateFeedBackDto.getFeedbackDoorPhoto() != null ){
+			//构造门头照片List<AttachmentDto>
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackDoorPhoto(),AttachmentTypeIdEnum.CHECK_DECORATION_DOOR);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR, operatorDto);
+		}
+
+		if(stationDecorateFeedBackDto.getFeedbackWallDeskPhoto() != null ){
+			//构造背景墙照片List<AttachmentDto>
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackWallDeskPhoto(),AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK, operatorDto);
+		}
+
+		if(stationDecorateFeedBackDto.getFeedbackOutsidePhoto() != null ){
+			//构造室外照片List<AttachmentDto>
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackOutsidePhoto(),AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE, operatorDto);
+		}
+
+		if(stationDecorateFeedBackDto.getFeedbackInsidePhoto() != null ){
+			//构造室内图片List<AttachmentDto>
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackInsidePhoto(),AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE, operatorDto);
+		}
+
+		if(stationDecorateFeedBackDto.getFeedbackMaterielPhoto() != null ){
+			//构造其他物料List<AttachmentDto>
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackMaterielPhoto(),AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL, operatorDto);
+		}
+		if(stationDecorateFeedBackDto.getFeedbackOutsideVideo()!= null ){
+			//室外视频
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackOutsideVideo(),AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO, operatorDto);
+		}
+		if(stationDecorateFeedBackDto.getFeedbackInsideVideo()!= null ){
+			//室内视频
+			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackInsideVideo(),AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO);
+			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO, operatorDto);
+		}
+        stationDecorateMapper.updateByPrimaryKeySelective(stationDecorate);
+		Long result = stationDecorate.getId();
+		if(result != null){
+			StartProcessDto startProcessDto = new StartProcessDto();
+			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
+			startProcessDto.setBusinessId(result);
+			Station station = stationBO.getStationById(stationDecorateFeedBackDto.getStationId());
+			startProcessDto.setBusinessName(station.getName() + station.getStationNum());
+			startProcessDto.setBusinessOrgId(station.getApplyOrg());
+			OperatorDto operator = new OperatorDto();
+			operator.setOperator(stationDecorateFeedBackDto.getOperator());
+			operator.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+			startProcessDto.copyOperatorDto(operator);
+			processService.startApproveProcess(startProcessDto);
+		}
+        return result;
+    }
+
+    private List<AttachmentDto> parseAttachements(List<FileUploadDto> fileUploadDtoList, AttachmentTypeIdEnum attachmentTypeIdEnum) {
+
+		List<AttachmentDto> attachmentDtoList = new ArrayList<>(5);
+		if(fileUploadDtoList != null){
+			fileUploadDtoList.forEach(fileUploadDto ->{
+				AttachmentDto attachmentDto = new AttachmentDto();
+				attachmentDto.setAttachmentTypeId(attachmentTypeIdEnum);
+				attachmentDto.setFileType(fileUploadDto.getFileType());
+                attachmentDto.setTitle(fileUploadDto.getTitle());
+				attachmentDto.setFsId(fileUploadDto.getFileUrl());
+				if(null != fileUploadDto.getAddtionalUrl()){
+					attachmentDto.setDescription(fileUploadDto.getAddtionalUrl());
+				}
+				attachmentDtoList.add(attachmentDto);
+			});
+		}
+		return attachmentDtoList;
+
+    }
+
+    @Override
 	public void auditStationDecorateCheck(Long stationId, ProcessApproveResultEnum approveResultEnum,String auditOpinion) {
 		StationDecorate record= this.getStationDecorateByStationId(stationId);
 		StationDecorate updateRecord = new StationDecorate();
 		updateRecord.setId(record.getId());
 		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
 		updateRecord.setCheckAuditOpinion(auditOpinion);
+		updateRecord.setGmtModified(new Date());
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setReflectSatisfySolid("y");
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
@@ -527,5 +649,54 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		
 	}
 
-	
+	@Override
+	public ResultModel<StationDecorateFeedBackDto> queryStationDecorateFeedBackDtoByUserId(Long taobaoUserId) {
+		if(taobaoUserId == null){
+			return null;
+		}
+		ResultModel<StationDecorateFeedBackDto> resultModel = new ResultModel<>();
+		try {
+			StationDecorateFeedBackDto feedBackDto = new StationDecorateFeedBackDto();
+			PartnerStationRel prtnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			Station station = stationBO.getStationById(prtnerInstance.getStationId());
+			StationDecorate stationDecorate = getStationDecorateByStationId(prtnerInstance.getStationId());
+			feedBackDto.setStatus(stationDecorate.getStatus());
+			feedBackDto.setAuditOption(stationDecorate.getAuditOpinion());
+			List<AttachmentDto> attachmentList = criusAttachmentService.getAttachmentList(stationDecorate.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
+			feedBackDto.setFeedbackInsidePhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE));
+			feedBackDto.setFeedbackOutsidePhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE));
+			feedBackDto.setFeedbackDoorPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_DOOR));
+			feedBackDto.setFeedbackWallDeskPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK));
+			feedBackDto.setFeedbackInsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO));
+			feedBackDto.setFeedbackOutsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO));
+			feedBackDto.setStationId(prtnerInstance.getStationId());
+			feedBackDto.setStationName(station.getName());
+			feedBackDto.setStationNum(station.getStationNum());
+			resultModel.setSuccess(true);
+			resultModel.setResult(feedBackDto);
+			return resultModel;
+		} catch (Exception ex) {
+			resultModel.setSuccess(false);
+			logger.error("根据taobaoUserId查询装修反馈信息异常，{taobaoUserId}",taobaoUserId,ex);
+		}
+		return  resultModel;
+	}
+
+	private List<FileUploadDto> getUrlFromAttachmentList(List<AttachmentDto> attachmentList, AttachmentTypeIdEnum attachmentType) {
+		List<FileUploadDto> fileUploadDtoList = new ArrayList<>(5);
+		attachmentList.forEach(attachmentDto -> {
+			if(attachmentType.getCode().equals(attachmentDto.getAttachmentTypeId().getCode())){
+				//无线端上传的文件url存在description字段中
+				FileUploadDto fileUploadDto = new FileUploadDto();
+				fileUploadDto.setTitle(attachmentDto.getTitle());
+				fileUploadDto.setFileType(attachmentDto.getFileType());
+				fileUploadDto.setFileUrl(attachmentDto.getFsId());
+				fileUploadDto.setAddtionalUrl(attachmentDto.getDescription());
+				fileUploadDtoList.add(fileUploadDto);
+			}
+		});
+		return fileUploadDtoList;
+	}
+
+
 }
