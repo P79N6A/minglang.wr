@@ -699,8 +699,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		Assert.notNull(param.getStationId(), "村点ID不能为空");
 		Assert.notEmpty(param.getFeedbackDoorPhoto(),"门头完工图不能为空");
 		Assert.notEmpty(param.getFeedbackOutsidePhoto(),"室外全景图不能为空");
-		Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
-		Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
+		//Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
+		//Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
 		if(param.getFeedbackInsidePhoto()== null || param.getFeedbackInsidePhoto().size() != 2){
 			throw new IllegalArgumentException("室内全景照片要求上传2张");
 		}
