@@ -697,18 +697,22 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private void validateDecorationCheck(StationDecorateFeedBackDto param) {
 		Assert.notNull(param, "参数不可空");
 		Assert.notNull(param.getStationId(), "村点ID不能为空");
-		Assert.notEmpty(param.getFeedbackDoorPhoto(),"门头完工图不能为空");
-		Assert.notEmpty(param.getFeedbackOutsidePhoto(),"室外全景图不能为空");
 		//Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
 		//Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
-		if(param.getFeedbackInsidePhoto()== null || param.getFeedbackInsidePhoto().size() != 2){
-			throw new IllegalArgumentException("室内全景照片要求上传2张");
+		if(param.getFeedbackDoorPhoto()== null || param.getFeedbackDoorPhoto().size() != 2){
+			throw new IllegalArgumentException("门头完工照片要求上传2张");
+		}
+		if(param.getFeedbackOutsidePhoto()== null && param.getFeedbackOutsidePhoto().size() > 2){
+			throw new IllegalArgumentException("室外全景照片要求上传1-2张");
+		}
+		if(param.getFeedbackInsidePhoto()== null || param.getFeedbackInsidePhoto().size() == 1 || param.getFeedbackInsidePhoto().size()>4 ){
+			throw new IllegalArgumentException("室内全景照片要求上传2-4张");
 		}
 		if(param.getFeedbackWallDeskPhoto()== null || param.getFeedbackWallDeskPhoto().size() != 2){
 			throw new IllegalArgumentException("背景墙和前台桌面要求上传2张");
 		}
-		if(param.getFeedbackMaterielPhoto()== null || param.getFeedbackMaterielPhoto().size() >5){
-			throw new IllegalArgumentException("其他LOGO物料图不超过5张");
+		if(param.getFeedbackMaterielPhoto()!= null && param.getFeedbackMaterielPhoto().size() >4){
+			throw new IllegalArgumentException("其他LOGO物料图不超过4张");
 		}
 
 	}
