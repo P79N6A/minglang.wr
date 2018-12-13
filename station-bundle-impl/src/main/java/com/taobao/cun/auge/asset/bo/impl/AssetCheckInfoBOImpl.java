@@ -289,6 +289,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 	private AssetCheckInfoDto assetCheckInfo2Dto(AssetCheckInfo assetCheckInfo) {
 		AssetCheckInfoDto assetCheckInfoDto = new AssetCheckInfoDto();
 		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo, assetCheckInfoDto, null);
+		assetCheckInfoDto.setCategoryType(assetCheckInfo.getCategory());
 		return assetCheckInfoDto;
 	}
 
