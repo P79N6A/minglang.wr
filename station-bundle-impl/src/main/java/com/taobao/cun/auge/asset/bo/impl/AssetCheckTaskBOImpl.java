@@ -43,9 +43,11 @@ import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.task.dto.TaskInteractionDto;
+import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.task.dto.TaskInteractionExecuteDto;
 import com.taobao.cun.auge.task.service.TaskElementService;
 
@@ -74,6 +76,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
     @Autowired
     private TaskElementService taskElementService;
+    
+	@Autowired
+	private ProcessService processService;
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
@@ -186,6 +191,15 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 				r.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 				DomainUtils.beforeInsert(r, "SYSTEM");
 				assetCheckTaskMapper.insert(r);
+				
+				StartProcessDto startProcessDto =new StartProcessDto();
+		        startProcessDto.setBusiness(ProcessBusinessEnum.assetCheckCountyTask);
+		        startProcessDto.setBusinessId(r.getId());
+		        startProcessDto.setBusinessName(o.getName());
+		        startProcessDto.setBusinessOrgId(orgId);
+		        startProcessDto.setOperator("SYSTEM");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        processService.startApproveProcess(startProcessDto);
 			}
 			
 			AssetCheckTask f = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
@@ -208,6 +222,15 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 				r1.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
 				DomainUtils.beforeInsert(r1, "SYSTEM");
 				assetCheckTaskMapper.insert(r1);
+				
+				StartProcessDto startProcessDto =new StartProcessDto();
+		        startProcessDto.setBusiness(ProcessBusinessEnum.assetCheckCountyFollowTask);
+		        startProcessDto.setBusinessId(r1.getId());
+		        startProcessDto.setBusinessName(o.getName());
+		        startProcessDto.setBusinessOrgId(orgId);
+		        startProcessDto.setOperator("SYSTEM");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        processService.startApproveProcess(startProcessDto);
 			}
 		} catch (Exception e) {
 			logger.error("initTaskForCounty error,param:"+orgId,e);
