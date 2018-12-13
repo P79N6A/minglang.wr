@@ -24,17 +24,18 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("assetCheckService")
 @HSFProvider(serviceInterface = AssetCheckService.class)
 public class AssetCheckServiceImpl implements AssetCheckService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AssetCheckService.class);
-	
+
 	@Autowired
 	private AssetCheckInfoBO assetCheckInfoBO;
-	
+
 	@Autowired
 	private AssetCheckTaskBO assetCheckTaskBO;
-	
+
 	@Autowired
 	private AssetBO assetBO;
+
 	@Override
 	public PageDto<AssetCheckTaskDto> listTasks(AssetCheckTaskCondition param) {
 		return assetCheckTaskBO.listTasks(param);
@@ -57,7 +58,7 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 	}
 
 	@Override
-	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize) {
+	public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId, Integer pageNum, Integer pageSize) {
 		return assetBO.listAssetToChecking(countyOrgId, pageNum, pageSize);
 	}
 
@@ -73,7 +74,7 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 
 	@Override
 	public Integer getWaitCheckAsset(String categoryType, Long countyOrgId) {
-		List<Asset> assets= assetBO.getWaitCheckAsset(categoryType, countyOrgId);
+		List<Asset> assets = assetBO.getWaitCheckAsset(categoryType, countyOrgId);
 		if (CollectionUtils.isNotEmpty(assets)) {
 			return assets.size();
 		}
@@ -91,6 +92,8 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 
 	}
 
-	
-
+	@Override
+	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
+		assetCheckTaskBO.initTaskForStation(taskType, taskCode, taobaoUserId);
+	}
 }
