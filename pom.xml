@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -35,7 +35,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency
 				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
@@ -479,9 +479,9 @@
 				<version>1.7.22</version>
 			</dependency>
 			<!--<dependency>-->
-				<!--<groupId>com.taobao.vipserver</groupId>-->
-				<!--<artifactId>vipserver-client</artifactId>-->
-				<!--<version>4.6.4</version>-->
+			<!--<groupId>com.taobao.vipserver</groupId>-->
+			<!--<artifactId>vipserver-client</artifactId>-->
+			<!--<version>4.6.4</version>-->
 			<!--</dependency>-->
 			<dependency>
 				<groupId>com.taobao.csp</groupId>
@@ -736,7 +736,7 @@
 				<artifactId>common-division</artifactId>
 				<version>3.0.26</version>
 			</dependency>
-			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
+			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId>
 				<version>3.0.3</version> </dependency> -->
 			<dependency>
 				<groupId>dms-sorting</groupId>
@@ -880,6 +880,11 @@
 				<groupId>com.taobao.rdb</groupId>
 				<artifactId>rdb-client2</artifactId>
 				<version>2.2.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.insopenprod</groupId>
+				<artifactId>insopenprod-common-service-facade</artifactId>
+				<version>1.0.0.20181022</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

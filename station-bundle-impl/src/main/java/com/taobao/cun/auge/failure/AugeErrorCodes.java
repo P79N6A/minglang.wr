@@ -118,4 +118,9 @@ public interface AugeErrorCodes {
 	 */
 	public static final  String COMPANY_DATA_NOT_EXISTS_ERROR_CODE = "B-00022";
 
+	/**
+	 * cp数据不存在，不需要报警
+	 */
+	public static final  String CP_NOT_EXISTS_ERROR_CODE = "B-00026";
+
 }
