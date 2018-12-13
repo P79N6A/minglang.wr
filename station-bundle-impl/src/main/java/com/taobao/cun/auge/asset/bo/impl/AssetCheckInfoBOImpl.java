@@ -11,6 +11,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
@@ -31,6 +33,7 @@ import com.taobao.cun.auge.asset.enums.AssetCheckInfoCategoryTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoCheckTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckInfoStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetCheckTaskTaskTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
@@ -50,8 +53,6 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 import net.sf.cglib.beans.BeanCopier;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
@@ -99,15 +100,20 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		record.setCheckTime(new Date());
 		record.setStatus(AssetCheckInfoStatusEnum.CHECKED.getCode());
 		if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType().getCode())) {// 县盘点
+			AssetCheckTask t = assetCheckTaskBO.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			record.setCheckerAreaId(addDto.getOperatorOrgId());
-			record.setCheckerAreaName(assetCheckTaskBO
-					.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode())
-					.getOrgName());
+			record.setCheckerAreaName(
+					t.getOrgName());
 			record.setCheckerAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
 			record.setCheckerId(addDto.getOperator());
 			record.setCheckerName(getWorkerName(addDto.getOperator()));
 			record.setCountyOrgId(addDto.getOperatorOrgId());
 			record.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
+			
+			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(t.getTaskStatus())) {
+				assetCheckTaskBO.doingTask(t.getId());
+			}
+			
 		} else if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType().getCode())) {// 村盘点
 			validateAddStation(addDto);
 			AssetCheckTask at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
@@ -118,10 +124,13 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			record.setCheckerName(at.getCheckerName());
 			record.setCountyOrgId(at.getOrgId());
 			record.setTaskType(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
+			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(at.getTaskStatus())) {
+				assetCheckTaskBO.doingTask(at.getId());
+			}
 		}
 		DomainUtils.beforeInsert(record, addDto.getOperator());
 		assetCheckInfoMapper.insert(record);
-		return null;
+		return Boolean.TRUE;
 
 	}
 
