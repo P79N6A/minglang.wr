@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.dto.CaiNiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
@@ -122,4 +123,11 @@ public interface CaiNiaoService {
 	 * @param featureKey
 	 */
 	public void removeCainiaoStationFeature(Long stationId,String featureKey);
+	
+	/**
+	 * 根据服务站获取菜鸟站点关系
+	 * @param stationId
+	 * @return
+	 */
+	CaiNiaoStationRelDto getCaiNiaoStationRelByStation(Long stationId);
 }
