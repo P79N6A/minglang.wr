@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,26 +35,26 @@ public class CountyFollowCheckCountDto implements Serializable{
 	/**
 	 * 已盘详情 key:AssetCheckInfoCategoryTypeEnum 的code value:总数
 	 */
-	private Map<String,Long> doneDetail;
+	private List<Map<String,Long>> doneDetail;
 	
 	/**
 	 * 未盘详情 key:AssetCheckInfoCategoryTypeEnum 的code value:总数
 	 */
-	private Map<String,Long> doingDetail;
+	private List<Map<String,Long>> doingDetail;
 	
-	public Map<String, Long> getDoneDetail() {
+	public List<Map<String, Long>> getDoneDetail() {
 		return doneDetail;
 	}
 
-	public void setDoneDetail(Map<String, Long> doneDetail) {
+	public void setDoneDetail(List<Map<String, Long>> doneDetail) {
 		this.doneDetail = doneDetail;
 	}
 
-	public Map<String, Long> getDoingDetail() {
+	public List<Map<String, Long>> getDoingDetail() {
 		return doingDetail;
 	}
 
-	public void setDoingDetail(Map<String, Long> doingDetail) {
+	public void setDoingDetail(List<Map<String, Long>> doingDetail) {
 		this.doingDetail = doingDetail;
 	}
 

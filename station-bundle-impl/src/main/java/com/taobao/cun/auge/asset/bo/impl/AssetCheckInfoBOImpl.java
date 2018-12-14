@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -377,18 +378,34 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				aDtail.put(categroyType, 1L);
 			}
 		}
+		List<Map<String,Long>>  dd= new ArrayList<Map<String,Long>>();
 		if (doneCount > 0) {
 			Map<String, Long> dDtail = l.stream()
 					.collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting()));
-			fDto.setDoneDetail(dDtail);
+			
+			for (Map.Entry<String, Long> entry : dDtail.entrySet()) {
+				Map<String,Long> t = new HashMap<String,Long>();
+				t.put(entry.getKey(), entry.getValue());
+				dd.add(t);
+			}
+			fDto.setDoneDetail(dd);
 			for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
 				if (dDtail.get(entry.getKey()) != null) {
 					Long sub = entry.getValue() - dDtail.get(entry.getKey());
 					aDtail.put(entry.getKey(), sub < 0 ? 0L : sub);
 				}
 			}
+		}else{
+			fDto.setDoneDetail(dd);
 		}
-		fDto.setDoingDetail(aDtail);
+		List<Map<String,Long>>  aa= new ArrayList<Map<String,Long>>();
+		for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
+			Map<String,Long> t = new HashMap<String,Long>();
+			t.put(entry.getKey(), entry.getValue());
+			aa.add(t);
+		}
+		fDto.setDoingDetail(aa);
+		
 		fDto.setDoingStationCount(new Long(assetCheckTaskBO.getWaitCheckStationCount(countyOrgId)));
 		fDto.setDoneStationCount(new Long(assetCheckTaskBO.getDoneCheckStationCount(countyOrgId)));
 		return fDto;
