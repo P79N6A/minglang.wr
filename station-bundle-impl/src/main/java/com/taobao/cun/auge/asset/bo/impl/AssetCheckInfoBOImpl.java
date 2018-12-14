@@ -18,6 +18,7 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -290,6 +291,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoDto assetCheckInfoDto = new AssetCheckInfoDto();
 		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo, assetCheckInfoDto, null);
 		assetCheckInfoDto.setCategoryType(assetCheckInfo.getCategory());
+		assetCheckInfoDto.setImages(JSONObject.parseObject(assetCheckInfo.getAttFile(),new TypeReference<Map<String, List<String>>>() {
+		}));
 		return assetCheckInfoDto;
 	}
 

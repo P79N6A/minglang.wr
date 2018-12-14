@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.common.PageQuery;
 
@@ -73,9 +74,9 @@ public class AssetCheckInfoDto extends PageQuery {
 	private Date checkTime;
 
 	/**
-	 * 图片
+	 * 盘点附件
 	 */
-	private List<String> images;
+	Map<String,List<String>> images;
 	/**
 	 * 状态
 	 */
@@ -193,11 +194,11 @@ public class AssetCheckInfoDto extends PageQuery {
 		this.checkTime = checkTime;
 	}
 
-	public List<String> getImages() {
+	public Map<String, List<String>> getImages() {
 		return images;
 	}
 
-	public void setImages(List<String> images) {
+	public void setImages(Map<String, List<String>> images) {
 		this.images = images;
 	}
 
