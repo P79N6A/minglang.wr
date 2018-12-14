@@ -355,6 +355,22 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				adminList.stream().collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting())));
 		return cd;
 	}
+	@Override
+	public CheckCountDto getCheckCountForStation(Long taobaoUserId) {
+		CheckCountDto cd = new CheckCountDto();
+		List<AssetCheckInfo> iList = getInfoByTaobaoUserIdToStationCheck(taobaoUserId);
+		if (CollectionUtils.isEmpty(iList)) {
+			return cd;
+		}
+		Long count = new Long(iList.size());
+		cd.setDoneCount(count);
+		cd.setItDoneCount(count);
+		cd.setAdminDoneCount(0L);
+		cd.setItDoneDetail(
+				iList.stream().collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting())));
+//		cd.setAdminDoneDetail(null);
+		return cd;
+	}
 
 	@Override
 	public CountyFollowCheckCountDto getCountyFollowCheckCount(Long countyOrgId) {
@@ -563,5 +579,17 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
 		return assetCheckInfoMapper.selectByExample(example);
 	}
+	
+	
+	private List<AssetCheckInfo> getInfoByTaobaoUserIdToStationCheck(Long taobaoUserId) {
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andCheckerIdEqualTo(String.valueOf(taobaoUserId));
+		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		return assetCheckInfoMapper.selectByExample(example);
+	}
+
+	
 
 }

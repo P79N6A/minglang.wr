@@ -22,6 +22,7 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.common.operator.OperatorTypeEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetCheckMobileService")
@@ -107,12 +108,15 @@ public class AssetCheckMobileServiceImpl implements AssetCheckMobileService {
 
 	@Override
 	public Result<CheckCountDto> getCheckCount(OperatorDto operator) {
-//		
-//		if () {
-//			
-//		}
+		
+	
 		try {
-			return Result.of(assetCheckInfoBO.getCountyCheckCount(operator.getOperatorOrgId()));
+			if (OperatorTypeEnum.BUC.getCode().equals(operator.getOperatorType().getCode())) {
+				return Result.of(assetCheckInfoBO.getCountyCheckCount(operator.getOperatorOrgId()));
+			}else if (OperatorTypeEnum.HAVANA.getCode().equals(operator.getOperatorType().getCode())){
+				return Result.of(assetCheckInfoBO.getCheckCountForStation(Long.parseLong(operator.getOperator())));
+			}
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, null, "操作人类型不正确"));
 		} catch (AugeBusinessException e1) {
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, null, e1.getMessage());
 			return Result.of(errorInfo);

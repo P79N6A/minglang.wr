@@ -76,6 +76,13 @@ public interface AssetCheckInfoBO {
 	 * @return
 	 */
 	public CheckCountDto getCountyCheckCount(Long countyOrgId);
+	
+	/**
+	 * 村盘点总数
+	 * @param countyOrgId
+	 * @return
+	 */
+	public CheckCountDto getCheckCountForStation(Long taobaoUserId); 
 	/**
 	 * 县跟踪盘点总数
 	 * @param countyOrgId
