@@ -2,6 +2,8 @@ package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+
 import com.ali.unit.rule.util.StringUtils;
 import com.alipay.baoxian.scene.facade.common.AliSceneResult;
 import com.alipay.baoxian.scene.facade.common.policy.dto.InsPolicyDTO;
@@ -393,8 +395,10 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         if (result.isSuccess() &&  InsAgreementStatusEnum.EFFECTIVE.getCode().equals(result.getStatus())) {
             return true;
         } else if (!result.isSuccess()) {
-            logger.error("{bizType} query {taobaoUserId} employer insurance error", "insurance", taobaoUserId, result.getErrorMessage());
+            logger.info("{bizType} {parameter}", "insurance", JSON.toJSONString(request));
+            logger.error("{bizType} query {taobaoUserId} employer insurance error", "insurance", taobaoUserId, JSON.toJSONString(result));
         } else {
+            logger.info("{bizType} {parameter}", "insurance", JSON.toJSONString(request));
             logger.info("{bizType} query {taobaoUserId} employer status:" + result.getStatus(), "insurance", taobaoUserId);
         }
         return false;
