@@ -66,7 +66,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
         infoDto.setAction("all");
 
         AppMsgPushInfoDto.AppMsgPushContent content = infoDto.new AppMsgPushContent();
-        content.setBizId(Long.valueOf( System.currentTimeMillis()+""+taobaoUserId));
+        //content.setBizId(Long.valueOf( System.currentTimeMillis()+""+taobaoUserId));
         content.setPublishTime(System.currentTimeMillis());
         content.setTitle("装修审核消息提示");//推送及消息的标题
         infoDto.setContent(content);
