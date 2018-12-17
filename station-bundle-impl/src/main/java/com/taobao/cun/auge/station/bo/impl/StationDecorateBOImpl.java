@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.service.ProcessService;
@@ -42,9 +42,6 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
@@ -73,6 +70,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	PartnerInstanceBO partnerInstanceBO;
 	@Autowired
 	ProcessService processService;
+	@Autowired
+	private StationDecorateMessageBo stationDecorateMessageBo;
 	
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
@@ -445,9 +444,13 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setGmtModified(new Date());
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode());
+			//运营中心设计图纸审核通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateDesignPassMessage(record.getPartnerUserId());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
+			//运营中心设计图纸审核未通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateDesignNotPassMessage(record.getPartnerUserId(),auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 	}
@@ -465,6 +468,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.DESIGN_AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
+			//县小二设计图纸审核未通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateDesignNotPassMessage(record.getPartnerUserId(),auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 
@@ -624,9 +629,13 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setReflectSatisfySolid("y");
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
+			//运营中心反馈图纸审核通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateFeedBackPassMessage(record.getPartnerUserId());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
+			//运营中心反馈图纸审核未通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateFeedBackNotPassMessage(record.getPartnerUserId(),auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 	}
@@ -644,6 +653,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
+			//县小二反馈图纸审核未通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateFeedBackNotPassMessage(record.getPartnerUserId(),auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 		

@@ -121,6 +121,17 @@ public class DiamondConfiguredProperties {
     @Value("${decorate.design.county.audit.activity.id}")
     private String decorateDesignCountyAuditActivityId;
 
+    @Value("${decorate.feedback.route.url}")
+    private String decorateFeedbackRouteUrl;
+
+    public String getDecorateFeedbackRouteUrl() {
+        return decorateFeedbackRouteUrl;
+    }
+
+    public void setDecorateFeedbackRouteUrl(String decorateFeedbackRouteUrl) {
+        this.decorateFeedbackRouteUrl = decorateFeedbackRouteUrl;
+    }
+
     //供应商Id,村淘自营门店对应uic的userId为3405569954
     @Value("${supplierTbId}")
     private Long supplierTbId;
