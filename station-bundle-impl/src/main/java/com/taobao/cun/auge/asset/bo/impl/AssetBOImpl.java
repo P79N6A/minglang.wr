@@ -2078,7 +2078,7 @@ public class AssetBOImpl implements AssetBO {
 		//cri.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
 		cri.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
 
-		example.setOrderByClause("a.gmt_modified desc");
+		example.setOrderByClause("gmt_modified desc");
 		PageHelper.startPage(pageNum, pageSize);
 		Page<Asset> page = (Page<Asset>)assetMapper.selectByExample(example);
 		
@@ -2098,7 +2098,7 @@ public class AssetBOImpl implements AssetBO {
 		cri.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		
 
-		example.setOrderByClause("a.gmt_modified desc");
+		example.setOrderByClause("gmt_modified desc");
 		PageHelper.startPage(pageNum, pageSize);
 		Page<Asset> page = (Page<Asset>)assetMapper.selectByExample(example);
 		
