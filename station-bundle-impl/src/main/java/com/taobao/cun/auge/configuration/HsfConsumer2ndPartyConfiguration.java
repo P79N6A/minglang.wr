@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
+import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -167,6 +168,9 @@ public class HsfConsumer2ndPartyConfiguration  {
 
 	@HSFConsumer(serviceVersion="${insPolicyApiFacade.version}",serviceGroup="HSF")
 	private InsPolicyApiFacade insPolicyApiFacade;
+
+	@HSFConsumer(serviceVersion="${insPolicyApiFacade.version}",serviceGroup="HSF")
+	private InsSceneApiFacade insSceneApiFacade;
 
 
 	@Bean
