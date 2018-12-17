@@ -634,10 +634,12 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			updateRecord.setReflectSatisfySolid("y");
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
 			stationDecorateMessageBo.pushStationDecorateFeedBackPassMessage(record.getPartnerUserId());
+			//运营中心反馈图纸审核通过，发送metaq消息
+			stationDecorateMessageBo.pushStationDecorateFeedBackPassMessage(record.getPartnerUserId());
 		}else{
 			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
 			updateRecord.setAuditOpinion(auditOpinion);
-			//县小二反馈图纸审核通过，发送metaq消息
+			//运营中心反馈图纸审核未通过，发送metaq消息
 			stationDecorateMessageBo.pushStationDecorateFeedBackNotPassMessage(record.getPartnerUserId(),auditOpinion);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);

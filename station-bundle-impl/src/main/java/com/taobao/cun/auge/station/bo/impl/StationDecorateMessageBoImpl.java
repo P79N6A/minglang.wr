@@ -61,12 +61,12 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
         infoDto.setSender(0L);
         infoDto.setReceivers(Lists.newArrayList(taobaoUserId.toString()));
         infoDto.setReceiverType(AppMsgPushInfoDto.RECEIVER_TYPE_TAOBAO_ID);
-        infoDto.setMsgType("cunpartner"+"StationDecorateAudit");
+        infoDto.setMsgType("cunpartnerSystem");
         infoDto.setMsgTypeDetail("StationDecorateAudit");
         infoDto.setAction("all");
 
         AppMsgPushInfoDto.AppMsgPushContent content = infoDto.new AppMsgPushContent();
-        content.setBizId(Long.valueOf( System.currentTimeMillis()+""+taobaoUserId));
+        content.setBizId(System.currentTimeMillis());
         content.setPublishTime(System.currentTimeMillis());
         content.setTitle("装修审核消息提示");//推送及消息的标题
         infoDto.setContent(content);
