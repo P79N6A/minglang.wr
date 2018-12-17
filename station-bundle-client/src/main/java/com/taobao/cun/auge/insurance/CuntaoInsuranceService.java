@@ -44,4 +44,11 @@ public interface CuntaoInsuranceService {
 	 */
 	Integer hasInsuranceForMobile(Long taobaoUserId);
 
+	/**
+	 * 查询是否买过雇主险
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Boolean hasEmployerInsurance(Long taobaoUserId);
+
 }
