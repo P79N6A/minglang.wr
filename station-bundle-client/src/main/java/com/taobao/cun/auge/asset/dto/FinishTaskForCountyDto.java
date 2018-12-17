@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.asset.dto;
 
-import java.util.Map;
 
 import com.taobao.cun.auge.common.OperatorDto;
 /**
@@ -19,12 +18,12 @@ public class FinishTaskForCountyDto  extends OperatorDto{
 	 * 实物资产无法找到
 	 * key:AssetCheckInfoCategoryTypeEnum 的code
 	 */
-	private Map<String,Long> lostAsset;
+	private String lostAsset;
 	/**
 	 * 村点停业，未回收资产
 	 * key:AssetCheckInfoCategoryTypeEnum 的code
 	 */
-	private Map<String,Long> waitBackAsset;
+	private String waitBackAsset;
 	/**
 	 * 其他原因
 	 */
@@ -37,18 +36,23 @@ public class FinishTaskForCountyDto  extends OperatorDto{
 	public void setTaskType(String taskType) {
 		this.taskType = taskType;
 	}
-	public Map<String, Long> getLostAsset() {
+
+	public String getLostAsset() {
 		return lostAsset;
 	}
-	public void setLostAsset(Map<String, Long> lostAsset) {
+
+	public void setLostAsset(String lostAsset) {
 		this.lostAsset = lostAsset;
 	}
-	public Map<String, Long> getWaitBackAsset() {
+
+	public String getWaitBackAsset() {
 		return waitBackAsset;
 	}
-	public void setWaitBackAsset(Map<String, Long> waitBackAsset) {
+
+	public void setWaitBackAsset(String waitBackAsset) {
 		this.waitBackAsset = waitBackAsset;
 	}
+
 	public String getOtherReason() {
 		return otherReason;
 	}

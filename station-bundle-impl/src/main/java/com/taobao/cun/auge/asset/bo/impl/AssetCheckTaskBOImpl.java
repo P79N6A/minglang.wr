@@ -266,8 +266,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		}
 		
 		if (AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(param.getTaskType())) {
-			at.setLostAsset(JSONObject.toJSONString(param.getLostAsset()));
-			at.setWaitBackAsset(JSONObject.toJSONString(param.getWaitBackAsset()));
+			at.setLostAsset(param.getLostAsset());
+			at.setWaitBackAsset(param.getWaitBackAsset());
 			at.setOtherReason(param.getOtherReason());
 		}
 		DomainUtils.beforeUpdate(at, param.getOperator());
