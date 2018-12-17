@@ -669,6 +669,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			feedBackDto.setFeedbackWallDeskPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK));
 			feedBackDto.setFeedbackInsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO));
 			feedBackDto.setFeedbackOutsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO));
+			feedBackDto.setFeedbackMaterielPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL));
 			feedBackDto.setStationId(prtnerInstance.getStationId());
 			feedBackDto.setStationName(station.getName());
 			feedBackDto.setStationNum(station.getStationNum());
