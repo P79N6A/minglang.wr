@@ -77,7 +77,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
 
     private void pushStationDecorateAuditMessage(AppMsgPushInfoDto appMsgPushInfoDto){
         try {
-            EventDispatcherUtil.dispatch("CUN_PARTNER_DECORATE_AUDIT_MSG_PUSH", new ExtEvent(JSON.toJSONString(appMsgPushInfoDto)));
+            EventDispatcherUtil.dispatch("CUN_PARTNER_DECORATE_AUDIT_MSG_PUSH", JSON.toJSONString(appMsgPushInfoDto));
         } catch (Exception e) {
             logger.error("pushStationDecorateDesignPassMessage,{taobaoUserId},{bizId}",appMsgPushInfoDto.getReceivers(),appMsgPushInfoDto.getContent().getBizId() ,e);
         }
