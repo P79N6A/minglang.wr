@@ -377,16 +377,15 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Override
     public Boolean hasEmployerInsurance(Long taobaoUserId) {
-        ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByUserId(taobaoUserId);
-
         InsProductAgreementQryRequest request = new InsProductAgreementQryRequest();
         request.setItemId(EMPLOYER_NO);
         request.setChannel("cuntao");
         request.setSignType(InsSignTypeEnum.CONTRACT_WITHHOLD_FOR_ORDER.getKey());
         request.setSignUserType(SignUserTypeEnum.TAOBAO.getCode());
         request.setSignUserId(String.valueOf(taobaoUserId));
+        ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByUserId(taobaoUserId);
         if (resultDO.isSuccess()) {
-            request.setAlipayUserId(resultDO.getModule().getOutUser());
+            request.setAlipayUserId(cut0156ForAlipayAccount(resultDO.getModule().getAccountNo()));
         } else {
             logger.error("{bizType} query {taobaoUserId} alipay user id error", "insurance", taobaoUserId, resultDO.getErrMsg());
             return false;
@@ -402,6 +401,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             logger.info("{bizType} query {taobaoUserId} employer status:" + result.getStatus(), "insurance", taobaoUserId);
         }
         return false;
+    }
+
+    private static String cut0156ForAlipayAccount(String partnerAlipayUserId){
+        if(partnerAlipayUserId.endsWith("0156")){
+            return partnerAlipayUserId.substring(0,partnerAlipayUserId.length()-4);
+        }
+        return partnerAlipayUserId;
     }
 
 }
