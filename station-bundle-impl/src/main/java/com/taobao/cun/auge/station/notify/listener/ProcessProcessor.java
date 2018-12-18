@@ -342,15 +342,23 @@ public class ProcessProcessor {
 				}
             }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+				String taskId = ob.getString("taskId");
+				CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
 				String resultCode = ob.getString("result");
+				String desc = ob.getString("taskRemark");
 				ProcessApproveResultEnum decorationDesignAuditResult = null;
 				if("拒绝".equals(resultCode)){
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+                    decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
+                }else{
+                    decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+                }
+				if(diamondConfiguredProperties.getDecorateDesignCountyAuditActivityId().equals(task.getActivityId())){
+					//县小二审核
+					stationDecorateService.auditStationDecorateDesignByCounty(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 				}else{
-					decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
+					//运营中台审核
+					stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 				}
-				String desc = ob.getString("taskRemark");
-				stationDecorateService.auditStationDecorateDesign(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 			}else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
 				StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
 				String taskId = ob.getString("taskId");

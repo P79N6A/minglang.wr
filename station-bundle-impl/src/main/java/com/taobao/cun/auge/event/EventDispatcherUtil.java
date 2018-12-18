@@ -48,7 +48,7 @@ public class EventDispatcherUtil {
 			public void afterCommit() {
 				try {
 					logger.info("start dispatch event : eventName = {}, obj = {}", eventName, JSON.toJSONString(obj));
-					EventDispatcher.getInstance().dispatch(eventName, new ExtEvent((Serializable)obj));
+					EventDispatcher.getInstance().dispatch(eventName, obj instanceof ExtEvent?obj:new ExtEvent((Serializable)obj));
 				} catch (Exception e) {
 					String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
 					logger.error(msg, e);
