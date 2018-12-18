@@ -377,6 +377,10 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Override
     public Boolean hasEmployerInsurance(Long taobaoUserId) {
+        if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(
+            taobaoUserId)) {
+            return true;
+        }
         InsProductAgreementQryRequest request = new InsProductAgreementQryRequest();
         request.setItemId(EMPLOYER_NO);
         request.setChannel("cuntao");

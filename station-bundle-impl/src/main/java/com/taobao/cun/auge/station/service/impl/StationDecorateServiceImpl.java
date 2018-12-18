@@ -1,10 +1,15 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.client.result.ResultModel;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.crius.train.dto.FileUploadDto;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ecs.xhtml.param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +54,6 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
-import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StartProcessDto;
-import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
-import com.taobao.cun.auge.station.dto.StationDecorateCheckDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDesignDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -629,11 +625,20 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		return result;
 	}
 
+
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void auditStationDecorateDesign(Long stationId, ProcessApproveResultEnum approveResultEnum,
 			String auditOpinion) {
 		stationDecorateBO.auditStationDecorateDesign(stationId, approveResultEnum, auditOpinion);
+	}
+
+
+	@Override
+	public void auditStationDecorateDesignByCounty(Long stationId, ProcessApproveResultEnum approveResultEnum,
+										   String auditOpinion) {
+		stationDecorateBO.auditStationDecorateDesignByCounty(stationId, approveResultEnum, auditOpinion);
 	}
 
 	@Override
@@ -654,6 +659,62 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			processService.startApproveProcess(startProcessDto);
 		}
 		return result;
+	}
+
+	@Override
+	public ResultModel<Boolean> uploadStationDecorateCheckForMobile(StationDecorateFeedBackDto stationDecorateFeedBackDto) {
+		ResultModel<Boolean> resultModel = new ResultModel<>();
+		try {
+			//参数校验
+			validateDecorationCheck(stationDecorateFeedBackDto);
+			//保存url至attachement表
+            Long result = stationDecorateBO.uploadStationDecorateFeedback(stationDecorateFeedBackDto);
+            if(result != null){
+				resultModel.setSuccess(true);
+				resultModel.setResult(true);
+				return resultModel;
+			}
+		}catch (IllegalArgumentException e){
+			resultModel.setSuccess(true);
+			resultModel.setResult(false);
+			resultModel.setErrorMessage(e.getMessage());
+		}catch (Exception ex){
+			resultModel.setSuccess(false);
+			resultModel.setResult(false);
+			resultModel.setErrorMessage("系统异常");
+			logger.error("更新装修反馈信息失败,{stationDecorateFeedBackDto}",stationDecorateFeedBackDto,ex);
+		}
+		return resultModel;
+	}
+
+	@Override
+	public ResultModel<StationDecorateFeedBackDto> getStationDecorateFeedBackDtoByUserId(Long taobaoUserId) {
+
+		return stationDecorateBO.queryStationDecorateFeedBackDtoByUserId(taobaoUserId);
+
+	}
+
+	private void validateDecorationCheck(StationDecorateFeedBackDto param) {
+		Assert.notNull(param, "参数不可空");
+		Assert.notNull(param.getStationId(), "村点ID不能为空");
+		Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
+		Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
+		if(param.getFeedbackDoorPhoto()== null || param.getFeedbackDoorPhoto().size() != 2){
+			throw new IllegalArgumentException("门头完工照片要求上传2张");
+		}
+		if(param.getFeedbackOutsidePhoto()== null && param.getFeedbackOutsidePhoto().size() > 2){
+			throw new IllegalArgumentException("室外全景照片要求上传1-2张");
+		}
+		if(param.getFeedbackInsidePhoto()== null || param.getFeedbackInsidePhoto().size() == 1 || param.getFeedbackInsidePhoto().size()>4 ){
+			throw new IllegalArgumentException("室内全景照片要求上传2-4张");
+		}
+		if(param.getFeedbackWallDeskPhoto()== null || param.getFeedbackWallDeskPhoto().size() != 2){
+			throw new IllegalArgumentException("背景墙和前台桌面要求上传2张");
+		}
+		if(param.getFeedbackMaterielPhoto()!= null && param.getFeedbackMaterielPhoto().size() >4){
+			throw new IllegalArgumentException("其他LOGO物料图不超过4张");
+		}
+
 	}
 
 	@Override
