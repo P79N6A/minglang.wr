@@ -337,7 +337,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
                 Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
             Date nowTime = new Date();
-            logger.info("查询新平台保险数据结果,taobaoUserId = {},searchResult = {}", taobaoUserId, searchResult);
             //1.新平台数据判断
             if (searchResult.isSuccess() && CollectionUtils.isNotEmpty(searchResult.getPolicys())) {
                 //约定给-10（事实上，此处可以给任意负整数）
@@ -355,7 +354,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             // 2.查询老平台保险数据
             AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
                 String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
-            logger.info("查询老平台保险数据结果，taobaoUserId = {},insure = {}", taobaoUserId, insure);
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
                 //约定给-10（事实上，此处可以给任意负整数）
                 int maxDurDate = -10;
