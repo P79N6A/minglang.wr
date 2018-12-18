@@ -524,6 +524,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
     @Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long uploadStationDecorateFeedback(StationDecorateFeedBackDto stationDecorateFeedBackDto) {
+		logger.info("uploadStationDecorateFeedback begin ,stationId = {}",stationDecorateFeedBackDto.getStationId());
         StationDecorate record = this.getStationDecorateByStationId(stationDecorateFeedBackDto.getStationId());
         if(record == null){
             return null;
@@ -594,6 +595,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			operator.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
 			startProcessDto.copyOperatorDto(operator);
 			processService.startApproveProcess(startProcessDto);
+			logger.info("uploadStationDecorateFeedback end,stationId = {}",record.getStationId());
 		}
         return result;
     }
