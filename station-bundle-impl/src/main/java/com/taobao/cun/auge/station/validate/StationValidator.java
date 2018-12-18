@@ -1,15 +1,22 @@
 package com.taobao.cun.auge.station.validate;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.taobao.cun.auge.alilang.bo.AlilangTopicBOImpl;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.diamond.client.Diamond;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class StationValidator {
 	
@@ -60,6 +67,13 @@ public final class StationValidator {
     
     public static HashSet<String> nameInvalidWord = new HashSet<>();
 	
+    public static HashSet<String> villageDeatilValidEndWord = new HashSet<>();
+    
+    public static HashSet<String> villageDeatilValidEndWordDiamond = new HashSet<>();
+    
+	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
+
+    
     static {
         generalInvalidWord.add("www");
         generalInvalidWord.add("http");
@@ -67,6 +81,8 @@ public final class StationValidator {
         generalInvalidWord.add(".cn");
         generalInvalidWord.add(".net");
         generalInvalidWord.add(".org");
+        addressInvalidWord.addAll(generalInvalidWord);
+        
         nameInvalidWord.addAll(generalInvalidWord);
         nameInvalidWord.add("附近");
         nameInvalidWord.add("旁边");
@@ -79,7 +95,37 @@ public final class StationValidator {
         nameInvalidWord.add("电器");
         nameInvalidWord.add("母婴");
         nameInvalidWord.add("招商中");
-        addressInvalidWord.addAll(generalInvalidWord);
+        
+        villageDeatilValidEndWord.add("村");
+        villageDeatilValidEndWord.add("区");
+        villageDeatilValidEndWord.add("社区");
+        villageDeatilValidEndWord.add("组");
+        villageDeatilValidEndWord.add("队");   
+        villageDeatilValidEndWord.add("连"); 
+        villageDeatilValidEndWord.add("场");   
+        villageDeatilValidEndWord.add("屯");   
+        villageDeatilValidEndWord.add("会");  
+        villageDeatilValidEndWord.add("部"); 
+        villageDeatilValidEndWord.add("站"); 
+        villageDeatilValidEndWord.add("路");    
+        villageDeatilValidEndWord.add("委"); 
+        villageDeatilValidEndWord.add("园");    
+        villageDeatilValidEndWord.add("所");     
+        villageDeatilValidEndWord.add("沟");  
+        
+        //从Diamond加载行政村结束词
+        try {
+			String villageEndWordDiamond = Diamond.getConfig("com.taobao.cun:auge.villageendwords","DEFAULT_GROUP" , 5000);
+			String[] villageEndWords = StringUtils.split(villageEndWordDiamond,",");
+			for(String endWord : villageEndWords) {
+				villageDeatilValidEndWordDiamond.add(endWord);
+			}
+			logger.info("villageDeatilValidEndWordDiamond loaded");
+		} catch (IOException e) {
+			logger.warn("villageDeatilValidEndWordDiamond load failed",e);
+
+		}
+        
     }
     
 	private StationValidator(){
@@ -199,23 +245,85 @@ public final class StationValidator {
      * @return
      */
     public static boolean addressFormatCheck(Address address){
+        //校验详细地址内容规范
+    	addressDetailFormatCheck(address);
+    	
+        //校验行政地址内容规范
+    	villageFormatCheck(address);
+
+        return true;
+    }
+    
+    /**
+     * 行政村地址格式校验
+     * 1.需要以特定关键词结尾 { 村、区、社区、组、队、连、场、屯、会、部、站、路、委、园、所、沟 }
+     * 2.不能与特殊关键词相等
+     * 
+     * @param address 传入Address预留一定扩展性
+     * @return
+     */
+    public static boolean villageFormatCheck(Address address){
         if (address == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能为空");
         }
+       
+        if(StringUtils.isEmpty(address.getVillageDetail())) {
+        	return true;
+        }
+        
+        //特殊符号校验
+        if (address.getVillageDetail().length() > 20) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不能超过20");
+        }
+        
+        //特殊符号校验
+        if ( !isSpecialStr(address.getVillageDetail(),RULE_REGEX_ADDRESS)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"所属行政村不可含有特殊字符");
+        }
+        
+        boolean isOk = false;
+        //行政村后缀和全称验证
+        HashSet<String> endWordSet = villageDeatilValidEndWordDiamond;
+        if(CollectionUtils.isEmpty(endWordSet)) {
+        	endWordSet = villageDeatilValidEndWord;
+        }
+        
+        for(String endWord : endWordSet) {
+        	
+        	if(StringUtils.endsWith(address.getVillageDetail(), endWord) && !villageDeatilValidEndWord.contains(address.getVillageDetail())) {
+        		isOk = true;
+        		break;
+        	}
+        }
+    	
+        if(!isOk) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"行政村名称不符合行政标准");
+        }
+        
+        return isOk;
+    }
+    
+    /**
+     * 详细村地址格式校验
+     * 
+     * @param address 传入Address预留一定扩展性
+     * @return
+     */
+    public static boolean addressDetailFormatCheck(Address address){
+        if (address == null || StringUtils.isEmpty(address.getAddressDetail())) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能为空");
+        }
         if (address.getAddressDetail().length() > 30 || address.getAddressDetail().length() < 3) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址长度控制在3-30位");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"详细地址长度控制在3-30位");
         }
         if (!isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS) || !isContainChinese(address.getAddressDetail())) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不可含有特殊字符,并且最少一个汉字");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"详细地址不可含有特殊字符,并且最少一个汉字");
         }
         String loweraddr = address.getAddressDetail();
         for(String vm : addressInvalidWord){
             if(loweraddr.contains(vm)){
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能含有特殊关键字:"+vm);
             }
-        }
-        if (OTHER_VILLAGE.equals(address.getVillage()) && !StringUtils.isEmpty(address.getVillageDetail()) && !isSpecialStr(address.getVillageDetail(),RULE_REGEX_ADDRESS)) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"所属行政村不可含有特殊字符");
         }
         return true;
     }
