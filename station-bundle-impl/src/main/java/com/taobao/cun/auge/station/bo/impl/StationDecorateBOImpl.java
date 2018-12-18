@@ -633,7 +633,6 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
 			updateRecord.setReflectSatisfySolid("y");
 			updateRecord.setStatus(StationDecorateStatusEnum.DONE.getCode());
-			stationDecorateMessageBo.pushStationDecorateFeedBackPassMessage(record.getPartnerUserId());
 			//运营中心反馈图纸审核通过，发送metaq消息
 			stationDecorateMessageBo.pushStationDecorateFeedBackPassMessage(record.getPartnerUserId());
 		}else{
@@ -673,9 +672,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		ResultModel<StationDecorateFeedBackDto> resultModel = new ResultModel<>();
 		try {
 			StationDecorateFeedBackDto feedBackDto = new StationDecorateFeedBackDto();
-			PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			Station station = stationBO.getStationById(partnerInstance.getStationId());
-			StationDecorate stationDecorate = getStationDecorateByStationId(partnerInstance.getStationId());
+			PartnerStationRel prtnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			Station station = stationBO.getStationById(prtnerInstance.getStationId());
+			StationDecorate stationDecorate = getStationDecorateByStationId(prtnerInstance.getStationId());
 			feedBackDto.setStatus(stationDecorate.getStatus());
 			feedBackDto.setAuditOption(stationDecorate.getAuditOpinion());
 			List<AttachmentDto> attachmentList = criusAttachmentService.getAttachmentList(stationDecorate.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK);
@@ -685,7 +684,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			feedBackDto.setFeedbackWallDeskPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_WALL_DESK));
 			feedBackDto.setFeedbackInsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO));
 			feedBackDto.setFeedbackOutsideVideo(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO));
-			feedBackDto.setStationId(partnerInstance.getStationId());
+			feedBackDto.setFeedbackMaterielPhoto(getUrlFromAttachmentList(attachmentList,AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL));
+			feedBackDto.setStationId(prtnerInstance.getStationId());
 			feedBackDto.setStationName(station.getName());
 			feedBackDto.setStationNum(station.getStationNum());
 			resultModel.setSuccess(true);
