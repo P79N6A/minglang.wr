@@ -697,8 +697,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private void validateDecorationCheck(StationDecorateFeedBackDto param) {
 		Assert.notNull(param, "参数不可空");
 		Assert.notNull(param.getStationId(), "村点ID不能为空");
-		//Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
-		//Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
+		Assert.notEmpty(param.getFeedbackOutsideVideo(),"室外视频不能为空");
+		Assert.notEmpty(param.getFeedbackInsideVideo(),"室内视频不能为空");
 		if(param.getFeedbackDoorPhoto()== null || param.getFeedbackDoorPhoto().size() != 2){
 			throw new IllegalArgumentException("门头完工照片要求上传2张");
 		}

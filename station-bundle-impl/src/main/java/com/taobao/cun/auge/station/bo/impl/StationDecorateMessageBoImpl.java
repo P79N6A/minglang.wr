@@ -28,7 +28,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
     @Override
     public void pushStationDecorateDesignPassMessage(Long taobaoUserId) {
         AppMsgPushInfoDto appMsgPushInfoDto = buildAppMsgPushInfoDto(taobaoUserId);
-        appMsgPushInfoDto.getContent().setContent("服务站装修效果图审批已经通过，请开始准备线下的门店装修。如果装修已经完成，点击此处可以上传装修完工图。");
+        appMsgPushInfoDto.getContent().setContent("服务站装修效果图审批已经通过，请开始准备线下的门店装修。如果装修已经完成，点击详情可以上传装修完工图。");
         appMsgPushInfoDto.getContent().setRouteUrl(diamondConfiguredProperties.getDecorateFeedbackRouteUrl());
         pushStationDecorateAuditMessage(appMsgPushInfoDto);
     }
@@ -36,7 +36,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
     @Override
     public void pushStationDecorateDesignNotPassMessage(Long taobaoUserId,String auditOption) {
         AppMsgPushInfoDto appMsgPushInfoDto = buildAppMsgPushInfoDto(taobaoUserId);
-        appMsgPushInfoDto.getContent().setContent("服务站装修效果图审批不通过，审批不通过的原因："+auditOption+"，请到爱村淘后台重新上传效果图。");
+        appMsgPushInfoDto.getContent().setContent("服务站装修效果图审批不通过，审批不通过的原因：\n"+auditOption+"\n请到电脑端爱村淘后台重新上传效果图。");
         pushStationDecorateAuditMessage(appMsgPushInfoDto);
     }
 
@@ -50,7 +50,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
     @Override
     public void pushStationDecorateFeedBackNotPassMessage(Long taobaoUserId,String auditOption) {
         AppMsgPushInfoDto appMsgPushInfoDto = buildAppMsgPushInfoDto(taobaoUserId);
-        appMsgPushInfoDto.getContent().setContent("服务站完工图审批不通过，审批不通过的原因："+auditOption+"，点击此处重新上传完工图");
+        appMsgPushInfoDto.getContent().setContent("服务站完工图审批不通过，审批不通过的原因：\n"+auditOption+"\n点击详情重新上传完工图。");
         appMsgPushInfoDto.getContent().setRouteUrl(diamondConfiguredProperties.getDecorateFeedbackRouteUrl());
         pushStationDecorateAuditMessage(appMsgPushInfoDto);
     }
@@ -66,7 +66,7 @@ public class StationDecorateMessageBoImpl implements StationDecorateMessageBo {
         infoDto.setAction("all");
 
         AppMsgPushInfoDto.AppMsgPushContent content = infoDto.new AppMsgPushContent();
-        content.setBizId(System.currentTimeMillis());
+        content.setBizId( System.currentTimeMillis());
         content.setPublishTime(System.currentTimeMillis());
         content.setTitle("装修审核消息提示");//推送及消息的标题
         infoDto.setContent(content);

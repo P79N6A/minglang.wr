@@ -647,13 +647,17 @@ public class CountyBOImpl implements CountyBO {
 	 * @param countyDto
 	 */
 	private void validateIfExistedCountyStation(CountyDto countyDto) {
-		CuntaoOrgAdminAddressExample example = new CuntaoOrgAdminAddressExample();
-		example.createCriteria().andIsDeletedEqualTo("n")
-				.andAddressCodeEqualTo(StringUtils.isNotBlank(countyDto.getCounty())?countyDto.getCounty():countyDto.getCity());
-			List<CuntaoOrgAdminAddress> addressList = cuntaoOrgAdminAddressMapper.selectByExample(example);
-			if(CollectionUtils.isNotEmpty(addressList)){
-				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"所在行政区已存在县服务中心");
-			}
+        CountyStationExample example = new CountyStationExample();
+		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n");
+		if(StringUtils.isNotBlank(countyDto.getCounty())){
+			criteria.andCountyEqualTo(countyDto.getCounty());
+		}else{
+			criteria.andCityEqualTo(countyDto.getCity());
+		}
+		List<CountyStation> countyStations = countyStationMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(countyStations)){
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"所在行政区已存在县服务中心");
+		}
 
 	}
 
