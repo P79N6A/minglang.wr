@@ -17,11 +17,13 @@ import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
+import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -84,6 +86,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private ManualReleaseDistributeLock distributeLock;
+
+    @Autowired
+    private PartnerApplyBO partnerApplyBO;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -395,6 +400,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
             partnerInstanceBO.deletePartnerStationRel(umInstanceId, operator);
             stationBO.deleteStation(stationId, operator);
+
+            restartPartnerApply(umInstanceDto.getTaobaoUserId());
         } catch (AugeBusinessException e) {
             logger.warn("stationId=" + stationId + ",operator = " + JSON.toJSONString(operatorDto), e);
             throw e;
@@ -402,5 +409,13 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             logger.error("stationId=" + stationId + ",operator = " + JSON.toJSONString(operatorDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
+    }
+
+    private void restartPartnerApply(Long taobaoUserId){
+        PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+        partnerApplyDto.setTaobaoUserId(taobaoUserId);
+
+        partnerApplyDto.setOperator("system");
+        partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
     }
 }

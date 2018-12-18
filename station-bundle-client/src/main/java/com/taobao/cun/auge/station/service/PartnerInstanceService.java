@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.trans.StationTransResponse;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailDto;
 
 
@@ -388,5 +389,12 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 */
 	public Result<Boolean> cancelShopMirror(Long taobaoUserId);
+
+	/**
+	 * icuntao点击确认转型
+	 * @param taobaoUserId
+	 * @return
+	 */
+	StationTransResponse confirmTrans(Long taobaoUserId);
     
 }

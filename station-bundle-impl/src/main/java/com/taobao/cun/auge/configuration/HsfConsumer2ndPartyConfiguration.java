@@ -3,6 +3,8 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
+import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -163,7 +165,14 @@ public class HsfConsumer2ndPartyConfiguration  {
 	
 	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
 	private UicDataWriteService uicDataWriteService;
-	
+
+	@HSFConsumer(serviceVersion="${insPolicyApiFacade.version}",serviceGroup="HSF")
+	private InsPolicyApiFacade insPolicyApiFacade;
+
+	@HSFConsumer(serviceVersion="${insPolicyApiFacade.version}",serviceGroup="HSF")
+	private InsSceneApiFacade insSceneApiFacade;
+
+
 	@Bean
 	public SQLIDQueryAPI sqlIDQueryAPI(HsfConsumerContext hsfConsumerContext) {
 		return hsfConsumerContext.hsfConsumerBuilder(SQLIDQueryAPI.class, HSFGroup.DUBBO.getName(), "${hsf.consumer.auge.SQLIDQueryAPI.version}").clientTimeout(8000).build();
@@ -232,7 +241,7 @@ public class HsfConsumer2ndPartyConfiguration  {
 	}
 	
 	
-	@HSFConsumer(serviceVersion="${hsf.consumer.version.enhancedUserQueryService}",serviceGroup="HSF")
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.enhancedUserQueryService}",serviceGroup="${hsf.consumer.serviceGroup.enhancedUserQueryService}")
 	private EnhancedUserQueryService enhancedUserQueryService;
 	
 
