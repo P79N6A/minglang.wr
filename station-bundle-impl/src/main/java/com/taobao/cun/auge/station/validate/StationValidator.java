@@ -1,15 +1,22 @@
 package com.taobao.cun.auge.station.validate;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.taobao.cun.auge.alilang.bo.AlilangTopicBOImpl;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.diamond.client.Diamond;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class StationValidator {
 	
@@ -62,6 +69,11 @@ public final class StationValidator {
 	
     public static HashSet<String> villageDeatilValidEndWord = new HashSet<>();
     
+    public static HashSet<String> villageDeatilValidEndWordDiamond = new HashSet<>();
+    
+	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
+
+    
     static {
         generalInvalidWord.add("www");
         generalInvalidWord.add("http");
@@ -100,6 +112,20 @@ public final class StationValidator {
         villageDeatilValidEndWord.add("园");    
         villageDeatilValidEndWord.add("所");     
         villageDeatilValidEndWord.add("沟");  
+        
+        //从Diamond加载行政村结束词
+        try {
+			String villageEndWordDiamond = Diamond.getConfig("com.taobao.cun:auge.villageendwords","DEFAULT_GROUP" , 5000);
+			String[] villageEndWords = StringUtils.split(villageEndWordDiamond,",");
+			for(String endWord : villageEndWords) {
+				villageDeatilValidEndWordDiamond.add(endWord);
+			}
+			logger.info("villageDeatilValidEndWordDiamond loaded");
+		} catch (IOException e) {
+			logger.warn("villageDeatilValidEndWordDiamond load failed",e);
+
+		}
+        
     }
     
 	private StationValidator(){
@@ -257,7 +283,12 @@ public final class StationValidator {
         
         boolean isOk = false;
         //行政村后缀和全称验证
-        for(String endWord : villageDeatilValidEndWord) {
+        HashSet<String> endWordSet = villageDeatilValidEndWordDiamond;
+        if(CollectionUtils.isEmpty(endWordSet)) {
+        	endWordSet = villageDeatilValidEndWord;
+        }
+        
+        for(String endWord : endWordSet) {
         	
         	if(StringUtils.endsWith(address.getVillageDetail(), endWord) && !villageDeatilValidEndWord.contains(address.getVillageDetail())) {
         		isOk = true;
