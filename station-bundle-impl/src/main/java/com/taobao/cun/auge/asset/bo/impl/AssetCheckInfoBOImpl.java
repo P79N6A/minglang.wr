@@ -292,6 +292,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoDto assetCheckInfoDto = new AssetCheckInfoDto();
 		assetCheckInfoVo2DtoCopier.copy(assetCheckInfo, assetCheckInfoDto, null);
 		assetCheckInfoDto.setCategoryType(assetCheckInfo.getCategory());
+		assetCheckInfoDto.setInfoId(assetCheckInfo.getId());
 		assetCheckInfoDto.setCheckerAreaId(assetCheckInfo.getCheckerAreaId() == null || assetCheckInfo.getCheckerAreaId()==0L? null:String.valueOf(assetCheckInfo.getCheckerAreaId()));
 		assetCheckInfoDto.setImages(JSONObject.parseObject(assetCheckInfo.getAttFile(),new TypeReference<Map<String, List<String>>>() {
 		}));
