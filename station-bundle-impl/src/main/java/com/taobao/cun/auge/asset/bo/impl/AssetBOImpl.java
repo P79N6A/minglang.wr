@@ -1223,7 +1223,8 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public AssetDetailDto checkAsset(AssetCheckDto checkDto) {
-		ValidateUtils.validateParam(checkDto);
+		throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "盘点功能下线" );
+	/*	ValidateUtils.validateParam(checkDto);
 		Objects.requireNonNull(checkDto.getAliNo(), "盘点资产不能为空");
 		Objects.requireNonNull(checkDto.getUserId(), "盘点人不能为空");
 		Objects.requireNonNull(checkDto.getUseAreaType(), "盘点人区域类型不能为空");
@@ -1244,7 +1245,7 @@ public class AssetBOImpl implements AssetBO {
 				CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(), checkDto.getOperator(),
 				checkDto.getOperatorType(), AssetCheckStatusEnum.CHECKED.getDesc());
 		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
-		return buildAssetDetail(assetMapper.selectByPrimaryKey(asset.getId()));
+		return buildAssetDetail(assetMapper.selectByPrimaryKey(asset.getId()));*/
 	}
 
 	private Asset validateUserIdForAssetCheck(String userId, String useAreaType, String aliNo) {
