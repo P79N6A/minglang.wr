@@ -532,6 +532,11 @@ public class StationDecorateBOImpl implements StationDecorateBO {
         if(!"APPROVE_PASS".equals(record.getDesignAuditStatus())){
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修设计图纸未审核完成");
         }
+
+		if(StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(record.getStatus())){
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"装修反馈图纸已提交，请勿重复提交");
+		}
+
         StationDecorate stationDecorate  = new StationDecorate();
         DomainUtils.beforeUpdate(stationDecorate, stationDecorateFeedBackDto.getOperator());
         stationDecorate.setId(record.getId());
