@@ -23,7 +23,9 @@ public class AssetCheckTaskListener implements EventListener {
 		if (event.getValue() instanceof String) {
 			String event1 =  (String)event.getValue();
 			TaskInteractionDto o = JSONObject.parseObject(event1,TaskInteractionDto.class);
-			assetCheckTaskBO.initTaskForStation(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode(), event1, Long.parseLong(o.getUserId()));
+			if("TP_ASSET_CHECK".equals(o.getBusiType())) {
+				assetCheckTaskBO.initTaskForStation(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode(), event1, Long.parseLong(o.getUserId()));
+			}
 		} 
 	}
 }
