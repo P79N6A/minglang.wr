@@ -583,6 +583,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}
         stationDecorateMapper.updateByPrimaryKeySelective(stationDecorate);
 		Long result = stationDecorate.getId();
+		logger.info("uploadStationDecorateFeedback.........,result = {}",result);
 		if(result != null){
 			StartProcessDto startProcessDto = new StartProcessDto();
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
