@@ -153,6 +153,23 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
 					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
 		}
+		String assetType =AssetCheckInfoCategoryTypeEnum.getAssetType(addDto.getCategoryType());
+		if (assetType != null && 
+				AssetCheckInfoAssetTypeEnum.ADMIN.getCode().equals(assetType)) {
+			if (!AssetCheckInfoCategoryTypeEnum.valueof(addDto.getCategoryType()).getDesc().equals(a.getModel())) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+a.getModel()+",请重新操作盘点");
+			}
+			
+		}
+		if (assetType != null && 
+				AssetCheckInfoAssetTypeEnum.IT.getCode().equals(assetType)) {
+			if (!addDto.getCategoryType().equals(a.getCategory())) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+AssetCheckInfoCategoryTypeEnum.valueof(a.getCategory())+",请重新操作盘点");
+			}
+			
+		}
 	}
 
 	private void validateAddStation(AssetCheckInfoAddDto addDto) {
