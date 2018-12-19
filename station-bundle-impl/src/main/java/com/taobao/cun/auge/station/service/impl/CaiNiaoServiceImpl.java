@@ -32,6 +32,7 @@ import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
+import com.taobao.cun.auge.station.dto.CaiNiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -48,6 +49,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFeatureOpModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
+import com.taobao.cun.common.util.BeanCopy;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("caiNiaoService")
@@ -646,5 +648,15 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			key.add(featureKey);
 			caiNiaoAdapter.removeStationFeatures(rel.getCainiaoStationId(), key);
 		}
+	}
+
+	@Override
+	public CaiNiaoStationRelDto getCaiNiaoStationRelByStation(Long stationId) {
+		CuntaoCainiaoStationRel cuntaoCainiaoStationRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+		if(cuntaoCainiaoStationRel == null) {
+			return null;
+		}
+		
+		return BeanCopy.copy(CaiNiaoStationRelDto.class, cuntaoCainiaoStationRel);
 	}
 }
