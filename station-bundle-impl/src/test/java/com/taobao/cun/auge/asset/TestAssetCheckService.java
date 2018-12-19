@@ -37,16 +37,16 @@ public class TestAssetCheckService {
 		taskInteractionDto.setUserId("3840659724");
 		//taskInteractionDto.setBusiType("ASSET_CHECK");
 		taskInteractionDto.setIdentifier("30002268");
-		String  str = "{\"identifier\":\"30002268\",\"taskId\":265,\"busiType\":\"ASSET_CHECK\",\"userId\":\"3840659724\"}";
+		String  str = "{\"identifier\":\"30002268\",\"taskId\":265,\"busiType\":\"ASSET_CHECK\",\"userId\":\"3840669352\"}";
 
-		assetCheckService.initTaskForStation("COUNTY_CHECK",str,3840659724L);
+		assetCheckService.initTaskForStation("STATION_CHECK",str,3840669352L);
 		System.out.println("success======================");
 	}
 
 	public static void main(String[] args) {
 		TaskInteractionDto taskInteractionDto = new TaskInteractionDto();
 		taskInteractionDto.setTaskId(265L);
-		taskInteractionDto.setUserId("3840659724");
+		taskInteractionDto.setUserId("3840669352");
 		//taskInteractionDto.setBusiType("ASSET_CHECK");
 		taskInteractionDto.setIdentifier("30002268");
 		System.out.println(JSON.toJSONString(taskInteractionDto));
