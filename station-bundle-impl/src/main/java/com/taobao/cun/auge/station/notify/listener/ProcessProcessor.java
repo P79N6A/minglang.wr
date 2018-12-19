@@ -352,7 +352,9 @@ public class ProcessProcessor {
                 }else{
                     decorationDesignAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
                 }
-				if(diamondConfiguredProperties.getDecorateDesignCountyAuditActivityId().equals(task.getActivityId())){
+				if(diamondConfiguredProperties.getDecorateDesignCountyAuditActivityId().equals(task.getActivityId())
+						||"sid-5121cfcd-77dc-18f4-6bd1-039075a2b442".equals(task.getActivityId())){
+					//为了兼容老数据，activityId写死，待老数据处理完，将该硬编码删除
 					//县小二审核
 					stationDecorateService.auditStationDecorateDesignByCounty(stationDecrateDto.getStationId(),  decorationDesignAuditResult, desc);
 				}else{

@@ -524,6 +524,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
     @Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long uploadStationDecorateFeedback(StationDecorateFeedBackDto stationDecorateFeedBackDto) {
+		logger.info("uploadStationDecorateFeedback begin ,stationId = {}",stationDecorateFeedBackDto.getStationId());
         StationDecorate record = this.getStationDecorateByStationId(stationDecorateFeedBackDto.getStationId());
         if(record == null){
             return null;
@@ -532,9 +533,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修设计图纸未审核完成");
         }
 
-        if(StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(record.getStatus())){
+		if(StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(record.getStatus())){
 			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"装修反馈图纸已提交，请勿重复提交");
 		}
+
         StationDecorate stationDecorate  = new StationDecorate();
         DomainUtils.beforeUpdate(stationDecorate, stationDecorateFeedBackDto.getOperator());
         stationDecorate.setId(record.getId());
@@ -586,6 +588,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}
         stationDecorateMapper.updateByPrimaryKeySelective(stationDecorate);
 		Long result = stationDecorate.getId();
+		logger.info("uploadStationDecorateFeedback.........,result = {}",result);
 		if(result != null){
 			StartProcessDto startProcessDto = new StartProcessDto();
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
@@ -598,6 +601,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			operator.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
 			startProcessDto.copyOperatorDto(operator);
 			processService.startApproveProcess(startProcessDto);
+			logger.info("uploadStationDecorateFeedback end,stationId = {}",record.getStationId());
 		}
         return result;
     }

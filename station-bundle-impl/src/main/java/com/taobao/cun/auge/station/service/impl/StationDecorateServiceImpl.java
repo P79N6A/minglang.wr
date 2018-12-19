@@ -678,6 +678,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			resultModel.setSuccess(true);
 			resultModel.setResult(false);
 			resultModel.setErrorMessage(e.getMessage());
+		}catch (AugeBusinessException e) {
+			resultModel.setSuccess(true);
+			resultModel.setResult(false);
+			resultModel.setErrorMessage(e.getMessage());
 		}catch (Exception ex){
 			resultModel.setSuccess(false);
 			resultModel.setResult(false);
