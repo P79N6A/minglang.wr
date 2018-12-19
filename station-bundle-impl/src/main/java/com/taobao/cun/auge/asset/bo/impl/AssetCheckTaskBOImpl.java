@@ -277,7 +277,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
 		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
-			//TODO:结束流程任务
+			TaskInteractionExecuteDto o = JSONObject.parseObject(at.getTaskCode(),TaskInteractionExecuteDto.class);
+			taskElementService.executeInteraction(o);
 		}
 		return  Boolean.TRUE;
 	}
