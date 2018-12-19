@@ -112,7 +112,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			record.setCountyOrgId(addDto.getOperatorOrgId());
 			record.setTaskType(AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			
-			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(t.getTaskStatus())) {
+			if (AssetCheckTaskTaskStatusEnum.TODO.getCode().equals(t.getTaskStatus())) {
 				assetCheckTaskBO.doingTask(t.getId());
 			}
 			
@@ -126,7 +126,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			record.setCheckerName(at.getCheckerName());
 			record.setCountyOrgId(at.getOrgId());
 			record.setTaskType(AssetCheckTaskTaskTypeEnum.STATION_CHECK.getCode());
-			if (AssetCheckTaskTaskStatusEnum.DOING.getCode().equals(at.getTaskStatus())) {
+			if (AssetCheckTaskTaskStatusEnum.TODO.getCode().equals(at.getTaskStatus())) {
 				assetCheckTaskBO.doingTask(at.getId());
 			}
 		}
@@ -153,13 +153,6 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
 					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
 		}
-		//TODO:ddfgdfgd
-		if (a == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-					"当前序列号[" + addDto.getSerialNo() + "]线上不存在，请操作异常盘点");
-		}
-		
-
 	}
 
 	private void validateAddStation(AssetCheckInfoAddDto addDto) {
