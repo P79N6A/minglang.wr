@@ -53,6 +53,9 @@ import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.task.dto.TaskInteractionExecuteDto;
 import com.taobao.cun.auge.task.service.TaskElementService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
+import com.taobao.cun.crius.bpm.dto.CuntaoTaskExecuteDto;
+import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 
 import net.sf.cglib.beans.BeanCopier;
 
@@ -85,6 +88,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	
     @Autowired
     private CuntaoUserRoleService cuntaoUserRoleService;
+    
+    @Autowired
+	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
@@ -277,8 +283,13 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
 		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
-			TaskInteractionExecuteDto o = JSONObject.parseObject(at.getTaskCode(),TaskInteractionExecuteDto.class);
-			taskElementService.executeInteraction(o);
+			   CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
+	            executeDto.setLoginId(param.getOperator());
+	            executeDto.setRemark("完成盘点任务");
+	            executeDto.setObjectId(String.valueOf(at.getId()));
+	            executeDto.setBusinessCode(at.getTaskType());
+	            executeDto.setAction(NodeActionEnum.AGREE);
+	            cuntaoWorkFlowService.executeTask(executeDto);
 		}
 		return  Boolean.TRUE;
 	}
