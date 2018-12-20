@@ -406,6 +406,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Map<String, Long> aDtail = new HashMap<String, Long>();
 		for (Asset b : a) {
 			String categroyType = bulidCategoryType(b.getModel(), b.getCategory());
+			if (categroyType == null) {
+				continue;
+			}
 			if (aDtail.get(categroyType) != null) {
 				aDtail.put(categroyType, aDtail.get(categroyType) + 1L);
 			} else {
@@ -435,10 +438,12 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		List<Map<String,String>>  aa= new ArrayList<Map<String,String>>();
 		for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
-			Map<String,String> t = new HashMap<String,String>();
-			t.put("type", entry.getKey());
-			t.put("count", String.valueOf(entry.getValue()));
-			aa.add(t);
+			if(entry.getValue() !=0L) {
+				Map<String,String> t = new HashMap<String,String>();
+				t.put("type", entry.getKey());
+				t.put("count", String.valueOf(entry.getValue()));
+				aa.add(t);
+			}
 		}
 		fDto.setDoingDetail(aa);
 		
@@ -463,6 +468,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				return AssetCheckInfoCategoryTypeEnum.XUNLUOJI.getCode();
 			} else if (AssetCheckInfoCategoryTypeEnum.YINXIANG.getDesc().equals(model)) {
 				return AssetCheckInfoCategoryTypeEnum.YINXIANG.getCode();
+			}else{
+				return null;
 			}
 		}
 		return category;
