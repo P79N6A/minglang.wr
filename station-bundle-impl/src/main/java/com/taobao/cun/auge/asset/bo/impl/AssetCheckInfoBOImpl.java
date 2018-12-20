@@ -438,7 +438,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		List<Map<String,String>>  aa= new ArrayList<Map<String,String>>();
 		for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
-			if(entry.getValue() !=0L) {
+			if(entry.getValue()!= null && entry.getValue() >0L) {
 				Map<String,String> t = new HashMap<String,String>();
 				t.put("type", entry.getKey());
 				t.put("count", String.valueOf(entry.getValue()));
