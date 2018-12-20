@@ -35,26 +35,26 @@ public class CountyFollowCheckCountDto implements Serializable{
 	/**
 	 * 已盘详情 key:AssetCheckInfoCategoryTypeEnum 的code value:总数
 	 */
-	private List<Map<String,Long>> doneDetail;
+	private List<Map<String,String>> doneDetail;
 	
 	/**
 	 * 未盘详情 key:AssetCheckInfoCategoryTypeEnum 的code value:总数
 	 */
-	private List<Map<String,Long>> doingDetail;
-	
-	public List<Map<String, Long>> getDoneDetail() {
+	private List<Map<String,String>> doingDetail;
+		
+	public List<Map<String, String>> getDoneDetail() {
 		return doneDetail;
 	}
 
-	public void setDoneDetail(List<Map<String, Long>> doneDetail) {
+	public void setDoneDetail(List<Map<String, String>> doneDetail) {
 		this.doneDetail = doneDetail;
 	}
 
-	public List<Map<String, Long>> getDoingDetail() {
+	public List<Map<String, String>> getDoingDetail() {
 		return doingDetail;
 	}
 
-	public void setDoingDetail(List<Map<String, Long>> doingDetail) {
+	public void setDoingDetail(List<Map<String, String>> doingDetail) {
 		this.doingDetail = doingDetail;
 	}
 

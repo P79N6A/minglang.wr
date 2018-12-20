@@ -412,14 +412,15 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				aDtail.put(categroyType, 1L);
 			}
 		}
-		List<Map<String,Long>>  dd= new ArrayList<Map<String,Long>>();
+		List<Map<String,String>>  dd= new ArrayList<Map<String,String>>();
 		if (doneCount > 0) {
 			Map<String, Long> dDtail = l.stream()
 					.collect(Collectors.groupingBy(AssetCheckInfo::getCategory, Collectors.counting()));
 			
 			for (Map.Entry<String, Long> entry : dDtail.entrySet()) {
-				Map<String,Long> t = new HashMap<String,Long>();
-				t.put(entry.getKey(), entry.getValue());
+				Map<String,String> t = new HashMap<String,String>();
+				t.put("type", entry.getKey());
+				t.put("count", String.valueOf(entry.getValue()));
 				dd.add(t);
 			}
 			fDto.setDoneDetail(dd);
@@ -432,10 +433,11 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}else{
 			fDto.setDoneDetail(dd);
 		}
-		List<Map<String,Long>>  aa= new ArrayList<Map<String,Long>>();
+		List<Map<String,String>>  aa= new ArrayList<Map<String,String>>();
 		for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
-			Map<String,Long> t = new HashMap<String,Long>();
-			t.put(entry.getKey(), entry.getValue());
+			Map<String,String> t = new HashMap<String,String>();
+			t.put("type", entry.getKey());
+			t.put("count", String.valueOf(entry.getValue()));
 			aa.add(t);
 		}
 		fDto.setDoingDetail(aa);
