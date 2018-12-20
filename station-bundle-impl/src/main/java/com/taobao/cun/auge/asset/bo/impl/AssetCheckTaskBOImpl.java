@@ -287,7 +287,12 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	            executeDto.setLoginId(param.getOperator());
 	            executeDto.setRemark("完成盘点任务");
 	            executeDto.setObjectId(String.valueOf(at.getId()));
-	            executeDto.setBusinessCode(at.getTaskType());
+	            if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(at.getTaskType())) {
+	            	 executeDto.setBusinessCode("assetCheckCountyTask");
+	            }else if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(at.getTaskType())) {
+	            	 executeDto.setBusinessCode("assetCheckCountyFollowTask");
+	            }
+	           
 	            executeDto.setAction(NodeActionEnum.AGREE);
 	            cuntaoWorkFlowService.executeTask(executeDto);
 		}
