@@ -103,6 +103,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		record.setStatus(AssetCheckInfoStatusEnum.CHECKED.getCode());
 		if (OperatorTypeEnum.BUC.getCode().equals(addDto.getOperatorType().getCode())) {// 县盘点
 			AssetCheckTask t = assetCheckTaskBO.getTaskForCounty(addDto.getOperatorOrgId(), AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
+			if(t == null) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "当前县域没有分发盘点任务，无需盘点");
+			}
 			record.setCheckerAreaId(addDto.getOperatorOrgId());
 			record.setCheckerAreaName(
 					t.getOrgName());
@@ -119,6 +122,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		} else if (OperatorTypeEnum.HAVANA.getCode().equals(addDto.getOperatorType().getCode())) {// 村盘点
 			validateAddStation(addDto);
 			AssetCheckTask at = assetCheckTaskBO.getTaskForStation(addDto.getOperator());
+			if(at == null) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "当前村点没有分发盘点任务，无需盘点");
+			}
 			record.setCheckerAreaId(at.getStationId());
 			record.setCheckerAreaName(at.getStationName());
 			record.setCheckerAreaType(AssetUseAreaTypeEnum.STATION.getCode());
