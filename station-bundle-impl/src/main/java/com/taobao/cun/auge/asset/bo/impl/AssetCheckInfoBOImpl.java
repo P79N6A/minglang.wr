@@ -400,9 +400,8 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		List<Asset> a = assetBO.getCheckAsset(countyOrgId);
 		Long count = new Long(a.size());
-		Long doing = count - doneCount;
 		fDto.setDoneCount(doneCount);
-		fDto.setDoingCount(doing < 0 ? 0 : doing);
+	
 		Map<String, Long> aDtail = new HashMap<String, Long>();
 		for (Asset b : a) {
 			String categroyType = bulidCategoryType(b.getModel(), b.getCategory());
@@ -437,12 +436,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			fDto.setDoneDetail(dd);
 		}
 		List<Map<String,String>>  aa= new ArrayList<Map<String,String>>();
+		Long doing =0L;
 		for (Map.Entry<String, Long> entry : aDtail.entrySet()) {
 			if(entry.getValue()!= null && entry.getValue() >0L) {
 				Map<String,String> t = new HashMap<String,String>();
 				t.put("type", entry.getKey());
 				t.put("count", String.valueOf(entry.getValue()));
 				aa.add(t);
+				doing=doing+entry.getValue();
 			}
 		}
 		fDto.setDoingDetail(aa);
