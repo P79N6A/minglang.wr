@@ -320,9 +320,15 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
+		//店掌柜调用不会传orgId
 		if (param.getOrgId() != null) {
+			//县点
 			criteria.andCheckerAreaIdEqualTo(param.getOrgId());
 			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
+		}else{
+			//村点
+			criteria.andCheckerIdEqualTo(param.getOperator());
+			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		}
 		// checkType 不为null表示 查询“异常提报”，“正常提报”中的一种
 		// checkType 为null 表示查询“异常提报”和“正常提报”
@@ -331,10 +337,6 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		}
 		if (param.getCategoryType() != null) {
 			criteria.andCategoryEqualTo(param.getCategoryType());
-		}
-		if (param.getTaobaoUserId() != null) {
-			criteria.andCheckerIdEqualTo(String.valueOf(param.getTaobaoUserId()));
-			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
