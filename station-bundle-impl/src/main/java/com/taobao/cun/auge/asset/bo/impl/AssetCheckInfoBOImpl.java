@@ -321,7 +321,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		//店掌柜调用不会传orgId
-		if (param.getOrgId() != null) {
+		if (param.getOrgId() != null && param.getOrgId() !=0L) {
 			//县点
 			criteria.andCheckerAreaIdEqualTo(param.getOrgId());
 			criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.COUNTY.getCode());
@@ -595,7 +595,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		AssetCheckInfoExample example = new AssetCheckInfoExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andCheckerAreaIdEqualTo(countyOrgId);
+		criteria.andCountyOrgIdEqualTo(countyOrgId);
 		return assetCheckInfoMapper.selectByExample(example);
 	}
 

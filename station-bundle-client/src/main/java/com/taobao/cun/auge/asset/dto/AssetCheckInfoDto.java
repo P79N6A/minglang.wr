@@ -81,7 +81,19 @@ public class AssetCheckInfoDto extends PageQuery {
 	 * 状态
 	 */
     private String status;
+    /**
+     * 打回原因
+     */
+    private String backReason;
     
+	public String getBackReason() {
+		return backReason;
+	}
+
+	public void setBackReason(String backReason) {
+		this.backReason = backReason;
+	}
+
 	public String getSerialNo() {
 		return serialNo;
 	}
