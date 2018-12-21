@@ -401,7 +401,6 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			doneCount = new Long(l.size());
 		}
 		List<Asset> a = assetBO.getCheckAsset(countyOrgId);
-		Long count = new Long(a.size());
 		fDto.setDoneCount(doneCount);
 	
 		Map<String, Long> aDtail = new HashMap<String, Long>();
@@ -446,6 +445,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				t.put("count", String.valueOf(entry.getValue()));
 				aa.add(t);
 				doing=doing+entry.getValue();
+				fDto.setDoingCount(doing);
 			}
 		}
 		fDto.setDoingDetail(aa);
