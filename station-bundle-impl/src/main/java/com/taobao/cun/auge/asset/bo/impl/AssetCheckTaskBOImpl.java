@@ -94,7 +94,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	@Override
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
-		if (at != null && !at.getTaskCode().equals(taskCode)) {
+		if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
 			at.setTaskCode(taskCode);
 			at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 			DomainUtils.beforeUpdate(at, String.valueOf(taobaoUserId));
@@ -186,7 +186,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
             List<CuntaoUserRole> userRoles = cuntaoUserRoleService.getCuntaoUserRoles(orgId, "COUNTY_LEADER_AUDIT");
             
 			AssetCheckTask at = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
-			if (at != null) {
+			if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
 				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
@@ -220,7 +220,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			}
 			
 			AssetCheckTask f = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
-			if (f != null) {
+			if (f != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
 				f.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
