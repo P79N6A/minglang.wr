@@ -527,10 +527,10 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToStation(a, stationId, checkerId, checkerName);
 						confirmBySystem(ai.getId(), a.getId(), checkerId);
-						
+						continue;
 					}
 				}
-				continue;
+				
 			}
 			doneStation(ai.getId(), checkerId);
 			
