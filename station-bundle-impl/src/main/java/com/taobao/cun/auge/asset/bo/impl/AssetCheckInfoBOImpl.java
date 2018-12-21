@@ -164,7 +164,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				AssetCheckInfoAssetTypeEnum.ADMIN.getCode().equals(assetType)) {
 			if (!AssetCheckInfoCategoryTypeEnum.valueof(addDto.getCategoryType()).getDesc().equals(a.getModel())) {
 				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+a.getModel()+",请重新操作盘点");
+						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+getCategoryDesc(a)+",请重新操作盘点");
 			}
 			
 		}
@@ -172,10 +172,23 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 				AssetCheckInfoAssetTypeEnum.IT.getCode().equals(assetType)) {
 			if (!addDto.getCategoryType().equals(a.getCategory())) {
 				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+AssetCheckInfoCategoryTypeEnum.valueof(a.getCategory())+",请重新操作盘点");
+						"当前序列号[" + addDto.getSerialNo() + "]对应资产类型是"+getCategoryDesc(a)+",请重新操作盘点");
 			}
 			
 		}
+	}
+	
+	private String getCategoryDesc(Asset a) {
+		if ("ADMINISTRATION".equals(a.getCategory())) {
+			return a.getModel();
+		}
+		if (AssetCheckInfoCategoryTypeEnum.valueof(a.getCategory()) != null) {
+			return AssetCheckInfoCategoryTypeEnum.valueof(a.getCategory()).getDesc();
+		}
+		return "";
+		
+		
+
 	}
 
 	private void validateAddStation(AssetCheckInfoAddDto addDto) {
