@@ -527,10 +527,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToStation(a, stationId, checkerId, checkerName);
 						confirmBySystem(ai.getId(), a.getId(), checkerId);
+						
 					}
-
 				}
+				continue;
 			}
+			doneStation(ai.getId(), checkerId);
+			
+
 		}
 		return Boolean.TRUE;
 	}
@@ -540,6 +544,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		ai.setAssetId(assetId);
 		ai.setId(aiId);
 		ai.setStatus(AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode());
+		DomainUtils.beforeUpdate(ai, operator);
+		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
+	}
+	
+	private void doneStation(Long id, String operator) {
+		AssetCheckInfo ai = new AssetCheckInfo();
+		ai.setId(id);
+		ai.setStatus(AssetCheckInfoStatusEnum.TASK_DONE.getCode());
 		DomainUtils.beforeUpdate(ai, operator);
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 	}
