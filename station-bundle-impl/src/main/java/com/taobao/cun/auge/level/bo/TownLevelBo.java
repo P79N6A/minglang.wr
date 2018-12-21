@@ -37,6 +37,8 @@ public class TownLevelBo implements InitializingBean{
 	private TownLevelMapper townLevelMapper;
 	@Resource
 	private TownLevelRuleMapper townLevelRuleMapper;
+	@Resource
+	private TownLevelResolver townLevelResolver;
 	
 	private LoadingCache<String, List<TownLevelRuleDto>> loadingCache;
 	
@@ -45,6 +47,13 @@ public class TownLevelBo implements InitializingBean{
 		townLevel.setModifier(operator);
 		townLevel.setGmtModified(new Date());
 		townLevelMapper.updateByPrimaryKeySelective(townLevel);
+	}
+	
+	public void updatePopulation(Long id, Long population) {
+		TownLevel townLevel = townLevelMapper.selectByPrimaryKey(id);
+		if(townLevel != null) {
+			townLevel.setTownPopulation(population);
+		}
 	}
 	
 	public TownLevelDto getTownLevel(Long id) {
