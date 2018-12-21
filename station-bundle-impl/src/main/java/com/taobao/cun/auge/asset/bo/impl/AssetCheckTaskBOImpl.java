@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
@@ -92,6 +94,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
     @Autowired
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		AssetCheckTask at = getTaskForStation(String.valueOf(taobaoUserId));
 		if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
@@ -143,7 +146,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		return JSONObject.toJSONString(e);
 	}
 	
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean finishTaskForStation(Long taobaoUserId) {
 		
@@ -171,11 +175,12 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		return Boolean.TRUE;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void initTaskForCounty(List<Long> orgIds) {
 		orgIds.stream().distinct().forEach(item->initTaskForCounty(item));
 	}
-	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     private void initTaskForCounty(Long orgId) {
     	try {
 			CuntaoOrgDto o = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
@@ -255,7 +260,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			logger.error("initTaskForCounty error,param:"+orgId,e);
 		}
     }
-
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean finishTaskForCounty(FinishTaskForCountyDto param) {
 		AssetCheckTask at = getTaskForCounty(param.getOperatorOrgId(),param.getTaskType());

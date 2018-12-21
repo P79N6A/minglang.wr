@@ -539,6 +539,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		return Boolean.TRUE;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void confirmBySystem(Long aiId, Long assetId, String operator) {
 		AssetCheckInfo ai = new AssetCheckInfo();
 		ai.setAssetId(assetId);
@@ -547,7 +548,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		DomainUtils.beforeUpdate(ai, operator);
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 	}
-	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void doneStation(Long id, String operator) {
 		AssetCheckInfo ai = new AssetCheckInfo();
 		ai.setId(id);
@@ -602,6 +603,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void confirmForXzByZb(List<Long> infoIds, OperatorDto ope, List<Asset> assets, int i) {
 		Long infoId = infoIds.get(i);
 		Asset a = assets.get(i);
