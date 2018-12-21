@@ -521,10 +521,10 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 						&& ai.getAssetId() != null) {// 已确认 直接返回
 					continue;
 				}
-				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
+				if (StringUtils.isNotEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
 					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))
-							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
+							&& a.getOwnerOrgId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToStation(a, stationId, checkerId, checkerName);
 						confirmBySystem(ai.getId(), a.getId(), checkerId);
 						continue;
