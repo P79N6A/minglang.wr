@@ -511,7 +511,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andCheckerAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
 		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
 		List<String> categoryList = aiList.stream().map(AssetCheckInfo::getCategory).collect(Collectors.toList());
-		if (!(categoryList.contains("TV") || !categoryList.contains("MAIN") || !categoryList.contains("DISPLAY"))) {
+		if (!categoryList.contains("TV") || !categoryList.contains("MAIN") || !categoryList.contains("DISPLAY")) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：盘点资产必须为1台电视,1台显示器,1台主机");
 		}
 		for (AssetCheckInfo ai : aiList) {
