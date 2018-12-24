@@ -158,7 +158,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-bundle.client</artifactId>
-				<version>3.7.3-SNAPSHOT</version>
+				<version>3.7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao</groupId>
