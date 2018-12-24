@@ -1,14 +1,26 @@
 package com.taobao.cun.auge.level.bo;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.taobao.cun.auge.common.utils.BeanCopy;
+import com.taobao.cun.auge.dal.domain.TownLevelRuleExample;
+import com.taobao.cun.auge.dal.mapper.TownLevelRuleMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-
-import jersey.repackaged.com.google.common.base.Throwables;
+import com.taobao.cun.auge.level.dto.TownLevelRuleDto;
 
 /**
  * 解析镇域分成等级
@@ -17,7 +29,12 @@ import jersey.repackaged.com.google.common.base.Throwables;
  *
  */
 @Component
-public class TownLevelResolver {
+public class TownLevelResolver implements InitializingBean{
+	@Resource
+	private TownLevelRuleMapper townLevelRuleMapper;
+	
+	private Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap = Maps.newHashMap();
+	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
 	static String X = "#coverageRate >= 3000 && #elecPredictionGmv >= 8000000";
@@ -35,19 +52,36 @@ public class TownLevelResolver {
 			Throwables.propagateIfPossible(e);
 		}
 		
-		if(expressionParser.parseExpression(X).getValue(context, Boolean.class)) {
-			townLevelDto.setLevel("X");
-		}else if(expressionParser.parseExpression(A).getValue(context, Boolean.class)) {
-			townLevelDto.setLevel("A");
-		}else if(expressionParser.parseExpression(B).getValue(context, Boolean.class)) {
-			townLevelDto.setLevel("B");
-		}else {
-			townLevelDto.setLevel("C");
-		}
+		List<TownLevelRuleDto> townLevelRuleDtos = getTownLevelRuleDtos(townLevelDto);
 		
+		String level = "C";
+		for(TownLevelRuleDto rule : townLevelRuleDtos) {
+			if(expressionParser.parseExpression(rule.getLevelRule()).getValue(context, Boolean.class)) {
+				level = rule.getLevel();
+				break;
+			}
+		}
+		townLevelDto.setLevel(level);
 		return townLevelDto;
 	}
 	
+	/**
+	 * 获取镇分层规则
+	 * 首先根据区域code获取是否有匹配得到的规则，按照镇->县->市->省的优先级排列，然后是默认规则
+	 * @param townLevelDto
+	 * @return
+	 */
+	private List<TownLevelRuleDto> getTownLevelRuleDtos(TownLevelDto townLevelDto) {
+		List<TownLevelRuleDto> townLevelRuleDtos = Lists.newArrayList();
+		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getTownCode())));
+		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCountyCode())));
+		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCityCode())));
+		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getProvinceCode())));
+		//默认规则
+		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get("*")));
+		return townLevelRuleDtos;
+	}
+
 	/**
 	 * 计算手淘渗透率
 	 * @param townLevelDto
@@ -61,13 +95,18 @@ public class TownLevelResolver {
 		return Math.round(townLevelDto.getmTaobaoUserNum() * 10000 / townLevelDto.getTownPopulation());
 	}
 	
-	public static void main(String[] argv) {
-		TownLevelDto townLevelDto = new TownLevelDto();
-		
-		townLevelDto.setmTaobaoUserNum(3);
-		townLevelDto.setTownPopulation(4L);
-		townLevelDto.setElecPredictionGmv(5000000L);
-		
-		new TownLevelResolver().levelResolve(townLevelDto);
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		List<TownLevelRuleDto> townLevelRuleDtos = BeanCopy.copyList(TownLevelRuleDto.class, townLevelRuleMapper.selectByExample(new TownLevelRuleExample()));
+		townLevelRuleDtos.forEach(townLevelRuleDto->{
+			List<TownLevelRuleDto> townLevelRuleGroupByAreaCode = null;
+			if(!townLevelRuleGroupByAreaCodeMap.containsKey(townLevelRuleDto.getAreaCode())) {
+				townLevelRuleGroupByAreaCode = Lists.newArrayList();
+				townLevelRuleGroupByAreaCodeMap.put(townLevelRuleDto.getAreaCode(), townLevelRuleGroupByAreaCode);
+			}else {
+				townLevelRuleGroupByAreaCode = townLevelRuleGroupByAreaCodeMap.get(townLevelRuleDto.getAreaCode());
+			}
+			townLevelRuleGroupByAreaCode.add(townLevelRuleDto);
+		});
 	}
 }

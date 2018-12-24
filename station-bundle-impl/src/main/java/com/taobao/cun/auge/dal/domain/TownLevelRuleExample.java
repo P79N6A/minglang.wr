@@ -445,143 +445,143 @@ public class TownLevelRuleExample {
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeIsNull() {
-            addCriterion("station_type_code is null");
+        public Criteria andLevelRuleIsNull() {
+            addCriterion("level_rule is null");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeIsNotNull() {
-            addCriterion("station_type_code is not null");
+        public Criteria andLevelRuleIsNotNull() {
+            addCriterion("level_rule is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeEqualTo(String value) {
-            addCriterion("station_type_code =", value, "stationTypeCode");
+        public Criteria andLevelRuleEqualTo(String value) {
+            addCriterion("level_rule =", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeNotEqualTo(String value) {
-            addCriterion("station_type_code <>", value, "stationTypeCode");
+        public Criteria andLevelRuleNotEqualTo(String value) {
+            addCriterion("level_rule <>", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeGreaterThan(String value) {
-            addCriterion("station_type_code >", value, "stationTypeCode");
+        public Criteria andLevelRuleGreaterThan(String value) {
+            addCriterion("level_rule >", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("station_type_code >=", value, "stationTypeCode");
+        public Criteria andLevelRuleGreaterThanOrEqualTo(String value) {
+            addCriterion("level_rule >=", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeLessThan(String value) {
-            addCriterion("station_type_code <", value, "stationTypeCode");
+        public Criteria andLevelRuleLessThan(String value) {
+            addCriterion("level_rule <", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeLessThanOrEqualTo(String value) {
-            addCriterion("station_type_code <=", value, "stationTypeCode");
+        public Criteria andLevelRuleLessThanOrEqualTo(String value) {
+            addCriterion("level_rule <=", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeLike(String value) {
-            addCriterion("station_type_code like", value, "stationTypeCode");
+        public Criteria andLevelRuleLike(String value) {
+            addCriterion("level_rule like", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeNotLike(String value) {
-            addCriterion("station_type_code not like", value, "stationTypeCode");
+        public Criteria andLevelRuleNotLike(String value) {
+            addCriterion("level_rule not like", value, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeIn(List<String> values) {
-            addCriterion("station_type_code in", values, "stationTypeCode");
+        public Criteria andLevelRuleIn(List<String> values) {
+            addCriterion("level_rule in", values, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeNotIn(List<String> values) {
-            addCriterion("station_type_code not in", values, "stationTypeCode");
+        public Criteria andLevelRuleNotIn(List<String> values) {
+            addCriterion("level_rule not in", values, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeBetween(String value1, String value2) {
-            addCriterion("station_type_code between", value1, value2, "stationTypeCode");
+        public Criteria andLevelRuleBetween(String value1, String value2) {
+            addCriterion("level_rule between", value1, value2, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeCodeNotBetween(String value1, String value2) {
-            addCriterion("station_type_code not between", value1, value2, "stationTypeCode");
+        public Criteria andLevelRuleNotBetween(String value1, String value2) {
+            addCriterion("level_rule not between", value1, value2, "levelRule");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameIsNull() {
-            addCriterion("station_type_name is null");
+        public Criteria andAreaCodeIsNull() {
+            addCriterion("area_code is null");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameIsNotNull() {
-            addCriterion("station_type_name is not null");
+        public Criteria andAreaCodeIsNotNull() {
+            addCriterion("area_code is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameEqualTo(String value) {
-            addCriterion("station_type_name =", value, "stationTypeName");
+        public Criteria andAreaCodeEqualTo(String value) {
+            addCriterion("area_code =", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameNotEqualTo(String value) {
-            addCriterion("station_type_name <>", value, "stationTypeName");
+        public Criteria andAreaCodeNotEqualTo(String value) {
+            addCriterion("area_code <>", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameGreaterThan(String value) {
-            addCriterion("station_type_name >", value, "stationTypeName");
+        public Criteria andAreaCodeGreaterThan(String value) {
+            addCriterion("area_code >", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameGreaterThanOrEqualTo(String value) {
-            addCriterion("station_type_name >=", value, "stationTypeName");
+        public Criteria andAreaCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("area_code >=", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameLessThan(String value) {
-            addCriterion("station_type_name <", value, "stationTypeName");
+        public Criteria andAreaCodeLessThan(String value) {
+            addCriterion("area_code <", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameLessThanOrEqualTo(String value) {
-            addCriterion("station_type_name <=", value, "stationTypeName");
+        public Criteria andAreaCodeLessThanOrEqualTo(String value) {
+            addCriterion("area_code <=", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameLike(String value) {
-            addCriterion("station_type_name like", value, "stationTypeName");
+        public Criteria andAreaCodeLike(String value) {
+            addCriterion("area_code like", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameNotLike(String value) {
-            addCriterion("station_type_name not like", value, "stationTypeName");
+        public Criteria andAreaCodeNotLike(String value) {
+            addCriterion("area_code not like", value, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameIn(List<String> values) {
-            addCriterion("station_type_name in", values, "stationTypeName");
+        public Criteria andAreaCodeIn(List<String> values) {
+            addCriterion("area_code in", values, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameNotIn(List<String> values) {
-            addCriterion("station_type_name not in", values, "stationTypeName");
+        public Criteria andAreaCodeNotIn(List<String> values) {
+            addCriterion("area_code not in", values, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameBetween(String value1, String value2) {
-            addCriterion("station_type_name between", value1, value2, "stationTypeName");
+        public Criteria andAreaCodeBetween(String value1, String value2) {
+            addCriterion("area_code between", value1, value2, "areaCode");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNameNotBetween(String value1, String value2) {
-            addCriterion("station_type_name not between", value1, value2, "stationTypeName");
+        public Criteria andAreaCodeNotBetween(String value1, String value2) {
+            addCriterion("area_code not between", value1, value2, "areaCode");
             return (Criteria) this;
         }
     }

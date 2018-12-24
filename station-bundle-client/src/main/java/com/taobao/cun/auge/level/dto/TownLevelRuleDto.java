@@ -8,9 +8,25 @@ public class TownLevelRuleDto implements Serializable{
 
 	private String level;
 	
-	private String stationTypeCode;
+	private String levelRule;
 	
-	private String stationTypeName;
+	private String areaCode;
+	
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+
+	public String getLevelRule() {
+		return levelRule;
+	}
+
+	public void setLevelRule(String levelRule) {
+		this.levelRule = levelRule;
+	}
 
 	public String getLevel() {
 		return level;
@@ -18,21 +34,5 @@ public class TownLevelRuleDto implements Serializable{
 
 	public void setLevel(String level) {
 		this.level = level;
-	}
-
-	public String getStationTypeCode() {
-		return stationTypeCode;
-	}
-
-	public void setStationTypeCode(String stationTypeCode) {
-		this.stationTypeCode = stationTypeCode;
-	}
-
-	public String getStationTypeName() {
-		return stationTypeName;
-	}
-
-	public void setStationTypeName(String stationTypeName) {
-		this.stationTypeName = stationTypeName;
 	}
 }

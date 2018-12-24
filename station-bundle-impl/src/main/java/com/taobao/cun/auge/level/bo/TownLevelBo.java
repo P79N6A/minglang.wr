@@ -54,6 +54,9 @@ public class TownLevelBo implements InitializingBean{
 		if(townLevel != null) {
 			townLevel.setTownPopulation(population);
 		}
+		TownLevelDto townLevelDto = townLevelResolver.levelResolve(BeanCopy.copy(TownLevelDto.class, townLevel));
+		townLevel.setLevel(townLevelDto.getLevel());
+		townLevelMapper.updateByPrimaryKey(townLevel);
 	}
 	
 	public TownLevelDto getTownLevel(Long id) {
