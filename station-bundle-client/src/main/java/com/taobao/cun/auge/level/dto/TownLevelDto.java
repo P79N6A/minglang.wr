@@ -18,7 +18,7 @@ public class TownLevelDto implements Serializable {
     private String townCode;
 
     private String level;
-
+    
     private Long townPopulation;
 
     private String countyCode;
@@ -39,6 +39,10 @@ public class TownLevelDto implements Serializable {
     
     private List<TownLevelRuleDto> townLevelRuleDtos;
 
+    public String getLevelDesc() {
+    	return TownLevelEnum.valueOf(level).getDesc();
+    }
+    
 	public List<TownLevelRuleDto> getTownLevelRuleDtos() {
 		return townLevelRuleDtos;
 	}
