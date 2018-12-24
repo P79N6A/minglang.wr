@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.level.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class TownLevelDto implements Serializable {
 
@@ -37,19 +36,20 @@ public class TownLevelDto implements Serializable {
 
     private Long taobaoGmv;
     
-    private List<TownLevelRuleDto> townLevelRuleDtos;
+    private TownLevelStationRuleDto townLevelStationRuleDto;
 
     public String getLevelDesc() {
     	return TownLevelEnum.valueOf(level).getDesc();
     }
     
-	public List<TownLevelRuleDto> getTownLevelRuleDtos() {
-		return townLevelRuleDtos;
+	public TownLevelStationRuleDto getTownLevelStationRuleDto() {
+		return townLevelStationRuleDto;
 	}
 
-	public void setTownLevelRuleDtos(List<TownLevelRuleDto> townLevelRuleDtos) {
-		this.townLevelRuleDtos = townLevelRuleDtos;
+	public void setTownLevelStationRuleDto(TownLevelStationRuleDto townLevelStationRuleDto) {
+		this.townLevelStationRuleDto = townLevelStationRuleDto;
 	}
+
 
 	public Long getId() {
 		return id;
