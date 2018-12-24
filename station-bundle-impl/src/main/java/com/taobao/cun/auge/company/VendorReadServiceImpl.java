@@ -105,6 +105,21 @@ public class VendorReadServiceImpl implements VendorReadService{
 	}
 
 	@Override
+	public Result<List<CuntaoServiceVendorDto>> queryVendorByTaobaoUserIDS(List<Long> taobaoUserIds) {
+		try {
+			CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+			Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n");
+			criteria.andTaobaoUserIdIn(taobaoUserIds);
+			List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(example);
+			return Result.of(VendorConverter.convert2CuntaoVendorDtoList(vendors));
+		} catch (Exception e) {
+			logger.error("queryVendorByTaobaoUserIDS error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+	@Override
 	public Result<CuntaoServiceVendorDto> queryVendorByTaobaoUserID(Long taobaoUserId) {
 		try {
 			CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
