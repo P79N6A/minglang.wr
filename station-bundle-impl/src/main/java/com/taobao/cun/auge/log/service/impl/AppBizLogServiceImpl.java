@@ -1,7 +1,8 @@
 package com.taobao.cun.auge.log.service.impl;
 
-import javax.annotation.Resource;
+import java.util.List;
 
+import javax.annotation.Resource;
 import com.taobao.cun.auge.log.ExtAppBizLog;
 import com.taobao.cun.auge.log.SimpleAppBizLog;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
@@ -27,6 +28,16 @@ public class AppBizLogServiceImpl implements AppBizLogService {
 	@Override
 	public void addLog(ExtAppBizLog extAppBizLog) {
 		appBizLogBo.addLog(extAppBizLog);
+	}
+	
+	@Override
+	public List<SimpleAppBizLog> queryLog(SimpleAppBizLog simpleAppBizLog) {
+		return appBizLogBo.queryLog(simpleAppBizLog);
+	}
+	
+	@Override
+	public void deleteLog(SimpleAppBizLog simpleAppBizLog) {
+		appBizLogBo.deleteLog(simpleAppBizLog);
 	}
 
 }
