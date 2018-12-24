@@ -514,6 +514,10 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (!categoryList.contains("TV") || !categoryList.contains("MAIN") || !categoryList.contains("DISPLAY")) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：盘点资产必须为1台电视,1台显示器,1台主机");
 		}
+		List<String> statusList = aiList.stream().map(AssetCheckInfo::getStatus).collect(Collectors.toList());
+		if (statusList.contains("ZB_BACK")) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：请删除总部打回资产，重新盘点");
+		}
 		for (AssetCheckInfo ai : aiList) {
 			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
 				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
