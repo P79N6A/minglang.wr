@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.task.service.TaskElementService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -115,6 +116,11 @@ public class HsfConsumerConfiguration  {
 	
 	@HSFConsumer(serviceVersion = "${spring.hsf.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private DdyLbsQueryService ddyLbsQueryService;
+
+
+
+	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
+	private TaskElementService taskElementService;
 	
 
 }

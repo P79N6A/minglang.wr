@@ -250,4 +250,74 @@ public interface AssetBO {
     public void transferItAsset(AssetDto signDto);
 
     public void sendAppMessage(AssetAppMessageDto appMessageDto);
+    
+    /**
+     * 根据序列号查询资产
+     * @param serialNo
+     * @return
+     */
+    public Asset getAssetBySerialNo(String serialNo);
+    /**
+     * 总部确认盘点资产
+     * @param assetId
+     * @param operator
+     */
+    public void confirmForZb(Long assetId,String operator);
+    /**
+     * 系统自动确认村点盘点资产
+     * @param a
+     * @param stationId
+     * @param checkerId
+     * @param checkerName
+     * @return
+     */
+    public Boolean confrimCheckInfoForSystemToStation(Asset a,Long stationId, String checkerId,String checkerName);
+    /**
+     * 系统自动确认县点盘点资产
+     * @param a
+     * @return
+     */
+    public Boolean confrimCheckInfoForSystemToCounty(Asset a);
+    /**
+     * 查询指定类型的资产
+     * @param categoryType
+     * @param countyOrgId
+     * @return
+     */
+    public List<Asset> getWaitCheckAsset(String categoryType, Long countyOrgId);
+    /**
+     * 获得盘点中的数据
+     * @param countyOrgId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageDto<AssetDetailDto> listAssetToChecking(Long countyOrgId,Integer pageNum,Integer pageSize);
+    /**
+     * 获得盘点中的数据
+     * @param countyOrgId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageDto<AssetDetailDto> listAssetToCheckingForStation(Long stationId, Integer pageNum, Integer pageSize);
+    
+    /**
+     * 查询it资产总数
+     * @param countyOrgId
+     * @return
+     */
+    public Integer getCheckAssetForIt(Long countyOrgId);
+    /**
+     * 查询行政资产总数
+     * @param countyOrgId
+     * @return
+     */
+    public Integer getCheckAssetForXz(Long countyOrgId);
+    /**
+     * 查询资产总数
+     * @param countyOrgId
+     * @return
+     */
+    public List<Asset> getCheckAsset(Long countyOrgId);
 }
