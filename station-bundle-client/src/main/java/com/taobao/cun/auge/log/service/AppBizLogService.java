@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.log.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.log.ExtAppBizLog;
 import com.taobao.cun.auge.log.SimpleAppBizLog;
 
@@ -21,4 +23,11 @@ public interface AppBizLogService {
 	 * @param appBizLog
 	 */
 	void addLog(ExtAppBizLog extAppBizLog);
+
+	public void deleteLog(SimpleAppBizLog simpleAppBizLog);
+
+	public List<SimpleAppBizLog> queryLog(SimpleAppBizLog simpleAppBizLog);
+	
+	
+	
 }
