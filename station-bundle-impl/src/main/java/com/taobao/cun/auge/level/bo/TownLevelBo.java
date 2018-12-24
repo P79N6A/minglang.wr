@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
@@ -109,7 +110,8 @@ public class TownLevelBo implements InitializingBean{
 		} catch (ExecutionException e) {
 			return null;
 		}
-		return optional.get();
+		
+		return optional.isPresent() ? optional.get() : null;
 	}
 
 	@Override
@@ -121,7 +123,7 @@ public class TownLevelBo implements InitializingBean{
 				TownLevelStationRuleExample example = new TownLevelStationRuleExample();
 				example.createCriteria().andLevelEqualTo(key);
 				List<TownLevelStationRule> townLevelStationRules = townLevelStationRuleMapper.selectByExample(example);
-				return townLevelStationRules == null ? Optional.empty() : Optional.of(BeanCopy.copy(TownLevelStationRuleDto.class, townLevelStationRules.get(0)));
+				return CollectionUtils.isEmpty(townLevelStationRules) ? Optional.empty() : Optional.of(BeanCopy.copy(TownLevelStationRuleDto.class, townLevelStationRules.get(0)));
 			}
 			
 		});
