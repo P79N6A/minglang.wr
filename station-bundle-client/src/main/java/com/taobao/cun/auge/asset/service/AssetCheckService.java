@@ -86,4 +86,19 @@ public interface AssetCheckService {
 	 *            淘宝userid
 	 */
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId);
+	
+	
+	/**
+	 * 系统确认村点盘点信息
+	 * @param infoId
+	 * @param operator
+	 */
+	public Boolean confrimCheckInfoForSystemToStation(Long stationId,String checkerId,String checkerName);
+	
+	/**
+	 * 系统确认县点盘点信息
+	 * @param infoId
+	 * @param operator
+	 */
+	public Boolean confrimCheckInfoForSystemToCounty(Long countyOrgId, String operator);
 }
