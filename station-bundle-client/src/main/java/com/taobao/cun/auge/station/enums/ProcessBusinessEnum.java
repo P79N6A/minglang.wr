@@ -35,6 +35,10 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum decorationDesignAudit = new ProcessBusinessEnum("decorationDesignAudit", "装修设计图纸审批");
 	public static final ProcessBusinessEnum decorationCheckAudit = new ProcessBusinessEnum("decorationCheckAudit", "装修完工图纸审批");
 	public static final ProcessBusinessEnum serviceAbilitySHRHDecision = new ProcessBusinessEnum("serviceAbilitySHRHDecision", "送货入户服务审批");
+	
+	public static final ProcessBusinessEnum assetCheckCountyFollowTask = new ProcessBusinessEnum("assetCheckCountyFollowTask", "县跟踪盘点任务");
+	public static final ProcessBusinessEnum assetCheckCountyTask = new ProcessBusinessEnum("assetCheckCountyTask", "县盘点任务");
+	
 
 
 	static {

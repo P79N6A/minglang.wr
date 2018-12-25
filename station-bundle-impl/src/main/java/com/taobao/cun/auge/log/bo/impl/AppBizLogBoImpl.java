@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.log.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.AppBizLog;
+import com.taobao.cun.auge.dal.domain.AppBizLogExample;
+import com.taobao.cun.auge.dal.domain.AppBizLogExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AppBizLogMapper;
 import com.taobao.cun.auge.log.ExtAppBizLog;
 import com.taobao.cun.auge.log.SimpleAppBizLog;
@@ -43,4 +47,52 @@ public class AppBizLogBoImpl implements AppBizLogBo {
 		simpleAppBizLog.setMessage("http://crius.cn-hangzhou.oss-cdn.aliyun-inc.com/" + fileName);
 		addLog(simpleAppBizLog);
 	}
+
+	@Override
+	public List<SimpleAppBizLog> queryLog(SimpleAppBizLog simpleAppBizLog) {
+		AppBizLogExample appBizLogExample = new AppBizLogExample();
+		Criteria criteria = appBizLogExample.createCriteria();
+		if(simpleAppBizLog.getBizKey() != null) {
+			criteria.andBizKeyEqualTo(simpleAppBizLog.getBizKey());
+		}
+		if(simpleAppBizLog.getBizType() != null) {
+			criteria.andBizTypeEqualTo(simpleAppBizLog.getBizType());
+		}
+		if(simpleAppBizLog.getCreator() != null) {
+			criteria.andCreatorEqualTo(simpleAppBizLog.getCreator());
+		}
+		if(simpleAppBizLog.getState() != null) {
+			criteria.andStateEqualTo(simpleAppBizLog.getState());
+		}
+		
+		List<AppBizLog> appBizLogList = appBizLogMapper.selectByExample(appBizLogExample);
+		List<SimpleAppBizLog> simpleAppBizLogList = new ArrayList<SimpleAppBizLog>();
+		for(AppBizLog appBizLog : appBizLogList) {
+			simpleAppBizLogList.add(BeanCopy.copy(SimpleAppBizLog.class, appBizLog));
+		}
+		
+		return simpleAppBizLogList; 
+	}
+
+	@Override
+	public void deleteLog(SimpleAppBizLog simpleAppBizLog) {
+		AppBizLogExample appBizLogExample = new AppBizLogExample();
+		Criteria criteria = appBizLogExample.createCriteria();
+		if(simpleAppBizLog.getBizKey() != null) {
+			criteria.andBizKeyEqualTo(simpleAppBizLog.getBizKey());
+		}
+		if(simpleAppBizLog.getBizType() != null) {
+			criteria.andBizTypeEqualTo(simpleAppBizLog.getBizType());
+		}
+		if(simpleAppBizLog.getCreator() != null) {
+			criteria.andCreatorEqualTo(simpleAppBizLog.getCreator());
+		}
+		if(simpleAppBizLog.getState() != null) {
+			criteria.andStateEqualTo(simpleAppBizLog.getState());
+		}
+		
+		appBizLogMapper.deleteByExample(appBizLogExample);		
+	}
+	
+
 }
