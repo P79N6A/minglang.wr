@@ -19,13 +19,13 @@ public class TownLevelUpdateApplyServiceImpl implements TownLevelUpdateApplyServ
 	}
 
 	@Override
-	public void agree(String applyId, String operator) {
-
+	public void agree(String applyId) {
+		townLevelUpdateApplyBo.agree(applyId);
 	}
 
 	@Override
-	public void disagree(String applyId, String operator) {
-
+	public void disagree(String applyId) {
+		townLevelUpdateApplyBo.disagree(applyId);
 	}
 
 }

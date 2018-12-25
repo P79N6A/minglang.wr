@@ -19,14 +19,12 @@ public interface TownLevelUpdateApplyService {
 	/**
 	 * 同意
 	 * @param applyId
-	 * @param operator
 	 */
-	void agree(String applyId, String operator);
+	void agree(String applyId);
 	
 	/**
 	 * 拒绝
 	 * @param applyId
-	 * @param operator
 	 */
-	void disagree(String applyId, String operator);
+	void disagree(String applyId);
 }

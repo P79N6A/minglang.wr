@@ -29,7 +29,6 @@ import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
-import com.jcabi.log.Logger;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -832,8 +831,8 @@ public class CountyBOImpl implements CountyBO {
         countyStation.setModifier(operator);
         countyStation.setGmtCreate(new Date());
         countyStation.setGmtModified(new Date());
-        countyStation.setOwnDept(OrgDeptType.extdept.name());
-        countyStation.setTransferState(TransferState.WAITING.name());
+        countyStation.setOwnDept(OrgDeptType.opdept.name());
+        countyStation.setTransferState(TransferState.FINISHED.name());
         countyStation.setIsDeleted("n");
         countyStation.setManageModel(countyDto.getManageModel().getCode());
         countyStation.setManageStatus(countyDto.getManageStatus().getCode());
