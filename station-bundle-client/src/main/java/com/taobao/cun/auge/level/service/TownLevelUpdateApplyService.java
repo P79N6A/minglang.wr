@@ -8,7 +8,7 @@ import com.taobao.cun.auge.level.dto.TownLevelUpdateApplyDto;
  * @author chengyu.zhoucy
  *
  */
-public interface TownLevelUpdateApply {
+public interface TownLevelUpdateApplyService {
 	/**
 	 * 申请变更
 	 * 
