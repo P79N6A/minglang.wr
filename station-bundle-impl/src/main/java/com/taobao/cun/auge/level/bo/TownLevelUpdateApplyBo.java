@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.dal.domain.TownLevelAlterApply;
 import com.taobao.cun.auge.dal.domain.TownLevelAlterApplyExample;
@@ -55,11 +54,10 @@ public class TownLevelUpdateApplyBo {
 		
         StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 		startDto.setBusinessCode(TASK_CODE);
-		startDto.setBusinessId(String.valueOf(townLevelUpdateApplyDto.getId()));
+		startDto.setBusinessId(String.valueOf(townLevelAlterApply.getId()));
 		startDto.setApplierId(townLevelUpdateApplyDto.getCreator());
 		startDto.setApplierUserType(UserTypeEnum.BUC);
 		startDto.setBusinessName(getTaskName(townLevelUpdateApplyDto.getTownLevelId()));
-		startDto.setInitData(Maps.newHashMap());
 		ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if(!result.isSuccess()) {
 			throw new RuntimeException("创建流程失败：" + result.getException().getMessage());
@@ -77,7 +75,7 @@ public class TownLevelUpdateApplyBo {
 			namePaths.add(townLevelDto.getCountyName());
 		}
 		namePaths.add(townLevelDto.getTownName());
-		return Joiner.on("-").join(namePaths);
+		return "【" + Joiner.on("-").join(namePaths) + "】市场分层数据变更";
 	}
 	
 	@Transactional(rollbackFor=Throwable.class)
@@ -86,6 +84,7 @@ public class TownLevelUpdateApplyBo {
 		townLevelBo.updatePopulation(townLevelAlterApply.getTownLevelId(), townLevelAlterApply.getPopulation());
 		townLevelAlterApply.setGmtModified(new Date());
 		townLevelAlterApply.setState("AGREE");
+		townLevelAlterApply.setFinishTime(System.currentTimeMillis());
 		townLevelAlterApplyMapper.updateByPrimaryKey(townLevelAlterApply);
 	}
 
@@ -93,6 +92,7 @@ public class TownLevelUpdateApplyBo {
 		TownLevelAlterApply townLevelAlterApply = townLevelAlterApplyMapper.selectByPrimaryKey(Long.parseLong(applyId));
 		townLevelAlterApply.setGmtModified(new Date());
 		townLevelAlterApply.setState("DISAGREE");
+		townLevelAlterApply.setFinishTime(System.currentTimeMillis());
 		townLevelAlterApplyMapper.updateByPrimaryKey(townLevelAlterApply);
 	}
 }
