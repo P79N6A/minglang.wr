@@ -27,4 +27,11 @@ public interface TownLevelUpdateApplyService {
 	 * @param applyId
 	 */
 	void disagree(String applyId);
+	
+	/**
+	 * 获取申请单
+	 * @param id
+	 * @return
+	 */
+	TownLevelUpdateApplyDto getTownLevelUpdateApplyDto(Long id);
 }

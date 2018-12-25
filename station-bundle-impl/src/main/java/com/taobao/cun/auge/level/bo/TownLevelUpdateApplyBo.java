@@ -32,6 +32,11 @@ public class TownLevelUpdateApplyBo {
 	@Resource
 	private TownLevelBo townLevelBo;
 	
+	public TownLevelUpdateApplyDto getTownLevelUpdateApplyDto(Long id) {
+		return BeanCopy.copy(TownLevelUpdateApplyDto.class, townLevelAlterApplyMapper.selectByPrimaryKey(id));
+	}
+	
+	
 	public void apply(TownLevelUpdateApplyDto townLevelUpdateApplyDto) {
 		//检查是否已经有在审批中的流程
 		TownLevelAlterApplyExample example = new TownLevelAlterApplyExample();

@@ -28,4 +28,9 @@ public class TownLevelUpdateApplyServiceImpl implements TownLevelUpdateApplyServ
 		townLevelUpdateApplyBo.disagree(applyId);
 	}
 
+	@Override
+	public TownLevelUpdateApplyDto getTownLevelUpdateApplyDto(Long id) {
+		return townLevelUpdateApplyBo.getTownLevelUpdateApplyDto(id);
+	}
+
 }
