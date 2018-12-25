@@ -14,11 +14,6 @@ public class TownLevelServiceImpl implements TownLevelService {
 	private TownLevelBo townLevelBo;
 	
 	@Override
-	public void update(TownLevelDto townLevelDto, String operator) {
-		townLevelBo.update(townLevelDto, operator);
-	}
-
-	@Override
 	public TownLevelDto getTownLevel(Long id) {
 		return townLevelBo.getTownLevel(id);
 	}

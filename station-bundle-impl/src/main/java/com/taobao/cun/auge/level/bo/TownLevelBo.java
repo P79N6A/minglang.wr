@@ -88,7 +88,7 @@ public class TownLevelBo implements InitializingBean{
 			criteria.andTownCodeEqualTo(townLevelCondition.getTownCode());
 		}
 		if(!Strings.isNullOrEmpty(townLevelCondition.getTownName())) {
-			criteria.andTownNameLike(townLevelCondition.getTownName());
+			criteria.andTownNameLike("%" + townLevelCondition.getTownName() + "%");
 		}
 		PageHelper.startPage(townLevelCondition.getPageNum(), townLevelCondition.getPageSize());
         PageHelper.orderBy("province_code,city_code,county_code desc");
