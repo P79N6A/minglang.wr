@@ -15,11 +15,11 @@ public class TownLevelUpdateApplyDto implements Serializable {
 	private Long townLevelId;
 	@Min(value=1, message="镇人口数必须是大于0的数值")
 	private long population;
-	@NotBlank(message="原因不能为空")
+	@NotBlank(message="申请变更原因不能为空")
 	@Length(min=10, max=512, message="原因最少10个字符，最多512个字符")
 	private String reason;
 	@NotBlank(message="凭证不能为空")
-	private String images;
+	private String attachments;
 	@NotBlank(message="申请人不能为空")
 	private String creator;
 	
@@ -53,10 +53,10 @@ public class TownLevelUpdateApplyDto implements Serializable {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	public String getImages() {
-		return images;
+	public String getAttachments() {
+		return attachments;
 	}
-	public void setImages(String images) {
-		this.images = images;
+	public void setAttachments(String attachments) {
+		this.attachments = attachments;
 	}
 }
