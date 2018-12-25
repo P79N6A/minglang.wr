@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 镇域分成查询条件
  * 
@@ -46,7 +48,7 @@ public class TownLevelCondition implements Serializable {
 	}
 
 	public String getProvinceCode() {
-		return provinceCode;
+		return StringUtils.defaultIfEmpty(provinceCode, null);
 	}
 
 	public void setProvinceCode(String provinceCode) {
@@ -54,7 +56,7 @@ public class TownLevelCondition implements Serializable {
 	}
 
 	public String getCityCode() {
-		return cityCode;
+		return StringUtils.defaultIfEmpty(cityCode, null);
 	}
 
 	public void setCityCode(String cityCode) {
@@ -62,7 +64,7 @@ public class TownLevelCondition implements Serializable {
 	}
 
 	public String getCountyCode() {
-		return countyCode;
+		return StringUtils.defaultIfEmpty(countyCode, null);
 	}
 
 	public void setCountyCode(String countyCode) {
@@ -70,7 +72,7 @@ public class TownLevelCondition implements Serializable {
 	}
 
 	public String getTownCode() {
-		return townCode;
+		return StringUtils.defaultIfEmpty(townCode, null);
 	}
 
 	public void setTownCode(String townCode) {
@@ -78,7 +80,7 @@ public class TownLevelCondition implements Serializable {
 	}
 
 	public String getTownName() {
-		return townName;
+		return StringUtils.defaultIfEmpty(townName, null);
 	}
 
 	public void setTownName(String townName) {
