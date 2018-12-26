@@ -58,6 +58,7 @@ public class TownLevelBo implements InitializingBean{
 		}
 		TownLevelDto townLevelDto = townLevelResolver.levelResolve(BeanCopy.copy(TownLevelDto.class, townLevel));
 		townLevel.setLevel(townLevelDto.getLevel());
+		townLevel.setCoverageRate(townLevelDto.getCoverageRate());
 		townLevelMapper.updateByPrimaryKey(townLevel);
 	}
 	
