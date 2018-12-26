@@ -12,6 +12,16 @@ public class TownLevelRuleDto implements Serializable{
 	
 	private String areaCode;
 	
+	private long priority;
+	
+	public long getPriority() {
+		return priority;
+	}
+
+	public void setPriority(long priority) {
+		this.priority = priority;
+	}
+
 	public String getAreaCode() {
 		return areaCode;
 	}

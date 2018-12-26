@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.bo;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +100,12 @@ public class TownLevelResolver implements InitializingBean{
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		List<TownLevelRuleDto> townLevelRuleDtos = BeanCopy.copyList(TownLevelRuleDto.class, townLevelRuleMapper.selectByExample(new TownLevelRuleExample()));
+		Collections.sort(townLevelRuleDtos, new Comparator<TownLevelRuleDto>() {
+			@Override
+			public int compare(TownLevelRuleDto t1, TownLevelRuleDto t2) {
+				return t1.getPriority() > t2.getPriority() ? 1 : -1;
+			}
+		});
 		townLevelRuleDtos.forEach(townLevelRuleDto->{
 			List<TownLevelRuleDto> townLevelRuleGroupByAreaCode = null;
 			if(!townLevelRuleGroupByAreaCodeMap.containsKey(townLevelRuleDto.getAreaCode())) {

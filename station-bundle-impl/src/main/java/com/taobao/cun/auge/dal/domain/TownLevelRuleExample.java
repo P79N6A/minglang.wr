@@ -584,6 +584,66 @@ public class TownLevelRuleExample {
             addCriterion("area_code not between", value1, value2, "areaCode");
             return (Criteria) this;
         }
+
+        public Criteria andPriorityIsNull() {
+            addCriterion("priority is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityIsNotNull() {
+            addCriterion("priority is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityEqualTo(Long value) {
+            addCriterion("priority =", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityNotEqualTo(Long value) {
+            addCriterion("priority <>", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityGreaterThan(Long value) {
+            addCriterion("priority >", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityGreaterThanOrEqualTo(Long value) {
+            addCriterion("priority >=", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityLessThan(Long value) {
+            addCriterion("priority <", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityLessThanOrEqualTo(Long value) {
+            addCriterion("priority <=", value, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityIn(List<Long> values) {
+            addCriterion("priority in", values, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityNotIn(List<Long> values) {
+            addCriterion("priority not in", values, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityBetween(Long value1, Long value2) {
+            addCriterion("priority between", value1, value2, "priority");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriorityNotBetween(Long value1, Long value2) {
+            addCriterion("priority not between", value1, value2, "priority");
+            return (Criteria) this;
+        }
     }
 
     /**
