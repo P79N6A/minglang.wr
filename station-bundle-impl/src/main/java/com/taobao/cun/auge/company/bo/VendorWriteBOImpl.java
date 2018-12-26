@@ -67,13 +67,38 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	private EmployeeWriteBO employeeWriteBO;
 	
 	@Override
-	 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
 			ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoServiceVendorDto.getTaobaoNick());
 			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
 			ServiceVendorAndManagerInfo serviceVendorAndManagerInfo = addVendorAndManager(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
 			createEndorOrgAndUser(serviceVendorAndManagerInfo);
 			return cuntaoServiceVendorDto.getId();
+	}
+
+	/**
+	 * 只创建vendor数据和VENDOR_MANAGER角色
+	 *
+	 * @param cuntaoServiceVendorDto
+	 * @return
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Long addNewVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
+		ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoServiceVendorDto.getTaobaoNick());
+		ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
+
+		ServiceVendorAndManagerInfo cuntaoCompanyAndManagerInfo = new ServiceVendorAndManagerInfo();
+		CuntaoServiceVendor cuntaoServiceVendor = convert2CuntaoVendor(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
+		cuntaoServiceVendorMapper.insertSelective(cuntaoServiceVendor);
+
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(cuntaoServiceVendorDto.getTaobaoUserId()+"");
+		userRoleAddDto.setOrgId(3L); //3是门店机构ID
+		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
+		userRoleAddDto.setUserId(cuntaoServiceVendorDto.getTaobaoUserId()+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		return cuntaoServiceVendorDto.getId();
 	}
 
 	private void createEndorOrgAndUser(ServiceVendorAndManagerInfo serviceVendorAndManagerInfo) {
