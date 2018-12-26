@@ -283,7 +283,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		}
 		
 		if (AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(param.getTaskType())) {
-			AssetCheckTask atflow = getTaskForCounty(param.getOperatorOrgId(),AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
+			AssetCheckTask atflow = getTaskForCounty(param.getOperatorOrgId(),AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			if (atflow != null && !AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(atflow.getTaskStatus())) {
 				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"请先完成县点盘点任务");
 			}
