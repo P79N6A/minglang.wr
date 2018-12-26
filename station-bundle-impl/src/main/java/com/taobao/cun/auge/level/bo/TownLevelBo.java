@@ -62,6 +62,18 @@ public class TownLevelBo implements InitializingBean{
 		townLevelMapper.updateByPrimaryKey(townLevel);
 	}
 	
+	public TownLevelDto getTownLevelByTownCode(String townCode) {
+		TownLevelExample example = new TownLevelExample();
+		example.createCriteria().andTownCodeEqualTo(townCode);
+		List<TownLevel> townLevels = townLevelMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(townLevels)) {
+			return null;
+		}
+		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevels.get(0));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDtos(townLevelDto.getLevel()));
+		return townLevelDto;
+	}
+	
 	public TownLevelDto getTownLevel(Long id) {
 		TownLevel townLevel = townLevelMapper.selectByPrimaryKey(id);
 		if(townLevel == null) {
