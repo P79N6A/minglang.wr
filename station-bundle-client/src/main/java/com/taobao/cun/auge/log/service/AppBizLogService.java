@@ -24,10 +24,23 @@ public interface AppBizLogService {
 	 */
 	void addLog(ExtAppBizLog extAppBizLog);
 
+	/**
+	 * 删除日志
+	 * @param SimpleAppBizLog
+	 */
 	public void deleteLog(SimpleAppBizLog simpleAppBizLog);
 
+	/**
+	 * 查询日志
+	 * @param SimpleAppBizLog
+	 */
 	public List<SimpleAppBizLog> queryLog(SimpleAppBizLog simpleAppBizLog);
 	
-	
+	/**
+	 * 编辑日志
+	 * @param SimpleAppBizLog
+	 */
+	public void updateLog(SimpleAppBizLog simpleAppBizLog);
+
 	
 }

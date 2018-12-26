@@ -93,6 +93,30 @@ public class AppBizLogBoImpl implements AppBizLogBo {
 		
 		appBizLogMapper.deleteByExample(appBizLogExample);		
 	}
+
+	@Override
+	public void updateLog(SimpleAppBizLog simpleAppBizLog) {
+		
+		AppBizLog appBizLog = BeanCopy.copy(AppBizLog.class, simpleAppBizLog);
+		
+		
+		AppBizLogExample appBizLogExample = new AppBizLogExample();
+		Criteria criteria = appBizLogExample.createCriteria();
+		if(simpleAppBizLog.getBizKey() != null) {
+			criteria.andBizKeyEqualTo(simpleAppBizLog.getBizKey());
+		}
+		if(simpleAppBizLog.getBizType() != null) {
+			criteria.andBizTypeEqualTo(simpleAppBizLog.getBizType());
+		}
+		if(simpleAppBizLog.getCreator() != null) {
+			criteria.andCreatorEqualTo(simpleAppBizLog.getCreator());
+		}
+		if(simpleAppBizLog.getState() != null) {
+			criteria.andStateEqualTo(simpleAppBizLog.getState());
+		}
+		
+		appBizLogMapper.updateByExampleSelective(appBizLog, appBizLogExample);	
+	}
 	
 
 }

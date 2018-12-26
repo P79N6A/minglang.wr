@@ -35,4 +35,11 @@ public interface AppBizLogBo {
 	 * @param SimpleAppBizLog
 	 */
 	public void deleteLog(SimpleAppBizLog simpleAppBizLog);
+	
+	/**
+	 * 编辑日志
+	 * @param SimpleAppBizLog
+	 */
+	public void updateLog(SimpleAppBizLog simpleAppBizLog);
+
 }
