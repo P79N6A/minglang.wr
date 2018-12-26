@@ -39,12 +39,6 @@ public class TownLevelResolver implements InitializingBean{
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
-	static String X = "#coverageRate >= 3000 && #elecPredictionGmv >= 8000000";
-	
-	static String A = "(#coverageRate < 3000 && #elecPredictionGmv >= 8000000) || (#coverageRate == 0 && #taobaoGmv >= 4000000)";
-	
-	static String B = "(#elecPredictionGmv >= 4200000 && #elecPredictionGmv < 8000000) || (#coverageRate == 0 && #taobaoGmv >= 1700000 && #taobaoGmv < 4000000)";
-	
 	TownLevelDto levelResolve(TownLevelDto townLevelDto) {
 		townLevelDto.setCoverageRate(calcCoverageRate(townLevelDto));
 		StandardEvaluationContext context = new StandardEvaluationContext();
