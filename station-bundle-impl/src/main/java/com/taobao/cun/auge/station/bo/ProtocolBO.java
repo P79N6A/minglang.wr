@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo;
 
 import java.util.List;
 
+import com.taobao.cun.auge.dal.domain.Protocol;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -31,6 +32,13 @@ public interface ProtocolBO {
      * @return
      */
     public List<ProtocolTypeEnum> getProtocolTypeByGroupType(ProtocolGroupTypeEnum groupTypeEnum);
+    
+    /**
+     * 获得当前协议
+     * @param id
+     * @return
+     */
+    public Protocol  getProtocolById(Long id);
 
 
 

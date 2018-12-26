@@ -20,4 +20,11 @@ public interface PartnerProtocolQueryService {
 	 */
 	public Boolean querySignedProjectNoticeProtocol(Long taobaoUserId);
 	
+	/**
+	 * 获取用户最后签署的入驻协议
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public String  queryLastSignedSettlingProtocol(Long taobaoUserId);
+	
 }
