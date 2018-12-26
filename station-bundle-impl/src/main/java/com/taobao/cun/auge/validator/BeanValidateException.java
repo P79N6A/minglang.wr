@@ -16,7 +16,7 @@ public class BeanValidateException extends RuntimeException {
 	private List<String> errors;
 	
 	public BeanValidateException(String className, List<String> errors){
-		super(className + "[" + StringUtils.join(errors, ";") + "]");
+		super(StringUtils.join(errors, ";"));
 		this.errors = errors;
 	}
 
