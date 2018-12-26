@@ -41,7 +41,7 @@ public class TownLevelUpdateApplyBo {
 		TownLevelAlterApplyExample example = new TownLevelAlterApplyExample();
 		example.createCriteria().andTownLevelIdEqualTo(townLevelUpdateApplyDto.getTownLevelId()).andStateEqualTo("NEW");
 		if(townLevelAlterApplyMapper.countByExample(example) > 0) {
-			throw new RuntimeException("已经有变更流程为完成，请等待流程结束后再提交。");
+			throw new RuntimeException("已经有变更流程未完成，请等待流程结束后再提交。");
 		}
 		TownLevelAlterApply townLevelAlterApply = BeanCopy.copy(TownLevelAlterApply.class, townLevelUpdateApplyDto);
 		townLevelAlterApply.setFinishTime(0L);

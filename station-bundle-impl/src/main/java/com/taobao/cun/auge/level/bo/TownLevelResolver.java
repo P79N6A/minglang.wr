@@ -88,7 +88,8 @@ public class TownLevelResolver implements InitializingBean{
 			return 0;
 		}
 		
-		return Math.round(townLevelDto.getmTaobaoUserNum() * 10000 / townLevelDto.getTownPopulation());
+		long i = Math.round((townLevelDto.getmTaobaoUserNum() * 10000.0 / townLevelDto.getTownPopulation()));
+		return Long.valueOf(i).intValue();
 	}
 	
 	@Override
