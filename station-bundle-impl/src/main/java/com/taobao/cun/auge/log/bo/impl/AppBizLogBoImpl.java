@@ -95,24 +95,24 @@ public class AppBizLogBoImpl implements AppBizLogBo {
 	}
 
 	@Override
-	public void updateLog(SimpleAppBizLog simpleAppBizLog) {
+	public void updateLog(SimpleAppBizLog updateAppBizLog,SimpleAppBizLog whereAppBizLog) {
 		
-		AppBizLog appBizLog = BeanCopy.copy(AppBizLog.class, simpleAppBizLog);
+		AppBizLog appBizLog = BeanCopy.copy(AppBizLog.class, updateAppBizLog);
 		
 		
 		AppBizLogExample appBizLogExample = new AppBizLogExample();
 		Criteria criteria = appBizLogExample.createCriteria();
-		if(simpleAppBizLog.getBizKey() != null) {
-			criteria.andBizKeyEqualTo(simpleAppBizLog.getBizKey());
+		if(whereAppBizLog.getBizKey() != null) {
+			criteria.andBizKeyEqualTo(whereAppBizLog.getBizKey());
 		}
-		if(simpleAppBizLog.getBizType() != null) {
-			criteria.andBizTypeEqualTo(simpleAppBizLog.getBizType());
+		if(whereAppBizLog.getBizType() != null) {
+			criteria.andBizTypeEqualTo(whereAppBizLog.getBizType());
 		}
-		if(simpleAppBizLog.getCreator() != null) {
-			criteria.andCreatorEqualTo(simpleAppBizLog.getCreator());
+		if(whereAppBizLog.getCreator() != null) {
+			criteria.andCreatorEqualTo(whereAppBizLog.getCreator());
 		}
-		if(simpleAppBizLog.getState() != null) {
-			criteria.andStateEqualTo(simpleAppBizLog.getState());
+		if(whereAppBizLog.getState() != null) {
+			criteria.andStateEqualTo(whereAppBizLog.getState());
 		}
 		
 		appBizLogMapper.updateByExampleSelective(appBizLog, appBizLogExample);	

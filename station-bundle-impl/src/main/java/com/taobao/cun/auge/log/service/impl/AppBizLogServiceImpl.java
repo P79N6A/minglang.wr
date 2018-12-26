@@ -41,8 +41,8 @@ public class AppBizLogServiceImpl implements AppBizLogService {
 	}
 
 	@Override
-	public void updateLog(SimpleAppBizLog simpleAppBizLog) {
-		appBizLogBo.updateLog(simpleAppBizLog);
+	public void updateLog(SimpleAppBizLog updateAppBizLog,SimpleAppBizLog whereAppBizLog) {
+		appBizLogBo.updateLog(updateAppBizLog,whereAppBizLog);
 	}
 
 }

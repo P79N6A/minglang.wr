@@ -40,6 +40,6 @@ public interface AppBizLogBo {
 	 * 编辑日志
 	 * @param SimpleAppBizLog
 	 */
-	public void updateLog(SimpleAppBizLog simpleAppBizLog);
+	public void updateLog(SimpleAppBizLog updateAppBizLog,SimpleAppBizLog whereAppBizLog);
 
 }
