@@ -308,7 +308,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
-		userRoleAddDto.setOrgId(stores.iterator().next().getEndorOrgId());
+		userRoleAddDto.setOrgId(3L);
 		userRoleAddDto.setRoleName(identifier.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
 		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);

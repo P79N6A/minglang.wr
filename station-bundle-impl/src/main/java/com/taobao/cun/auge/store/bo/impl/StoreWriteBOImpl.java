@@ -296,9 +296,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
 			cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 			cuntaoStore.setScmCode(scmCode);
-			cuntaoStore.setEndorOrgId(groupSequence.nextValue());
+			cuntaoStore.setEndorOrgId(3L);
 			cuntaoStoreMapper.insert(cuntaoStore);
-			addOrg(cuntaoStore);
+			//addOrg(cuntaoStore);
 		}
 		initStoreWarehouse(station.getId());
 		initStoreEmployees(station.getId());
@@ -620,9 +620,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setStoreCategory(StoreCategoryConstants.FMCG);
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 		cuntaoStore.setScmCode("");
-		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
+		cuntaoStore.setEndorOrgId(3L);
 		cuntaoStoreMapper.insert(cuntaoStore);
-		addOrg(cuntaoStore);
+		//addOrg(cuntaoStore);
 		/*
 		 * Long cainiaoStationId =
 		 * cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId()); if
