@@ -2,6 +2,7 @@ package com.taobao.cun.auge.company.bo;
 
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 
 public interface EmployeeWriteBO {
 
@@ -69,5 +70,11 @@ public interface EmployeeWriteBO {
 	 * @param roleName
 	 * @param orgId
 	 */
-	public void addEndorUserRole(Long taobaoUserId,String roleName,Long orgId);
+	void addEndorUserRole(Long taobaoUserId,String roleName,Long orgId);
+
+	/**
+	 * 初始化门店角色
+	 */
+	void createStoreEndorUser(Long stationId, CuntaoEmployee employee);
+
 }

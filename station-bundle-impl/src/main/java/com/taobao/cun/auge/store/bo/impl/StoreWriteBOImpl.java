@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.company.bo.EmployeeWriteBO;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,10 +139,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private PartnerInstanceBO partnerInstanceBO;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 
-	 @Autowired
+	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
-	 
-	
+
+	@Autowired
+	private EmployeeWriteBO employeeWriteBO;
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException {
@@ -309,13 +313,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		operator.setOperatorType(OperatorTypeEnum.HAVANA);
 		PartnerInstanceDto partnerInstance = queryInfo(stationId, operator);
 		if (partnerInstance != null && partnerInstance.getPartnerDto() != null) {
-			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+			CuntaoEmployee employee = new CuntaoEmployee();
 			employee.setName(partnerInstance.getPartnerDto().getName());
-			employee.setMobile(partnerInstance.getPartnerDto().getMobile());
-			employee.setOperator("system");
 			employee.setTaobaoNick(partnerInstance.getPartnerDto().getTaobaoNick());
-			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
-			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
+			employee.setTaobaoUserId(partnerInstance.getPartnerDto().getTaobaoUserId());
+			employee.setCreator("system");
+			employeeWriteBO.createStoreEndorUser(stationId, employee);
 		} else {
 			logger.error("add storeEmployee error! can not find PartnerInstance By stationId[" + stationId + "]");
 		}
