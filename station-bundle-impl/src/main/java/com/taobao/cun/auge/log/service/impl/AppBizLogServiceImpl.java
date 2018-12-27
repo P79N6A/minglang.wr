@@ -40,4 +40,9 @@ public class AppBizLogServiceImpl implements AppBizLogService {
 		appBizLogBo.deleteLog(simpleAppBizLog);
 	}
 
+	@Override
+	public void updateLog(SimpleAppBizLog updateAppBizLog,SimpleAppBizLog whereAppBizLog) {
+		appBizLogBo.updateLog(updateAppBizLog,whereAppBizLog);
+	}
+
 }

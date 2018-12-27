@@ -34,6 +34,7 @@ import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
@@ -165,6 +166,10 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (partnerInstance != null && PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
                 Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+                if(partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())){
+                    //如果站点状态是已退出的，则返回买过保险
+                    return  true;
+                }
                 if (null == partner || StringUtils.isEmpty(partner.getIdenNum())) {
                     return false;
                 }
@@ -323,8 +328,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 return 365;
             }
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-            if (partnerInstance == null || !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
-                //只有合伙人和淘帮手才强制买保险
+            if (partnerInstance == null || !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())
+                    ||partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())) {
+                //只有合伙人和淘帮手才强制买保险,同时站点已经退出的也返回已买保险
                 return 365;
             }
             // 查询新平台的保险数据

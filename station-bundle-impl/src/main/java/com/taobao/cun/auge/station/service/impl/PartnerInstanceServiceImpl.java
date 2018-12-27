@@ -30,6 +30,7 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -598,6 +599,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         instance.setOperator(String.valueOf(taobaoUserId));
         instance.setOperatorType(OperatorTypeEnum.HAVANA);
         partnerInstanceBO.updatePartnerStationRel(instance);
+        
+        if (PartnerInstanceTypeEnum.TP.getCode().equals(psRel.getType())) {
+        	  partnerInstanceBO.updateIncomeMode(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(taobaoUserId));
+        }
     }
 
     @Override
@@ -2705,4 +2710,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         return response;
     }
+
+	@Override
+	public void updateIncomeMode(Long instanceId, String incomeMode, String operator) {
+		partnerInstanceBO.updateIncomeMode(instanceId, incomeMode, operator);
+	}
 }
