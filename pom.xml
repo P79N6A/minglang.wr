@@ -29,7 +29,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>4.4.4</ague.station.client.version>
+		<ague.station.client.version>4.4.6</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
@@ -885,6 +885,11 @@
 				<groupId>com.alipay.insopenprod</groupId>
 				<artifactId>insopenprod-common-service-facade</artifactId>
 				<version>1.0.0.20181120</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.cun</groupId>
+			  <artifactId>cun-partner-api</artifactId>
+			  <version>1.3.3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

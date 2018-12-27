@@ -35,6 +35,8 @@
     <result column="shop_id" jdbcType="BIGINT" property="shopId" />
     <result column="distribution_channel_id" jdbcType="BIGINT" property="distributionChannelId" />
     <result column="distributor_code" jdbcType="VARCHAR" property="distributorCode" />
+    <result column="income_mode" jdbcType="VARCHAR" property="incomeMode" />
+    <result column="income_mode_begin_time" jdbcType="TIMESTAMP" property="incomeModeBeginTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -111,7 +113,7 @@
     service_begin_time, service_end_time, partner_id, parent_station_id, state, applier_id, 
     bit, type, open_date, is_current, applier_type, close_type, station_apply_id, version, 
     taobao_user_id, mode, seller_id, trans_status, shop_id, distribution_channel_id, 
-    distributor_code
+    distributor_code, income_mode, income_mode_begin_time
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRelExample" resultMap="BaseResultMap">
     <!--
@@ -177,7 +179,8 @@
       close_type, station_apply_id, version, 
       taobao_user_id, mode, seller_id, 
       trans_status, shop_id, distribution_channel_id, 
-      distributor_code)
+      distributor_code, income_mode, income_mode_begin_time
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{stationId,jdbcType=BIGINT}, 
       #{applyTime,jdbcType=TIMESTAMP}, #{serviceBeginTime,jdbcType=TIMESTAMP}, #{serviceEndTime,jdbcType=TIMESTAMP}, 
@@ -187,7 +190,8 @@
       #{closeType,jdbcType=VARCHAR}, #{stationApplyId,jdbcType=BIGINT}, #{version,jdbcType=BIGINT}, 
       #{taobaoUserId,jdbcType=BIGINT}, #{mode,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}, 
       #{transStatus,jdbcType=VARCHAR}, #{shopId,jdbcType=BIGINT}, #{distributionChannelId,jdbcType=BIGINT}, 
-      #{distributorCode,jdbcType=VARCHAR})
+      #{distributorCode,jdbcType=VARCHAR}, #{incomeMode,jdbcType=VARCHAR}, #{incomeModeBeginTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRel">
     <!--
@@ -283,6 +287,12 @@
       <if test="distributorCode != null">
         distributor_code,
       </if>
+      <if test="incomeMode != null">
+        income_mode,
+      </if>
+      <if test="incomeModeBeginTime != null">
+        income_mode_begin_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -368,6 +378,12 @@
       </if>
       <if test="distributorCode != null">
         #{distributorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeMode != null">
+        #{incomeMode,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeModeBeginTime != null">
+        #{incomeModeBeginTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -475,6 +491,12 @@
       <if test="record.distributorCode != null">
         distributor_code = #{record.distributorCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.incomeMode != null">
+        income_mode = #{record.incomeMode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.incomeModeBeginTime != null">
+        income_mode_begin_time = #{record.incomeModeBeginTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -514,7 +536,9 @@
       trans_status = #{record.transStatus,jdbcType=VARCHAR},
       shop_id = #{record.shopId,jdbcType=BIGINT},
       distribution_channel_id = #{record.distributionChannelId,jdbcType=BIGINT},
-      distributor_code = #{record.distributorCode,jdbcType=VARCHAR}
+      distributor_code = #{record.distributorCode,jdbcType=VARCHAR},
+      income_mode = #{record.incomeMode,jdbcType=VARCHAR},
+      income_mode_begin_time = #{record.incomeModeBeginTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -610,6 +634,12 @@
       <if test="distributorCode != null">
         distributor_code = #{distributorCode,jdbcType=VARCHAR},
       </if>
+      <if test="incomeMode != null">
+        income_mode = #{incomeMode,jdbcType=VARCHAR},
+      </if>
+      <if test="incomeModeBeginTime != null">
+        income_mode_begin_time = #{incomeModeBeginTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -646,7 +676,9 @@
       trans_status = #{transStatus,jdbcType=VARCHAR},
       shop_id = #{shopId,jdbcType=BIGINT},
       distribution_channel_id = #{distributionChannelId,jdbcType=BIGINT},
-      distributor_code = #{distributorCode,jdbcType=VARCHAR}
+      distributor_code = #{distributorCode,jdbcType=VARCHAR},
+      income_mode = #{incomeMode,jdbcType=VARCHAR},
+      income_mode_begin_time = #{incomeModeBeginTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

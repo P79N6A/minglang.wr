@@ -396,5 +396,12 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	StationTransResponse confirmTrans(Long taobaoUserId);
+	/**
+	 * 更新模式
+	 * @param instanceId
+	 * @param incomeMode
+	 * @param operator
+	 */
+	public void updateIncomeMode(Long instanceId, String incomeMode, String operator);
     
 }
