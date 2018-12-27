@@ -87,12 +87,8 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		// 判断同一省不能重复村站名
 		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
 		lifeCycleValidator.checkStationNameDuplicate(stationId,stationDto.getName()+nameSuffix,stationDto.getAddress().getProvince());
-		stationDto.setOwnDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
-		if(stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
-			stationDto.setTransferState(TransferState.WAITING.name());
-		}else {
-			stationDto.setTransferState(TransferState.FINISHED.name());
-		}
+		stationDto.setOwnDept("opdept");
+		stationDto.setTransferState(TransferState.FINISHED.name());
 		stationId = stationBO.addStation(stationDto);
 		partnerInstanceDto.setStationId(stationId);
 		if (partnerInstanceDto.getParentStationId() == null) {
