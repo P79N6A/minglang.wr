@@ -2050,11 +2050,28 @@ public class AssetBOImpl implements AssetBO {
 		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andOwnerOrgIdEqualTo(countyOrgId);
-		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
 		criteria.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		criteria.andCheckStatusNotEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
 		bulidParam(categoryType,criteria);
+		List<Asset> c = assetMapper.selectByExample(example);
+		List<Asset> c1 =  getCheckStatusIsNullAsset(categoryType,countyOrgId);
+		if (CollectionUtils.isEmpty(c)) {
+			return c1;
+		}else {
+			c.addAll(c1);
+			return c;
+		}
+	}
+	
+	private List<Asset>  getCheckStatusIsNullAsset(String categoryType, Long countyOrgId) {
+		AssetExample example = new AssetExample();
+		com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria1 = example.createCriteria();
+		criteria1.andIsDeletedEqualTo("n");
+		criteria1.andOwnerOrgIdEqualTo(countyOrgId);
+		criteria1.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		criteria1.andCheckStatusIsNull();
+		bulidParam(categoryType,criteria1);
 		return assetMapper.selectByExample(example);
-		
 	}
 	
 	private void bulidParam(String categoryType,com.taobao.cun.auge.dal.domain.AssetExample.Criteria criteria){
