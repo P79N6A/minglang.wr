@@ -1091,7 +1091,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Override
 	public void updateIncomeMode(Long instanceId, String incomeMode, String operator) {
 		Date a = new Date();
-		if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(a)) {
+//		if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(a)) {
 			ValidateUtils.notNull(instanceId);
 			ValidateUtils.notNull(incomeMode);
 			ValidateUtils.notNull(operator);
@@ -1101,7 +1101,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	        updateInstance.setIncomeModeBeginTime(a);
 	        DomainUtils.beforeUpdate(updateInstance, operator);
 	        partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
-		}
+//		}
 		
 	}
 }
