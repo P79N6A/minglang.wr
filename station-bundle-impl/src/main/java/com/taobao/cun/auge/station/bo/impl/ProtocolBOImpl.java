@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Service("protocolBO")
 public class ProtocolBOImpl implements ProtocolBO {
 
+	
 	@Autowired
 	ProtocolMapper protocolMapper;
 
@@ -85,5 +86,11 @@ public class ProtocolBOImpl implements ProtocolBO {
 			ProtocolGroupTypeEnum groupTypeEnum) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public Protocol getProtocolById(Long id) {
+		return protocolMapper.selectByPrimaryKey(id);
 	}
 }

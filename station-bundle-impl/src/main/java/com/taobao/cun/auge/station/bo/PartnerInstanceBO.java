@@ -315,4 +315,6 @@ public interface PartnerInstanceBO {
 	 */
 	public void cancelShopMirror(Long taobaoUserId);
 	
+	public void updateIncomeMode(Long instanceId,String incomeMode,String operator);
+	
 }
