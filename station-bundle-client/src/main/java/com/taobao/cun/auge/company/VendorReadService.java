@@ -24,6 +24,11 @@ public interface VendorReadService {
 	 * 单个查询服务商
 	 */
 	Result<CuntaoServiceVendorDto> queryVendorByID(Long id);
+
+	/**
+	 * 单个查询服务商
+	 */
+	Result<CuntaoServiceVendorDto> queryVendorByStoreId(Long storeId);
 	
 	/**
 	 * ID批量查询服务商

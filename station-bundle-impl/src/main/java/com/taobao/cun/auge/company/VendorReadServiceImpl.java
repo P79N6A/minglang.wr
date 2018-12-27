@@ -22,6 +22,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +43,9 @@ public class VendorReadServiceImpl implements VendorReadService{
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
+
+	@Autowired
+	private StoreReadBO storeReadBO;
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorReadServiceImpl.class);
@@ -87,6 +92,15 @@ public class VendorReadServiceImpl implements VendorReadService{
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
+	}
+
+	@Override
+	public Result<CuntaoServiceVendorDto> queryVendorByStoreId(Long storeId) {
+		StoreDto storeDto = storeReadBO.getStoreBySharedStoreId(storeId);
+		if(null == storeDto){
+			return Result.of(ErrorInfo.of(AugeErrorCodes.STORE_DATA_NOT_EXISTS_ERROR_CODE, null, "门店不存在"));
+		}
+		return queryVendorByTaobaoUserID(storeDto.getTaobaoUserId());
 	}
 
 	@Override
