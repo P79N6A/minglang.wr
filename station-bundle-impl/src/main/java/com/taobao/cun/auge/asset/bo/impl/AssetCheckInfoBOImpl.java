@@ -255,6 +255,24 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
 					"该阿里编号[" + aliNo + "]所属县域和当前信息[" + infoId + "]不同，不能确认");
 		}
+		
+		String assetType =ai.getAssetType();
+		if (assetType != null && 
+				AssetCheckInfoAssetTypeEnum.ADMIN.getCode().equals(assetType)) {
+			if (!AssetCheckInfoCategoryTypeEnum.valueof(ai.getCategory()).getDesc().equals(a.getModel())) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+						"当前序列号[" + aliNo + "]对应资产类型是"+getCategoryDesc(a)+",请重新操作");
+			}
+			
+		}
+		if (assetType != null && 
+				AssetCheckInfoAssetTypeEnum.IT.getCode().equals(assetType)) {
+			if (!ai.getCategory().equals(a.getCategory())) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+						"当前序列号[" + aliNo+ "]对应资产类型是"+getCategoryDesc(a)+",请重新操作盘点");
+			}
+			
+		}
 
 		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
