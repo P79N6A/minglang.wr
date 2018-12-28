@@ -259,6 +259,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
+		ai.setBackReason("");
 		DomainUtils.beforeUpdate(ai, operator.getOperator());
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 		return Boolean.TRUE;
