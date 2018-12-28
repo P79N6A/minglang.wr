@@ -611,6 +611,9 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (!infoList.stream().allMatch(assetCheckInfo -> countyOrgId==assetCheckInfo.getCountyOrgId())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产所属县域和条件不同");
 		}
+		if (!infoList.stream().allMatch(assetCheckInfo -> categoryType.equals(assetCheckInfo.getCategory()))) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产类型和条件不同");
+		}
 		
 		List<Asset> assets = assetBO.getWaitCheckAsset(categoryType, countyOrgId);
 		if (CollectionUtils.isNotEmpty(assets)) {
