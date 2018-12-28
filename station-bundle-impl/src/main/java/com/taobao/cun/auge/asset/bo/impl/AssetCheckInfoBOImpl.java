@@ -603,9 +603,10 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (assetTypeList.contains(AssetCheckInfoAssetTypeEnum.IT.getCode())) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产必须是行政资产");
 		}
-		List<String> statusList = infoList.stream().map(AssetCheckInfo::getStatus).collect(Collectors.toList());
-		if (statusList.contains(AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode()) ||
-				statusList.contains(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode())) {
+//		List<String> statusList = infoList.stream().map(AssetCheckInfo::getStatus).collect(Collectors.toList());
+//		statusList.contains(AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode()) ||
+//		statusList.contains(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode())
+		if (!infoList.stream().allMatch(assetCheckInfo -> AssetCheckInfoStatusEnum.TASK_DONE.getCode().equals(assetCheckInfo.getStatus()))) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产必须是待确认资产");
 		}
 		
