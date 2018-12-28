@@ -19,6 +19,7 @@ import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckInfoBO;
 import com.taobao.cun.auge.asset.bo.AssetCheckTaskBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckStationExtInfo;
@@ -33,6 +34,8 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetCheckInfo;
 import com.taobao.cun.auge.dal.domain.AssetCheckTask;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample;
 import com.taobao.cun.auge.dal.domain.AssetCheckTaskExample.Criteria;
@@ -93,6 +96,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
     
     @Autowired
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
+    
+	@Autowired
+	private AssetBO assetBO;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
@@ -277,7 +283,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		}
 		
 		if (AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(param.getTaskType())) {
-			AssetCheckTask atflow = getTaskForCounty(param.getOperatorOrgId(),AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
+			AssetCheckTask atflow = getTaskForCounty(param.getOperatorOrgId(),AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
 			if (atflow != null && !AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(atflow.getTaskStatus())) {
 				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"请先完成县点盘点任务");
 			}
@@ -322,6 +328,9 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		if(StringUtils.isNotEmpty(param.getStationName())) {
 			criteria.andStationNameEqualTo(param.getStationName());
 		}
+		if(StringUtils.isNotEmpty(param.getTaskStatus())) {
+			criteria.andTaskStatusEqualTo(param.getTaskStatus());
+		}
 		example.setOrderByClause("id desc");
 		PageHelper.startPage(param.getPageNum(), param.getPageSize());
 		Page<AssetCheckTask> page = (Page<AssetCheckTask>)assetCheckTaskMapper.selectByExample(example);
@@ -334,6 +343,20 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		assetCheckTaskVo2DtoCopier.copy(assetCheckTask,assetCheckTaskDto,null);
 		if (StringUtils.isNotEmpty(assetCheckTask.getStationExtInfo())) {
 			assetCheckTaskDto.setStationExtInfo(JSONObject.parseObject(assetCheckTask.getStationExtInfo(), AssetCheckStationExtInfo.class));
+		}
+		if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(assetCheckTask.getTaskType())) {
+			List<Asset> a = assetBO.getCheckAsset(assetCheckTask.getOrgId());
+			List<AssetCheckInfo> l = assetCheckInfoBO.getInfoByCountyOrgId(assetCheckTask.getOrgId());
+			Long assetCount =0L;
+			Long doneCount =0L;
+			if (CollectionUtils.isNotEmpty(a)) {
+				assetCount = new Long(a.size());
+			}
+			if (CollectionUtils.isNotEmpty(l)) {
+				doneCount = new Long(l.size());
+			}
+			assetCheckTaskDto.setDoneCount(doneCount);
+			assetCheckTaskDto.setAssetCount(assetCount);
 		}
 	
 		return assetCheckTaskDto;

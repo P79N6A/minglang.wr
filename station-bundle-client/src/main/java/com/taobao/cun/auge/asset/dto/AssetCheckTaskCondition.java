@@ -16,6 +16,16 @@ public class AssetCheckTaskCondition  extends PageQuery {
 	private String orgName;
 	
 	private String taskType;
+	
+	private String taskStatus;
+	
+	public String getTaskStatus() {
+		return taskStatus;
+	}
+
+	public void setTaskStatus(String taskStatus) {
+		this.taskStatus = taskStatus;
+	}
 
 	public String getStationName() {
 		return stationName;
