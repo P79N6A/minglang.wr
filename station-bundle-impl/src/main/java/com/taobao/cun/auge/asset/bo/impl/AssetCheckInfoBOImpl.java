@@ -259,6 +259,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
+		ai.setBackReason("");
 		DomainUtils.beforeUpdate(ai, operator.getOperator());
 		assetCheckInfoMapper.updateByPrimaryKeySelective(ai);
 		return Boolean.TRUE;
@@ -592,6 +593,30 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		if (CollectionUtils.isEmpty(infoIds)) {
 			return;
 		}
+		AssetCheckInfoExample example = new AssetCheckInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdIn(infoIds);
+		List<AssetCheckInfo> infoList =  assetCheckInfoMapper.selectByExample(example);
+		
+		List<String> assetTypeList = infoList.stream().map(AssetCheckInfo::getAssetType).collect(Collectors.toList());
+		if (assetTypeList.contains(AssetCheckInfoAssetTypeEnum.IT.getCode())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产必须是行政资产");
+		}
+//		List<String> statusList = infoList.stream().map(AssetCheckInfo::getStatus).collect(Collectors.toList());
+//		statusList.contains(AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode()) ||
+//		statusList.contains(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode())
+		if (!infoList.stream().allMatch(assetCheckInfo -> AssetCheckInfoStatusEnum.TASK_DONE.getCode().equals(assetCheckInfo.getStatus()))) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产状态必须是任务完成");
+		}
+		
+		if (!infoList.stream().allMatch(assetCheckInfo -> countyOrgId==assetCheckInfo.getCountyOrgId())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产所属县域和条件不同");
+		}
+		if (!infoList.stream().allMatch(assetCheckInfo -> categoryType.equals(assetCheckInfo.getCategory()))) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产类型和条件不同");
+		}
+		
 		List<Asset> assets = assetBO.getWaitCheckAsset(categoryType, countyOrgId);
 		if (CollectionUtils.isNotEmpty(assets)) {
 			if (assets.size() >= infoIds.size()) {
@@ -612,7 +637,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		Long infoId = infoIds.get(i);
 		Asset a = assets.get(i);
 		assetBO.confirmForZb(a.getId(), ope.getOperator());
-
+		
 		AssetCheckInfo ai = new AssetCheckInfo();
 		ai.setId(infoId);
 		ai.setAssetId(a.getId());
