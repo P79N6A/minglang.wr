@@ -24,4 +24,10 @@ public interface TownLevelService {
 	 * @return
 	 */
 	PageDto<TownLevelDto> query(TownLevelCondition townLevelCondition);
+	
+	/**
+	 * 计算分层
+	 * @param id
+	 */
+	TownLevelDto calcTownLevel(Long id);
 }

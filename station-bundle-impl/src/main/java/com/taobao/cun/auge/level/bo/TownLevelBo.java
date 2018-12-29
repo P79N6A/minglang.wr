@@ -44,6 +44,11 @@ public class TownLevelBo implements InitializingBean{
 	
 	private LoadingCache<String, Optional<TownLevelStationRuleDto>> loadingCache;
 	
+	public TownLevelDto calcTownLevel(Long id) {
+		TownLevelDto townLevelDto = getTownLevel(id);
+		return townLevelResolver.levelResolve(townLevelDto);
+	}
+	
 	public void update(TownLevelDto townLevelDto, String operator) {
 		TownLevel townLevel = BeanCopy.copy(TownLevel.class, townLevelDto);
 		townLevel.setModifier(operator);

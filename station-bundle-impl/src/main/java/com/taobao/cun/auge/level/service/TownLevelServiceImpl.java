@@ -23,4 +23,9 @@ public class TownLevelServiceImpl implements TownLevelService {
 		return townLevelBo.query(townLevelCondition);
 	}
 
+	@Override
+	public TownLevelDto calcTownLevel(Long id) {
+		return townLevelBo.calcTownLevel(id);
+	}
+	
 }
