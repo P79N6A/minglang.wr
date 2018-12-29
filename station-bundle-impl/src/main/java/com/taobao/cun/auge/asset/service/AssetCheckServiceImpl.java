@@ -96,4 +96,16 @@ public class AssetCheckServiceImpl implements AssetCheckService {
 	public void initTaskForStation(String taskType, String taskCode, Long taobaoUserId) {
 		assetCheckTaskBO.initTaskForStation(taskType, taskCode, taobaoUserId);
 	}
+
+	@Override
+	public Boolean confrimCheckInfoForSystemToStation(Long stationId, String checkerId, String checkerName) {
+		return assetCheckInfoBO.confrimCheckInfoForSystemToStation(stationId, checkerId, checkerName);
+	}
+
+	@Override
+	public Boolean confrimCheckInfoForSystemToCounty(Long countyOrgId, String operator) {
+		return confrimCheckInfoForSystemToCounty(countyOrgId, operator);
+	}
+	
+	
 }

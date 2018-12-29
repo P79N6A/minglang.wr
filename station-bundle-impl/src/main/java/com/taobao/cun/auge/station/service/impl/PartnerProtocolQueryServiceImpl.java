@@ -10,9 +10,13 @@ import org.springframework.util.Assert;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExt;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExtExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Protocol;
 import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelExtMapper;
-import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.dto.PartnerProtocolDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
@@ -20,6 +24,7 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerProtocolQueryService;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
@@ -36,6 +41,11 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
 	
 	@Autowired
 	private PartnerApplyService partnerApplyService;
+	
+	@Autowired
+	private   PartnerInstanceBO partnerInstanceBO;
+	@Autowired
+	ProtocolBO protocolBO;
 	
 	@Override
 	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId){
@@ -103,6 +113,35 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
         	 return Boolean.TRUE;
          }
          return Boolean.FALSE;
+	}
+
+	@Override
+	public String queryLastSignedSettlingProtocol(Long taobaoUserId) {
+		 ValidateUtils.notNull(taobaoUserId);
+		 PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		 if (rel == null) {
+			 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"当前账号不是村小二");
+		 }
+         PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO, rel.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+         if (pprDto != null) {
+        	 Protocol p =  protocolBO.getProtocolById(pprDto.getProtocolId());
+        	 if (p != null){
+        		 if ("C2B入驻协议".equals(p.getName())) {
+        			 return "SETTLING_PROTOCOL_V4";
+        		 }
+        		 if ("4.0入驻协议".equals(p.getName())) {
+        			 return "SETTLING_PROTOCOL_V5";
+        		 }
+        		 if ("4.1入驻协议".equals(p.getName())) {
+        			 return "SETTLING_PROTOCOL_V6";
+        		 }
+        	 }
+         }
+         pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO, rel.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+         if (pprDto != null) {
+        	 return "SETTLING_PROTOCOL_V4";
+         }
+		return null;
 	}
 
 }

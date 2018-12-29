@@ -68,9 +68,7 @@ public final class StationValidator {
     public static HashSet<String> nameInvalidWord = new HashSet<>();
 	
     public static HashSet<String> villageDeatilValidEndWord = new HashSet<>();
-    
-    public static HashSet<String> villageDeatilValidEndWordDiamond = new HashSet<>();
-    
+        
 	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
 
     
@@ -112,8 +110,15 @@ public final class StationValidator {
         villageDeatilValidEndWord.add("园");    
         villageDeatilValidEndWord.add("所");     
         villageDeatilValidEndWord.add("沟");  
+        villageDeatilValidEndWord.add("大道");  
+
         
-        //从Diamond加载行政村结束词
+    }
+    
+    public static HashSet<String> getVillageEndWordFromDiamond(){
+        
+        HashSet<String> villageDeatilValidEndWordDiamond = new HashSet<>();
+
         try {
 			String villageEndWordDiamond = Diamond.getConfig("com.taobao.cun:auge.villageendwords","DEFAULT_GROUP" , 5000);
 			String[] villageEndWords = StringUtils.split(villageEndWordDiamond,",");
@@ -126,7 +131,10 @@ public final class StationValidator {
 
 		}
         
+        return villageDeatilValidEndWordDiamond;
     }
+    
+    
     
 	private StationValidator(){
 		
@@ -283,7 +291,7 @@ public final class StationValidator {
         
         boolean isOk = false;
         //行政村后缀和全称验证
-        HashSet<String> endWordSet = villageDeatilValidEndWordDiamond;
+        HashSet<String> endWordSet = getVillageEndWordFromDiamond();
         if(CollectionUtils.isEmpty(endWordSet)) {
         	endWordSet = villageDeatilValidEndWord;
         }

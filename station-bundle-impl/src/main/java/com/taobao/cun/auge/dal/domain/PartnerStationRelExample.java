@@ -2054,6 +2054,136 @@ public class PartnerStationRelExample {
             addCriterion("distributor_code not between", value1, value2, "distributorCode");
             return (Criteria) this;
         }
+
+        public Criteria andIncomeModeIsNull() {
+            addCriterion("income_mode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeIsNotNull() {
+            addCriterion("income_mode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeEqualTo(String value) {
+            addCriterion("income_mode =", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeNotEqualTo(String value) {
+            addCriterion("income_mode <>", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeGreaterThan(String value) {
+            addCriterion("income_mode >", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeGreaterThanOrEqualTo(String value) {
+            addCriterion("income_mode >=", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeLessThan(String value) {
+            addCriterion("income_mode <", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeLessThanOrEqualTo(String value) {
+            addCriterion("income_mode <=", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeLike(String value) {
+            addCriterion("income_mode like", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeNotLike(String value) {
+            addCriterion("income_mode not like", value, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeIn(List<String> values) {
+            addCriterion("income_mode in", values, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeNotIn(List<String> values) {
+            addCriterion("income_mode not in", values, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBetween(String value1, String value2) {
+            addCriterion("income_mode between", value1, value2, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeNotBetween(String value1, String value2) {
+            addCriterion("income_mode not between", value1, value2, "incomeMode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeIsNull() {
+            addCriterion("income_mode_begin_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeIsNotNull() {
+            addCriterion("income_mode_begin_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeEqualTo(Date value) {
+            addCriterion("income_mode_begin_time =", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeNotEqualTo(Date value) {
+            addCriterion("income_mode_begin_time <>", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeGreaterThan(Date value) {
+            addCriterion("income_mode_begin_time >", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("income_mode_begin_time >=", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeLessThan(Date value) {
+            addCriterion("income_mode_begin_time <", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeLessThanOrEqualTo(Date value) {
+            addCriterion("income_mode_begin_time <=", value, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeIn(List<Date> values) {
+            addCriterion("income_mode_begin_time in", values, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeNotIn(List<Date> values) {
+            addCriterion("income_mode_begin_time not in", values, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeBetween(Date value1, Date value2) {
+            addCriterion("income_mode_begin_time between", value1, value2, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andIncomeModeBeginTimeNotBetween(Date value1, Date value2) {
+            addCriterion("income_mode_begin_time not between", value1, value2, "incomeModeBeginTime");
+            return (Criteria) this;
+        }
     }
 
     /**

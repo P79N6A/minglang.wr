@@ -74,9 +74,35 @@ public class AssetCheckTaskDto implements Serializable{
 	private String waitBackAsset;
 	
 	/**
+	 * 总资产数
+	 */
+	private Long assetCount;
+	/**
+	 * 已盘资产数
+	 */
+	private Long  doneCount;
+	
+	/**
      * 村点信息
      */
     private AssetCheckStationExtInfo stationExtInfo;
+    
+
+	public Long getAssetCount() {
+		return assetCount;
+	}
+
+	public void setAssetCount(Long assetCount) {
+		this.assetCount = assetCount;
+	}
+
+	public Long getDoneCount() {
+		return doneCount;
+	}
+
+	public void setDoneCount(Long doneCount) {
+		this.doneCount = doneCount;
+	}
 
 	public Long getId() {
 		return id;
