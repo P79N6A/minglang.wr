@@ -273,8 +273,13 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			}
 			
 		}
+		if (AssetUseAreaTypeEnum.STATION.getCode().equals(ai.getCheckerAreaType())) {
+			assetBO.confrimCheckInfoForSystemToStation(a, ai.getCheckerAreaId(), ai.getCheckerId(), ai.getCheckerName());
+		}else{
+			assetBO.confrimCheckInfoForSystemToCounty(a);
+		}
 
-		assetBO.confirmForZb(a.getId(), operator.getOperator());
+//		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
 		ai.setBackReason("");
