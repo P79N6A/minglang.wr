@@ -46,7 +46,9 @@ public class TownLevelBo implements InitializingBean{
 	
 	public TownLevelDto calcTownLevel(Long id) {
 		TownLevelDto townLevelDto = getTownLevel(id);
-		return townLevelResolver.levelResolve(townLevelDto);
+		townLevelDto = townLevelResolver.levelResolve(townLevelDto);
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
+		return townLevelDto;
 	}
 	
 	public void update(TownLevelDto townLevelDto, String operator) {
@@ -75,7 +77,7 @@ public class TownLevelBo implements InitializingBean{
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevels.get(0));
-		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDtos(townLevelDto.getLevel()));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
 		return townLevelDto;
 	}
 	
@@ -85,7 +87,7 @@ public class TownLevelBo implements InitializingBean{
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevel);
-		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDtos(townLevelDto.getLevel()));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
 		return townLevelDto;
 	}
 	
@@ -115,13 +117,13 @@ public class TownLevelBo implements InitializingBean{
         List<TownLevelDto> townLevelDtos = Lists.newArrayList();
         townLevels.forEach(t->{
         	TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, t);
-        	townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDtos(townLevelDto.getLevel()));
+        	townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
         	townLevelDtos.add(townLevelDto);
         });
         return PageDtoUtil.success((Page<TownLevel>)townLevels, townLevelDtos);
 	}
 	
-	private TownLevelStationRuleDto getTownLevelStationRuleDtos(String level){
+	private TownLevelStationRuleDto getTownLevelStationRuleDto(String level){
 		Optional<TownLevelStationRuleDto> optional = null;
 		try {
 			optional = loadingCache.get(level);
