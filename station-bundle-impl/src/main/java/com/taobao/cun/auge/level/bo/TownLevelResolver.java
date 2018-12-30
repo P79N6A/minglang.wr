@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -16,6 +18,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Throwables;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.BeanCopy;
@@ -35,7 +40,7 @@ public class TownLevelResolver implements InitializingBean{
 	@Resource
 	private TownLevelRuleMapper townLevelRuleMapper;
 	
-	private Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap = Maps.newHashMap();
+	private LoadingCache<String, Map<String, List<TownLevelRuleDto>>> townLevelRuleGroupByAreaCodeCache;
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
@@ -69,6 +74,12 @@ public class TownLevelResolver implements InitializingBean{
 	 */
 	private List<TownLevelRuleDto> getTownLevelRuleDtos(TownLevelDto townLevelDto) {
 		List<TownLevelRuleDto> townLevelRuleDtos = Lists.newArrayList();
+		Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap;
+		try {
+			townLevelRuleGroupByAreaCodeMap = townLevelRuleGroupByAreaCodeCache.get("RULES");
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getTownCode())));
 		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCountyCode())));
 		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCityCode())));
@@ -94,6 +105,22 @@ public class TownLevelResolver implements InitializingBean{
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		initCache();
+	}
+	
+	private void initCache() {
+		townLevelRuleGroupByAreaCodeCache = CacheBuilder
+				.newBuilder()
+				.expireAfterWrite(5*60, TimeUnit.SECONDS)
+				.build(new CacheLoader<String, Map<String, List<TownLevelRuleDto>>>() {
+            @Override
+            public Map<String, List<TownLevelRuleDto>> load(String name) throws Exception {
+                return loadRules();
+            }
+        });
+	}
+	
+	private Map<String, List<TownLevelRuleDto>> loadRules(){
 		List<TownLevelRuleDto> townLevelRuleDtos = BeanCopy.copyList(TownLevelRuleDto.class, townLevelRuleMapper.selectByExample(new TownLevelRuleExample()));
 		Collections.sort(townLevelRuleDtos, new Comparator<TownLevelRuleDto>() {
 			@Override
@@ -101,6 +128,7 @@ public class TownLevelResolver implements InitializingBean{
 				return t1.getPriority() > t2.getPriority() ? 1 : -1;
 			}
 		});
+		Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap = Maps.newHashMap();
 		townLevelRuleDtos.forEach(townLevelRuleDto->{
 			List<TownLevelRuleDto> townLevelRuleGroupByAreaCode = null;
 			if(!townLevelRuleGroupByAreaCodeMap.containsKey(townLevelRuleDto.getAreaCode())) {
@@ -111,5 +139,6 @@ public class TownLevelResolver implements InitializingBean{
 			}
 			townLevelRuleGroupByAreaCode.add(townLevelRuleDto);
 		});
+		return townLevelRuleGroupByAreaCodeMap;
 	}
 }
