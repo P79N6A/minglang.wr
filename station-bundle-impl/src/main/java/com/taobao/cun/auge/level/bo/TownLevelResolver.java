@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.dal.domain.TownLevelRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelRuleMapper;
+import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelRuleDto;
 
@@ -42,7 +43,7 @@ public class TownLevelResolver implements InitializingBean{
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
-	TownLevelDto levelResolve(TownLevelDto townLevelDto) {
+	TownLevelCalcResult levelResolve(TownLevelDto townLevelDto) {
 		townLevelDto.setCoverageRate(calcCoverageRate(townLevelDto));
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		try {
@@ -54,14 +55,16 @@ public class TownLevelResolver implements InitializingBean{
 		List<TownLevelRuleDto> townLevelRuleDtos = getTownLevelRuleDtos(townLevelDto);
 		
 		String level = "C";
+		TownLevelRuleDto townLevelRuleDto = null;
 		for(TownLevelRuleDto rule : townLevelRuleDtos) {
 			if(expressionParser.parseExpression(rule.getLevelRule()).getValue(context, Boolean.class)) {
 				level = rule.getLevel();
+				townLevelRuleDto = rule;
 				break;
 			}
 		}
 		townLevelDto.setLevel(level);
-		return townLevelDto;
+		return new TownLevelCalcResult(townLevelDto, townLevelRuleDto);
 	}
 	
 	/**

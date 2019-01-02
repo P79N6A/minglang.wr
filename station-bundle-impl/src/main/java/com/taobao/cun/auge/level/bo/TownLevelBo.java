@@ -19,6 +19,7 @@ import com.taobao.cun.auge.dal.domain.TownLevel;
 import com.taobao.cun.auge.dal.domain.TownLevelExample;
 import com.taobao.cun.auge.dal.domain.TownLevelExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.TownLevelMapper;
+import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 
@@ -31,11 +32,11 @@ public class TownLevelBo {
 	@Resource
 	private TownLevelResolver townLevelResolver;
 	
-	public TownLevelDto calcTownLevel(Long id) {
-		TownLevelDto townLevelDto = getTownLevel(id);
-		townLevelDto = townLevelResolver.levelResolve(townLevelDto);
+	public TownLevelCalcResult calcTownLevel(Long id) {
+		TownLevelCalcResult townLevelCalcResult = townLevelResolver.levelResolve(getTownLevel(id));
+		TownLevelDto townLevelDto = townLevelCalcResult.getTownLevel();
 		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
-		return townLevelDto;
+		return townLevelCalcResult;
 	}
 	
 	public void update(TownLevelDto townLevelDto, String operator) {
@@ -50,7 +51,8 @@ public class TownLevelBo {
 		if(townLevel != null) {
 			townLevel.setTownPopulation(population);
 		}
-		TownLevelDto townLevelDto = townLevelResolver.levelResolve(BeanCopy.copy(TownLevelDto.class, townLevel));
+		TownLevelCalcResult townLevelCalcResult = townLevelResolver.levelResolve(BeanCopy.copy(TownLevelDto.class, townLevel));
+		TownLevelDto townLevelDto = townLevelCalcResult.getTownLevel();
 		townLevel.setLevel(townLevelDto.getLevel());
 		townLevel.setCoverageRate(townLevelDto.getCoverageRate());
 		townLevelMapper.updateByPrimaryKey(townLevel);

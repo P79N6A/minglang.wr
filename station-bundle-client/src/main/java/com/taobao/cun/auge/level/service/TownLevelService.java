@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.level.service;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 
@@ -29,5 +30,5 @@ public interface TownLevelService {
 	 * 计算分层
 	 * @param id
 	 */
-	TownLevelDto calcTownLevel(Long id);
+	TownLevelCalcResult calcTownLevel(Long id);
 }
