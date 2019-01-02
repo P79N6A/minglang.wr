@@ -83,21 +83,30 @@ public class TownLevelResolver implements InitializingBean{
 		}
 		
 		for(Map<String, TownLevelRuleDto> townLevelRuleGroupByLevel : townLevelRuleGroupByLevels) {
-			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getTownCode());
-			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getCountyCode());
-			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getCityCode());
-			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getProvinceCode());
-			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, "*");
+			if(townLevelRuleGroupByLevel.containsKey(townLevelDto.getTownCode())) {
+				townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(townLevelDto.getTownCode()));
+				break;
+			}
+			if(townLevelRuleGroupByLevel.containsKey(townLevelDto.getCountyCode())) {
+				townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(townLevelDto.getCountyCode()));
+				break;
+			}
+			if(townLevelRuleGroupByLevel.containsKey(townLevelDto.getCityCode())) {
+				townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(townLevelDto.getCityCode()));
+				break;
+			}
+			if(townLevelRuleGroupByLevel.containsKey(townLevelDto.getProvinceCode())) {
+				townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(townLevelDto.getProvinceCode()));
+				break;
+			}
+			if(townLevelRuleGroupByLevel.containsKey("*")) {
+				townLevelRuleDtos.add(townLevelRuleGroupByLevel.get("*"));
+				break;
+			}
 		}
 		return townLevelRuleDtos;
 	}
 	
-	private void addRule(List<TownLevelRuleDto> townLevelRuleDtos, Map<String, TownLevelRuleDto> townLevelRuleGroupByLevel, String areaCode) {
-		if(townLevelRuleGroupByLevel.containsKey(areaCode)) {
-			townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(areaCode));
-		}
-	}
-
 	/**
 	 * 计算手淘渗透率
 	 * @param townLevelDto
