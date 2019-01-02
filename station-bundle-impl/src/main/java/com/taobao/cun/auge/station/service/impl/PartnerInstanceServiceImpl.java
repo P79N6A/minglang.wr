@@ -190,6 +190,7 @@ import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
@@ -2579,18 +2580,33 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     public void signProjectNoticeProtocol(Long taobaoUserId) {
         ValidateUtils.notNull(taobaoUserId);
         PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
-        Assert.notNull(paDto, "partner apply not exists");
 
-        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
-            ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(),
-            PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
-        if (pprDto != null) {
-            return;
+        Assert.notNull(paDto, "partner apply not exists");
+        
+        if (PartnerApplyConfirmIntentionEnum.TPS_ELEC.getCode().equals(paDto.getConfirmIntention())) {
+        	 PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
+        	            ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS, paDto.getId(),
+        	            PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+        	        if (pprDto != null) {
+        	            return;
+        	        }
+        	        Date date = new Date();
+        	        partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS,
+        	            date, date, date,
+        	            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+
+        }else {
+	        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
+	            ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(),
+	            PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+	        if (pprDto != null) {
+	            return;
+	        }
+	        Date date = new Date();
+	        partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE,
+	            date, date, date,
+	            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
         }
-        Date date = new Date();
-        partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE,
-            date, date, date,
-            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
 
     }
 
