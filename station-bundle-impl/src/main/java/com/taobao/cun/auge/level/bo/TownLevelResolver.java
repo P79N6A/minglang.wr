@@ -35,7 +35,7 @@ import com.taobao.cun.auge.level.dto.TownLevelRuleDto;
  */
 @Component
 public class TownLevelResolver implements InitializingBean{
-	private static final String[] LEVELS = new String[] {"X", "A", "B", "C"};
+	private static final String[] LEVELS = new String[] {"X", "A", "B"};
 	@Resource
 	private TownLevelRuleMapper townLevelRuleMapper;
 	
