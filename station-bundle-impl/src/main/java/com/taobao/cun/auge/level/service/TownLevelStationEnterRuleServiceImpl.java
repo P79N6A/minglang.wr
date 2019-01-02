@@ -21,9 +21,9 @@ public class TownLevelStationEnterRuleServiceImpl implements TownLevelStationEnt
 		if(townLevelDto != null) {
 			townLevelStationRuleDto = townLevelDto.getTownLevelStationRuleDto();
 		}
-		//如果是C，则返回空，不能开点
+		//如果是StationTypeCode为CLOSE，则返回空，不能开点
 		if(townLevelStationRuleDto != null) {
-			if(townLevelStationRuleDto.getLevel().equalsIgnoreCase("C")) {
+			if(townLevelStationRuleDto.getStationTypeCode().equalsIgnoreCase("CLOSE")) {
 				townLevelStationRuleDto = null;
 			}
 		}

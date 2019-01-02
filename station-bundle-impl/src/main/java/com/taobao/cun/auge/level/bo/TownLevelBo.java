@@ -2,22 +2,15 @@ package com.taobao.cun.auge.level.bo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.BeanCopy;
@@ -25,29 +18,23 @@ import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.TownLevel;
 import com.taobao.cun.auge.dal.domain.TownLevelExample;
 import com.taobao.cun.auge.dal.domain.TownLevelExample.Criteria;
-import com.taobao.cun.auge.dal.domain.TownLevelStationRule;
-import com.taobao.cun.auge.dal.domain.TownLevelStationRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelMapper;
-import com.taobao.cun.auge.dal.mapper.TownLevelStationRuleMapper;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
 
 @Component
-public class TownLevelBo implements InitializingBean{
+public class TownLevelBo {
 	@Resource
 	private TownLevelMapper townLevelMapper;
 	@Resource
-	private TownLevelStationRuleMapper townLevelStationRuleMapper;
+	private TownLevelStationEnterResolver townLevelStationEnterResolver;
 	@Resource
 	private TownLevelResolver townLevelResolver;
-	
-	private LoadingCache<String, Optional<TownLevelStationRuleDto>> loadingCache;
 	
 	public TownLevelDto calcTownLevel(Long id) {
 		TownLevelDto townLevelDto = getTownLevel(id);
 		townLevelDto = townLevelResolver.levelResolve(townLevelDto);
-		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
+		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
 		return townLevelDto;
 	}
 	
@@ -77,7 +64,7 @@ public class TownLevelBo implements InitializingBean{
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevels.get(0));
-		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
+		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
 		return townLevelDto;
 	}
 	
@@ -87,7 +74,7 @@ public class TownLevelBo implements InitializingBean{
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevel);
-		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
+		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
 		return townLevelDto;
 	}
 	
@@ -117,36 +104,9 @@ public class TownLevelBo implements InitializingBean{
         List<TownLevelDto> townLevelDtos = Lists.newArrayList();
         townLevels.forEach(t->{
         	TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, t);
-        	townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRuleDto(townLevelDto.getLevel()));
+        	townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
         	townLevelDtos.add(townLevelDto);
         });
         return PageDtoUtil.success((Page<TownLevel>)townLevels, townLevelDtos);
 	}
-	
-	private TownLevelStationRuleDto getTownLevelStationRuleDto(String level){
-		Optional<TownLevelStationRuleDto> optional = null;
-		try {
-			optional = loadingCache.get(level);
-		} catch (ExecutionException e) {
-			return null;
-		}
-		
-		return optional.isPresent() ? optional.get() : null;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		loadingCache = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES).build(new CacheLoader<String, Optional<TownLevelStationRuleDto>>() {
-
-			@Override
-			public Optional<TownLevelStationRuleDto> load(String key) throws Exception {
-				TownLevelStationRuleExample example = new TownLevelStationRuleExample();
-				example.createCriteria().andLevelEqualTo(key);
-				List<TownLevelStationRule> townLevelStationRules = townLevelStationRuleMapper.selectByExample(example);
-				return CollectionUtils.isEmpty(townLevelStationRules) ? Optional.empty() : Optional.of(BeanCopy.copy(TownLevelStationRuleDto.class, townLevelStationRules.get(0)));
-			}
-			
-		});
-	}
-	
 }

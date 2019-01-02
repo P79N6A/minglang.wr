@@ -584,6 +584,76 @@ public class TownLevelStationRuleExample {
             addCriterion("station_type_desc not between", value1, value2, "stationTypeDesc");
             return (Criteria) this;
         }
+
+        public Criteria andAreaCodeIsNull() {
+            addCriterion("area_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeIsNotNull() {
+            addCriterion("area_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeEqualTo(String value) {
+            addCriterion("area_code =", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotEqualTo(String value) {
+            addCriterion("area_code <>", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeGreaterThan(String value) {
+            addCriterion("area_code >", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("area_code >=", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLessThan(String value) {
+            addCriterion("area_code <", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLessThanOrEqualTo(String value) {
+            addCriterion("area_code <=", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLike(String value) {
+            addCriterion("area_code like", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotLike(String value) {
+            addCriterion("area_code not like", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeIn(List<String> values) {
+            addCriterion("area_code in", values, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotIn(List<String> values) {
+            addCriterion("area_code not in", values, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeBetween(String value1, String value2) {
+            addCriterion("area_code between", value1, value2, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotBetween(String value1, String value2) {
+            addCriterion("area_code not between", value1, value2, "areaCode");
+            return (Criteria) this;
+        }
     }
 
     /**

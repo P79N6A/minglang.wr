@@ -12,6 +12,16 @@ public class TownLevelStationRuleDto implements Serializable{
 	
 	private String stationTypeDesc;
 	
+	private String areaCode;
+	
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+
 	public String getStationTypeCode() {
 		return stationTypeCode;
 	}
