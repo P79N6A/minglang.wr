@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.level.bo;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -10,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -37,10 +34,11 @@ import com.taobao.cun.auge.level.dto.TownLevelRuleDto;
  */
 @Component
 public class TownLevelResolver implements InitializingBean{
+	private static final String[] LEVELS = new String[] {"X", "A", "B", "C"};
 	@Resource
 	private TownLevelRuleMapper townLevelRuleMapper;
 	
-	private LoadingCache<String, Map<String, List<TownLevelRuleDto>>> townLevelRuleGroupByAreaCodeCache;
+	private LoadingCache<String, List<Map<String, TownLevelRuleDto>>> townLevelRuleGroupByLevelCache;
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
@@ -74,19 +72,27 @@ public class TownLevelResolver implements InitializingBean{
 	 */
 	private List<TownLevelRuleDto> getTownLevelRuleDtos(TownLevelDto townLevelDto) {
 		List<TownLevelRuleDto> townLevelRuleDtos = Lists.newArrayList();
-		Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap;
+		List<Map<String, TownLevelRuleDto>> townLevelRuleGroupByLevels;
 		try {
-			townLevelRuleGroupByAreaCodeMap = townLevelRuleGroupByAreaCodeCache.get("RULES");
+			townLevelRuleGroupByLevels = townLevelRuleGroupByLevelCache.get("RULES");
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		}
-		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getTownCode())));
-		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCountyCode())));
-		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getCityCode())));
-		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get(townLevelDto.getProvinceCode())));
-		//默认规则
-		townLevelRuleDtos.addAll(CollectionUtils.emptyIfNull(townLevelRuleGroupByAreaCodeMap.get("*")));
+		
+		for(Map<String, TownLevelRuleDto> townLevelRuleGroupByLevel : townLevelRuleGroupByLevels) {
+			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getTownCode());
+			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getCountyCode());
+			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getCityCode());
+			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, townLevelDto.getProvinceCode());
+			addRule(townLevelRuleDtos, townLevelRuleGroupByLevel, "*");
+		}
 		return townLevelRuleDtos;
+	}
+	
+	private void addRule(List<TownLevelRuleDto> townLevelRuleDtos, Map<String, TownLevelRuleDto> townLevelRuleGroupByLevel, String areaCode) {
+		if(townLevelRuleGroupByLevel.containsKey(areaCode)) {
+			townLevelRuleDtos.add(townLevelRuleGroupByLevel.get(areaCode));
+		}
 	}
 
 	/**
@@ -109,36 +115,47 @@ public class TownLevelResolver implements InitializingBean{
 	}
 	
 	private void initCache() {
-		townLevelRuleGroupByAreaCodeCache = CacheBuilder
+		townLevelRuleGroupByLevelCache = CacheBuilder
 				.newBuilder()
 				.expireAfterWrite(5*60, TimeUnit.SECONDS)
-				.build(new CacheLoader<String, Map<String, List<TownLevelRuleDto>>>() {
+				.build(new CacheLoader<String, List<Map<String, TownLevelRuleDto>>>() {
             @Override
-            public Map<String, List<TownLevelRuleDto>> load(String name) throws Exception {
+            public List<Map<String, TownLevelRuleDto>> load(String name) throws Exception {
                 return loadRules();
             }
         });
 	}
 	
-	private Map<String, List<TownLevelRuleDto>> loadRules(){
+	/**
+	 * 缓存的List结构是有顺序的，按照{@see LEVELS}的顺序构建Map
+	 * 
+	 * @return
+	 */
+	private List<Map<String, TownLevelRuleDto>> loadRules(){
 		List<TownLevelRuleDto> townLevelRuleDtos = BeanCopy.copyList(TownLevelRuleDto.class, townLevelRuleMapper.selectByExample(new TownLevelRuleExample()));
-		Collections.sort(townLevelRuleDtos, new Comparator<TownLevelRuleDto>() {
-			@Override
-			public int compare(TownLevelRuleDto t1, TownLevelRuleDto t2) {
-				return t1.getPriority() > t2.getPriority() ? 1 : -1;
-			}
-		});
-		Map<String, List<TownLevelRuleDto>> townLevelRuleGroupByAreaCodeMap = Maps.newHashMap();
+		
+		List<Map<String, TownLevelRuleDto>> townLevelRuleGroupByLevels = Lists.newArrayList();
+		
+		for(String level : LEVELS) {
+			townLevelRuleGroupByLevels.add(getTownLevelRuleGroupByAreaCode(townLevelRuleDtos, level));
+		}
+		
+		return townLevelRuleGroupByLevels;
+	}
+	
+	/**
+	 * 把相同层级的规则按照区域CODE为key放到一个Map里
+	 * @param townLevelRuleDtos
+	 * @param level
+	 * @return
+	 */
+	private Map<String, TownLevelRuleDto> getTownLevelRuleGroupByAreaCode(List<TownLevelRuleDto> townLevelRuleDtos, String level){
+		Map<String, TownLevelRuleDto> townLevelRuleGroupByAreaCode = Maps.newHashMap();
 		townLevelRuleDtos.forEach(townLevelRuleDto->{
-			List<TownLevelRuleDto> townLevelRuleGroupByAreaCode = null;
-			if(!townLevelRuleGroupByAreaCodeMap.containsKey(townLevelRuleDto.getAreaCode())) {
-				townLevelRuleGroupByAreaCode = Lists.newArrayList();
-				townLevelRuleGroupByAreaCodeMap.put(townLevelRuleDto.getAreaCode(), townLevelRuleGroupByAreaCode);
-			}else {
-				townLevelRuleGroupByAreaCode = townLevelRuleGroupByAreaCodeMap.get(townLevelRuleDto.getAreaCode());
+			if(level.equals(townLevelRuleDto.getLevel())) {
+				townLevelRuleGroupByAreaCode.put(townLevelRuleDto.getAreaCode(), townLevelRuleDto);
 			}
-			townLevelRuleGroupByAreaCode.add(townLevelRuleDto);
 		});
-		return townLevelRuleGroupByAreaCodeMap;
+		return townLevelRuleGroupByAreaCode;
 	}
 }
