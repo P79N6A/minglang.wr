@@ -179,7 +179,7 @@ public class TPSClosingLifeCyclePhase extends AbstractLifeCyclePhase{
         PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
         Date quitProDate = new Date();
         proRelDto.setObjectId(partnerInstance.getId());
-        proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
+        proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO_TPS);
         proRelDto.setConfirmTime(quitProDate);
         proRelDto.setStartTime(quitProDate);
         proRelDto.setTaobaoUserId(partnerInstance.getTaobaoUserId());
