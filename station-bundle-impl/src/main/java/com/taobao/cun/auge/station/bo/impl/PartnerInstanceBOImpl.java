@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -1086,5 +1087,21 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, cancelResult.getErrMsg());
 		}
 	}
-	
+
+	@Override
+	public void updateIncomeMode(Long instanceId, String incomeMode, String operator) {
+		Date a = new Date();
+		if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(a)) {
+			ValidateUtils.notNull(instanceId);
+			ValidateUtils.notNull(incomeMode);
+			ValidateUtils.notNull(operator);
+	        PartnerStationRel updateInstance = new PartnerStationRel();
+	        updateInstance.setId(instanceId);
+	        updateInstance.setIncomeMode(incomeMode);
+	        updateInstance.setIncomeModeBeginTime(a);
+	        DomainUtils.beforeUpdate(updateInstance, operator);
+	        partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+		}
+		
+	}
 }

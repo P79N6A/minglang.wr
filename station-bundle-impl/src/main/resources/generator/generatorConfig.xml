@@ -129,12 +129,8 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="asset_check_task" enableCountByExample="AssetCheckTask" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
-		</table>
-		<table tableName="asset_check_info" enableCountByExample="AssetCheckInfo" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+		<table tableName="partner_station_rel" enableCountByExample="true" enableUpdateByExample="true"
+			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 	</context>

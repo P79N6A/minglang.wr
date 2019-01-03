@@ -9,7 +9,6 @@ import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
@@ -63,6 +62,11 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 	private EndorApiClient storeEndorApiClient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteBOImpl.class);
+
+	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
+
+	private static final int ALIPAY_ENTER_PROMOTED_TYPE = 4;
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addVendorEmployee(Long vendorId, CuntaoEmployeeDto employeeDto, CuntaoEmployeeIdentifier identifier) {
@@ -270,6 +274,24 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		return employeeId;
 	}
 
+	@Override
+	public void createStoreEndorUser(Long stationId, CuntaoEmployee employee) {
+		checkTaobaoNick(employee.getTaobaoNick());
+		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
+		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
+		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.SONGZHUANG_BULU);
+	}
+
+	private void checkTaobaoNick(String taobaoNick) {
+		ResultDO<BaseUserDO> resultDO = uicReadServiceClient.getBaseUserByNick(taobaoNick);
+		if (resultDO == null || !resultDO.isSuccess() || resultDO.getModule() == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "员工淘宝账号不存在或状态异常!");
+		}
+		if (((resultDO.getModule().getPromotedType() & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)&&((resultDO.getModule().getPromotedType() & ALIPAY_ENTER_PROMOTED_TYPE) != ALIPAY_ENTER_PROMOTED_TYPE)) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "员工淘宝账号绑定支付宝未做个人实名认证!");
+		}
+	}
+
 	private void createStoreEndorUser(Long stationId,CuntaoEmployee employee,CuntaoEmployeeIdentifier identifier){
 		CuntaoStoreExample example = new CuntaoStoreExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
@@ -286,7 +308,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
-		userRoleAddDto.setOrgId(stores.iterator().next().getEndorOrgId());
+		userRoleAddDto.setOrgId(3L);
 		userRoleAddDto.setRoleName(identifier.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
 		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);

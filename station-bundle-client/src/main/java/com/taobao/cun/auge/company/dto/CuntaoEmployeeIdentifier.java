@@ -6,6 +6,6 @@ public enum CuntaoEmployeeIdentifier {
 	VENDOR_DISTRIBUTOR,//配送员
 	STORE_PICKER,//拣货员
 	STORE_MANAGER,//门店管理员
-	VENDOR_INSTALLER;//安装员
-	
+	VENDOR_INSTALLER,//安装员
+	SONGZHUANG_BULU;//送装补录
 }
