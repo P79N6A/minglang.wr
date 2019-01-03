@@ -200,7 +200,16 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
 				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
+				
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+				StartProcessDto startProcessDto =new StartProcessDto();
+		        startProcessDto.setBusiness(ProcessBusinessEnum.assetCheckCountyTask);
+		        startProcessDto.setBusinessId(at.getId());
+		        startProcessDto.setBusinessName(o.getName());
+		        startProcessDto.setBusinessOrgId(orgId);
+		        startProcessDto.setOperator("SYSTEM");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r = new AssetCheckTask();
 				if (CollectionUtils.isNotEmpty(userRoles)) {
@@ -235,6 +244,15 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 				f.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
+				
+				StartProcessDto startProcessDto =new StartProcessDto();
+		        startProcessDto.setBusiness(ProcessBusinessEnum.assetCheckCountyFollowTask);
+		        startProcessDto.setBusinessId(f.getId());
+		        startProcessDto.setBusinessName(o.getName());
+		        startProcessDto.setBusinessOrgId(orgId);
+		        startProcessDto.setOperator("SYSTEM");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r1 = new AssetCheckTask();
 				if (CollectionUtils.isNotEmpty(userRoles)) {
