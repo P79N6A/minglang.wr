@@ -54,7 +54,7 @@ public class TownLevelResolver implements InitializingBean{
 		
 		List<TownLevelRuleDto> townLevelRuleDtos = getTownLevelRuleDtos(townLevelDto);
 		
-		String level = "C";
+		String level = null;
 		TownLevelRuleDto townLevelRuleDto = null;
 		for(TownLevelRuleDto rule : townLevelRuleDtos) {
 			if(expressionParser.parseExpression(rule.getLevelRule()).getValue(context, Boolean.class)) {
@@ -62,6 +62,9 @@ public class TownLevelResolver implements InitializingBean{
 				townLevelRuleDto = rule;
 				break;
 			}
+		}
+		if(level == null) {
+			throw new RuntimeException("规则不完整，id=" + townLevelDto.getId());
 		}
 		townLevelDto.setLevel(level);
 		return new TownLevelCalcResult(townLevelDto, townLevelRuleDto);
@@ -160,5 +163,11 @@ public class TownLevelResolver implements InitializingBean{
 			}
 		});
 		return townLevelRuleGroupByAreaCode;
+	}
+	
+	public static void main(String[] argv) {
+		ExpressionParser expressionParser = new SpelExpressionParser();
+		StandardEvaluationContext context = new StandardEvaluationContext();
+		System.out.println(expressionParser.parseExpression("false").getValue(context, Boolean.class));
 	}
 }
