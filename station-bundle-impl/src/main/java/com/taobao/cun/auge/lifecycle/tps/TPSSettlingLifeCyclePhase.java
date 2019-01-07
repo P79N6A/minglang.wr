@@ -134,13 +134,6 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="创建培训装修记录")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		try {
-			//开通1688授权
-			stationDecorateService.openAccessCbuMarket(partnerInstanceDto.getTaobaoUserId());
-		} catch (Exception e) {
-			logger.error("openAccessCbuMarket error,taobaoUserId"+partnerInstanceDto.getTaobaoUserId(),e);
-		}
 	}
 
 	@Override

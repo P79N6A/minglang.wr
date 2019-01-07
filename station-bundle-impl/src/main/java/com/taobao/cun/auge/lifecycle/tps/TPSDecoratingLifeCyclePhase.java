@@ -47,6 +47,7 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
@@ -87,6 +88,9 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     
     @Autowired
     private AccountMoneyBO accountMoneyBO;
+    
+    @Autowired
+	private StationDecorateService stationDecorateService;
     
     private static Logger logger = LoggerFactory.getLogger(TPSDecoratingLifeCyclePhase.class);
 	@Override
@@ -149,6 +153,13 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			} catch (StoreException e) {
 				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
 				throw new AugeSystemException(e);
+			}
+		 
+			try {
+				//开通1688授权
+				stationDecorateService.openAccessCbuMarket(partnerInstanceDto.getTaobaoUserId());
+			} catch (Exception e) {
+				logger.error("openAccessCbuMarket error,taobaoUserId"+partnerInstanceDto.getTaobaoUserId(),e);
 			}
 		 //
 	}
