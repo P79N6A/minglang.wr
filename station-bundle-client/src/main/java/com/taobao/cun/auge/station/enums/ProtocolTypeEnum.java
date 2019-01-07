@@ -45,6 +45,8 @@ public class ProtocolTypeEnum implements Serializable {
     public static final ProtocolTypeEnum RUBBING_SUPPLEMENT_AGREEMENT = new ProtocolTypeEnum("RUBBING_SUPPLEMENT_AGREEMENT", "合伙人蹭单补充协议");
 
     public static final ProtocolTypeEnum DELIVERY_GOODS_AGREEMENT = new ProtocolTypeEnum("DELIVERY_GOODS_AGREEMENT", "送货上门协议");
+
+    public static final ProtocolTypeEnum CTS_JZ_SZYT_AGREEMENT = new ProtocolTypeEnum("CTS_JZ_SZYT_AGREEMENT", "家装送装协议");
     
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE", "招募项目告知协议");
 
@@ -78,6 +80,7 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT", YOUPIN_FMCG_GOODS_REPLENISHMENT_AGREEMENT);
         mappings.put("YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT", YOUPIN_SELEC_GOODS_REPLENISHMENT_AGREEMENT);
         mappings.put("UM_SETTLING", UM_SETTLING);
+        mappings.put("CTS_JZ_SZYT_AGREEMENT",CTS_JZ_SZYT_AGREEMENT);
     }
 
     public ProtocolTypeEnum(String code, String desc) {
