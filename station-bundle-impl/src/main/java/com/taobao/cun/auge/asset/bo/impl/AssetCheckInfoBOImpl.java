@@ -603,11 +603,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToCounty(a);
 						confirmBySystem(ai.getId(), a.getId(), operator);
+						continue;
 					}
 				}
 			}
+			doneStation(ai.getId(), operator);
 		}
-		return null;
+		
+		return Boolean.TRUE;
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
