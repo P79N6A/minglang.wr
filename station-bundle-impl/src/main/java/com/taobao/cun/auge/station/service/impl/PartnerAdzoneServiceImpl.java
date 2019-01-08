@@ -87,6 +87,23 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         return createAdzone(taobaoUserId, stationId);
     }
 
+    public String createAdzoneWithoutStationId(Long taobaoUserId){
+        Map<String, Object> variables = Maps.newHashMap();
+        variables.put("appkey", appKey);
+        variables.put("siteId", siteId);
+        variables.put("tbNumId", tbNumId);
+        variables.put("adzoneName", taobaoUserId);
+        RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
+        if (!result.isSuccess()) {
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone without station_id error: {}, {}", JSON.toJSONString(variables),
+                    result.toString());
+            throw new AugeSystemException(result.toString());
+        }
+        Map data = (Map)result.getData();
+        String pid = (String)data.get("pid");
+        return pid;
+    }
+
     private String createAdzone(Long taobaoUserId, Long stationId) {
         Map<String, Object> variables = Maps.newHashMap();
         variables.put("appkey", appKey);
@@ -95,7 +112,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
-            logger.error(PARTNER_ADZONE_ERROR + "create adzone erroor: {}, {}", JSON.toJSONString(variables),
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone error: {}, {}", JSON.toJSONString(variables),
                 result.toString());
             throw new AugeSystemException(result.toString());
         }

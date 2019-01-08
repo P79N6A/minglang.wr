@@ -15,6 +15,14 @@ public interface PartnerAdzoneService {
     public String createAdzone(Long taobaoUserId);
 
     /**
+     * 创建阿里妈妈拉新PID
+     *
+     * @param taobaoUserId
+     * @return
+     */
+    public String createAdzoneWithoutStationId(Long taobaoUserId);
+
+    /**
      * 获取阿里妈妈PID
      *
      * @param taobaoUserId 必选
