@@ -429,7 +429,7 @@ public class HsfConsumer2ndPartyConfiguration  {
     @HSFConsumer(serviceVersion="${cbu.member.service.version}",serviceGroup="DUBBO")
    	private MemberReadService memberReadService;
 
-	@HSFConsumer(serviceVersion="${taobao.union.entry.service.version}",serviceGroup="HSF1")
+	@HSFConsumer(serviceVersion="${taobao.union.entry.service.version}",serviceGroup="HSF")
 	private EntryService entryService;
     
 	@HSFConsumer(serviceVersion="${shopMirrorService.version}",serviceGroup="HSF")
