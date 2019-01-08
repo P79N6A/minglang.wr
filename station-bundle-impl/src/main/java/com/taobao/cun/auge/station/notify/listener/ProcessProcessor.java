@@ -73,11 +73,8 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
-import com.taobao.cun.recruit.partner.dto.ServiceAbilityDecisionAuditDto;
-import com.taobao.cun.recruit.partner.dto.ServiceAbilityDecisionDto;
 import com.taobao.cun.recruit.partner.enums.AddressInfoDecisionStatusEnum;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-import com.taobao.cun.recruit.partner.enums.ServiceAbilityDecisionStatusEnum;
 import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.cun.recruit.partner.service.ServiceAbilityDecisionService;
@@ -222,15 +219,6 @@ public class ProcessProcessor {
                 pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
             } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode) || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
-                //ServiceAbilityDecisionAuditDto sddDto = new ServiceAbilityDecisionAuditDto();
-                //if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-                //    sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_PASS);
-                //} else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)) {
-                //    sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_NOT_PASS);
-                //}
-                //sddDto.setId(businessId);
-                //sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
-                //serviceAbilityDecisionService.audit(sddDto);
                 ServiceAbilityApplyAuditDto auditDto = new ServiceAbilityApplyAuditDto();
                 if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
                     auditDto.setState(ServiceAbilityApplyStateEnum.AUDIT_PASS);
@@ -323,51 +311,13 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 addressInfoDecisionService.updateAddressInfoMemo(sdd);
+            } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode) || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
+                ServiceAbilityApplyAuditDto auditDto = new ServiceAbilityApplyAuditDto();
+                auditDto.setAuditOpinion(ob.getString("taskRemark"));
+                auditDto.setId(businessId);
+                auditDto.setOperator("system");
+                serviceAbilityApplyService.saveApplyAuditOpinion(auditDto);
             }
-            //else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode)) {
-            //    String auditOpinion = ob.getString("taskRemark");
-            //    ServiceAbilityDecisionDto sdd = new ServiceAbilityDecisionDto();
-            //    sdd.setMemo(auditOpinion);
-            //    sdd.setId(businessId);
-            //    sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
-            //    serviceAbilityDecisionService.updateServiceAbilityMemo(sdd);
-            //}
-            //else if (ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
-            //    String resultCode = ob.getString("result");
-            //    String desc = ob.getString("taskRemark");
-            //    String taskId = ob.getString("taskId");
-            //    CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
-            //    if ("拒绝".equals(resultCode)) {
-            //        resultCode = ProcessApproveResultEnum.APPROVE_REFUSE.getCode();
-            //    } else {
-            //        resultCode = ProcessApproveResultEnum.APPROVE_PASS.getCode();
-            //    }
-            //
-            //    if (diamondConfiguredProperties.getServiceAbilitySHRHCountyAuditActivityId().equals(
-            //        task.getActivityId())) {
-            //        ServiceAbilityDecisionAuditDto sddDto = new ServiceAbilityDecisionAuditDto();
-            //        if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-            //            sddDto.setStatus(ServiceAbilityDecisionStatusEnum.COUNTY_AUDIT_PASS);
-            //        } else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)) {
-            //            sddDto.setStatus(ServiceAbilityDecisionStatusEnum.COUNTY_AUDIT_NOT_PASS);
-            //        }
-            //        sddDto.setId(businessId);
-            //        sddDto.setMemo(desc);
-            //        sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
-            //        serviceAbilityDecisionService.auditSHRHByCountyLeader(sddDto);
-            //    } else {
-            //        ServiceAbilityDecisionAuditDto sddDto = new ServiceAbilityDecisionAuditDto();
-            //        if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-            //            sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_PASS);
-            //        } else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)) {
-            //            sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_NOT_PASS);
-            //        }
-            //        sddDto.setId(businessId);
-            //        sddDto.setMemo(desc);
-            //        sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
-            //        serviceAbilityDecisionService.auditSHRH(sddDto);
-            //    }
-            //}
             else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
                 StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
                 String taskId = ob.getString("taskId");
