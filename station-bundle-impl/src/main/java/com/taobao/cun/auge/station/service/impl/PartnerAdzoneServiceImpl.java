@@ -70,6 +70,24 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     private static final String CONFIG_UNION_NEWUSER_CURRENT_UPDATE_DATE = "current_update_date_";
     private static final String CONFIG_UNION_NEWUSER_ACTIVITY_ID = "activity_id_";
 
+
+    public String createAdzoneWithoutStationId(Long taobaoUserId){
+        Map<String, Object> variables = Maps.newHashMap();
+        variables.put("appkey", appKey);
+        variables.put("siteId", siteId);
+        variables.put("tbNumId", tbNumId);
+        variables.put("adzoneName", taobaoUserId);
+        RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
+        if (!result.isSuccess()) {
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone without station_id error: {}, {}", JSON.toJSONString(variables),
+                    result.toString());
+            throw new AugeSystemException(result.toString());
+        }
+        Map data = (Map)result.getData();
+        String pid = (String)data.get("pid");
+        return pid;
+    }
+
     @Override
     public String createAdzone(Long taobaoUserId) {
         Assert.notNull(taobaoUserId, "taobaoUserId is null");
