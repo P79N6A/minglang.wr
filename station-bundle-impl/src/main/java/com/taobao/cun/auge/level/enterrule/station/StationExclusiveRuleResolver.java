@@ -52,14 +52,16 @@ public class StationExclusiveRuleResolver {
 				break;
 			}
 		}
-		logger.info("el result:{}", elResult);
 		TownLevelStationRuleDto result = BeanCopy.copy(TownLevelStationRuleDto.class, townLevelStationRuleDto);
+		
+		logger.info("el result:{},{}", elResult, result);
 		if(elResult.startsWith(CLOSE)) {
 			result.setStationTypeCode(CLOSE);
 			String[] array = elResult.split(":");
 			result.setStationTypeDesc(array[1]);
 		}else {
 			PartnerApplyConfirmIntentionEnum intention = PartnerApplyConfirmIntentionEnum.valueof(elResult);
+			logger.info("el result:{},{},{}", elResult, result, intention);
 			result.setStationTypeCode(intention.getCode());
 			result.setStationTypeDesc(intention.getDesc());
 		}
