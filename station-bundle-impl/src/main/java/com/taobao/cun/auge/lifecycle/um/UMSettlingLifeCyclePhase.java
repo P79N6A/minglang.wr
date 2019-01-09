@@ -4,11 +4,13 @@ import java.util.Date;
 
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
+import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -23,9 +25,12 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +40,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中服务节点")
 public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
+
+    private static final Logger logger = LoggerFactory.getLogger(UMSettlingLifeCyclePhase.class);
 
     @Autowired
     private StationNumConfigBO stationNumConfigBO;
@@ -57,6 +64,9 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;
 
+    @Autowired
+    private ManualReleaseDistributeLock distributeLock;
+
     @Override
     @PhaseStepMeta(descr = "创建或更新优盟站点")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -67,15 +77,30 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
         if (stationId == null) {
             //创建优盟编号
             StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
-            String stationNum = stationNumConfigBO.createStationNum(
-                partnerInstanceDto.getStationDto().getAddress().getProvince(), typeEnum, 0);
-            partnerInstanceDto.getStationDto().setStationNum(stationNum);
 
-            //创建优盟门店
-            stationId = addUmStation(partnerInstanceDto, StationType.STATION.getType());
-            stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
-                typeEnum, stationNum);
-            partnerInstanceDto.setStationId(stationId);
+            String province = partnerInstanceDto.getStationDto().getAddress().getProvince();
+            String stationNum = stationNumConfigBO.createStationNum(province, typeEnum, 0);
+            boolean lockResult= false;
+            try {
+                lockResult = distributeLock.lock("unionMember-station-num", stationNum, 3);
+                if (!lockResult) {
+                    logger.error("distributeLock failed: {}", stationNum);
+                    throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "请稍后重试");
+                }
+                partnerInstanceDto.getStationDto().setStationNum(stationNum);
+
+                //创建优盟门店
+                stationId = addUmStation(partnerInstanceDto, StationType.STATION.getType());
+                stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
+                        typeEnum, stationNum);
+                partnerInstanceDto.setStationId(stationId);
+            } catch (Exception e) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "创建优盟失败，请稍后重试");
+            } finally {
+                if(lockResult){
+                    distributeLock.unlock("unionMember-station-num", stationNum);
+                }
+            }
         } else {
             StationDto stationDto = partnerInstanceDto.getStationDto();
             stationDto.setState(StationStateEnum.INVALID);
