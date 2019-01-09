@@ -175,6 +175,6 @@ public class TownLevelResolver implements InitializingBean{
 		System.out.println(expressionParser.parseExpression("(#storeNum==0 && #tpElecNum>0 && #population>=60000)?'TP_YOUPIN':'NEXT'").getValue(context, String.class));
 		System.out.println(expressionParser.parseExpression("(#storeNum + #tpElecNum >1)?'CLOSE':'NEXT'").getValue(context, String.class));
 		System.out.println(expressionParser.parseExpression("#tpElecNum>1?'{\"CLOSE\":\"该镇有'+#tpElecNum+'个天猫优品电器合作店\"}':'NEXT'").getValue(context, String.class));
-		System.out.println(expressionParser.parseExpression("'CLOSE'").getValue(context, String.class));
+		System.out.println(expressionParser.parseExpression("'CLOSE:该地区禁止开优品体验店'").getValue(context, String.class));
 	}
 }

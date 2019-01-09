@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.level.service;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.level.bo.TownLevelBo;
@@ -15,19 +13,18 @@ public class TownLevelStationEnterRuleServiceImpl implements TownLevelStationEnt
 	private TownLevelBo townLevelBo;
 	
 	@Override
-	public Optional<TownLevelStationRuleDto> getTownLevelStationRule(String townCode) {
+	public TownLevelStationRuleDto getTownLevelStationRule(String townCode) {
 		TownLevelDto townLevelDto = townLevelBo.getTownLevelByTownCode(townCode);
 		TownLevelStationRuleDto townLevelStationRuleDto = null;
 		if(townLevelDto != null) {
 			townLevelStationRuleDto = townLevelDto.getTownLevelStationRuleDto();
+		}else {//如果该镇数据缺失，则提示补充该地区的分层数据
+			townLevelStationRuleDto = new TownLevelStationRuleDto();
+			townLevelStationRuleDto.setAreaCode(townCode);
+			townLevelStationRuleDto.setStationTypeCode("CLOSE");
+			townLevelStationRuleDto.setStationTypeDesc("该镇分层数据缺失，请联系PD补充该镇分层数据");
 		}
-		//如果是StationTypeCode为CLOSE，则返回空，不能开点
-		if(townLevelStationRuleDto != null) {
-			if(townLevelStationRuleDto.getStationTypeCode().equalsIgnoreCase("CLOSE")) {
-				townLevelStationRuleDto = null;
-			}
-		}
-		return Optional.ofNullable(townLevelStationRuleDto);
+		return townLevelStationRuleDto;
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Splitter;
 import com.taobao.cun.auge.common.utils.BeanCopy;
@@ -23,6 +24,7 @@ import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
  * @author chengyu.zhoucy
  *
  */
+@Component
 public class StationExclusiveRuleResolver {
 	private static final String CLOSE = "CLOSE";
 	@Resource
