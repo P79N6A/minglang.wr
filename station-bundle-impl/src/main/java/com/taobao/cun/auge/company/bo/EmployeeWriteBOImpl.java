@@ -279,7 +279,6 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		checkTaobaoNick(employee.getTaobaoNick());
 		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
 		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
-		createStoreEndorUser(stationId, employee, CuntaoEmployeeIdentifier.SONGZHUANG_BULU);
 	}
 
 	private void checkTaobaoNick(String taobaoNick) {
