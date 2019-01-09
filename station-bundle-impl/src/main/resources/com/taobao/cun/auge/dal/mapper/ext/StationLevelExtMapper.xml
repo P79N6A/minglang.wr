@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.ext.StationLevelExtMapper">
+  <select id="countTownTPS" parameterType="string" resultType="int">
+    select count(0) as num from station a,partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.id=b.station_id and b.type='TPS'
+	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
+	and a.town=#{townCode}
+   </select>
+   
+   <select id="countTownHZD" parameterType="string" resultType="int">
+    select count(0) as num from station a,partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.id=b.station_id and b.type='TP'
+	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
+	and a.category='ELEC'
+	and a.town=#{townCode}
+   </select>
+   
+   <select id="countTownStation" parameterType="string" resultType="int">
+    select count(0) as num from station a,partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.id=b.station_id and b.type in('TP','TPS')
+	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
+	and a.town=#{townCode}
+   </select>
+</mapper>

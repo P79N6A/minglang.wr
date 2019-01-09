@@ -168,6 +168,13 @@ public class TownLevelResolver implements InitializingBean{
 	public static void main(String[] argv) {
 		ExpressionParser expressionParser = new SpelExpressionParser();
 		StandardEvaluationContext context = new StandardEvaluationContext();
-		System.out.println(expressionParser.parseExpression("false").getValue(context, Boolean.class));
+		context.setVariable("storeNum", 1);
+		context.setVariable("tpElecNum", 2);
+		context.setVariable("population", 80000);
+		System.out.println(expressionParser.parseExpression("(#storeNum==0 && #tpElecNum==0)?'TP_ELEC':'NEXT'").getValue(context, String.class));
+		System.out.println(expressionParser.parseExpression("(#storeNum==0 && #tpElecNum>0 && #population>=60000)?'TP_YOUPIN':'NEXT'").getValue(context, String.class));
+		System.out.println(expressionParser.parseExpression("(#storeNum + #tpElecNum >1)?'CLOSE':'NEXT'").getValue(context, String.class));
+		System.out.println(expressionParser.parseExpression("#tpElecNum>1?'{\"CLOSE\":\"该镇有'+#tpElecNum+'个天猫优品电器合作店\"}':'NEXT'").getValue(context, String.class));
+		System.out.println(expressionParser.parseExpression("'CLOSE'").getValue(context, String.class));
 	}
 }
