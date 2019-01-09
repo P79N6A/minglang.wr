@@ -673,7 +673,8 @@
 		s.provider_id,
 		s.feature,
 		s.status,
-		s.fixed_type
+		s.fixed_type,
+		s.is_on_town
 		
 		from partner_station_rel instance,partner p,station s
 		
