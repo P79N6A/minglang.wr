@@ -15,6 +15,14 @@ public interface PartnerAdzoneService {
     public String createAdzone(Long taobaoUserId);
 
     /**
+     * 创建阿里妈妈拉新PID
+     *
+     * @param taobaoUserId
+     * @return
+     */
+    public String createAdzoneWithoutStationId(Long taobaoUserId);
+
+    /**
      * 获取阿里妈妈PID
      *
      * @param taobaoUserId 必选
@@ -33,6 +41,7 @@ public interface PartnerAdzoneService {
 
     /**
      * 分页初始化拉新订单数据
+     *
      * @param request
      * @return
      */
@@ -40,12 +49,14 @@ public interface PartnerAdzoneService {
 
     /**
      * 初始化所有的用户拉新订单数据
+     *
      * @param request
      */
     public void initAllNewUserOrder(NewuserOrderInitRequest request);
 
     /**
      * 删除某一天的统计数据
+     *
      * @param activityId
      * @param updateDate
      */
@@ -53,8 +64,9 @@ public interface PartnerAdzoneService {
 
     /**
      * 获取拉新统计数据
+     *
      * @param taobaoUserId
-     * @param stationId 可为空，默认当前taobaoUserId对应的村点
+     * @param stationId    可为空，默认当前taobaoUserId对应的村点
      * @param statDate
      * @return
      */
