@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @author chengyu.zhoucy
  *
  */
-@Component
+@Component("bgradeRuleResolver")
 public class BGradeRuleResolver extends DefaultGradeRuleResolver {
 
 	protected BGradeRuleResolver() {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
@@ -81,6 +82,7 @@ public class TownLevelBo {
 	}
 	
 	public PageDto<TownLevelDto> query(TownLevelCondition townLevelCondition){
+		Preconditions.checkArgument(townLevelCondition.getPageSize() > 0 && townLevelCondition.getPageSize() <= 50, "每页数不超过50");
 		TownLevelExample example = new TownLevelExample();
 		Criteria criteria = example.createCriteria();
 		

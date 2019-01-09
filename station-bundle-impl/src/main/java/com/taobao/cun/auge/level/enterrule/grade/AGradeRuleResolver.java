@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @author chengyu.zhoucy
  *
  */
-@Component
+@Component("agradeRuleResolver")
 public class AGradeRuleResolver extends DefaultGradeRuleResolver {
 
 	protected AGradeRuleResolver() {
