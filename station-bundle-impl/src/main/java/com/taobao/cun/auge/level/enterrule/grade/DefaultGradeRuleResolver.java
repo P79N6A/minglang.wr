@@ -35,7 +35,7 @@ public class DefaultGradeRuleResolver implements GradeRuleResolver, Initializing
 	
 	@Override
 	public TownLevelStationRuleDto resolve(TownLevelDto townLevelDto) {
-		return stationExclusiveRuleResolver.resolve(townLevelDto, getTownLevelStationRuleDtos(townLevelDto));
+		return stationExclusiveRuleResolver.resolve(townLevelDto, getTownLevelStationRuleDto(townLevelDto));
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class DefaultGradeRuleResolver implements GradeRuleResolver, Initializing
 	 * @param townLevelDto
 	 * @return
 	 */
-	protected TownLevelStationRuleDto getTownLevelStationRuleDtos(TownLevelDto townLevelDto) {
+	protected TownLevelStationRuleDto getTownLevelStationRuleDto(TownLevelDto townLevelDto) {
 		Map<String, TownLevelStationRuleDto> townLevelStationRuleGroupByAreaCodeMap;
 		try {
 			townLevelStationRuleGroupByAreaCodeMap = loadingCache.get("RULES");
@@ -92,5 +92,10 @@ public class DefaultGradeRuleResolver implements GradeRuleResolver, Initializing
 			townLevelStationRuleGroupByAreaCodeMap.put(townLevelStationRuleDto.getAreaCode(), townLevelStationRuleDto);
 		});
 		return townLevelStationRuleGroupByAreaCodeMap;
+	}
+
+	@Override
+	public TownLevelStationRuleDto getDefaultRule(TownLevelDto townLevelDto) {
+		return getTownLevelStationRuleDto(townLevelDto);
 	}
 }

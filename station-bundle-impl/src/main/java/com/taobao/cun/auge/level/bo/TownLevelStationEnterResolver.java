@@ -27,6 +27,10 @@ public class TownLevelStationEnterResolver {
 		return getGradeRuleResolver(townLevelDto).resolve(townLevelDto);
 	}
 	
+	TownLevelStationRuleDto getDefaultRule(TownLevelDto townLevelDto) {
+		return getGradeRuleResolver(townLevelDto).getDefaultRule(townLevelDto);
+	}
+	
 	private GradeRuleResolver getGradeRuleResolver(TownLevelDto townLevelDto) {
 		switch(townLevelDto.getLevel()) {
 		case "A":

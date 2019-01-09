@@ -23,6 +23,17 @@
 	where a.is_deleted='n' and b.is_deleted='n'
 	and a.id=b.station_id and b.type in('TP','TPS')
 	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
+	and b.mode='v4'
+	and a.town=#{townCode}
+   </select>
+   
+   <select id="countTownYoupin" parameterType="string" resultType="int">
+    select count(0) as num from station a,partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.id=b.station_id and b.type='TP'
+	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
+	and a.category is null
+	and a.mode='v4'
 	and a.town=#{townCode}
    </select>
 </mapper>

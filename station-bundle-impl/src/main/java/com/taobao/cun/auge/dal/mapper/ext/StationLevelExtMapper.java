@@ -9,4 +9,6 @@ public interface StationLevelExtMapper {
 	int countTownHZD(@Param("townCode")String townCode);
 	
 	int countTownStation(@Param("townCode")String townCode);
+	
+	int countTownYoupin(@Param("townCode")String townCode);
 }

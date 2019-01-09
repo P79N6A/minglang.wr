@@ -108,7 +108,7 @@ public class TownLevelBo {
         List<TownLevelDto> townLevelDtos = Lists.newArrayList();
         townLevels.forEach(t->{
         	TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, t);
-        	townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
+        	townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.getDefaultRule(townLevelDto));
         	townLevelDtos.add(townLevelDto);
         });
         return PageDtoUtil.success((Page<TownLevel>)townLevels, townLevelDtos);

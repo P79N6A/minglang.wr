@@ -17,4 +17,11 @@ public interface GradeRuleResolver {
 	 * @return
 	 */
 	TownLevelStationRuleDto resolve(TownLevelDto townLevelDto);
+	
+	/**
+	 * 获取默认规则
+	 * @param townLevelDto
+	 * @return
+	 */
+	TownLevelStationRuleDto getDefaultRule(TownLevelDto townLevelDto);
 }

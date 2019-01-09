@@ -24,7 +24,7 @@ public class BRuleDataBuilder implements RuleDataBuilder {
 	@Override
 	public Map<String, Object> build(TownLevelDto townLevelDto) {
 		Map<String, Object> map = Maps.newHashMap();
-		map.put("youpinNum", stationLevelExtMapper.countTownStation(townLevelDto.getTownCode()));
+		map.put("stationNum", stationLevelExtMapper.countTownStation(townLevelDto.getTownCode()));
 		return map;
 	}
 

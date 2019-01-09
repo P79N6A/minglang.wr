@@ -26,6 +26,7 @@ public class ARuleDataBuilder implements RuleDataBuilder {
 		Map<String, Object> map = Maps.newHashMap();
 		map.put("storeNum", stationLevelExtMapper.countTownTPS(townLevelDto.getTownCode()));
 		map.put("tpElecNum", stationLevelExtMapper.countTownHZD(townLevelDto.getTownCode()));
+		map.put("youpinNum", stationLevelExtMapper.countTownYoupin(townLevelDto.getTownCode()));
 		map.put("population", townLevelDto.getTownPopulation());
 		return map;
 	}
