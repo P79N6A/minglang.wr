@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -26,6 +28,7 @@ import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
  */
 @Component
 public class StationExclusiveRuleResolver {
+	private Logger logger = LoggerFactory.getLogger(StationExclusiveRuleResolver.class);
 	private static final String CLOSE = "CLOSE";
 	@Resource
 	private RuleDataBuilderFactory ruleDataBuilderFactory;
@@ -49,7 +52,7 @@ public class StationExclusiveRuleResolver {
 				break;
 			}
 		}
-		
+		logger.info("el result:{}", elResult);
 		TownLevelStationRuleDto result = BeanCopy.copy(TownLevelStationRuleDto.class, townLevelStationRuleDto);
 		if(elResult.startsWith(CLOSE)) {
 			result.setStationTypeCode(CLOSE);
