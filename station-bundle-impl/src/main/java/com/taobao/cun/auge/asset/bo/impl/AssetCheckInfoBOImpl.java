@@ -543,12 +543,12 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：请删除总部打回资产，重新盘点");
 		}
 		for (AssetCheckInfo ai : aiList) {
+			if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+					|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
+					&& ai.getAssetId() != null) {// 已确认 直接返回
+				continue;
+			}
 			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
-				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
-						|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
-						&& ai.getAssetId() != null) {// 已确认 直接返回
-					continue;
-				}
 				if (StringUtils.isNotEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
 					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))
@@ -596,6 +596,11 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
 		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
 		for (AssetCheckInfo ai : aiList) {
+			if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+					|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
+					&& ai.getAssetId() != null) {// 已确认 直接返回
+				continue;
+			}
 			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
 				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());

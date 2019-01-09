@@ -479,7 +479,11 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long uploadStationDecorateCheck(StationDecorateCheckDto stationDecorateCheckDto) {
-		StationDecorate record = this.getStationDecorateByStationId(stationDecorateCheckDto.getStationId());
+		//老逻辑暂时屏蔽，观察一段时候后下线
+		logger.info("uploadStationDecorateCheck begin ,stationId = {},checkOutsideVideoAttachments = {},checkInsideVideoAttachments",
+				new Object[]{stationDecorateCheckDto.getStationId(),stationDecorateCheckDto.getCheckOutsideVideoAttachments(),stationDecorateCheckDto.getCheckOutsideVideoAttachments()});
+		return null;
+		/*StationDecorate record = this.getStationDecorateByStationId(stationDecorateCheckDto.getStationId());
 		if(record == null){
 			return null;
 		}
@@ -509,16 +513,16 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if(stationDecorateCheckDto.getCheckMaterielAttachments()!= null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckMaterielAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_MATERIEL, operatorDto);
 		}
-		
+
 		if(stationDecorateCheckDto.getCheckInsideVideoAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckInsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO, operatorDto);
 		}
-		
+
 		if(stationDecorateCheckDto.getCheckOutsideVideoAttachments() != null){
 			criusAttachmentService.modifyAttachmentBatch(stationDecorateCheckDto.getCheckOutsideVideoAttachments(),record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_OUTSIDE_VIDEO, operatorDto);
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
-		return updateRecord.getId();
+		return updateRecord.getId();*/
 	}
 
     @Override
