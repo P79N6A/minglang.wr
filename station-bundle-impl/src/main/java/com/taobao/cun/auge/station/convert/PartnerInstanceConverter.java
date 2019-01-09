@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -232,6 +233,7 @@ public final class PartnerInstanceConverter {
 		stationDto.setAddress(convertAddress(instance));
 		stationDto.setFixedType(StationFixedTypeEnum.valueof(instance.getFixedType()));
 		stationDto.setCategory(instance.getCategory());
+		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(instance.getIsOnTown()));
 		return stationDto;
 	}
 
