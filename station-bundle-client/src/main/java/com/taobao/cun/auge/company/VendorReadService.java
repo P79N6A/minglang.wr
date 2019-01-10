@@ -55,5 +55,6 @@ public interface VendorReadService {
 	 * @param taobaoUserId
 	 * @return
 	 */
+	@Deprecated
 	Result<CuntaoServiceVendorDto> queryVendorByEmployeeTaobaoUserID(Long taobaoUserId);
 }

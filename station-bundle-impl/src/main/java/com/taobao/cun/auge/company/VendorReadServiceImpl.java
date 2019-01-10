@@ -156,22 +156,7 @@ public class VendorReadServiceImpl implements VendorReadService{
 
 	@Override
 	public Result<CuntaoServiceVendorDto> queryVendorByEmployeeTaobaoUserID(Long taobaoUserId) {
-		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andTaobaoUserIdEqualTo(taobaoUserId);
-		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
-		if(employees != null && !employees.isEmpty()){
-			CuntaoEmployee employee = employees.iterator().next();
-			CuntaoEmployeeRelExample relExample = new CuntaoEmployeeRelExample(); 
-			relExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andEmployeeIdEqualTo(employee.getId());
-			 List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(relExample);
-			 if(rels != null && !rels.isEmpty()){
-				 CuntaoEmployeeRel rel = rels.iterator().next();
-				 return this.queryVendorByID(rel.getOwnerId());
-			 }
-		}
-		Result<CuntaoServiceVendorDto>	result =  Result.of(true);
-		result.setModule(null);
-		return result;
+		throw new UnsupportedOperationException("该服务已迁移，请勿使用！");
 	}
 
 }
