@@ -26,6 +26,7 @@ import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
 import com.taobao.cun.auge.level.enterrule.grade.GradeRuleFacade;
+import com.taobao.cun.auge.level.levelrule.TownLevelResolver;
 
 @Component
 public class TownLevelBo {

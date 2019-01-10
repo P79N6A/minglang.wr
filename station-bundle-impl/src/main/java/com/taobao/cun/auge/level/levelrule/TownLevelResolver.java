@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.bo;
+package com.taobao.cun.auge.level.levelrule;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class TownLevelResolver implements InitializingBean{
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
-	TownLevelCalcResult levelResolve(TownLevelDto townLevelDto) {
+	public TownLevelCalcResult levelResolve(TownLevelDto townLevelDto) {
 		townLevelDto.setCoverageRate(calcCoverageRate(townLevelDto));
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		try {
