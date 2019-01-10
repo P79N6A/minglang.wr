@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.level.service;
 
-import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
+import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
 
 /**
  * 市场分层站点转型升级规则
@@ -15,5 +15,5 @@ public interface TownLevelStationUpgradeRuleService {
 	 * @param stationId
 	 * @return
 	 */
-	TownLevelStationRuleDto getTownLevelStationRule(long stationId);
+	TownLevelStationSetting getTownLevelStationRule(long stationId);
 }

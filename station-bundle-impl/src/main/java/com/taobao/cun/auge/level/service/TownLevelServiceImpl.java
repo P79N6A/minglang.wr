@@ -28,5 +28,10 @@ public class TownLevelServiceImpl implements TownLevelService {
 	public TownLevelCalcResult calcTownLevel(Long id) {
 		return townLevelBo.calcTownLevel(id);
 	}
+
+	@Override
+	public int getStationNumInTown(String townCode) {
+		return 0;
+	}
 	
 }

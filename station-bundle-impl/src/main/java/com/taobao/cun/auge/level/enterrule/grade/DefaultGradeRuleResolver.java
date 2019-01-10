@@ -18,7 +18,7 @@ import com.taobao.cun.auge.dal.domain.TownLevelStationRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelStationRuleMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
-import com.taobao.cun.auge.level.enterrule.station.StationExclusiveRuleResolver;
+import com.taobao.cun.auge.level.enterrule.setting.StationExclusiveRuleResolver;
 
 public class DefaultGradeRuleResolver implements GradeRuleResolver, InitializingBean {
 	private LoadingCache<String, Map<String, TownLevelStationRuleDto>> loadingCache;
@@ -33,18 +33,13 @@ public class DefaultGradeRuleResolver implements GradeRuleResolver, Initializing
 		this.level = level;
 	}
 	
-	@Override
-	public TownLevelStationRuleDto resolve(TownLevelDto townLevelDto) {
-		return stationExclusiveRuleResolver.resolve(townLevelDto, getTownLevelStationRuleDto(townLevelDto));
-	}
-	
 	/**
 	 * 解析镇域开点规则
 	 * 首先根据区域code获取是否有匹配得到的规则，按照镇->县->市->省的优先级排列，然后是默认规则
 	 * @param townLevelDto
 	 * @return
 	 */
-	protected TownLevelStationRuleDto getTownLevelStationRuleDto(TownLevelDto townLevelDto) {
+	public TownLevelStationRuleDto getTownLevelStationRule(TownLevelDto townLevelDto) {
 		Map<String, TownLevelStationRuleDto> townLevelStationRuleGroupByAreaCodeMap;
 		try {
 			townLevelStationRuleGroupByAreaCodeMap = loadingCache.get("RULES");
@@ -92,10 +87,5 @@ public class DefaultGradeRuleResolver implements GradeRuleResolver, Initializing
 			townLevelStationRuleGroupByAreaCodeMap.put(townLevelStationRuleDto.getAreaCode(), townLevelStationRuleDto);
 		});
 		return townLevelStationRuleGroupByAreaCodeMap;
-	}
-
-	@Override
-	public TownLevelStationRuleDto getDefaultRule(TownLevelDto townLevelDto) {
-		return getTownLevelStationRuleDto(townLevelDto);
 	}
 }

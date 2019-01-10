@@ -11,4 +11,10 @@ public interface StationLevelExtMapper {
 	int countTownStation(@Param("townCode")String townCode);
 	
 	int countTownYoupin(@Param("townCode")String townCode);
+	
+	int countTransYoupin(@Param("townCode")String townCode);
+	
+	int countTransHZD(@Param("townCode")String townCode);
+	
+	int countTransTPS(@Param("townCode")String townCode);
 }

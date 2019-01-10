@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
+import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.service.StationQueryService;
 
@@ -15,7 +15,7 @@ public class TownLevelStationUpgradeRuleBo {
 	@Resource
 	private TownLevelStationEnterRuleBo townLevelStationEnterRuleBo;
 	
-	public TownLevelStationRuleDto getTownLevelStationRule(long stationId) {
+	public TownLevelStationSetting getTownLevelStationRule(long stationId) {
 		StationDto stationDto = stationQueryService.getStation(stationId);
 		return townLevelStationEnterRuleBo.getTownLevelStationRule(stationDto.getAddress().getTown());
 	}

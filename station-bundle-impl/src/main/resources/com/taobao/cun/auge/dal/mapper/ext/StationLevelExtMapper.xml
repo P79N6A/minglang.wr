@@ -36,4 +36,28 @@
 	and a.mode='v4'
 	and a.town=#{townCode}
    </select>
+   
+   <select id="countTransYoupin" parameterType="string" resultType="int">
+   select count(0) as num from station a, station_trans_info b where a.is_deleted='n'
+   and b.is_deleted='n' 
+   and a.id=b.station_id
+   and b.status='TRANS_ING'
+   and b.to_biz_type='YOUPIN'
+   </select>
+   
+   <select id="countTransHZD" parameterType="string" resultType="int">
+   select count(0) as num from station a, station_trans_info b where a.is_deleted='n'
+   and b.is_deleted='n' 
+   and a.id=b.station_id
+   and b.status='TRANS_ING'
+   and b.to_biz_type='YOUPIN_ELEC'
+   </select>
+   
+   <select id="countTransTPS" parameterType="string" resultType="int">
+   select count(0) as num from station a, station_trans_info b where a.is_deleted='n'
+   and b.is_deleted='n' 
+   and a.id=b.station_id
+   and b.status='TRANS_ING'
+   and b.to_biz_type='TPS_ELEC'
+   </select>
 </mapper>

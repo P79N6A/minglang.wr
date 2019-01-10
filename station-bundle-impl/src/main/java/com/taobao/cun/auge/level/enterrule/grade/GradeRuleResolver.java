@@ -11,17 +11,9 @@ import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
  */
 public interface GradeRuleResolver {
 	/**
-	 * 解析镇域准入规则，返回允许开的站点类型
-	 * 
+	 * 获取配置规则
 	 * @param townLevelDto
 	 * @return
 	 */
-	TownLevelStationRuleDto resolve(TownLevelDto townLevelDto);
-	
-	/**
-	 * 获取默认规则
-	 * @param townLevelDto
-	 * @return
-	 */
-	TownLevelStationRuleDto getDefaultRule(TownLevelDto townLevelDto);
+	TownLevelStationRuleDto getTownLevelStationRule(TownLevelDto townLevelDto);
 }

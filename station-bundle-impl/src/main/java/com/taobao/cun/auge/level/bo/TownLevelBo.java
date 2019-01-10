@@ -20,23 +20,32 @@ import com.taobao.cun.auge.dal.domain.TownLevel;
 import com.taobao.cun.auge.dal.domain.TownLevelExample;
 import com.taobao.cun.auge.dal.domain.TownLevelExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.TownLevelMapper;
+import com.taobao.cun.auge.dal.mapper.ext.StationLevelExtMapper;
 import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
+import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
+import com.taobao.cun.auge.level.enterrule.grade.GradeRuleFacade;
 
 @Component
 public class TownLevelBo {
 	@Resource
 	private TownLevelMapper townLevelMapper;
 	@Resource
-	private TownLevelStationEnterResolver townLevelStationEnterResolver;
+	private GradeRuleFacade gradeRuleFacade;
 	@Resource
 	private TownLevelResolver townLevelResolver;
+	@Resource
+	private StationLevelExtMapper stationLevelExtMapper;
+	
+	private TownLevelStationRuleDto getTownLevelStationRule(TownLevelDto townLevelDto) {
+		return gradeRuleFacade.getTownLevelStationRule(townLevelDto);
+	}
 	
 	public TownLevelCalcResult calcTownLevel(Long id) {
 		TownLevelCalcResult townLevelCalcResult = townLevelResolver.levelResolve(getTownLevel(id));
 		TownLevelDto townLevelDto = townLevelCalcResult.getTownLevel();
-		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRule(townLevelDto));
 		return townLevelCalcResult;
 	}
 	
@@ -67,7 +76,7 @@ public class TownLevelBo {
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevels.get(0));
-		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRule(townLevelDto));
 		return townLevelDto;
 	}
 	
@@ -77,7 +86,7 @@ public class TownLevelBo {
 			return null;
 		}
 		TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, townLevel);
-		townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.resolve(townLevelDto));
+		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRule(townLevelDto));
 		return townLevelDto;
 	}
 	
@@ -108,9 +117,13 @@ public class TownLevelBo {
         List<TownLevelDto> townLevelDtos = Lists.newArrayList();
         townLevels.forEach(t->{
         	TownLevelDto townLevelDto = BeanCopy.copy(TownLevelDto.class, t);
-        	townLevelDto.setTownLevelStationRuleDto(townLevelStationEnterResolver.getDefaultRule(townLevelDto));
+        	townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRule(townLevelDto));
         	townLevelDtos.add(townLevelDto);
         });
         return PageDtoUtil.success((Page<TownLevel>)townLevels, townLevelDtos);
+	}
+	
+	public int getStationNumInTown(String townCode) {
+		return stationLevelExtMapper.countTownStation(townCode);
 	}
 }

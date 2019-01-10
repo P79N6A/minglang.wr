@@ -5,25 +5,28 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
+import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
+import com.taobao.cun.auge.level.enterrule.setting.StationExclusiveRuleResolver;
 
 @Component
 public class TownLevelStationEnterRuleBo {
 	@Resource
 	private TownLevelBo townLevelBo;
+	@Resource
+	private StationExclusiveRuleResolver stationExclusiveRuleResolver;
 	
-	public TownLevelStationRuleDto getTownLevelStationRule(String townCode) {
+	public TownLevelStationSetting getTownLevelStationRule(String townCode) {
 		TownLevelDto townLevelDto = townLevelBo.getTownLevelByTownCode(townCode);
-		TownLevelStationRuleDto townLevelStationRuleDto = null;
 		if(townLevelDto != null) {
-			townLevelStationRuleDto = townLevelDto.getTownLevelStationRuleDto();
+			return stationExclusiveRuleResolver.resolve(townLevelDto);
 		}else {//如果该镇数据缺失，则提示补充该地区的分层数据
-			townLevelStationRuleDto = new TownLevelStationRuleDto();
-			townLevelStationRuleDto.setAreaCode(townCode);
-			townLevelStationRuleDto.setStationTypeCode("CLOSE");
-			townLevelStationRuleDto.setStationTypeDesc("该镇分层数据缺失，请联系PD补充该镇分层数据");
+			TownLevelStationSetting townLevelStationSetting = new TownLevelStationSetting();
+			townLevelStationSetting = new TownLevelStationSetting();
+			townLevelStationSetting.setAreaCode(townCode);
+			townLevelStationSetting.setStationTypeCode("CLOSE");
+			townLevelStationSetting.setStationTypeDesc("该镇分层数据缺失，请联系PD补充该镇分层数据");
+			return townLevelStationSetting;
 		}
-		return townLevelStationRuleDto;
 	}
 
 }

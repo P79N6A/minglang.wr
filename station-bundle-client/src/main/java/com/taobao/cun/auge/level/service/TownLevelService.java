@@ -31,4 +31,11 @@ public interface TownLevelService {
 	 * @param id
 	 */
 	TownLevelCalcResult calcTownLevel(Long id);
+	
+	/**
+	 * 获取镇上站点数（TP/TPS），'SERVICING','SETTLING','DECORATING','CLOSING'状态
+	 * @param townCode
+	 * @return
+	 */
+	int getStationNumInTown(String townCode);
 }
