@@ -19,7 +19,7 @@ import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
  */
 @Component("xsettingRuleParse")
 public class XSettingRuleParse implements SettingRuleParse {
-	private static final String MESSAGE = "'该镇为超标镇，' + #storeNum>0?('已开' + #storeNum + '家天猫优品电器体验店;'):'' + #transingStoreNum>0?('有一家正在升级为天猫优品电器体验店的站点;'):''";
+	private static final String MESSAGE = "'该镇为超标镇，' + (#storeNum>0?('已开' + #storeNum + '家天猫优品电器体验店;'):'') + (#transingStoreNum>0?('有一家正在升级为天猫优品电器体验店的站点;'):'')";
 	@Resource
 	private StationLevelExtMapper stationLevelExtMapper;
 	

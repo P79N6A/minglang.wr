@@ -20,8 +20,8 @@ import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
  */
 @Component("asettingRuleParse")
 public class ASettingRuleParse implements SettingRuleParse {
-	private static final String MESSAGE_1 = "'该镇为A镇，' + #storeNum>0?('已开' + #storeNum + '家天猫优品体验店;'):'' + #tpElecNum>0?('已开' + #tpElecNum + '家天猫优品体服务站(电器合作店);'):'' + #transingHzdNum>0?('有' + #transingHzdNum + '家正在升级为天猫优品体服务站(电器合作店)的站点;'):''";
-	private static final String MESSAGE_2 = "'该镇为A镇(人口数大于6w)，' + #storeNum>0?('已开' + #storeNum + '家天猫优品体验店;'):'' + #tpElecNum>0?('已开' + #tpElecNum + '家天猫优品体服务站(电器合作店);'):'' + #youpinNum>0?('已开' + #youpinNum + '家天猫优品体服务站;'):'' + #transingHzdNum>0?('有' + #transingHzdNum + '家正在升级为天猫优品体服务站(电器合作店)的站点;'):'' + #youpinTransingNum>0?('有' + #youpinTransingNum + '家正在升级为天猫优品体服务站的站点;'):''";
+	private static final String MESSAGE_1 = "'该镇为A镇，' + (#storeNum>0?('已开' + #storeNum + '家天猫优品体验店;'):'') + (#tpElecNum>0?('已开' + #tpElecNum + '家天猫优品体服务站(电器合作店);'):'') + (#transingHzdNum>0?('有' + #transingHzdNum + '家正在升级为天猫优品体服务站(电器合作店)的站点;'):'')";
+	private static final String MESSAGE_2 = "'该镇为A镇(人口数大于6w)，' + (#storeNum>0?('已开' + #storeNum + '家天猫优品体验店;'):'') + (#tpElecNum>0?('已开' + #tpElecNum + '家天猫优品体服务站(电器合作店);'):'') + (#youpinNum>0?('已开' + #youpinNum + '家天猫优品体服务站;'):'') + (#transingHzdNum>0?('有' + #transingHzdNum + '家正在升级为天猫优品体服务站(电器合作店)的站点;'):'') + (#youpinTransingNum>0?('有' + #youpinTransingNum + '家正在升级为天猫优品体服务站的站点;'):'')";
 	@Resource
 	private StationLevelExtMapper stationLevelExtMapper;
 	
