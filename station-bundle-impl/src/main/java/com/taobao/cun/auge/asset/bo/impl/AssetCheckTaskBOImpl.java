@@ -60,6 +60,7 @@ import com.taobao.cun.auge.task.service.TaskElementService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.crius.bpm.dto.CuntaoTaskExecuteDto;
 import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
+import com.taobao.cun.crius.bpm.exception.CuntaoWorkFlowException;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 
 import net.sf.cglib.beans.BeanCopier;
@@ -316,18 +317,21 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
 		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
-			   CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
-	            executeDto.setLoginId(param.getOperator());
-	            executeDto.setRemark("完成盘点任务");
-	            executeDto.setObjectId(String.valueOf(at.getId()));
-	            if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(at.getTaskType())) {
-	            	 executeDto.setBusinessCode("assetCheckCountyTask");
-	            }else if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(at.getTaskType())) {
-	            	 executeDto.setBusinessCode("assetCheckCountyFollowTask");
-	            }
-	           
-	            executeDto.setAction(NodeActionEnum.AGREE);
-	            cuntaoWorkFlowService.executeTask(executeDto);
+			   try {
+				CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
+				    executeDto.setLoginId(param.getOperator());
+				    executeDto.setRemark("完成盘点任务");
+				    executeDto.setObjectId(String.valueOf(at.getId()));
+				    if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(at.getTaskType())) {
+				    	 executeDto.setBusinessCode("assetCheckCountyTask");
+				    }else if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(at.getTaskType())) {
+				    	 executeDto.setBusinessCode("assetCheckCountyFollowTask");
+				    }
+				   
+				    executeDto.setAction(NodeActionEnum.AGREE);
+				    cuntaoWorkFlowService.executeTask(executeDto);
+			} catch (CuntaoWorkFlowException e) {
+			}
 		}
 		return  Boolean.TRUE;
 	}
