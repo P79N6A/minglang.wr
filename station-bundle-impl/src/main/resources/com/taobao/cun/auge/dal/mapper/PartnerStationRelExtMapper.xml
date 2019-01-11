@@ -76,6 +76,8 @@
     <result column="feature" jdbcType="VARCHAR" property="feature" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
+    <result column="is_on_town" jdbcType="VARCHAR" property="isOnTown" />
+    
     
     <!-- 生命周期表 -->
     <result column="lifecycle_business_type" jdbcType="VARCHAR" property="lifecycleBusinessType" />
@@ -136,6 +138,7 @@
 		s.status,
 		s.fixed_type,
 		s.category,
+		s.is_on_town,
 		org.name as county_station_name
 		
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
@@ -670,7 +673,8 @@
 		s.provider_id,
 		s.feature,
 		s.status,
-		s.fixed_type
+		s.fixed_type,
+		s.is_on_town
 		
 		from partner_station_rel instance,partner p,station s
 		

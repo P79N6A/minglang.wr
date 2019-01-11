@@ -273,8 +273,13 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			}
 			
 		}
+		if (AssetUseAreaTypeEnum.STATION.getCode().equals(ai.getCheckerAreaType())) {
+			assetBO.confrimCheckInfoForSystemToStation(a, ai.getCheckerAreaId(), ai.getCheckerId(), ai.getCheckerName());
+		}else{
+			assetBO.confrimCheckInfoForSystemToCounty(a);
+		}
 
-		assetBO.confirmForZb(a.getId(), operator.getOperator());
+//		assetBO.confirmForZb(a.getId(), operator.getOperator());
 		ai.setAssetId(a.getId());
 		ai.setStatus(AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode());
 		ai.setBackReason("");
@@ -538,12 +543,12 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "完成盘点失败：请删除总部打回资产，重新盘点");
 		}
 		for (AssetCheckInfo ai : aiList) {
+			if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+					|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
+					&& ai.getAssetId() != null) {// 已确认 直接返回
+				continue;
+			}
 			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
-				if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
-						|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
-						&& ai.getAssetId() != null) {// 已确认 直接返回
-					continue;
-				}
 				if (StringUtils.isNotEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
 					if ((!AssetCheckStatusEnum.CHECKED.getCode().equals(a.getCheckStatus()))
@@ -591,6 +596,11 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 		criteria.andStatusIn(AssetCheckInfoStatusEnum.getCanConfirmList());
 		List<AssetCheckInfo> aiList = assetCheckInfoMapper.selectByExample(example);
 		for (AssetCheckInfo ai : aiList) {
+			if ((AssetCheckInfoStatusEnum.SYS_CONFIRM.getCode().equals(ai.getStatus())
+					|| AssetCheckInfoStatusEnum.ZB_CONFIRM.getCode().equals(ai.getStatus()))
+					&& ai.getAssetId() != null) {// 已确认 直接返回
+				continue;
+			}
 			if (AssetCheckInfoCheckTypeEnum.COMMON.getCode().equals(ai.getCheckType())) {// 正常提报
 				if (StringUtils.isNoneEmpty(ai.getSerialNo())) {
 					Asset a = assetBO.getAssetBySerialNo(ai.getSerialNo());
@@ -598,11 +608,14 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 							&& a.getUseAreaId().equals(ai.getCountyOrgId())) {// 同县
 						assetBO.confrimCheckInfoForSystemToCounty(a);
 						confirmBySystem(ai.getId(), a.getId(), operator);
+						continue;
 					}
 				}
 			}
+			doneStation(ai.getId(), operator);
 		}
-		return null;
+		
+		return Boolean.TRUE;
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

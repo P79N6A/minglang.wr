@@ -422,6 +422,17 @@ public class PartnerInstance {
 	private String transStatus;
 	
 	private String category;
+	
+	private String isOnTown;
+	
+	public String getIsOnTown() {
+		return isOnTown;
+	}
+
+	public void setIsOnTown(String isOnTown) {
+		this.isOnTown = isOnTown;
+	}
+
 	public String getFlowerName() {
 		return flowerName;
 	}
