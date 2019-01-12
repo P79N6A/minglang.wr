@@ -44,8 +44,12 @@ public class TownLevelBo {
 	}
 	
 	public TownLevelCalcResult calcTownLevel(Long id) {
-		TownLevelCalcResult townLevelCalcResult = townLevelResolver.levelResolve(getTownLevel(id));
-		TownLevelDto townLevelDto = townLevelCalcResult.getTownLevel();
+		return calcTownLevel(getTownLevel(id));
+	}
+	
+	public TownLevelCalcResult calcTownLevel(TownLevelDto townLevelDto) {
+		TownLevelCalcResult townLevelCalcResult = townLevelResolver.levelResolve(townLevelDto);
+		townLevelDto = townLevelCalcResult.getTownLevel();
 		townLevelDto.setTownLevelStationRuleDto(getTownLevelStationRule(townLevelDto));
 		return townLevelCalcResult;
 	}

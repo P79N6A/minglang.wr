@@ -31,7 +31,12 @@ public class TownLevelServiceImpl implements TownLevelService {
 
 	@Override
 	public int getStationNumInTown(String townCode) {
-		return 0;
+		return townLevelBo.getStationNumInTown(townCode);
+	}
+
+	@Override
+	public TownLevelCalcResult calcTownLevel(TownLevelDto townLevelDto) {
+		return townLevelBo.calcTownLevel(townLevelDto);
 	}
 	
 }

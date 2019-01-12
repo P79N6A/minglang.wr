@@ -33,6 +33,12 @@ public interface TownLevelService {
 	TownLevelCalcResult calcTownLevel(Long id);
 	
 	/**
+	 * 计算分层
+	 * @param id
+	 */
+	TownLevelCalcResult calcTownLevel(TownLevelDto townLevelDto);
+	
+	/**
 	 * 获取镇上站点数（TP/TPS），'SERVICING','SETTLING','DECORATING','CLOSING'状态
 	 * @param townCode
 	 * @return
