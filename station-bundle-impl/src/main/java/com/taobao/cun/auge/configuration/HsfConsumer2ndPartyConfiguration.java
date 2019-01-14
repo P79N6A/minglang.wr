@@ -95,6 +95,9 @@ import com.tmall.usc.channel.client.UscChannelRelationService;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration  {
 
+	@HSFConsumer(serviceVersion="${new.customer.unit.service.version}",serviceGroup="HSF")
+	private NewCustomerUnitQueryService newCustomerUnitQueryService;
+
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.employeeService}",serviceGroup="HSF")
 	private Employee360Service employee360Service;
 	
@@ -323,12 +326,6 @@ public class HsfConsumer2ndPartyConfiguration  {
 	@Bean
 	public RefundReadService refundReadService(HsfConsumerContext context, @Value("${refund.read.service.version}") String version) {
 		return context.hsfConsumerBuilder(RefundReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
-				.build();
-	}
-
-	@Bean
-	public NewCustomerUnitQueryService newCustomerUnitQueryService(HsfConsumerContext context, @Value("${new.customer.unit.service.version}") String version) {
-		return context.hsfConsumerBuilder(NewCustomerUnitQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(10000)
 				.build();
 	}
 
