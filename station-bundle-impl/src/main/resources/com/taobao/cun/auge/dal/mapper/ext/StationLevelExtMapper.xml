@@ -43,6 +43,7 @@
    and a.id=b.station_id
    and b.status in('TRANS_ING','WAIT_TRANS')
    and b.to_biz_type='YOUPIN'
+   and a.town=#{townCode}
    </select>
    
    <select id="countTransHZD" parameterType="string" resultType="int">
@@ -51,6 +52,7 @@
    and a.id=b.station_id
    and b.status in('TRANS_ING','WAIT_TRANS')
    and b.to_biz_type='YOUPIN_ELEC'
+   and a.town=#{townCode}
    </select>
    
    <select id="countTransTPS" parameterType="string" resultType="int">
@@ -59,5 +61,6 @@
    and a.id=b.station_id
    and b.status in('TRANS_ING','WAIT_TRANS')
    and b.to_biz_type='TPS_ELEC'
+   and a.town=#{townCode}
    </select>
 </mapper>
