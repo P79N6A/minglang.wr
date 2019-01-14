@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import com.alibaba.cuntao.ctsm.client.dto.read.ServiceJudgmentForStoreQuitDTO;
+import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -24,16 +26,18 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
+import com.taobao.cun.shared.base.result.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = StoreReadService.class)
 public class StoreReadServiceImpl implements StoreReadService {
-
+	
 	@Autowired
 	private StoreReadBO storeReadBO;
 	
@@ -48,6 +52,8 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private StationBO sationBO;
+	@Autowired
+	private StoreSReadService storeSReadService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -147,6 +153,22 @@ public class StoreReadServiceImpl implements StoreReadService {
 //				return true;
 //		}
 //		return false;
+	}
+
+	@Override
+	public Boolean serviceJudgmentForStoreQuit(Long storeId) {
+		
+		ResultModel<ServiceJudgmentForStoreQuitDTO> rs = storeSReadService.serviceJudgmentForStoreQuit(storeId);
+		if (rs.isSuccess() &&  rs.getModel() != null) {
+			ServiceJudgmentForStoreQuitDTO dto = rs.getModel();
+			if (dto.getCanQuit()) {
+				return Boolean.TRUE;
+			}
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+					dto.getReason());
+		}
+		throw new AugeBusinessException(AugeErrorCodes.SYSTEM_ERROR_CODE,
+				"门店服务退出校验，系统异常");
 	}
 
 }
