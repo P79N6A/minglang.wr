@@ -1504,6 +1504,66 @@ public class StationNewCustomerExample {
             addCriterion("is_deleted not between", value1, value2, "isDeleted");
             return (Criteria) this;
         }
+
+        public Criteria andTagRmTimeIsNull() {
+            addCriterion("tag_rm_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeIsNotNull() {
+            addCriterion("tag_rm_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeEqualTo(Date value) {
+            addCriterion("tag_rm_time =", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeNotEqualTo(Date value) {
+            addCriterion("tag_rm_time <>", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeGreaterThan(Date value) {
+            addCriterion("tag_rm_time >", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("tag_rm_time >=", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeLessThan(Date value) {
+            addCriterion("tag_rm_time <", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeLessThanOrEqualTo(Date value) {
+            addCriterion("tag_rm_time <=", value, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeIn(List<Date> values) {
+            addCriterion("tag_rm_time in", values, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeNotIn(List<Date> values) {
+            addCriterion("tag_rm_time not in", values, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeBetween(Date value1, Date value2) {
+            addCriterion("tag_rm_time between", value1, value2, "tagRmTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andTagRmTimeNotBetween(Date value1, Date value2) {
+            addCriterion("tag_rm_time not between", value1, value2, "tagRmTime");
+            return (Criteria) this;
+        }
     }
 
     /**
