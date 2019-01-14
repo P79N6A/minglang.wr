@@ -112,5 +112,12 @@ public interface StoreWriteService {
 	public void syncStore(Long stationId);
 	
 	public void syncStore();
+	/**
+	 * 
+	 * @param operator
+	 * @param storeId
+	 * @return
+	 */
+	public Boolean disableByStoreId(String operator, Long storeId);
 
 }

@@ -6,9 +6,13 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.cuntao.ctsm.client.dto.enums.ChannelEnum;
+import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
-import com.taobao.cun.auge.store.bo.impl.StoreWriteBOImpl;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
@@ -19,6 +23,10 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class StoreWriteServiceImpl implements StoreWriteService {
 	@Resource
 	private StoreWriteBO storeWriteBO;
+	
+	@Autowired
+	private StoreSWriteService storeSWriteService;
+	
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteServiceImpl.class);
 
@@ -137,5 +145,20 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Override
 	public void syncStore() {
 		storeWriteBO.syncStore();
+	}
+
+	@Override
+	public Boolean disableByStoreId(String operator, Long storeId) {
+		com.alibaba.cuntao.ctsm.client.common.Operator  op = new com.alibaba.cuntao.ctsm.client.common.Operator ();
+		op.setChannelEnum(ChannelEnum.CTBOPS);
+		op.setOperatorId(operator);
+		op.setStoreId(storeId);
+		com.taobao.cun.shared.base.result.SimpleResult  res = storeSWriteService.disableByStoreId(op, storeId);
+		if (res.isSuccess()) {
+			return Boolean.TRUE;
+		}else {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+					res.getErrorCode()+res.getErrorMsg());
+		}
 	}
 }

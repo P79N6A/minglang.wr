@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
+import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -125,6 +126,8 @@ public class HsfConsumerConfiguration  {
 	
 	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private StoreSReadService storeSReadService;
+	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private StoreSWriteService storeSWriteService;
 	
 
 }
