@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
 import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
+import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -324,7 +325,13 @@ public class HsfConsumer2ndPartyConfiguration  {
 		return context.hsfConsumerBuilder(RefundReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
-	
+
+	@Bean
+	public NewCustomerUnitQueryService newCustomerUnitQueryService(HsfConsumerContext context, @Value("${new.customer.unit.service.version}") String version) {
+		return context.hsfConsumerBuilder(NewCustomerUnitQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(10000)
+				.build();
+	}
+
 	@Bean
 	public UicPaymentAccountReadService uicPaymentAccountReadService(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
 		return context.hsfConsumerBuilder(UicPaymentAccountReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
