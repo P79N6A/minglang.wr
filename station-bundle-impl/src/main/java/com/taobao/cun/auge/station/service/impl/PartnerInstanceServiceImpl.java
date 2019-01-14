@@ -97,6 +97,7 @@ import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -1032,6 +1033,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         // 合伙人实例状态校验
         PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
             PartnerInstanceStateEnum.SERVICING);
+        if (partnerInstance == null){
+        	partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
+                    PartnerInstanceStateEnum.DECORATING);
+        }
         Assert.notNull(partnerInstance, "没有服务中的合伙人。taobaoUserId = " + taobaoUserId);
 
         Long instanceId = partnerInstance.getId();
@@ -1202,11 +1207,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } else {
             PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerInstance);
             partnerInstanceDto.copyOperatorDto(confirmCloseDto);
-
-            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,
-                StateMachineEvent.SERVICING_EVENT);
-            stateMachineService.executePhase(phaseEvent);
-     			
+            
+            CloseStationApplyDto closeStationApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
+			PartnerInstanceStateEnum sourceInstanceState = closeStationApplyDto.getInstanceState();
+			if (PartnerInstanceStateEnum.SERVICING.equals(sourceInstanceState)) {
+				LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+				stateMachineService.executePhase(phaseEvent);
+			}else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
+				LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT);
+				stateMachineService.executePhase(phaseEvent);
+			}
             	/*
                 // 更新合伙人实例，服务中
                 partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum
