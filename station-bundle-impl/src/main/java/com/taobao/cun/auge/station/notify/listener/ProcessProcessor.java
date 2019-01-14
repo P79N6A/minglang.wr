@@ -506,7 +506,6 @@ public class ProcessProcessor {
      * 更新生命周期表，流程审批结果
      *
      * @param instanceId
-     * @param operator
      * @param approveResult
      */
     private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
