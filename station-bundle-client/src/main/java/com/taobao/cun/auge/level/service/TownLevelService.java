@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.level.service;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 
@@ -24,4 +25,23 @@ public interface TownLevelService {
 	 * @return
 	 */
 	PageDto<TownLevelDto> query(TownLevelCondition townLevelCondition);
+	
+	/**
+	 * 计算分层
+	 * @param id
+	 */
+	TownLevelCalcResult calcTownLevel(Long id);
+	
+	/**
+	 * 计算分层
+	 * @param id
+	 */
+	TownLevelCalcResult calcTownLevel(TownLevelDto townLevelDto);
+	
+	/**
+	 * 获取镇上站点数（TP/TPS），'SERVICING','SETTLING','DECORATING','CLOSING'状态
+	 * @param townCode
+	 * @return
+	 */
+	int getStationNumInTown(String townCode);
 }

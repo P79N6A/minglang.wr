@@ -16,7 +16,7 @@ public class StationBizTypeEnum implements Serializable {
 	public static final StationBizTypeEnum STATION = new StationBizTypeEnum("STATION", "农村淘宝服务站");
 	public static final StationBizTypeEnum YOUPIN = new StationBizTypeEnum("YOUPIN", "天猫优品服务站");
 	public static final StationBizTypeEnum YOUPIN_ELEC = new StationBizTypeEnum("YOUPIN_ELEC",
-			"天猫优品服务站-电器合作店");
+			"天猫优品服务站(电器合作店)");
 	public static final StationBizTypeEnum TPS_ELEC = new StationBizTypeEnum("TPS_ELEC", "天猫优品电器体验店");
 
 	static {

@@ -1,10 +1,8 @@
 package com.taobao.cun.auge.station.check.impl.trans;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -35,6 +33,8 @@ public class TransTaobaoPermeabilityChecker implements StationTransChecker {
 
 	@Override
 	public void check(PartnerInstanceTransDto t) {
+		//可以去掉了，用市场分层准入规则在入口判定了
+		/*
 		PartnerStationRel r = partnerInstanceBO.findPartnerInstanceById(t.getInstanceId());
 		if (r == null || r.getTaobaoUserId() == null) {
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "查询不到指定站点。");
@@ -46,7 +46,7 @@ public class TransTaobaoPermeabilityChecker implements StationTransChecker {
 		;
 		if (townBlacknameService.isBlackname(s.getCountyDetail(), s.getTownDetail())) {
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "所属行政区域，手淘渗透率超过30%,不可转型升级。");
-		}
+		}*/
 	}
 
 }
