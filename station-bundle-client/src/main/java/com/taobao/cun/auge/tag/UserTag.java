@@ -20,7 +20,7 @@ public enum UserTag {
 
 	UM_USER_TAG("cuntao_youmeng"),
 
-	STATION_NEW_CUSTOMER_TAG("2019_NEW_STATION"),
+	STATION_NEW_CUSTOMER_TAG("new_ctp_user"),
 	
 	SELLER_HQZY_TAG("cuntao_huoquan_zhuanyi");
 
