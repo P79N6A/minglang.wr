@@ -2,6 +2,7 @@ package com.taobao.cun.auge.level.bo;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.level.dto.TownLevelDto;
@@ -14,6 +15,8 @@ public class TownLevelStationEnterRuleBo {
 	private TownLevelBo townLevelBo;
 	@Resource
 	private StationExclusiveRuleResolver stationExclusiveRuleResolver;
+	@Value("${townlevel.notown.tip}")
+	private String noTownTip;
 	
 	public TownLevelStationSetting getTownLevelStationRule(String townCode) {
 		TownLevelDto townLevelDto = townLevelBo.getTownLevelByTownCode(townCode);
@@ -24,7 +27,7 @@ public class TownLevelStationEnterRuleBo {
 			townLevelStationSetting = new TownLevelStationSetting();
 			townLevelStationSetting.setAreaCode(townCode);
 			townLevelStationSetting.setStationTypeCode("CLOSE");
-			townLevelStationSetting.setStationTypeDesc("该镇分层数据缺失，请联系PD补充该镇分层数据");
+			townLevelStationSetting.setStationTypeDesc(noTownTip);
 			return townLevelStationSetting;
 		}
 	}
