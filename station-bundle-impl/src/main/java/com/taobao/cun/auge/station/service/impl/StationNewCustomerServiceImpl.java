@@ -8,8 +8,10 @@ import com.taobao.cun.auge.dal.domain.StationNewCustomer;
 import com.taobao.cun.auge.dal.domain.StationNewCustomerExample;
 import com.taobao.cun.auge.dal.domain.StationNewCustomerExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationNewCustomerMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.convert.StationNewCustomerConverter;
 import com.taobao.cun.auge.station.dto.StationNewCustomerDailyTaskDto;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.StationNewCustomerService;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
@@ -164,7 +166,10 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      */
     private void addNewCustomerUserTag(Long taobaoUserId) {
         if (!userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
-            userTagService.addTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+            boolean tagResult = userTagService.addTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+            if (!tagResult) {
+                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "打标失败。taobaoUserId=" + taobaoUserId);
+            }
             updateTagAddTime(taobaoUserId);
         }
     }
@@ -176,7 +181,11 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      */
     private void removeNewCustomerUserTag(Long taobaoUserId) {
         if (userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
-            userTagService.removeTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+            boolean tagResult = userTagService.removeTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+
+            if (!tagResult) {
+                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "去标失败。taobaoUserId=" + taobaoUserId);
+            }
             updateTagRemoveTime(taobaoUserId);
         }
     }
