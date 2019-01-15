@@ -49,7 +49,7 @@ public class ProtocolTypeEnum implements Serializable {
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE", "招募项目告知协议");
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE_TPS = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE_TPS", "体验店招募项目告知协议");
     
-    public static final ProtocolTypeEnum PARTNER_QUIT_PRO_TPS = new ProtocolTypeEnum("PARTNER_QUIT_PRO_TPS", "合伙人退出协议");
+    public static final ProtocolTypeEnum PARTNER_QUIT_PRO_TPS = new ProtocolTypeEnum("PARTNER_QUIT_PRO_TPS", "体验店合伙人退出协议");
 
     public static final ProtocolTypeEnum EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT = new ProtocolTypeEnum("EXPERIENCE_GOODS_SUPPLEMENT_AGREEMENT", "体验货品补货协议");
 

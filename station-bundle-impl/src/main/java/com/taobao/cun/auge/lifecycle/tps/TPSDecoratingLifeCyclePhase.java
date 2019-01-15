@@ -56,7 +56,6 @@ import com.taobao.cun.auge.store.service.StoreWriteService;
 @Component
 @Phase(type="TPS",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
 public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
-
 	@Autowired
 	private StationBO stationBO;
 	
@@ -91,13 +90,11 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		stationBO.updateStation(stationDto);
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新村小二信息")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nonthing
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新村小二实例状态到装修中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
@@ -108,7 +105,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);
 		}
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
@@ -141,7 +137,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 		}
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
@@ -150,7 +145,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			   // 合伙人停业审核拒绝了，删除停业协议
 			  //合伙人发起的删除停业协议
 			 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())){
-				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceDto.getId(),
+				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO_TPS, partnerInstanceDto.getId(),
 			     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceDto.getOperator());
 			 }
 	       
@@ -185,7 +180,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
 		}
 	}
-
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 
@@ -203,12 +197,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
 			}
 	}
-	
-	
-	
-
-
-	
 	/**
 	 * 设置关系表为装修中
 	 */
