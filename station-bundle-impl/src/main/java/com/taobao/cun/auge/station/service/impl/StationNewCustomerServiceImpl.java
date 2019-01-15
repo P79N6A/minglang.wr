@@ -27,7 +27,7 @@ import java.util.List;
 
 
 @Service("stationNewCustomerService")
-@HSFProvider(serviceInterface = StationNewCustomerService.class,clientTimeout =10000)
+@HSFProvider(serviceInterface = StationNewCustomerService.class, clientTimeout = 10000)
 public class StationNewCustomerServiceImpl implements StationNewCustomerService {
 
     @Autowired
@@ -131,7 +131,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
         buildRateTime(newCustomer);
 
-        if("n".equalsIgnoreCase(taskDto.getRisk())){
+        if ("n".equalsIgnoreCase(taskDto.getRisk())) {
             newCustomer.setTagAddTime(new Date());
         }
 
