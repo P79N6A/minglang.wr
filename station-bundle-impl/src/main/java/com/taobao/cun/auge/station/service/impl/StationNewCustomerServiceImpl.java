@@ -94,7 +94,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
     private void updateNewCustomer(StationNewCustomerDailyTaskDto taskDto) {
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
-        StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
+        StationNewCustomer newCustomer = StationNewCustomerConverter.convertToUpdate(taskDto);
         DomainUtils.beforeUpdate(newCustomer, "system");
 
         StationNewCustomerExample example = new StationNewCustomerExample();
