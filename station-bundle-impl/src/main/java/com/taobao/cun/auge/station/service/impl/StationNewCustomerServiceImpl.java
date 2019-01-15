@@ -92,14 +92,16 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      * @param taskDto
      */
     private void updateNewCustomer(StationNewCustomerDailyTaskDto taskDto) {
-        //风险用户
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
+        StationNewCustomer record = StationNewCustomerConverter.convert(taskDto);
+
+        //风险用户，去标，去缓存
         if ("y".equalsIgnoreCase(taskDto.getRisk())) {
             removeNewCustomerUserTag(taobaoUserId);
+            record.setTagRmTime(new Date());
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
         }
-        StationNewCustomer record = StationNewCustomerConverter.convert(taskDto);
         DomainUtils.beforeUpdate(record, "system");
 
         StationNewCustomerExample example = new StationNewCustomerExample();
@@ -128,6 +130,10 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
 
         StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
         buildRateTime(newCustomer);
+
+        if("n".equalsIgnoreCase(taskDto.getRisk())){
+            newCustomer.setTagAddTime(new Date());
+        }
 
         DomainUtils.beforeInsert(newCustomer, "system");
         stationNewCustomerMapper.insertSelective(newCustomer);
