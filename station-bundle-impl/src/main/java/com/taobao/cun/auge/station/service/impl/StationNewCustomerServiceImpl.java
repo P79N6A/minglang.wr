@@ -94,15 +94,8 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
     private void updateNewCustomer(StationNewCustomerDailyTaskDto taskDto) {
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
-        StationNewCustomer record = StationNewCustomerConverter.convert(taskDto);
-
-        //风险用户，去标，去缓存
-        if ("y".equalsIgnoreCase(taskDto.getRisk())) {
-            removeNewCustomerUserTag(taobaoUserId);
-            record.setTagRmTime(new Date());
-            newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
-        }
-        DomainUtils.beforeUpdate(record, "system");
+        StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
+        DomainUtils.beforeUpdate(newCustomer, "system");
 
         StationNewCustomerExample example = new StationNewCustomerExample();
 
@@ -111,10 +104,15 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         criteria.andTaobaoUserIdEqualTo(taobaoUserId);
         criteria.andIsDeletedEqualTo("n");
 
-        stationNewCustomerMapper.updateByExampleSelective(record, example);
+        stationNewCustomerMapper.updateByExampleSelective(newCustomer, example);
 
-        //非风险用户，信息变更，更新缓存
-        if ("n".equalsIgnoreCase(taskDto.getRisk())) {
+        //风险用户，去标，去缓存
+        if ("y".equalsIgnoreCase(taskDto.getRisk())) {
+            removeNewCustomerUserTag(taobaoUserId);
+            newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
+        } else {
+            addNewCustomerUserTag(taobaoUserId);
+
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
         }
@@ -129,11 +127,6 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
         StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
-        buildRateTime(newCustomer);
-
-        if ("n".equalsIgnoreCase(taskDto.getRisk())) {
-            newCustomer.setTagAddTime(new Date());
-        }
 
         DomainUtils.beforeInsert(newCustomer, "system");
         stationNewCustomerMapper.insertSelective(newCustomer);
@@ -172,6 +165,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
     private void addNewCustomerUserTag(Long taobaoUserId) {
         if (!userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
             userTagService.addTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+            updateTagAddTime(taobaoUserId);
         }
     }
 
@@ -183,6 +177,50 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
     private void removeNewCustomerUserTag(Long taobaoUserId) {
         if (userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
             userTagService.removeTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
+            updateTagRemoveTime(taobaoUserId);
         }
+    }
+
+    /**
+     * 修改打标时间
+     *
+     * @param taobaoUserId
+     */
+    private void updateTagAddTime(Long taobaoUserId) {
+        StationNewCustomer newCustomer = new StationNewCustomer();
+        newCustomer.setTagAddTime(new Date());
+
+        buildRateTime(newCustomer);
+
+        DomainUtils.beforeUpdate(newCustomer, "system");
+
+        StationNewCustomerExample example = new StationNewCustomerExample();
+
+        Criteria criteria = example.createCriteria();
+
+        criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+        criteria.andIsDeletedEqualTo("n");
+
+        stationNewCustomerMapper.updateByExampleSelective(newCustomer, example);
+    }
+
+    /**
+     * 修改打标时间
+     *
+     * @param taobaoUserId
+     */
+    private void updateTagRemoveTime(Long taobaoUserId) {
+        StationNewCustomer newCustomer = new StationNewCustomer();
+        newCustomer.setTagRmTime(new Date());
+        DomainUtils.beforeUpdate(newCustomer, "system");
+
+        StationNewCustomerExample example = new StationNewCustomerExample();
+
+        Criteria criteria = example.createCriteria();
+
+        criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+        criteria.andIsDeletedEqualTo("n");
+
+        stationNewCustomerMapper.updateByExampleSelective(newCustomer, example);
     }
 }
