@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class StationNewCustomerDailyTaskDto implements Serializable {
 
+    private static final long serialVersionUID = -3414974273909149856L;
     @NotNull(message = "taobaoUserId is null")
     private Long taobaoUserId;
 
