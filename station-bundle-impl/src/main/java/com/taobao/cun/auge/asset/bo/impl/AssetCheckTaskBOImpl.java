@@ -316,6 +316,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
 		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
+			try {
 			   CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
 	            executeDto.setLoginId(param.getOperator());
 	            executeDto.setRemark("完成盘点任务");
@@ -328,6 +329,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 	           
 	            executeDto.setAction(NodeActionEnum.AGREE);
 	            cuntaoWorkFlowService.executeTask(executeDto);
+			}catch(Exception e) {}
 		}
 		return  Boolean.TRUE;
 	}

@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.level.bo.TownLevelBo;
+import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelCondition;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -23,4 +24,19 @@ public class TownLevelServiceImpl implements TownLevelService {
 		return townLevelBo.query(townLevelCondition);
 	}
 
+	@Override
+	public TownLevelCalcResult calcTownLevel(Long id) {
+		return townLevelBo.calcTownLevel(id);
+	}
+
+	@Override
+	public int getStationNumInTown(String townCode) {
+		return townLevelBo.getStationNumInTown(townCode);
+	}
+
+	@Override
+	public TownLevelCalcResult calcTownLevel(TownLevelDto townLevelDto) {
+		return townLevelBo.calcTownLevel(townLevelDto);
+	}
+	
 }
