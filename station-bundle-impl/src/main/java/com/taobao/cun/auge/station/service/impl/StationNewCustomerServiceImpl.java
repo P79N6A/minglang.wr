@@ -226,7 +226,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         c.setTime(realInterestTime);
 
         //首登时间+2天
-        c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 2);
+        c.add(Calendar.DAY_OF_MONTH, 2);
 
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
