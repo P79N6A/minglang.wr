@@ -236,7 +236,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
 
         //结束时间为开始时间+180天
         Integer stationNewCustomerRateTime = diamondConfiguredProperties.getStationNewCustomerRateTime();
-        c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + stationNewCustomerRateTime);
+        c.add(Calendar.DAY_OF_MONTH, stationNewCustomerRateTime);
 
         newCustomer.setRateEndTime(c.getTime());
     }
