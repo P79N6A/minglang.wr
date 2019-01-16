@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -23,6 +25,7 @@ public class StationNewCustomerDailyTaskDto implements Serializable {
 
     private String preInterestTime;
 
+    @NotBlank(message="realInterestTime is null")
     private String realInterestTime;
 
     private String finishCpaTime;

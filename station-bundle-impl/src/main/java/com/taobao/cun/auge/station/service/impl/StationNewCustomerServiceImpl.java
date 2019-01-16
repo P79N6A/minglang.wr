@@ -17,12 +17,16 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +35,8 @@ import java.util.List;
 @Service("stationNewCustomerService")
 @HSFProvider(serviceInterface = StationNewCustomerService.class, clientTimeout = 10000)
 public class StationNewCustomerServiceImpl implements StationNewCustomerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(StationNewCustomerService.class);
 
     @Autowired
     private NewCustomerUnitQueryService newCustomerUnitQueryService;
@@ -101,10 +107,20 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
 
         //风险用户，去标，去缓存
         if ("y".equalsIgnoreCase(taskDto.getRisk())) {
+            //去标
             removeNewCustomerUserTag(taobaoUserId);
+            //更新去标时间
+            updateTagRemoveTime(taobaoUserId);
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
         } else {
+            //先转换首登时间，如果时间，抛异常，跳出去
+            Date realInterestTime = buildRealInterestTime(taskDto.getRealInterestTime());
+
+            //只有首登时间，解析成功后，再去打标，并更新打标时间
             addNewCustomerUserTag(taobaoUserId);
+
+            //更新打标时间
+            updateTagAddTime(taobaoUserId, realInterestTime);
 
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
@@ -126,11 +142,32 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
 
         //非风险用户，打标，新增缓存
         if ("n".equalsIgnoreCase(taskDto.getRisk())) {
+            //先转换首登时间，如果时间，抛异常，跳出去
+            Date realInterestTime = buildRealInterestTime(taskDto.getRealInterestTime());
             //打标
             addNewCustomerUserTag(taobaoUserId);
 
+            //更新打标时间
+            updateTagAddTime(taobaoUserId, realInterestTime);
+
             //初始化缓存
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
+        }
+    }
+
+    /**
+     * 转换首登时间
+     *
+     * @param realInterestTime
+     * @return
+     */
+    private Date buildRealInterestTime(String realInterestTime) {
+        try {
+            SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return TIME_FORMAT.parse(realInterestTime);
+        } catch (ParseException e) {
+            logger.error("Failed to parse realInterestTime.realInterestTime = " + realInterestTime, e);
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "Failed to parse realInterestTime.realInterestTime = " + realInterestTime);
         }
     }
 
@@ -143,9 +180,10 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         if (!userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
             boolean tagResult = userTagService.addTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
             if (!tagResult) {
-                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "打标失败。taobaoUserId=" + taobaoUserId);
+                logger.error("Failed to add tag。taobaoUserId=" + taobaoUserId);
+                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "Failed to add tag。taobaoUserId=" + taobaoUserId);
             }
-            updateTagAddTime(taobaoUserId);
+
         }
     }
 
@@ -157,11 +195,10 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
     private void removeNewCustomerUserTag(Long taobaoUserId) {
         if (userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
             boolean tagResult = userTagService.removeTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
-
             if (!tagResult) {
-                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "去标失败。taobaoUserId=" + taobaoUserId);
+                logger.error("Failed to remove tag。taobaoUserId=" + taobaoUserId);
+                throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "Failed to remove tag。taobaoUserId=" + taobaoUserId);
             }
-            updateTagRemoveTime(taobaoUserId);
         }
     }
 
@@ -170,11 +207,11 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      *
      * @param taobaoUserId
      */
-    private void updateTagAddTime(Long taobaoUserId) {
+    private void updateTagAddTime(Long taobaoUserId, Date realInterestTime) {
         StationNewCustomer newCustomer = new StationNewCustomer();
 
         newCustomer.setTagAddTime(new Date());
-        buildRateTime(newCustomer);
+        buildRateTime(newCustomer, realInterestTime);
 
         updateNewCustomer(taobaoUserId, newCustomer);
     }
@@ -184,14 +221,23 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      *
      * @param newCustomer
      */
-    private void buildRateTime(StationNewCustomer newCustomer) {
-        //开始时间为插入时间
-        newCustomer.setRateBeginTime(new Date());
-
-        Integer stationNewCustomerRateTime = diamondConfiguredProperties.getStationNewCustomerRateTime();
+    private void buildRateTime(StationNewCustomer newCustomer, Date realInterestTime) {
         Calendar c = Calendar.getInstance();
+        c.setTime(realInterestTime);
+
+        //首登时间+2天
+        c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 2);
+
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+
+        newCustomer.setRateBeginTime(c.getTime());
+
+        //结束时间为开始时间+180天
+        Integer stationNewCustomerRateTime = diamondConfiguredProperties.getStationNewCustomerRateTime();
         c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + stationNewCustomerRateTime);
-        //结束时间为插入时间+180天
+
         newCustomer.setRateEndTime(c.getTime());
     }
 
