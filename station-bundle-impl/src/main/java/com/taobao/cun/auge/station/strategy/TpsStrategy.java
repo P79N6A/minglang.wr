@@ -316,6 +316,12 @@ public class TpsStrategy  extends CommonStrategy implements PartnerInstanceStrat
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
 		}
 		
+		//如果是从装修中停业，则需要判断村点是否退出了装修
+		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
+				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
+		}
+		//判断培训课程否是已经退款或签到
+		partnerPeixunBO.validateQuitable(partnerStationRel.getTaobaoUserId());
 	}
 
 	@Override

@@ -2091,21 +2091,28 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     public void signProjectNoticeProtocol(Long taobaoUserId) {
         ValidateUtils.notNull(taobaoUserId);
         PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
-
         Assert.notNull(paDto, "partner apply not exists");
+        String taobaoID= String.valueOf(taobaoUserId);
         
         if (PartnerApplyConfirmIntentionEnum.TPS_ELEC.getCode().equals(paDto.getConfirmIntention())) {
-        	 PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
+        	Date date = new Date();
+        	PartnerProtocolRelDto pprDto = null;
+        	partnerProtocolRelBO.getPartnerProtocolRelDto(
         	            ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS, paDto.getId(),
         	            PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
-        	        if (pprDto != null) {
-        	            return;
-        	        }
-        	        Date date = new Date();
-        	        partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS,
+	        if (pprDto == null) {
+	        	 partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS,
+	        	            date, date, date,
+	        	            taobaoID, PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+	        }
+	        pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
+    	            ProtocolTypeEnum.PARTNER_APPLY_MANAGER_STANDARD_TPS, paDto.getId(),
+    	            PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+	        if (pprDto == null) {
+        	 partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_MANAGER_STANDARD_TPS,
         	            date, date, date,
-        	            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
-
+        	            taobaoID, PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+	        }
         }else {
 	        PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(
 	            ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(),
@@ -2116,7 +2123,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	        Date date = new Date();
 	        partnerProtocolRelBO.signProtocol(paDto.getId(), taobaoUserId, ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE,
 	            date, date, date,
-	            String.valueOf(taobaoUserId), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+	            taobaoID, PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
         }
 
     }
