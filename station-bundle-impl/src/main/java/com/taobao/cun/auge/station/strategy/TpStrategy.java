@@ -256,6 +256,17 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				}
 			}
 		}
+		
+		UnionMemberPageCondition  con = new UnionMemberPageCondition();
+		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
+		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		con.setParentStationId(instance.getStationId());
+		con.setPageNum(1);
+		con.setPageSize(10);
+		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+		if (CollectionUtils.isNotEmpty(umList.getItems())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
+		}
 	}
 	
 	@Override
@@ -734,12 +745,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
-		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
-				operatorDto);
-
-		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
-		rewardParentTp(taobaoUserId, operatorDto);
+		//淘帮手业务已经下线
+//		// 合伙人进入服务中，默认拥有3个淘帮手名额
+//		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
+//				operatorDto);
+//
+//		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
+//		rewardParentTp(taobaoUserId, operatorDto);
 	}
 
 	// 如果该账号以前是淘帮手，则奖励其原有合伙人1个淘帮手名额
