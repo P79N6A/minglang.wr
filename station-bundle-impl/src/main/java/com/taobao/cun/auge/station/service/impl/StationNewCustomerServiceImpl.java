@@ -97,16 +97,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
         StationNewCustomer newCustomer = StationNewCustomerConverter.convertToUpdate(taskDto);
-        DomainUtils.beforeUpdate(newCustomer, "system");
-
-        StationNewCustomerExample example = new StationNewCustomerExample();
-
-        Criteria criteria = example.createCriteria();
-
-        criteria.andTaobaoUserIdEqualTo(taobaoUserId);
-        criteria.andIsDeletedEqualTo("n");
-
-        stationNewCustomerMapper.updateByExampleSelective(newCustomer, example);
+        updateNewCustomer(taobaoUserId, newCustomer);
 
         //风险用户，去标，去缓存
         if ("y".equalsIgnoreCase(taskDto.getRisk())) {
@@ -141,22 +132,6 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
             //初始化缓存
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
         }
-    }
-
-    /**
-     * 组装权益开始时间，结束时间
-     *
-     * @param newCustomer
-     */
-    private void buildRateTime(StationNewCustomer newCustomer) {
-        //开始时间为插入时间
-        newCustomer.setRateBeginTime(new Date());
-
-        Integer stationNewCustomerRateTime = diamondConfiguredProperties.getStationNewCustomerRateTime();
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + stationNewCustomerRateTime);
-        //结束时间为插入时间+180天
-        newCustomer.setRateEndTime(c.getTime());
     }
 
     /**
@@ -197,20 +172,27 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      */
     private void updateTagAddTime(Long taobaoUserId) {
         StationNewCustomer newCustomer = new StationNewCustomer();
-        newCustomer.setTagAddTime(new Date());
 
+        newCustomer.setTagAddTime(new Date());
         buildRateTime(newCustomer);
 
-        DomainUtils.beforeUpdate(newCustomer, "system");
+        updateNewCustomer(taobaoUserId, newCustomer);
+    }
 
-        StationNewCustomerExample example = new StationNewCustomerExample();
+    /**
+     * 组装权益开始时间，结束时间
+     *
+     * @param newCustomer
+     */
+    private void buildRateTime(StationNewCustomer newCustomer) {
+        //开始时间为插入时间
+        newCustomer.setRateBeginTime(new Date());
 
-        Criteria criteria = example.createCriteria();
-
-        criteria.andTaobaoUserIdEqualTo(taobaoUserId);
-        criteria.andIsDeletedEqualTo("n");
-
-        stationNewCustomerMapper.updateByExampleSelective(newCustomer, example);
+        Integer stationNewCustomerRateTime = diamondConfiguredProperties.getStationNewCustomerRateTime();
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + stationNewCustomerRateTime);
+        //结束时间为插入时间+180天
+        newCustomer.setRateEndTime(c.getTime());
     }
 
     /**
@@ -220,7 +202,13 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      */
     private void updateTagRemoveTime(Long taobaoUserId) {
         StationNewCustomer newCustomer = new StationNewCustomer();
+
         newCustomer.setTagRmTime(new Date());
+
+        updateNewCustomer(taobaoUserId, newCustomer);
+    }
+
+    private void updateNewCustomer(Long taobaoUserId, StationNewCustomer newCustomer) {
         DomainUtils.beforeUpdate(newCustomer, "system");
 
         StationNewCustomerExample example = new StationNewCustomerExample();

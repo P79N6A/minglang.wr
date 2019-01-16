@@ -11,38 +11,29 @@ import java.io.Serializable;
 public class StationNewCustomerDailyTaskDto implements Serializable {
 
     private static final long serialVersionUID = -3414974273909149856L;
+
     @NotNull(message = "taobaoUserId is null")
     private Long taobaoUserId;
 
     private String mobile;
 
-
     private Long stationId;
-
 
     private String adzoneId;
 
-
     private String preInterestTime;
-
 
     private String realInterestTime;
 
-
     private String finishCpaTime;
-
 
     private String cpaConstraintTime;
 
-
     private Long status;
-
 
     private String risk;
 
-
     private String ms;
-
 
     public Long getTaobaoUserId() {
         return taobaoUserId;
