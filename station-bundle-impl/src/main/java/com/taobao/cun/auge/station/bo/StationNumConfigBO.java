@@ -35,4 +35,14 @@ public interface StationNumConfigBO {
 	 */
 	
 	public String createStationNum(String provinceCode,StationNumConfigTypeEnum typeEnum,int level);
+
+	/**
+	 * 创建优盟站点编号
+	 *
+	 * @param provinceCode
+	 * @param typeEnum
+	 * @param level
+	 * @return
+	 */
+	public String createUmStationNum(String provinceCode,StationNumConfigTypeEnum typeEnum,int level);
 }
