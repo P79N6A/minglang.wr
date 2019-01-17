@@ -117,10 +117,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
             Date realInterestTime = buildRealInterestTime(taskDto.getRealInterestTime());
 
             //只有首登时间，解析成功后，再去打标，并更新打标时间
-            addNewCustomerUserTag(taobaoUserId);
-
-            //更新打标时间
-            updateTagAddTime(taobaoUserId, realInterestTime);
+            addNewCustomerUserTag(taobaoUserId, realInterestTime);
 
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
@@ -145,10 +142,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
             //先转换首登时间，如果时间，抛异常，跳出去
             Date realInterestTime = buildRealInterestTime(taskDto.getRealInterestTime());
             //打标
-            addNewCustomerUserTag(taobaoUserId);
-
-            //更新打标时间
-            updateTagAddTime(taobaoUserId, realInterestTime);
+            addNewCustomerUserTag(taobaoUserId, realInterestTime);
 
             //初始化缓存
             newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
@@ -176,14 +170,15 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
      *
      * @param taobaoUserId
      */
-    private void addNewCustomerUserTag(Long taobaoUserId) {
+    private void addNewCustomerUserTag(Long taobaoUserId, Date realInterestTime) {
         if (!userTagService.hasTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag())) {
             boolean tagResult = userTagService.addTag(taobaoUserId, UserTag.STATION_NEW_CUSTOMER_TAG.getTag());
             if (!tagResult) {
                 logger.error("Failed to add tag。taobaoUserId=" + taobaoUserId);
                 throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "Failed to add tag。taobaoUserId=" + taobaoUserId);
             }
-
+            //更新打标时间
+            updateTagAddTime(taobaoUserId, realInterestTime);
         }
     }
 
