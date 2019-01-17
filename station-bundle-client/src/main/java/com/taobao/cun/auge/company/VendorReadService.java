@@ -24,12 +24,23 @@ public interface VendorReadService {
 	 * 单个查询服务商
 	 */
 	Result<CuntaoServiceVendorDto> queryVendorByID(Long id);
+
+	/**
+	 * 单个查询服务商
+	 */
+	Result<CuntaoServiceVendorDto> queryVendorByStoreId(Long storeId);
 	
 	/**
 	 * ID批量查询服务商
 	 */
 	
 	Result<List<CuntaoServiceVendorDto>> queryVendorByIDS(List<Long> ids);
+
+	/**
+	 * taobaoUserID批量查询服务商
+	 */
+
+	Result<List<CuntaoServiceVendorDto>> queryVendorByTaobaoUserIDS(List<Long> taobaoUserIds);
 
 	/**
 	 * 根据淘宝UserId查询
@@ -44,5 +55,6 @@ public interface VendorReadService {
 	 * @param taobaoUserId
 	 * @return
 	 */
+	@Deprecated
 	Result<CuntaoServiceVendorDto> queryVendorByEmployeeTaobaoUserID(Long taobaoUserId);
 }

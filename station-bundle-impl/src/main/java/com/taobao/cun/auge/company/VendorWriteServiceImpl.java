@@ -61,7 +61,43 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	
 	@Autowired
 	private VendorWriteBO vendorWriteBO;
-	
+
+	@Override
+	public Result<Long> addNewVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
+		Result<Long> result = null;
+		ErrorInfo errorInfo = checkAddCuntaoVendorDto(cuntaoServiceVendorDto);
+		//TODO 效验规则细化
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoNick());
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		errorInfo = checkTaobaoNickExists(cuntaoServiceVendorDto.getTaobaoNick(),"淘宝账号已存在!");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		errorInfo = checkCompanyExists(cuntaoServiceVendorDto.getCompanyName(),"公司名称已存在!");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		if(StringUtils.isNotEmpty(cuntaoServiceVendorDto.getMobile())){
+			errorInfo =  checkMobileExists(cuntaoServiceVendorDto.getMobile(),"公司手机号已存在!");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+		}
+		try {
+			result = Result.of(vendorWriteBO.addNewVendor(cuntaoServiceVendorDto));
+			return result;
+		} catch (Exception e) {
+			logger.error("addNewVendor error!",e);
+			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
 	@SuppressWarnings("static-access")
 	@Override
 	public Result<Long> addVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
