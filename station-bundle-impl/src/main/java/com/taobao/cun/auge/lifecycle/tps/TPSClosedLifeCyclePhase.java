@@ -2,9 +2,12 @@ package com.taobao.cun.auge.lifecycle.tps;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -16,6 +19,7 @@ import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.tp.TPClosedLifeCyclePhase;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -39,6 +43,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 @Component
 @Phase(type="TPS",event=StateMachineEvent.CLOSED_EVENT,desc="村小二已停业服务节点")
 public class TPSClosedLifeCyclePhase extends AbstractLifeCyclePhase{
+	
+	private static final Logger logger = LoggerFactory.getLogger(TPSClosedLifeCyclePhase.class);
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -51,6 +57,8 @@ public class TPSClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private QuitStationApplyBO quitStationApplyBO;
+	@Autowired
+	private AssetBO assetBO;
 	
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
@@ -124,9 +132,16 @@ public class TPSClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//设置资产状态为待回收
+		assetBO.setAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
 		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}
+		try {
+			partnerInstanceBO.cancelShopMirror(partnerInstanceDto.getTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("cancelShopMirror failed["+partnerInstanceDto.getTaobaoUserId()+"]", e);
+		}
+		
 	}
 
 	@Override

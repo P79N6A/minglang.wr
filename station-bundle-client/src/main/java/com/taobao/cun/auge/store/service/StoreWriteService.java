@@ -113,11 +113,11 @@ public interface StoreWriteService {
 	
 	public void syncStore();
 	/**
-	 * 
+	 * 去除配送接单能力
 	 * @param operator
 	 * @param storeId
 	 * @return
 	 */
-	public Boolean disableByStoreId(String operator, Long storeId);
+	public Boolean disableByTabaoUserId(Long taobaoUserId);
 
 }
