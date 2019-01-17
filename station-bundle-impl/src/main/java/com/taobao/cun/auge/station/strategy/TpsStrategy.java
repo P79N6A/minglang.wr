@@ -352,7 +352,6 @@ public class TpsStrategy  extends CommonStrategy implements PartnerInstanceStrat
 		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
-		
 	}
 
 	@Override
@@ -373,7 +372,6 @@ public class TpsStrategy  extends CommonStrategy implements PartnerInstanceStrat
 		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
-		
 	}
 
 	@Override

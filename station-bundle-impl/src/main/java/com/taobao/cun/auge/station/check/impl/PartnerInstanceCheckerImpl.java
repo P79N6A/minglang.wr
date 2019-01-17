@@ -20,13 +20,11 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
-import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
 import com.taobao.cun.order.fulfillment.common.Result;
 import com.taobao.cun.order.fulfillment.result.CtFulFillStockDTO;
@@ -71,6 +69,9 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	
 	@Autowired
 	private CuntaoNewBailService cuntaoNewBailService;
+	@Autowired
+	StoreReadService storeReadService;
+	
 	 
 	@Override
 	public void checkCloseApply(Long instanceId) {
@@ -107,6 +108,14 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 				 }
 			 }
 			
+		}
+		
+		try {
+			storeReadService.serviceJudgmentForStoreQuit(store.getShareStoreId());
+		} catch (AugeBusinessException e1) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,e1.getMessage());
+		}catch (Exception e1) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"门店服务退出校验，系统异常");
 		}
 		
 		//
