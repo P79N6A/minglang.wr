@@ -109,8 +109,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         if ("y".equalsIgnoreCase(taskDto.getRisk())) {
             //去标
             removeNewCustomerUserTag(taobaoUserId);
-            //更新去标时间
-            updateTagRemoveTime(taobaoUserId);
+
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
         } else {
             //先转换首登时间，如果时间，抛异常，跳出去
@@ -194,6 +193,8 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
                 logger.error("Failed to remove tag。taobaoUserId=" + taobaoUserId);
                 throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "Failed to remove tag。taobaoUserId=" + taobaoUserId);
             }
+            //更新去标时间
+            updateTagRemoveTime(taobaoUserId);
         }
     }
 
