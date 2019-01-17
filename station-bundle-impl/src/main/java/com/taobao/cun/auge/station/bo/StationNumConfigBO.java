@@ -37,7 +37,9 @@ public interface StationNumConfigBO {
 	public String createStationNum(String provinceCode,StationNumConfigTypeEnum typeEnum,int level);
 
 	/**
-	 * 创建优盟站点编号
+	 * 创建优盟站点编号,重新写一个，目的是为了降低编号重复
+	 *
+	 * 和createStationNum的区别是，生成新编号后，已经将config表更新了
 	 *
 	 * @param provinceCode
 	 * @param typeEnum

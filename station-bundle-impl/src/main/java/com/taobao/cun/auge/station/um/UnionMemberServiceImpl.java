@@ -439,11 +439,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 continue;
             }
 
-            String newStationNum = stationNumConfigBO.createStationNum(province, typeEnum, 0);
+            String newStationNum = stationNumConfigBO.createUmStationNum(province, typeEnum, 0);
 
             stationBO.updateStationNum(station.getId(), newStationNum);
-
-            stationNumConfigBO.updateSeqNumByStationNum(province, typeEnum, newStationNum);
         }
     }
 }
