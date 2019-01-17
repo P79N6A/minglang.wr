@@ -113,7 +113,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
-            logger.error(PARTNER_ADZONE_ERROR + "create adzone erroor: {}, {}", JSON.toJSONString(variables),
+            logger.error(PARTNER_ADZONE_ERROR + "create adzone error: {}, {}", JSON.toJSONString(variables),
                 result.toString());
             throw new AugeSystemException(result.toString());
         }
