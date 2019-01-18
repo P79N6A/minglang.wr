@@ -182,9 +182,9 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
                 logger.error("Failed to add tag。taobaoUserId=" + taobaoUserId);
                 throw new AugeBusinessException(AugeErrorCodes.USER_TAG_ERROR_CODE, "Failed to add tag。taobaoUserId=" + taobaoUserId);
             }
+            //更新打标时间
+            updateTagAddTime(taobaoUserId, realInterestTime);
         }
-        //更新打标时间
-        updateTagAddTime(taobaoUserId, realInterestTime);
     }
 
     /**
