@@ -17,6 +17,7 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+
+    @Resource(name = "stationNewCustomerSequence")
+    private GroupSequence stationNewCustomerSequence;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -132,6 +136,8 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
         Long taobaoUserId = taskDto.getTaobaoUserId();
 
         StationNewCustomer newCustomer = StationNewCustomerConverter.convert(taskDto);
+
+        newCustomer.setId(stationNewCustomerSequence.nextValue());
 
         DomainUtils.beforeInsert(newCustomer, "system");
         stationNewCustomerMapper.insertSelective(newCustomer);
