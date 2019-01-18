@@ -884,7 +884,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cun-partner-api</artifactId>
-				<version>1.3.3</version>
+				<version>1.3.4-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
