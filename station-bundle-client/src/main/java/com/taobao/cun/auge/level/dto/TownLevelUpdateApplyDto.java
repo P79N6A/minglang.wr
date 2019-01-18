@@ -13,7 +13,7 @@ public class TownLevelUpdateApplyDto implements Serializable {
 	private Long id;
 	@NotNull(message="镇域分层ID不能为空")
 	private Long townLevelId;
-	@Min(value=1, message="镇人口数必须是大于0的数值")
+	@Min(value=0, message="镇人口数必须是大于等于0的数值")
 	private long population;
 	@NotBlank(message="申请变更原因不能为空")
 	@Length(min=10, max=512, message="原因最少10个字符，最多512个字符")

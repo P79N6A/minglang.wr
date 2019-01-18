@@ -15,6 +15,8 @@ import com.taobao.cun.crius.bpm.enums.CuntaoProcessInstanceStatus;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = PartnerApplyWhitenameApplyService.class)
@@ -25,6 +27,8 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Resource
 	private UserFilterService userFilterService;
+	@Resource
+	private PartnerApplyService partnerApplyService;
 	
 	private static final String TASK_CODE = "partnerApplyWhitenameApply";
 	
@@ -43,12 +47,15 @@ public class PartnerApplyWhitenameApplyServiceImpl implements PartnerApplyWhiten
 			}
 		}
 		
+		PartnerApplyDto partnerApplyDto = partnerApplyService.getPartnerApplyById(partnerApplyId);
+		
 		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 		startDto.setBusinessCode(TASK_CODE);
 		startDto.setBusinessId(String.valueOf(partnerApplyId));
 		startDto.setApplierId(applierId);
 		startDto.setApplierUserType(UserTypeEnum.BUC);
+		startDto.setBusinessName("[" + partnerApplyDto.getStationAddressDetail() + "]申请开点白名单");
 		Map<String, String> initData = Maps.newHashMap();
 		initData.put("taobaoUserId", String.valueOf(taobaoUserId));
 		startDto.setInitData(initData);

@@ -14,6 +14,7 @@ import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
  * @author zhenhuan.zhangzh
  *
  */
+@Deprecated
 public interface EmployeeReadService {
 
 
@@ -56,7 +57,7 @@ public interface EmployeeReadService {
 	
 	/**
 	 * 根据taobaoUserId查询门店员工(含历史所有数据)
-	 * @param stationId
+	 * @param taobaoUserId
 	 * @return
 	 */
 	Result<List<CuntaoEmployeeInfoDto>> queryVendorEmployeeByTaobaoUserIdForBx(Long taobaoUserId);

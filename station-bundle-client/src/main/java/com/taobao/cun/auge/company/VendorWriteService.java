@@ -13,7 +13,14 @@ public interface VendorWriteService {
 
 	/**
 	 * 新增合作公司和管理员
-	 * @param serviceVendor
+	 * @param cuntaoCompanyDto
+	 * @return
+	 */
+	Result<Long> addNewVendor(CuntaoServiceVendorDto cuntaoCompanyDto);
+
+	/**
+	 * 新增合作公司和管理员
+	 * @param cuntaoCompanyDto
 	 * @return
 	 */
 	Result<Long> addVendor(CuntaoServiceVendorDto cuntaoCompanyDto);
@@ -27,7 +34,8 @@ public interface VendorWriteService {
 	
 	/**
 	 * 删除服务供应商
-	 * @param serviceVendorId
+	 * @param companyId
+     * @param operator
 	 * @return
 	 */
 	Result<Boolean> removeVendor(Long companyId,String operator);

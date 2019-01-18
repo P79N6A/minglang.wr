@@ -317,21 +317,20 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			assetCheckInfoBO.confrimCheckInfoForSystemToCounty(at.getOrgId(), param.getOperator());
 		}
 		if(!AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(status)) {
-			   try {
-				CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
-				    executeDto.setLoginId(param.getOperator());
-				    executeDto.setRemark("完成盘点任务");
-				    executeDto.setObjectId(String.valueOf(at.getId()));
-				    if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(at.getTaskType())) {
-				    	 executeDto.setBusinessCode("assetCheckCountyTask");
-				    }else if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(at.getTaskType())) {
-				    	 executeDto.setBusinessCode("assetCheckCountyFollowTask");
-				    }
-				   
-				    executeDto.setAction(NodeActionEnum.AGREE);
-				    cuntaoWorkFlowService.executeTask(executeDto);
-			} catch (CuntaoWorkFlowException e) {
-			}
+			try {
+			   CuntaoTaskExecuteDto executeDto = new CuntaoTaskExecuteDto();
+	            executeDto.setLoginId(param.getOperator());
+	            executeDto.setRemark("完成盘点任务");
+	            executeDto.setObjectId(String.valueOf(at.getId()));
+	            if (AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode().equals(at.getTaskType())) {
+	            	 executeDto.setBusinessCode("assetCheckCountyTask");
+	            }else if(AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode().equals(at.getTaskType())) {
+	            	 executeDto.setBusinessCode("assetCheckCountyFollowTask");
+	            }
+	           
+	            executeDto.setAction(NodeActionEnum.AGREE);
+	            cuntaoWorkFlowService.executeTask(executeDto);
+			}catch(Exception e) {}
 		}
 		return  Boolean.TRUE;
 	}

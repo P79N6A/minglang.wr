@@ -22,6 +22,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +43,9 @@ public class VendorReadServiceImpl implements VendorReadService{
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
+
+	@Autowired
+	private StoreReadBO storeReadBO;
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorReadServiceImpl.class);
@@ -90,6 +95,15 @@ public class VendorReadServiceImpl implements VendorReadService{
 	}
 
 	@Override
+	public Result<CuntaoServiceVendorDto> queryVendorByStoreId(Long storeId) {
+		StoreDto storeDto = storeReadBO.getStoreBySharedStoreId(storeId);
+		if(null == storeDto){
+			return Result.of(ErrorInfo.of(AugeErrorCodes.STORE_DATA_NOT_EXISTS_ERROR_CODE, null, "门店不存在"));
+		}
+		return queryVendorByTaobaoUserID(storeDto.getTaobaoUserId());
+	}
+
+	@Override
 	public Result<List<CuntaoServiceVendorDto>> queryVendorByIDS(List<Long> ids) {
 		try {
 			CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
@@ -99,6 +113,21 @@ public class VendorReadServiceImpl implements VendorReadService{
 			return Result.of(VendorConverter.convert2CuntaoVendorDtoList(vendors));
 		} catch (Exception e) {
 			logger.error("queryVendorByIDS error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+	@Override
+	public Result<List<CuntaoServiceVendorDto>> queryVendorByTaobaoUserIDS(List<Long> taobaoUserIds) {
+		try {
+			CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+			Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n");
+			criteria.andTaobaoUserIdIn(taobaoUserIds);
+			List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(example);
+			return Result.of(VendorConverter.convert2CuntaoVendorDtoList(vendors));
+		} catch (Exception e) {
+			logger.error("queryVendorByTaobaoUserIDS error!",e);
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
@@ -127,22 +156,7 @@ public class VendorReadServiceImpl implements VendorReadService{
 
 	@Override
 	public Result<CuntaoServiceVendorDto> queryVendorByEmployeeTaobaoUserID(Long taobaoUserId) {
-		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andTaobaoUserIdEqualTo(taobaoUserId);
-		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
-		if(employees != null && !employees.isEmpty()){
-			CuntaoEmployee employee = employees.iterator().next();
-			CuntaoEmployeeRelExample relExample = new CuntaoEmployeeRelExample(); 
-			relExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andEmployeeIdEqualTo(employee.getId());
-			 List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(relExample);
-			 if(rels != null && !rels.isEmpty()){
-				 CuntaoEmployeeRel rel = rels.iterator().next();
-				 return this.queryVendorByID(rel.getOwnerId());
-			 }
-		}
-		Result<CuntaoServiceVendorDto>	result =  Result.of(true);
-		result.setModule(null);
-		return result;
+		throw new UnsupportedOperationException("该服务已迁移，请勿使用！");
 	}
 
 }
