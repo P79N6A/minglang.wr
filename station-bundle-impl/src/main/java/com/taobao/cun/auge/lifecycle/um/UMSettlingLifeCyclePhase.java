@@ -3,6 +3,7 @@ package com.taobao.cun.auge.lifecycle.um;
 import java.util.Date;
 
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -29,6 +30,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +81,10 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
             StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
 
             String province = partnerInstanceDto.getStationDto().getAddress().getProvince();
-            String stationNum = stationNumConfigBO.createStationNum(province, typeEnum, 0);
+            String stationNum = stationNumConfigBO.createUmStationNum(province, typeEnum, 0);
             boolean lockResult= false;
             try {
-                lockResult = distributeLock.lock("unionMember-station-num", stationNum, 3);
+                lockResult = distributeLock.lock("unionMember-station-num", stationNum, 5);
                 if (!lockResult) {
                     logger.error("distributeLock failed: {}", stationNum);
                     throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "请稍后重试");
@@ -91,8 +93,8 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
 
                 //创建优盟门店
                 stationId = addUmStation(partnerInstanceDto, StationType.STATION.getType());
-                stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
-                        typeEnum, stationNum);
+//                stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(),
+//                        typeEnum, stationNum);
                 partnerInstanceDto.setStationId(stationId);
             } catch (Exception e) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "创建优盟失败，请稍后重试");
@@ -135,12 +137,20 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
         } else {
             stationDto.setTransferState(TransferState.FINISHED.name());
         }
+        checkUmStationNumDuplicate(stationDto.getStationNum());
         Long stationId = stationBO.addStation(stationDto);
         partnerInstanceDto.setStationId(stationId);
         if (partnerInstanceDto.getParentStationId() == null) {
             partnerInstanceDto.setParentStationId(stationId);
         }
         return stationId;
+    }
+
+    public void checkUmStationNumDuplicate(String newStationNum) {
+        int count = stationBO.getStationCountByStationNum(newStationNum);
+        if (count > 0) {
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "系统自动生成优盟站点编号重复，请重试");
+        }
     }
 
     @Override

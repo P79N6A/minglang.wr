@@ -51,4 +51,11 @@ public interface UnionMemberService {
      * @param operatorDto
      */
     void deleteUnionMember(Long stationId, OperatorDto operatorDto);
+
+    /**
+     * 测试接口，不可对外暴露
+     * @param stationNums
+     */
+    @Deprecated
+    public void updateUmstationNum(String stationNums);
 }
