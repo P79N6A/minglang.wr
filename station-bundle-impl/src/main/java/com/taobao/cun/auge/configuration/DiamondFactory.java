@@ -12,9 +12,18 @@ public class DiamondFactory {
     private static final String INSURANCE_DATA_ID = "insurance";
 
     private static final String INSURANCE_GROUP_ID = "whiteList";
+    
+    private static final String C2B_BIZSCOPE_KEYWORDS_DATA_ID = "c2bBizScopeKeyWords";
+    
+    private static final String C2B_BIZSCOPE_KEYWORDS_GROUP_ID = "whiteList";
+
 
     public static String getTransDiamondConfig() {
         return getDiamondConfig(TRANS_GROUP_ID, TRANS_DATA_ID);
+    }
+    
+    public static String getBizScopeKeyWordsDiamondConfig() {
+        return getDiamondConfig(C2B_BIZSCOPE_KEYWORDS_GROUP_ID, C2B_BIZSCOPE_KEYWORDS_DATA_ID);
     }
 
     public static String getInsuranceDiamondConfig() {
