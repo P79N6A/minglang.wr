@@ -243,4 +243,15 @@ public class StationBOImpl implements StationBO {
 		example.createCriteria().andApplyOrgEqualTo(orgId);
 		stationMapper.updateByExampleSelective(record, example);
 	}
+
+	@Override
+	public void updateStationNum(Long stationId, String stationNum) {
+		Station record = new Station();
+
+		record.setId(stationId);
+		record.setStationNum(stationNum);
+
+		DomainUtils.beforeUpdate(record, "system");
+		stationMapper.updateByPrimaryKeySelective(record);
+	}
 }

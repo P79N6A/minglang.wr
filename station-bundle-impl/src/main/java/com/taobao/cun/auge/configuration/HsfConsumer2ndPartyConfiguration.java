@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
 import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
+import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
@@ -94,6 +95,9 @@ import com.taobao.wws.hsf2icesrv;
 import com.tmall.usc.channel.client.UscChannelRelationService;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration  {
+
+	@HSFConsumer(serviceVersion="${new.customer.unit.service.version}",serviceGroup="HSF")
+	private NewCustomerUnitQueryService newCustomerUnitQueryService;
 
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.employeeService}",serviceGroup="HSF")
 	private Employee360Service employee360Service;
@@ -327,7 +331,7 @@ public class HsfConsumer2ndPartyConfiguration  {
 		return context.hsfConsumerBuilder(RefundReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
-	
+
 	@Bean
 	public UicPaymentAccountReadService uicPaymentAccountReadService(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
 		return context.hsfConsumerBuilder(UicPaymentAccountReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)

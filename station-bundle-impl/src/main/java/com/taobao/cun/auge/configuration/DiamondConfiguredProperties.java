@@ -145,6 +145,9 @@ public class DiamondConfiguredProperties {
     
     @Value("${cainiao.switch}")
     private String cainiaoSwitch;
+
+    @Value("${station.new.customer.rate.time}")
+    private Integer stationNewCustomerRateTime;
     
     public String getCainiaoSwitch() {
 		return cainiaoSwitch;
@@ -378,5 +381,13 @@ public class DiamondConfiguredProperties {
 
     public List<String> getInsureCpCodes() {
         return insureCpCodes;
+    }
+
+    public Integer getStationNewCustomerRateTime() {
+        return stationNewCustomerRateTime;
+    }
+
+    public void setStationNewCustomerRateTime(Integer stationNewCustomerRateTime) {
+        this.stationNewCustomerRateTime = stationNewCustomerRateTime;
     }
 }

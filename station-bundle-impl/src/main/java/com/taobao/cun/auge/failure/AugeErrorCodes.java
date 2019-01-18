@@ -124,8 +124,12 @@ public interface AugeErrorCodes {
 	public static final  String CP_NOT_EXISTS_ERROR_CODE = "B-00026";
 
 	/**
+	 * 打标去标失败
+	 */
+	public static final  String USER_TAG_ERROR_CODE = "B-00027";
+
+	/**
 	 * 门店不存在
 	 */
 	public static final  String STORE_DATA_NOT_EXISTS_ERROR_CODE = "B-00027";
-
 }

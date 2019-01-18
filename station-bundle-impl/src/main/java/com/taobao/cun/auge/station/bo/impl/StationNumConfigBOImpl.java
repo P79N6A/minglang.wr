@@ -104,7 +104,36 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		createStationNum(provinceCode,typeEnum,++level);
 		return stationNum;
 	}
-	
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public String createUmStationNum(String provinceCode, StationNumConfigTypeEnum typeEnum, int level) {
+		if (level== 20) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点编号创建异常");
+		}
+		StationNumConfig sc = getConfigByProvinceCode(provinceCode,typeEnum);
+		if (sc==null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点编号配置信息不存在");
+		}
+		String seqNum = sc.getSeqNum();
+		Integer  i = Integer.parseInt(seqNum);
+		String str =  String.format("%0"+seqNum.length()+"d", ++i);  //字符串加一
+
+		StringBuilder sb =getStationNumPre(sc);
+		sb.append(str);
+		String stationNum = sb.toString();
+
+
+		int count = stationBO.getStationCountByStationNum(stationNum);
+		if(count < 1){
+			updateSeqNumByStationNum(provinceCode,typeEnum,stationNum);
+			return stationNum;
+		}
+		updateSeqNumByStationNum(provinceCode,typeEnum,stationNum);
+		createStationNum(provinceCode,typeEnum,++level);
+		return stationNum;
+	}
+
 	private StringBuilder  getStationNumPre(StationNumConfig sc){
 		StringBuilder sb = new StringBuilder();
 		//sb.append("NO.");

@@ -19,8 +19,11 @@ public enum UserTag {
 	TPS_USER_TAG("cuntao_store"),
 
 	UM_USER_TAG("cuntao_youmeng"),
+
+	STATION_NEW_CUSTOMER_TAG("new_ctp_user"),
 	
 	SELLER_HQZY_TAG("cuntao_huoquan_zhuanyi");
+
 
 	private UserTag(String tag){
 		 this.tag = tag;
