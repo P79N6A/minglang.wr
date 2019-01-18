@@ -60,6 +60,7 @@ import com.taobao.cun.auge.task.service.TaskElementService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.crius.bpm.dto.CuntaoTaskExecuteDto;
 import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
+import com.taobao.cun.crius.bpm.exception.CuntaoWorkFlowException;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 
 import net.sf.cglib.beans.BeanCopier;
