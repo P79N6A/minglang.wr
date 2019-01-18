@@ -233,8 +233,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insRequest.setPerson(insQueryPerson);
         //产品列表集合村淘合伙人意外险:4025
         insRequest.setProductList(Lists.newArrayList(PAI_NO));
-        //保单状态列表
-        insRequest.setStatusList(statusList);
+        //保单状态
+        insRequest.setStatus("INEFFECTIVE_OR_GUARANTEE");
         insRequest.setPageNo(1);
         insRequest.setPageSize(20);
         //投放渠道，必填，村淘默认cuntao

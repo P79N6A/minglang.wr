@@ -6,10 +6,17 @@ public interface VendorWriteBO {
 
 	/**
 	 * 新增合作公司和管理员
-	 * @param serviceVendor
+	 * @param cuntaoCompanyDto
 	 * @return
 	 */
 	Long addVendor(CuntaoServiceVendorDto cuntaoCompanyDto);
+
+	/**
+	 * 新增合作公司和管理员
+	 * @param cuntaoCompanyDto
+	 * @return
+	 */
+	Long addNewVendor(CuntaoServiceVendorDto cuntaoCompanyDto);
 	
 	/**
 	 * 更新公司信息

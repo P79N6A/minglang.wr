@@ -14,6 +14,16 @@ public class TownLevelRuleDto implements Serializable{
 	
 	private long priority;
 	
+	private String memo;
+	
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
 	public long getPriority() {
 		return priority;
 	}
