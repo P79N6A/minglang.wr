@@ -88,6 +88,8 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("PARTNER_APPLY_PROJECT_NOTICE_TPS", PARTNER_APPLY_PROJECT_NOTICE_TPS);
         mappings.put("PARTNER_APPLY_MANAGER_STANDARD_TPS", PARTNER_APPLY_MANAGER_STANDARD_TPS);
         mappings.put("PARTNER_QUIT_PRO_TPS", PARTNER_QUIT_PRO_TPS);
+        mappings.put("CTS_JZ_SZYT_AGREEMENT",CTS_JZ_SZYT_AGREEMENT);
+
 
     }
 
