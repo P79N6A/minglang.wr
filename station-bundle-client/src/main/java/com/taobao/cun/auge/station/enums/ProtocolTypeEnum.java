@@ -45,6 +45,8 @@ public class ProtocolTypeEnum implements Serializable {
     public static final ProtocolTypeEnum RUBBING_SUPPLEMENT_AGREEMENT = new ProtocolTypeEnum("RUBBING_SUPPLEMENT_AGREEMENT", "合伙人蹭单补充协议");
 
     public static final ProtocolTypeEnum DELIVERY_GOODS_AGREEMENT = new ProtocolTypeEnum("DELIVERY_GOODS_AGREEMENT", "送货上门协议");
+
+    public static final ProtocolTypeEnum CTS_JZ_SZYT_AGREEMENT = new ProtocolTypeEnum("CTS_JZ_SZYT_AGREEMENT", "家装送装协议");
     
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE", "招募项目告知协议");
     public static final ProtocolTypeEnum PARTNER_APPLY_PROJECT_NOTICE_TPS = new ProtocolTypeEnum("PARTNER_APPLY_PROJECT_NOTICE_TPS", "体验店招募项目告知协议");

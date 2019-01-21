@@ -134,4 +134,6 @@ public interface StationBO {
      * @param orgDeptType
      */
 	void updateStationDeptByOrgId(Long orgId, OrgDeptType orgDeptType);
+
+    void updateStationNum(Long id, String newStationNum);
 }

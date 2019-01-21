@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.um;
 
 import com.alibaba.fastjson.JSON;
-
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -11,17 +10,12 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
-import com.taobao.cun.auge.lock.TairManualReleaseDistributeLock;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.auge.payment.account.utils.PaymentAccountDtoUtil;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
-import com.taobao.cun.auge.station.bo.PartnerApplyBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.TaobaoAccountBo;
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -30,6 +24,7 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -89,6 +84,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private PartnerApplyBO partnerApplyBO;
+
+    @Autowired
+    private StationNumConfigBO stationNumConfigBO;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -367,6 +365,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void deleteUnionMember(Long stationId, OperatorDto operatorDto) {
         BeanValidator.validateWithThrowable(operatorDto);
         if (null == stationId || 0 == stationId) {
@@ -417,5 +416,32 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
         partnerApplyDto.setOperator("system");
         partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @Override
+    public void updateUmstationNum(String stationNums) {
+        if(StringUtils.isEmpty(stationNums)){
+            return;
+        }
+        String[] stationNumArray = stationNums.split(",");
+
+        for(String stationNum:stationNumArray){
+            StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
+
+            Station station = stationBO.getStationByStationNum(stationNum);
+            if(null == station){
+                continue;
+            }
+
+            String province = station.getProvince();
+            if(null == province||""==province){
+                continue;
+            }
+
+            String newStationNum = stationNumConfigBO.createUmStationNum(province, typeEnum, 0);
+
+            stationBO.updateStationNum(station.getId(), newStationNum);
+        }
     }
 }
