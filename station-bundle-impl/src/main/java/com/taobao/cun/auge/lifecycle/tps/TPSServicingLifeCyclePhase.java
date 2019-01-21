@@ -133,7 +133,7 @@ public class TPSServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 			   // 合伙人停业审核拒绝了，删除停业协议
 			  //合伙人发起的删除停业协议
 			 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())){
-				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO_TPS, partnerInstanceDto.getId(),
+				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceDto.getId(),
 			     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceDto.getOperator());
 			 }
 	        // 删除停业申请单
