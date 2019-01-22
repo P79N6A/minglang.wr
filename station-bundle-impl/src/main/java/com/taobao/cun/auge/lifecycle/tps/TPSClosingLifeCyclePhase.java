@@ -196,7 +196,7 @@ public class TPSClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 			return PartnerInstanceStateChangeEnum.START_CLOSING;
 		} else {
 			// 状态校验,只有装修中，或者服务中可以停业
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"只有服务中、装修中服务站才可以申请停业");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"只有服务中、装修中服务站才可以申请停业,当前服务站是"+PartnerInstanceStateEnum.valueof(context.getSourceState()).getDesc());
 		}
 	}
 }
