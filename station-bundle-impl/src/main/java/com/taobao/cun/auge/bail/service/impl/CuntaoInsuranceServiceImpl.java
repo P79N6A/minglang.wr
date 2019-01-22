@@ -444,16 +444,16 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 break;
             }
             handledCount += resList.size();
-            logger.info("query partner_station_rel data ,count = {} 条数据", handledCount);
-            for (PartnerStationRel partnerStationRel : resList) {
+            logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
+           /* for (PartnerStationRel partnerStationRel : resList) {
                 List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
                 partnerInsuranceDetails.forEach(detail->{
                     partnerInsuranceDetailMapper.insert(detail);
                 });
-            }
+            }*/
 
         }
-        logger.info("count insurance data costs = {} ms ,handledCount count = {} 条数据！",System.currentTimeMillis()-startTime,handledCount);
+        logger.info("count insurance data costs = {} ms ,handledCount count = {} ",System.currentTimeMillis()-startTime,handledCount);
 
 
     }
