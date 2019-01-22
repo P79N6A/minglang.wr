@@ -432,30 +432,34 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         //物理删除之前的数据
         int deletedCount = partnerInsuranceDetailMapper.deleteByExample(null);
         logger.info("delete from partner_insurance_detail ,count = {}", deletedCount);
-        int pageNum = 0;
+        int pageNum = 1;
         int handledCount = 0 ;
         PartnerStationRelExample example = new PartnerStationRelExample();
-        example.createCriteria().andIsDeletedEqualTo("n").andStateIn(PartnerInstanceStateEnum.unReSettlableStatusCodeList());
+        example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y")
+                .andTypeIn(Lists.newArrayList("TP","TPS")).andStateIn(Lists.newArrayList("SETTING","DECORATING","SERVICING","CLOSING"));
         long startTime = System.currentTimeMillis();
         while (true) {
-            PageHelper.startPage(pageNum++, pageSize);
+            PageHelper.startPage(pageNum++, pageSize,"id asc");
             List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
-            if (CollectionUtils.isEmpty(resList)) {
-                break;
-            }
             handledCount += resList.size();
             logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
-           /* for (PartnerStationRel partnerStationRel : resList) {
+            for (PartnerStationRel partnerStationRel : resList) {
                 List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
                 partnerInsuranceDetails.forEach(detail->{
                     partnerInsuranceDetailMapper.insert(detail);
                 });
-            }*/
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (resList.size()<pageSize) {
+                break;
+            }
 
         }
         logger.info("count insurance data costs = {} ms ,handledCount count = {} ",System.currentTimeMillis()-startTime,handledCount);
-
-
     }
 
 
