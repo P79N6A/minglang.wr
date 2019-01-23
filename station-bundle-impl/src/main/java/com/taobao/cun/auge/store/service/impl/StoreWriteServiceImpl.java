@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.cuntao.ctsm.client.dto.enums.ChannelEnum;
 import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
@@ -22,6 +23,7 @@ import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = StoreWriteService.class)
+@Service("storeWriteService")
 public class StoreWriteServiceImpl implements StoreWriteService {
 	@Resource
 	private StoreWriteBO storeWriteBO;
