@@ -562,7 +562,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         psVo.setBeanName("storeWriteService");
         psVo.setMethodName("disableByTabaoUserId");
         psVo.setBusinessStepNo(2L);
-        psVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_PEISONG_TAG.getCode());
+        psVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
         psVo.setBusinessStepDesc("去配送接单能力");
         psVo.setOperator(operatorId);
         psVo.setParameterType(Long.class.getName());
