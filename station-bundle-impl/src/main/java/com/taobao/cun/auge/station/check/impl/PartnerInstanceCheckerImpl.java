@@ -109,13 +109,14 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 			 }
 			
 		}
-		
-		try {
-			storeReadService.serviceJudgmentForStoreQuit(store.getShareStoreId());
-		} catch (AugeBusinessException e1) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,e1.getMessage());
-		}catch (Exception e1) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"门店服务退出校验，系统异常");
+		if (store != null && store.getShareStoreId() != null){
+			try {
+				storeReadService.serviceJudgmentForStoreQuit(store.getShareStoreId());
+			} catch (AugeBusinessException e1) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,e1.getMessage());
+			}catch (Exception e1) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"门店服务退出校验，系统异常");
+			}
 		}
 		
 		//
