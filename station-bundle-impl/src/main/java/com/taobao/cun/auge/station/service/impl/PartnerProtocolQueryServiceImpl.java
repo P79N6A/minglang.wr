@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerProtocolQueryService;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("partnerProtocolQueryService")
@@ -106,10 +107,17 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
 	public Boolean querySignedProjectNoticeProtocol(Long taobaoUserId) {
 		 ValidateUtils.notNull(taobaoUserId);
 		 PartnerApplyDto paDto = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
-         Assert.notNull(paDto, "partner apply not exists");
-        
-         PartnerProtocolRelDto pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
-         if (pprDto != null) {
+		 Assert.notNull(paDto, "partner apply not exists");
+		 if (paDto.getConfirmIntention() == null) {
+			 return Boolean.TRUE;
+		 }
+		 PartnerProtocolRelDto pprDto =  null;
+		 if (PartnerApplyConfirmIntentionEnum.TPS_ELEC.getCode().equals(paDto.getConfirmIntention())) {
+			  pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE_TPS, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+		 }else {
+	         pprDto = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.PARTNER_APPLY_PROJECT_NOTICE, paDto.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_APPlY);
+         }
+		 if (pprDto != null) {
         	 return Boolean.TRUE;
          }
          return Boolean.FALSE;

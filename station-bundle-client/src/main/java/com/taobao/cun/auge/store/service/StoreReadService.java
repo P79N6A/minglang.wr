@@ -94,4 +94,10 @@ public interface StoreReadService {
 	  */
 	 boolean isTestStore(Long sharedStoreId);
 	 
+	 /**
+	  *  服务业务判断，门店是否可以退出。
+	  * @param storeId
+	  * @return
+	  */
+	 public Boolean serviceJudgmentForStoreQuit(Long storeId);
 }

@@ -23,6 +23,7 @@ import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -46,6 +47,7 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -91,6 +93,8 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
+import com.taobao.cun.auge.station.um.UnionMemberQueryService;
+import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
@@ -164,6 +168,10 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Autowired
 	private TestUserService testUserService;
+	
+	@Autowired
+	private UnionMemberQueryService unionMemberQueryService;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto) {
@@ -248,6 +256,17 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				}
 			}
 		}
+		
+		UnionMemberPageCondition  con = new UnionMemberPageCondition();
+		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
+		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		con.setParentStationId(instance.getStationId());
+		con.setPageNum(1);
+		con.setPageSize(10);
+		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+		if (CollectionUtils.isNotEmpty(umList.getItems())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
+		}
 	}
 	
 	@Override
@@ -259,6 +278,18 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
+		
+		UnionMemberPageCondition  con = new UnionMemberPageCondition();
+		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
+		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		con.setParentStationId(partnerStationRel.getStationId());
+		con.setPageNum(1);
+		con.setPageSize(10);
+		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+		if (CollectionUtils.isNotEmpty(umList.getItems())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
+		}
+		
 		/**CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
 		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());
 		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
@@ -714,12 +745,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
-		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
-				operatorDto);
-
-		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
-		rewardParentTp(taobaoUserId, operatorDto);
+		//淘帮手业务已经下线
+//		// 合伙人进入服务中，默认拥有3个淘帮手名额
+//		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
+//				operatorDto);
+//
+//		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
+//		rewardParentTp(taobaoUserId, operatorDto);
 	}
 
 	// 如果该账号以前是淘帮手，则奖励其原有合伙人1个淘帮手名额

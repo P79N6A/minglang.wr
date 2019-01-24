@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.store.dto;
 
-@Deprecated
 /**
  * 请用StoreDto.category字段代替
  * @author zhenhuan.zhangzh

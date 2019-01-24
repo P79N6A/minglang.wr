@@ -1,10 +1,11 @@
 package com.taobao.cun.auge.configuration;
 
-import com.taobao.cun.auge.task.service.TaskElementService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
+import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -20,6 +21,7 @@ import com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
 import com.taobao.cun.auge.sop.inspection.service.InspectionService;
+import com.taobao.cun.auge.task.service.TaskElementService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
@@ -121,6 +123,11 @@ public class HsfConsumerConfiguration  {
 
 	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
 	private TaskElementService taskElementService;
+	
+	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private StoreSReadService storeSReadService;
+	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private StoreSWriteService storeSWriteService;
 	
 
 }

@@ -2,10 +2,11 @@ package com.taobao.cun.auge.lifecycle.tp;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.jcabi.log.Logger;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -41,6 +42,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 @Component
 @Phase(type="TP",event=StateMachineEvent.CLOSED_EVENT,desc="村小二已停业服务节点")
 public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
+	
+	private static final Logger logger = LoggerFactory.getLogger(TPClosedLifeCyclePhase.class);
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -135,7 +138,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 		try {
 			partnerInstanceBO.cancelShopMirror(partnerInstanceDto.getTaobaoUserId());
 		} catch (Exception e) {
-			Logger.error(e,"cancelShopMirror failed["+partnerInstanceDto.getTaobaoUserId()+"]");
+			logger.error("cancelShopMirror failed["+partnerInstanceDto.getTaobaoUserId()+"]", e);
 		}
 		
 	}
