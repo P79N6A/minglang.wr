@@ -59,6 +59,8 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
@@ -553,13 +555,27 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         task.setParameter(JSON.toJSONString(userTagDto));
         task.setPriority(TaskPriority.HIGH);
         taskLists.add(task);
+        
+        //配送接单能力
+        GeneralTaskDto psVo = new GeneralTaskDto();
+        psVo.setBusinessNo(String.valueOf(taobaoUserId));
+        psVo.setBeanName("storeWriteService");
+        psVo.setMethodName("disableByTabaoUserId");
+        psVo.setBusinessStepNo(2L);
+        psVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
+        psVo.setBusinessStepDesc("去配送接单能力");
+        psVo.setOperator(operatorId);
+        psVo.setParameterType(Long.class.getName());
+        psVo.setParameter(taobaoUserId.toString());
+        psVo.setPriority(TaskPriority.HIGH);
+        taskLists.add(psVo);
 
         // 旺旺去标
         GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
         wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
         wangwangTaskVo.setBeanName("wangWangTagService");
         wangwangTaskVo.setMethodName("removeWangWangTagByNick");
-        wangwangTaskVo.setBusinessStepNo(2L);
+        wangwangTaskVo.setBusinessStepNo(3L);
         wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
         wangwangTaskVo.setBusinessStepDesc("去旺旺标");
         wangwangTaskVo.setOperator(operatorId);
@@ -574,7 +590,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
             degradeTpgTask.setBusinessNo(String.valueOf(taobaoUserId));
             degradeTpgTask.setBeanName("partnerTpgService");
             degradeTpgTask.setMethodName("degradeTpg");
-            degradeTpgTask.setBusinessStepNo(3L);
+            degradeTpgTask.setBusinessStepNo(4L);
             degradeTpgTask.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
             degradeTpgTask.setBusinessStepDesc("降级供赢通会员");
             degradeTpgTask.setOperator(OperatorDto.defaultOperator().getOperator());
@@ -582,7 +598,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
             degradeTpgTask.setParameterType(Long.class.getName());
             taskLists.add(degradeTpgTask);
         }
-
+    	
         // 提交任务
         taskSubmitService.submitTasks(taskLists);
         logger.info("submitRemoveUserTagTasks : {}", JSON.toJSONString(taskLists));

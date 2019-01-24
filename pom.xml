@@ -402,6 +402,11 @@
 				<version>4.5.2</version>
 			</dependency>
 			<dependency>
+			    <groupId>com.alibaba.cuntao.cts</groupId>
+			    <artifactId>ctsm-client</artifactId>
+			    <version>1.0.25</version>
+			</dependency>
+			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
 				<version>3.7.5.9</version>

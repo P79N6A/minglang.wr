@@ -112,5 +112,12 @@ public interface StoreWriteService {
 	public void syncStore(Long stationId);
 	
 	public void syncStore();
+	/**
+	 * 去除配送接单能力
+	 * @param operator
+	 * @param storeId
+	 * @return
+	 */
+	public Boolean disableByTabaoUserId(Long taobaoUserId);
 
 }

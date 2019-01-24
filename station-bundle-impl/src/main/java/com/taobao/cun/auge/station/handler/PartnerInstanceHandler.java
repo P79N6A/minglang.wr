@@ -3,6 +3,12 @@ package com.taobao.cun.auge.station.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -14,14 +20,10 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.strategy.PartnerInstanceStrategy;
 import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
+import com.taobao.cun.auge.station.strategy.TpsStrategy;
 import com.taobao.cun.auge.station.strategy.TptStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
 import com.taobao.cun.auge.station.strategy.UmStrategy;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component("partnerInstanceHandler")
 public class PartnerInstanceHandler implements InitializingBean{
@@ -38,6 +40,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 
 	@Autowired
 	private UmStrategy umStrategy;
+	@Autowired
+	private TpsStrategy tpsStrategy;
 	
 	Map<String,PartnerInstanceStrategy> strategy = new HashMap<String,PartnerInstanceStrategy>();
 	@Override
@@ -47,6 +51,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TPT.getCode(), tptStrategy);
 		strategy.put(PartnerInstanceTypeEnum.UM.getCode(), umStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TPS.getCode(), tpsStrategy);
 	}
 	
 	/**

@@ -98,10 +98,14 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 		 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())) {
 			 //合伙人申请停业插入停业协议
 			 addCloseProtocol(partnerInstanceDto);
+			  //生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
+	         PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(context);
+	         
 			 // 新增停业申请
 	         CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
 	         closeStationApplyDto.setPartnerInstanceId(partnerInstanceDto.getId());
 	         closeStationApplyDto.setType(partnerInstanceDto.getCloseType());
+	         closeStationApplyDto.setInstanceState(instanceStateChange.getPrePartnerInstanceState());
 	         closeStationApplyDto.copyOperatorDto(partnerInstanceDto);
 	         closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 		 }else{

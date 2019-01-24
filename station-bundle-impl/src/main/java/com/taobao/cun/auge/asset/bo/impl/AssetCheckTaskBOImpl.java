@@ -209,7 +209,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
 		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r = new AssetCheckTask();
@@ -236,7 +236,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
 		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
 		        processService.startApproveProcess(startProcessDto);
 			}
 			
@@ -252,7 +252,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
 		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r1 = new AssetCheckTask();
@@ -278,7 +278,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
 		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.HAVANA);
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
 		        processService.startApproveProcess(startProcessDto);
 			}
 		} catch (Exception e) {
