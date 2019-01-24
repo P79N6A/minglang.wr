@@ -30,7 +30,6 @@ import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import com.taobao.cun.recruit.partner.service.ServiceAbilityDecisionService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 
@@ -87,9 +86,6 @@ public class HsfConsumerConfiguration  {
 
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.crius.examUserDispatchService}",serviceGroup="HSF")
 	private ExamUserDispatchService examUserDispatchService;
-	
-    @HSFConsumer(serviceVersion="${hsf.consumer.version.auge.serviceAbilityDecisionService}",serviceGroup="HSF")
-    private ServiceAbilityDecisionService serviceAbilityDecisionService;
 	
     @HSFConsumer(serviceVersion="${hsf.consumer.version.auge.addressInfoDecisionService}",serviceGroup="HSF")
     private AddressInfoDecisionService addressInfoDecisionService;

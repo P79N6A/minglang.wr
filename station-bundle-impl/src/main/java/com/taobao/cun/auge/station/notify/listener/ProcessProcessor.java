@@ -77,7 +77,6 @@ import com.taobao.cun.recruit.partner.enums.AddressInfoDecisionStatusEnum;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import com.taobao.cun.recruit.partner.service.ServiceAbilityDecisionService;
 import com.taobao.notify.message.StringMessage;
 
 @Component("processProcessor")
@@ -144,8 +143,6 @@ public class ProcessProcessor {
     @Autowired
     StationDecorateService stationDecorateService;
 
-    @Autowired
-    private ServiceAbilityDecisionService serviceAbilityDecisionService;
     @Autowired
     private AddressInfoDecisionService addressInfoDecisionService;
     @Autowired

@@ -123,7 +123,7 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
             addNewCustomerUserTag(taobaoUserId, realInterestTime);
 
             newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
-            newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
+            //newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
         }
     }
 
@@ -150,7 +150,8 @@ public class StationNewCustomerServiceImpl implements StationNewCustomerService 
             addNewCustomerUserTag(taobaoUserId, realInterestTime);
 
             //初始化缓存
-            newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
+            newCustomerUnitQueryService.invalidNewCustomerCache(taobaoUserId);
+            //newCustomerUnitQueryService.getNewCustomer(taobaoUserId);
         }
     }
 
