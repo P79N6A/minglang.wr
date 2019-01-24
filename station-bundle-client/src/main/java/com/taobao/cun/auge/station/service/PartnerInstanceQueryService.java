@@ -324,6 +324,13 @@ public interface PartnerInstanceQueryService {
 	StationBizTypeEnum  getBizTypeByInstanceId(Long instanceId);
 
 	/**
+	 * 根据淘宝id获得  业务类型
+	 * @param taobaoUserId
+	 * @return
+	 */
+	StationBizTypeEnum  getBizTypeByTaobaoUserId(Long taobaoUserId);
+
+	/**
 	 * 给icuntao使用,获得服务站待确认协议的转型信息,若已确认则返回null
 	 * @param taobaoUserId
 	 * @return

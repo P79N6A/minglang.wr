@@ -956,6 +956,16 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     }
 
     @Override
+    public StationBizTypeEnum getBizTypeByTaobaoUserId(Long taobaoUserId) {
+        ValidateUtils.notNull(taobaoUserId);
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (null == rel) {
+            return null;
+        }
+        return getBizTypeByInstanceId(rel.getId());
+    }
+
+    @Override
     public StationTransInfoTypeEnum getWaitConfirmTransInfoTypeByTaobaoUserId(Long taobaoUserId) {
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if (instance != null && PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
