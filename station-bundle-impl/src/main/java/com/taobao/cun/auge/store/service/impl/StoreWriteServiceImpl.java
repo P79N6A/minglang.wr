@@ -6,19 +6,32 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.alibaba.cuntao.ctsm.client.dto.enums.ChannelEnum;
+import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
-import com.taobao.cun.auge.store.bo.impl.StoreWriteBOImpl;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = StoreWriteService.class)
+@Service("storeWriteService")
 public class StoreWriteServiceImpl implements StoreWriteService {
 	@Resource
 	private StoreWriteBO storeWriteBO;
+	
+	@Autowired
+	private StoreSWriteService storeSWriteService;
+	@Autowired
+	private StoreReadBO storeReadBO;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteServiceImpl.class);
 
@@ -137,5 +150,24 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Override
 	public void syncStore() {
 		storeWriteBO.syncStore();
+	}
+
+	@Override
+	public Boolean disableByTabaoUserId(Long taobaoUserId) {
+		  StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
+		  if (dto != null && dto.getShareStoreId() != null) {
+			 com.alibaba.cuntao.ctsm.client.common.Operator  op = new com.alibaba.cuntao.ctsm.client.common.Operator();
+			op.setChannelEnum(ChannelEnum.CTBOPS);
+			op.setOperatorId(String.valueOf(taobaoUserId));
+			op.setStoreId(dto.getShareStoreId());
+			com.taobao.cun.shared.base.result.SimpleResult  res = storeSWriteService.disableByStoreId(op, dto.getShareStoreId());
+			if (res.isSuccess()) {
+				return Boolean.TRUE;
+			}else {
+				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+						res.getErrorCode()+res.getErrorMsg());
+			}
+		  }
+		  return Boolean.TRUE;
 	}
 }

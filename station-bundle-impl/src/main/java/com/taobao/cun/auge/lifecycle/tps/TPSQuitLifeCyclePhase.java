@@ -1,9 +1,13 @@
 package com.taobao.cun.auge.lifecycle.tps;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -29,7 +33,6 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -37,11 +40,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.taobao.cun.auge.station.service.StationService;
 
 /**
  * 村小二已退出阶段组件
@@ -73,7 +72,7 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	private GeneralTaskSubmitService generalTaskSubmitService;
 	
 	@Autowired
-	private PartnerQualifyApplyService partnerQualifyApplyService;
+	private StationService stationService;
 
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
@@ -89,6 +88,10 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
+			}else {
+				List<Long> sIds = new ArrayList<Long>();
+				sIds.add(partnerInstanceDto.getStationId());
+				stationService.updateStationCategory(sIds, "INVALID");
 			}
 		}
 		
@@ -156,20 +159,6 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceDto.getId());
 			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-			//如果资格认证通过，招募信息改成  资格认证通过，否则改成面试通过
-			PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
-			
-			if(pqaDto != null &&PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
-				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_PASS);
-			}else  if (pqaDto != null && PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
-				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
-			}else {
-				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
-				PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(instance.getTaobaoUserId());
-				if(partnerApply != null) {
-					partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
-				}
-			}
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
 			
@@ -202,6 +191,17 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 			accountMoneyUpdateDto.copyOperatorDto(operatorDto);
 			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+			
+			//解冻铺货金保证金
+			AccountMoneyDto replenishMoneyUpdateDto = new AccountMoneyDto();
+			replenishMoneyUpdateDto.setObjectId(instanceId);
+			replenishMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+			replenishMoneyUpdateDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+			replenishMoneyUpdateDto.setThawTime(new Date());
+			replenishMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
+			replenishMoneyUpdateDto.copyOperatorDto(operatorDto);
+			accountMoneyBO.updateAccountMoneyByObjectId(replenishMoneyUpdateDto);
+			
 		}
 	
 }

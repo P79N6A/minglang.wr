@@ -1,13 +1,15 @@
 package com.taobao.cun.auge.lifecycle.tps;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -19,31 +21,26 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
@@ -51,10 +48,6 @@ import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 村小二装修中阶段组件
@@ -63,7 +56,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Phase(type="TPS",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
 public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
-
 	@Autowired
 	private StationBO stationBO;
 	
@@ -80,13 +72,10 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
     @Autowired
-    private StationDecorateBO stationDecorateBO;
-    
-    @Autowired
-    private FrozenMoneyAmountConfig frozenMoneyConfig;
-    
-    @Autowired
-    private AccountMoneyBO accountMoneyBO;
+   	private PartnerProtocolRelBO partnerProtocolRelBO;
+   	
+   	@Autowired
+   	private CloseStationApplyBO closeStationApplyBO;
     
     private static Logger logger = LoggerFactory.getLogger(TPSDecoratingLifeCyclePhase.class);
 	@Override
@@ -101,42 +90,68 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		stationBO.updateStation(stationDto);
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新村小二信息")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nonthing
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新村小二实例状态到装修中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			partnerInstanceBO.changeState(partnerInstanceDto.getId(), partnerInstanceDto.getState(), PartnerInstanceStateEnum.DECORATING,partnerInstanceDto.getOperator());
+		}else {
+			setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);
+		}
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId =partnerInstanceDto.getId();
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
-				PartnerLifecycleCurrentStepEnum.PROCESSING);
-		if (items != null) {
-			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-			param.setSystem(PartnerLifecycleSystemEnum.HAS_PROCESS);
-			param.setLifecycleId(items.getId());
-			param.copyOperatorDto(partnerInstanceDto);
-			partnerLifecycleBO.updateLifecycle(param);
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
+			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+			partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
+			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			partnerLifecycle.copyOperatorDto(partnerInstanceDto);
+			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
+			}
+			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+				partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			}
+	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+		}else {
+			Long instanceId =partnerInstanceDto.getId();
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
+			if (items != null) {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+				param.setSystem(PartnerLifecycleSystemEnum.HAS_PROCESS);
+				param.setLifecycleId(items.getId());
+				param.copyOperatorDto(partnerInstanceDto);
+				partnerLifecycleBO.updateLifecycle(param);
+			}
+			initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 		}
-		//initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 	}
-
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
+			   // 合伙人停业审核拒绝了，删除停业协议
+			  //合伙人发起的删除停业协议
+			 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())){
+				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceDto.getId(),
+			     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceDto.getOperator());
+			 }
+	       
+	        // 删除停业申请单
+	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
+		}else{
 		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
 		 try {
          	StoreCreateDto store = new StoreCreateDto();
@@ -150,7 +165,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
 				throw new AugeSystemException(e);
 			}
-		 //
+		}
 	}
 
 	@Override
@@ -158,10 +173,13 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId =partnerInstanceDto.getId();
-		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, partnerInstanceDto);
-		dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
+			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceDto);
+		}else {
+			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, partnerInstanceDto);
+			dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
+		}
 	}
-
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 
@@ -179,12 +197,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
 			}
 	}
-	
-	
-	
-
-
-	
 	/**
 	 * 设置关系表为装修中
 	 */
@@ -223,42 +235,6 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
         partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
         partnerLifecycleDto.setPartnerInstanceId(rel.getId());
         partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
-        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
-        partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
         partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-        
-        // 生成装修记录
-        StationDecorateDto stationDecorateDto = new StationDecorateDto();
-        stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
-        stationDecorateDto.setStationId(rel.getStationId());
-        stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-        stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
-        stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
-        stationDecorateBO.addStationDecorate(stationDecorateDto);
-        
-//        //张振环确认门店没有铺货保证金概念
-//        Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-//        addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney);
-    }
-    
-    private void addWaitFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
-        ValidateUtils.notNull(instanceId);
-        AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
-        accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
-        accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
-        accountMoneyDto.setOperatorType(OperatorTypeEnum.HAVANA);
-        accountMoneyDto.setObjectId(instanceId);
-        accountMoneyDto.setState(AccountMoneyStateEnum.WAIT_FROZEN);
-        accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
-        accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
-        accountMoneyDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
-
-        AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
-                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
-        if (dupRecord != null) {
-            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyDto);
-        } else {
-            accountMoneyBO.addAccountMoney(accountMoneyDto);
-        }
     }
 }

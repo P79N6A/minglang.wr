@@ -24,6 +24,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 	public static final TaskBusinessTypeEnum UPDATE_SERVICING_CAINIAO = new TaskBusinessTypeEnum("UPDATE_SERVICING_CAINIAO", "服务中修改菜鸟");
 
 	public static final TaskBusinessTypeEnum REMOVE_USER_TAG = new TaskBusinessTypeEnum("REMOVE_USER_TAG", "去UIC、旺旺标任务");
+	public static final TaskBusinessTypeEnum REMOVE_PEISONG_TAG = new TaskBusinessTypeEnum("REMOVE_PEISONG_TAG", "去配送接单能力任务");
+
 
 	public static final TaskBusinessTypeEnum REMOVE_LOGISTICS = new TaskBusinessTypeEnum("REMOVE_LOGISTICS", "删除物流站点任务");
 
@@ -49,6 +51,7 @@ public class TaskBusinessTypeEnum implements Serializable {
 		mappings.put("SETTLING_SYS_PROCESS", SETTLING_SYS_PROCESS);
 		mappings.put("UPDATE_SERVICING_CAINIAO", UPDATE_SERVICING_CAINIAO);
 		mappings.put("REMOVE_USER_TAG", REMOVE_USER_TAG);
+		mappings.put("REMOVE_PEISONG_TAG", REMOVE_PEISONG_TAG);
 		mappings.put("REMOVE_LOGISTICS", REMOVE_LOGISTICS);
 		mappings.put("REMOVE_ALIPAY_TAG", REMOVE_ALIPAY_TAG);
 		mappings.put("PARTNER_INSTANCE_QUIT", PARTNER_INSTANCE_QUIT);
