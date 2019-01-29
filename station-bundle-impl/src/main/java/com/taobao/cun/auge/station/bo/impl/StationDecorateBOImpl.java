@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.*;
@@ -590,9 +591,12 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			List<AttachmentDto> attachmentDtoList = parseAttachements(stationDecorateFeedBackDto.getFeedbackInsideVideo(),AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO);
 			criusAttachmentService.modifyAttachmentBatch(attachmentDtoList,record.getId(), AttachmentBizTypeEnum.STATION_DECORATION_CHECK,AttachmentTypeIdEnum.CHECK_DECORATION_INSIDE_VIDEO, operatorDto);
 		}
-        stationDecorateMapper.updateByPrimaryKeySelective(stationDecorate);
+		//幂等控制
+		StationDecorateExample exmaple = new StationDecorateExample();
+		exmaple.createCriteria().andIdEqualTo(record.getId()).andStatusIn(Lists.newArrayList(StationDecorateStatusEnum.WAIT_CHECK_UPLOAD.getCode(),StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode()));
+		int affectRow = stationDecorateMapper.updateByExampleSelective(stationDecorate,exmaple);
 		Long result = stationDecorate.getId();
-		logger.info("uploadStationDecorateFeedback.........,result = {}",result);
+		logger.info("uploadStationDecorateFeedback.........,result = {},affectRow = {}",result,affectRow);
 		if(result != null){
 			StartProcessDto startProcessDto = new StartProcessDto();
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
