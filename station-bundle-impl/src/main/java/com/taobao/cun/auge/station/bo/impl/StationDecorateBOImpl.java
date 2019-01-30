@@ -597,7 +597,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		int affectRow = stationDecorateMapper.updateByExampleSelective(stationDecorate,exmaple);
 		Long result = stationDecorate.getId();
 		logger.info("uploadStationDecorateFeedback.........,result = {},affectRow = {}",result,affectRow);
-		if(result != null){
+		if(result != null && affectRow>0){
 			StartProcessDto startProcessDto = new StartProcessDto();
 			startProcessDto.setBusiness(ProcessBusinessEnum.decorationCheckAudit);
 			startProcessDto.setBusinessId(result);
