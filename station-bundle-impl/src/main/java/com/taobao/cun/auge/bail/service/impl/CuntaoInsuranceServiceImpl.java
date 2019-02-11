@@ -450,7 +450,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 });
             }
             try {
-                Thread.sleep(200);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -472,7 +472,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         }
         List<PartnerInsuranceDetail> resultList = new ArrayList<PartnerInsuranceDetail>();
         Date nowTime = new Date();
-        InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), null);
+        InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "GUARANTEE");
 
         //1.查询新平台数据
         if (searchResult.isSuccess() && CollectionUtils.isNotEmpty(searchResult.getPolicys())) {
@@ -490,15 +490,31 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
                 String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
         if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
-            for (InsPolicyDTO insPolicyDTO : insure.getModel()) {
-                int durDate = DateUtil.daysBetween(nowTime, insPolicyDTO.getEffectEndTime()) ;
+            InsPolicyDTO insPolicyDTO = null ;
+            int durDate = 0;
+            for (InsPolicyDTO insPolicyDTONew : insure.getModel()) {
+                int newDurDate = DateUtil.daysBetween(nowTime, insPolicyDTONew.getEffectEndTime());
+                if(newDurDate > durDate ){
+                    durDate = newDurDate;
+                    insPolicyDTO = insPolicyDTONew;
+                }
+
+            }
+            if(insPolicyDTO != null){
                 PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
                         insPolicyDTO.getEffectStartTime(),insPolicyDTO.getEffectEndTime(), InsuranceStateEnum.valueof(Integer.valueOf(insPolicyDTO.getStatus())).getDesc(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"y");
                 resultList.add(insuranceDetail);
-
+            }else{
+                PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                        null,null, null,Long.valueOf(durDate),partner.getName(),stationId,stationName,"y");
+                resultList.add(insuranceDetail);
             }
 
+            return resultList;
         }
+        PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                null,null, null,0L,partner.getName(),stationId,stationName,"x");
+        resultList.add(insuranceDetail);
         return resultList;
     }
 
