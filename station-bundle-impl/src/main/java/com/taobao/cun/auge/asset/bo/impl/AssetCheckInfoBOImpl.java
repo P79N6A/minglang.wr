@@ -641,7 +641,7 @@ public class AssetCheckInfoBOImpl implements AssetCheckInfoBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产状态必须是任务完成");
 		}
 		
-		if (!infoList.stream().allMatch(assetCheckInfo -> countyOrgId==assetCheckInfo.getCountyOrgId())) {
+		if (!infoList.stream().allMatch(assetCheckInfo -> countyOrgId.equals(assetCheckInfo.getCountyOrgId()))) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "选择的资产所属县域和条件不同");
 		}
 		if (!infoList.stream().allMatch(assetCheckInfo -> categoryType.equals(assetCheckInfo.getCategory()))) {
