@@ -36,9 +36,19 @@ public class TownLevelDto implements Serializable {
 
     private Long taobaoGmv;
     
+    private String chengguanTown;
+    
     private TownLevelStationRuleDto townLevelStationRuleDto;
 
-    public String getLevelDesc() {
+    public String getChengguanTown() {
+		return chengguanTown;
+	}
+
+	public void setChengguanTown(String chengguanTown) {
+		this.chengguanTown = chengguanTown;
+	}
+
+	public String getLevelDesc() {
     	return TownLevelEnum.valueOf(level).getDesc();
     }
     
