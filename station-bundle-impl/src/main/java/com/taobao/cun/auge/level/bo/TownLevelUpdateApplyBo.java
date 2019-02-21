@@ -68,10 +68,10 @@ public class TownLevelUpdateApplyBo {
 		TownLevelDto townLevelDto = townLevelBo.getTownLevel(townLevelId);
 		List<String> namePaths = Lists.newArrayList();
 		namePaths.add(townLevelDto.getProvinceName());
-		if(!"N".equals(townLevelDto.getCityName())) {
+		if(townLevelDto.getCityName() != null && !"N".equals(townLevelDto.getCityName())) {
 			namePaths.add(townLevelDto.getCityName());
 		}
-		if(!"N".equals(townLevelDto.getCountyName())) {
+		if(townLevelDto.getCountyName() != null && !"N".equals(townLevelDto.getCountyName())) {
 			namePaths.add(townLevelDto.getCountyName());
 		}
 		namePaths.add(townLevelDto.getTownName());

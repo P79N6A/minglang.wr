@@ -1444,6 +1444,76 @@ public class TownLevelExample {
             addCriterion("modifier not between", value1, value2, "modifier");
             return (Criteria) this;
         }
+
+        public Criteria andChengguanTownIsNull() {
+            addCriterion("chengguan_town is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownIsNotNull() {
+            addCriterion("chengguan_town is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownEqualTo(String value) {
+            addCriterion("chengguan_town =", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownNotEqualTo(String value) {
+            addCriterion("chengguan_town <>", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownGreaterThan(String value) {
+            addCriterion("chengguan_town >", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownGreaterThanOrEqualTo(String value) {
+            addCriterion("chengguan_town >=", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownLessThan(String value) {
+            addCriterion("chengguan_town <", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownLessThanOrEqualTo(String value) {
+            addCriterion("chengguan_town <=", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownLike(String value) {
+            addCriterion("chengguan_town like", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownNotLike(String value) {
+            addCriterion("chengguan_town not like", value, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownIn(List<String> values) {
+            addCriterion("chengguan_town in", values, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownNotIn(List<String> values) {
+            addCriterion("chengguan_town not in", values, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownBetween(String value1, String value2) {
+            addCriterion("chengguan_town between", value1, value2, "chengguanTown");
+            return (Criteria) this;
+        }
+
+        public Criteria andChengguanTownNotBetween(String value1, String value2) {
+            addCriterion("chengguan_town not between", value1, value2, "chengguanTown");
+            return (Criteria) this;
+        }
     }
 
     /**
