@@ -152,4 +152,10 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator);
 
+	/**
+	 * 创建关闭优盟任务
+	 * @param taobaoUserId
+	 */
+	public void submitClosedUmTask(Long taobaoUserId);
+
 }

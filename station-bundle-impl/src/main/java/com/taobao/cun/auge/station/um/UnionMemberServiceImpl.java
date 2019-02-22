@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.um;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -17,25 +18,21 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
-import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
+import com.taobao.cun.auge.station.um.dto.*;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +84,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private StationNumConfigBO stationNumConfigBO;
+
+    @Autowired
+    private UnionMemberQueryService unionMemberQueryService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -351,19 +351,21 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
-    public void quitUnionMember(UnionMemberStateChangeDto stateChangeDto) {
-        BeanValidator.validateWithThrowable(stateChangeDto);
+    public void quitUnionMember(Long stationId, OperatorDto operatorDto) {
+        BeanValidator.validateWithThrowable(operatorDto);
+        if (null == stationId || 0 == stationId) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "stationId is null");
+        }
         try {
-            String operator = stateChangeDto.getOperator();
+            String operator = operatorDto.getOperator();
             Long parentTaobaoUserId = Long.valueOf(operator);
-            Long stationId = stateChangeDto.getStationId();
 
             //所属村小二实例
             PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
                     parentTaobaoUserId);
 
             //优盟实例
-            PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(stateChangeDto, stationId);
+            PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(operatorDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
@@ -371,10 +373,10 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             }
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
-            UnionMemberStateEnum targetStateEnum = stateChangeDto.getState();
+            UnionMemberStateEnum targetStateEnum = UnionMemberStateEnum.QUIT;
 
             //组装操作人
-            umInstanceDto.copyOperatorDto(stateChangeDto);
+            umInstanceDto.copyOperatorDto(operatorDto);
 
             if (!UnionMemberStateEnum.QUIT.equals(targetStateEnum)) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟目标状态必须为已退出");
@@ -388,12 +390,63 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可退出");
             }
         } catch (AugeBusinessException e) {
-            logger.warn(JSON.toJSONString(stateChangeDto), e);
+            logger.warn("stationId=" + stationId + "operator=" + JSON.toJSONString(operatorDto), e);
             throw e;
         } catch (Exception e) {
-            logger.error(JSON.toJSONString(stateChangeDto), e);
+            logger.error("stationId=" + stationId + "operator=" + JSON.toJSONString(operatorDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
+    }
+
+    @Override
+    public void closeUnionMembers(Long parentStationId) {
+        PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING);
+        if (CollectionUtils.isEmpty(umList.getItems())) {
+            return;
+        }
+        for (UnionMemberDto unionMemberDto : umList.getItems()) {
+            Long umInstanceId = unionMemberDto.getInstanceId();
+            Long umStationId = unionMemberDto.getStationDto().getId();
+
+            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, "system");
+            partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
+                    "system");
+        }
+    }
+
+    @Override
+    public void quitUnionMembers(Long parentStationId) {
+        PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED);
+        if (CollectionUtils.isEmpty(umList.getItems())) {
+            return;
+        }
+        for (UnionMemberDto unionMemberDto : umList.getItems()) {
+            Long umInstanceId = unionMemberDto.getInstanceId();
+            Long umStationId = unionMemberDto.getStationDto().getId();
+
+            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, "system");
+            partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
+                    "system");
+        }
+    }
+
+    /**
+     * 根据父站点id，查询某种状态的优盟
+     *
+     * @param parentStationId
+     * @param state
+     * @return
+     */
+    private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state) {
+        UnionMemberPageCondition con = new UnionMemberPageCondition();
+        con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
+        con.setOperatorType(OperatorTypeEnum.SYSTEM);
+        con.setParentStationId(parentStationId);
+        con.setState(state);
+        con.setPageNum(1);
+        con.setPageSize(10000);
+        PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+        return umList;
     }
 
     private PartnerInstanceDto getUmPartnerInstanceDto(OperatorDto operatorDto, Long stationId) {

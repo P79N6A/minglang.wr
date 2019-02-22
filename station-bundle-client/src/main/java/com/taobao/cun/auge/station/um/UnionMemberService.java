@@ -47,9 +47,24 @@ public interface UnionMemberService {
     /**
      * 退出优盟，只有所属村小二可以操作
      *
-     * @param stateChangeDto
+     * @param stationId
+     * @param operatorDto
      */
-    void quitUnionMember(UnionMemberStateChangeDto stateChangeDto);
+    void quitUnionMember(Long stationId, OperatorDto operatorDto);
+
+    /**
+     * 批量关闭优盟
+     *
+     * @param parentStationId
+     */
+    void closeUnionMembers(Long parentStationId);
+
+    /**
+     * 批量退出优盟
+     *
+     * @param parentStationId
+     */
+    void quitUnionMembers(Long parentStationId);
 
     /**
      * 删除优盟

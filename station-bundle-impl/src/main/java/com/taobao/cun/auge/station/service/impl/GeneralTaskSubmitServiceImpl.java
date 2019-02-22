@@ -952,4 +952,33 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         taskSubmitService.submitTask(cainiaoTaskVo);
         logger.info("submitClosedCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
     }
+
+    /**
+     * 关闭优盟任务
+     *
+     * @param taobaoUserId
+     */
+    @Override
+    public void submitClosedUmTask(Long taobaoUserId) {
+        GeneralTaskDto closeUmTaskVo = new GeneralTaskDto();
+        closeUmTaskVo.setBusinessNo(String.valueOf(instanceId));
+        closeUmTaskVo.setBeanName("unionMemberService");
+        closeUmTaskVo.setMethodName("quitUnionMember");
+        closeUmTaskVo.setBusinessStepNo(1L);
+        closeUmTaskVo.setBusinessType(TaskBusinessTypeEnum.CLOSED_TO_CAINIAO.getCode());
+        closeUmTaskVo.setBusinessStepDesc("停业同步菜鸟");
+        closeUmTaskVo.setOperator(operatorId);
+
+        SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+        syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+        syncModifyCainiaoStationDto.setOperator(operatorId);
+        syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.BUC);
+        closeUmTaskVo.setParameterType(SyncModifyCainiaoStationDto.class.getName());
+        closeUmTaskVo.setParameter(JSON.toJSONString(syncModifyCainiaoStationDto));
+
+        // 提交任务
+        taskSubmitService.submitTask(closeUmTaskVo);
+        logger.info("submitClosedUmTask : {}", JSON.toJSONString(closeUmTaskVo));
+    }
+
 }
