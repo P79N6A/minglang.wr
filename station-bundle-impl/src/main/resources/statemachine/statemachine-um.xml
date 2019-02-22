@@ -38,6 +38,14 @@
             <cs:stateMachineComponent method="closed"/>
         </onentry>
         <transition event="SERVICING_EVENT" target="SERVICING"/>
+        <transition event="QUIT_EVENT" target="QUIT"/>
+    </state>
+    <state id="QUIT">
+        <onentry>
+            <log expr="'已退出'"/>
+            <cs:stateMachineComponent method="quit"/>
+        </onentry>
+        <transition target="end"/>
     </state>
     <final id="end"/>
 </scxml>

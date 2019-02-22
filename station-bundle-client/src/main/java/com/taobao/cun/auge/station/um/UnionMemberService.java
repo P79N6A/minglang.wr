@@ -45,6 +45,13 @@ public interface UnionMemberService {
     void openOrCloseUnionMember(UnionMemberStateChangeDto stateChangeDto);
 
     /**
+     * 退出优盟，只有所属村小二可以操作
+     *
+     * @param stateChangeDto
+     */
+    void quitUnionMember(UnionMemberStateChangeDto stateChangeDto);
+
+    /**
      * 删除优盟
      *
      * @param stationId
@@ -54,6 +61,7 @@ public interface UnionMemberService {
 
     /**
      * 测试接口，不可对外暴露
+     *
      * @param stationNums
      */
     @Deprecated
