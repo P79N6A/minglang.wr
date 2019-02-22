@@ -35,6 +35,7 @@ import com.taobao.cun.auge.insurance.enums.InsuranceStateEnum;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -108,6 +109,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Autowired
     private PartnerInsuranceDetailMapper partnerInsuranceDetailMapper;
+
+    @Autowired
+    private StationBO stationBo;
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
@@ -436,7 +440,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         int handledCount = 0 ;
         PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y")
-                .andTypeIn(Lists.newArrayList("TP","TPS")).andStateIn(Lists.newArrayList("SETTING","DECORATING","SERVICING","CLOSING"));
+                .andTypeIn(Lists.newArrayList("TP","TPS")).andStateIn(Lists.newArrayList("DECORATING","SERVICING","CLOSING"));
         long startTime = System.currentTimeMillis();
         while (true) {
             PageHelper.startPage(pageNum++, pageSize,"id asc");
@@ -520,6 +524,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
 
     private PartnerInsuranceDetail buildPartnerInsuranceDetail(Long taobaoUserId, String idenNum,Date effectStartTime,Date effectEndTime,String status,Long expiredDay ,String parnterName,Long stationId,String stationName,String isOld) {
+        Station station = stationBo.getStationById(stationId);
         PartnerInsuranceDetail insuranceDetail = new PartnerInsuranceDetail();
         insuranceDetail.setTaobaoUserId(taobaoUserId);
         insuranceDetail.setIdenNum(idenNum);
@@ -534,7 +539,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insuranceDetail.setIsDeleted("n");
         insuranceDetail.setName(parnterName);
         insuranceDetail.setStationId(stationId);
-        insuranceDetail.setStationName(stationName);
+        insuranceDetail.setStationName(station.getName());
+        insuranceDetail.setOrgId(station.getApplyOrg());
         return insuranceDetail;
     }
 
