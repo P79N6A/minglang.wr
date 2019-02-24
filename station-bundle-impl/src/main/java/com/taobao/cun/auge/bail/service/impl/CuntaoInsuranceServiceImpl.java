@@ -533,7 +533,10 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insuranceDetail.setCreator("system");
         insuranceDetail.setGmtCreate(new Date());
         insuranceDetail.setGmtModified(new Date());
-        insuranceDetail.setExpiredDay(expiredDay<0?0:expiredDay);
+        if(expiredDay<0){
+            expiredDay = 0L;
+        }
+        insuranceDetail.setExpiredDay(expiredDay);
         insuranceDetail.setIsOld(isOld);
         insuranceDetail.setStatus(status);
         insuranceDetail.setIsDeleted("n");
@@ -541,6 +544,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insuranceDetail.setStationId(stationId);
         insuranceDetail.setStationName(station.getName());
         insuranceDetail.setOrgId(station.getApplyOrg());
+        insuranceDetail.setExtInfo(expiredDay.equals(0L)?"n":"y");
         return insuranceDetail;
     }
 
