@@ -403,7 +403,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
-    public void closeUnionMembers(Long parentStationId, OperatorDto operatorDto) {
+    public void closeUnionMembers(BatchCloseUnionMemberDto batchCloseUnionMemberDto) {
+        BeanValidator.validateWithThrowable(batchCloseUnionMemberDto);
+
+        Long parentStationId = batchCloseUnionMemberDto.getParentStationId();
+        String operator = batchCloseUnionMemberDto.getOperator();
+
         PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING);
         if (CollectionUtils.isEmpty(umList.getItems())) {
             return;
@@ -412,15 +417,15 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long umInstanceId = unionMemberDto.getInstanceId();
             Long umStationId = unionMemberDto.getStationDto().getId();
 
-            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operatorDto.getOperator());
+            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operator);
             partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
-                    operatorDto.getOperator());
+                    operator);
             //去标
-            addRemoveTagTask(unionMemberDto,operatorDto);
+            addRemoveTagTask(unionMemberDto, batchCloseUnionMemberDto);
         }
     }
 
-    private void addRemoveTagTask(UnionMemberDto unionMemberDto,OperatorDto operatorDto){
+    private void addRemoveTagTask(UnionMemberDto unionMemberDto, OperatorDto operatorDto) {
         Long instanceId = unionMemberDto.getInstanceId();
 
         String operatorId = operatorDto.getOperator();
@@ -432,18 +437,23 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
-    public void quitUnionMembers(Long parentStationId, OperatorDto operatorDto) {
+    public void quitUnionMembers(BatchQuitUnionMemberDto batchQuitUnionMemberDto) {
+        BeanValidator.validateWithThrowable(batchQuitUnionMemberDto);
+        Long parentStationId = batchQuitUnionMemberDto.getParentStationId();
+        String operator = batchQuitUnionMemberDto.getOperator();
+
         PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED);
         if (CollectionUtils.isEmpty(umList.getItems())) {
             return;
         }
+
         for (UnionMemberDto unionMemberDto : umList.getItems()) {
             Long umInstanceId = unionMemberDto.getInstanceId();
             Long umStationId = unionMemberDto.getStationDto().getId();
 
-            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operatorDto.getOperator());
             partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
-                    operatorDto.getOperator());
+                    operator);
+            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operator);
         }
     }
 
