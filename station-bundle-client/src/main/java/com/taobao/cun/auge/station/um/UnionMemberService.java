@@ -94,4 +94,8 @@ public interface UnionMemberService {
      */
     @Deprecated
     public void submitQuitUmTask(Long parentStationId);
+
+    public void testTpClosedEvent(Long instanceId);
+
+    public void testTpQuitedEvent(Long instanceId);
 }
