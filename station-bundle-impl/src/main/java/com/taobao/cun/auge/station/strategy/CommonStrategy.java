@@ -77,6 +77,6 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	@Override
 	public void quited(Long instanceId, OperatorDto operatorDto){
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		generalTaskSubmitService.submitClosedUmTask(instance.getStationId(),operatorDto);
+		generalTaskSubmitService.submitQuitUmTask(instance.getStationId(),operatorDto);
 	}
 }
