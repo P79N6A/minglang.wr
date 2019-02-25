@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.um.dto.*;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
@@ -87,6 +88,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Autowired
     private UnionMemberQueryService unionMemberQueryService;
+
+    @Autowired
+    private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -411,7 +415,20 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operatorDto.getOperator());
             partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
                     operatorDto.getOperator());
+            //去标
+            addRemoveTagTask(unionMemberDto,operatorDto);
         }
+    }
+
+    private void addRemoveTagTask(UnionMemberDto unionMemberDto,OperatorDto operatorDto){
+        Long instanceId = unionMemberDto.getInstanceId();
+
+        String operatorId = operatorDto.getOperator();
+        Long taobaoUserId = unionMemberDto.getPartnerDto().getTaobaoUserId();
+        String taobaoNick = unionMemberDto.getPartnerDto().getTaobaoNick();
+        PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.UM;
+        generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId,
+                instanceId);
     }
 
     @Override
