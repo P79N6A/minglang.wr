@@ -78,4 +78,20 @@ public interface UnionMemberService {
      */
     @Deprecated
     public void updateUmstationNum(String stationNums);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param parentStationId
+     */
+    @Deprecated
+    public void submitClosedUmTask(Long parentStationId);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param parentStationId
+     */
+    @Deprecated
+    public void submitQuitUmTask(Long parentStationId);
 }

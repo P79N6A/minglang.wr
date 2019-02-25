@@ -570,4 +570,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             stationBO.updateStationNum(station.getId(), newStationNum);
         }
     }
+
+    @Override
+    public void submitClosedUmTask(Long parentStationId) {
+        generalTaskSubmitService.submitClosedUmTask(parentStationId);
+    }
+
+    @Override
+    public void submitQuitUmTask(Long parentStationId) {
+        generalTaskSubmitService.submitQuitUmTask(parentStationId);
+    }
 }
