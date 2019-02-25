@@ -399,7 +399,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
-    public void closeUnionMembers(Long parentStationId) {
+    public void closeUnionMembers(Long parentStationId, OperatorDto operatorDto) {
         PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING);
         if (CollectionUtils.isEmpty(umList.getItems())) {
             return;
@@ -408,14 +408,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long umInstanceId = unionMemberDto.getInstanceId();
             Long umStationId = unionMemberDto.getStationDto().getId();
 
-            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, "system");
+            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operatorDto.getOperator());
             partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
-                    "system");
+                    operatorDto.getOperator());
         }
     }
 
     @Override
-    public void quitUnionMembers(Long parentStationId) {
+    public void quitUnionMembers(Long parentStationId, OperatorDto operatorDto) {
         PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED);
         if (CollectionUtils.isEmpty(umList.getItems())) {
             return;
@@ -424,9 +424,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long umInstanceId = unionMemberDto.getInstanceId();
             Long umStationId = unionMemberDto.getStationDto().getId();
 
-            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, "system");
+            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operatorDto.getOperator());
             partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
-                    "system");
+                    operatorDto.getOperator());
         }
     }
 

@@ -53,18 +53,18 @@ public interface UnionMemberService {
     void quitUnionMember(Long stationId, OperatorDto operatorDto);
 
     /**
-     * 批量关闭优盟
+     * 根据所属村小二站点id，批量关闭优盟
      *
      * @param parentStationId
      */
-    void closeUnionMembers(Long parentStationId);
+    void closeUnionMembers(Long parentStationId, OperatorDto operatorDto);
 
     /**
-     * 批量退出优盟
+     * 根据所属村小二站点id，批量退出优盟
      *
      * @param parentStationId
      */
-    void quitUnionMembers(Long parentStationId);
+    void quitUnionMembers(Long parentStationId, OperatorDto operatorDto);
 
     /**
      * 删除优盟
