@@ -157,13 +157,13 @@ public interface GeneralTaskSubmitService {
 	 *
 	 * @param parentStationId
 	 */
-	public void submitClosedUmTask(Long parentStationId);
+	public void submitClosedUmTask(Long parentStationId, OperatorDto operatorDto);
 
 	/**
 	 * 创建退出优盟任务
 	 *
 	 * @param parentStationId
 	 */
-	public void submitQuitUmTask(Long parentStationId);
+	public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto);
 
 }

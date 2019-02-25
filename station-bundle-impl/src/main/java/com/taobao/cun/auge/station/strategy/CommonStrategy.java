@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.strategy;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
@@ -20,6 +22,9 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
+
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 
 	public String findCloseReason(Long instanceId) {
 		// 获取停业原因
@@ -64,5 +69,14 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto){
 		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(),instanceId);
 		generalTaskSubmitService.submitClosedCainiaoStation(instanceId, operatorDto.getOperator());
+
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		generalTaskSubmitService.submitClosedUmTask(instance.getStationId(),operatorDto);
+	}
+
+	@Override
+	public void quited(Long instanceId, OperatorDto operatorDto){
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		generalTaskSubmitService.submitClosedUmTask(instance.getStationId(),operatorDto);
 	}
 }

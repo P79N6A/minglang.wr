@@ -573,11 +573,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
     @Override
     public void submitClosedUmTask(Long parentStationId) {
-        generalTaskSubmitService.submitClosedUmTask(parentStationId);
+        generalTaskSubmitService.submitClosedUmTask(parentStationId, OperatorDto.defaultOperator());
     }
 
     @Override
     public void submitQuitUmTask(Long parentStationId) {
-        generalTaskSubmitService.submitQuitUmTask(parentStationId);
+        generalTaskSubmitService.submitQuitUmTask(parentStationId, OperatorDto.defaultOperator());
     }
 }

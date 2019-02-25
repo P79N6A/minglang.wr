@@ -961,7 +961,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
      * @param parentStationId
      */
     @Override
-    public void submitClosedUmTask(Long parentStationId) {
+    public void submitClosedUmTask(Long parentStationId, OperatorDto operatorDto) {
         GeneralTaskDto closeUmTaskVo = new GeneralTaskDto();
         closeUmTaskVo.setBusinessNo(String.valueOf(parentStationId));
         closeUmTaskVo.setBeanName("unionMemberService");
@@ -969,12 +969,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         closeUmTaskVo.setBusinessStepNo(1L);
         closeUmTaskVo.setBusinessType(TaskBusinessTypeEnum.CLOSED_UM.getCode());
         closeUmTaskVo.setBusinessStepDesc("关闭优盟");
-        closeUmTaskVo.setOperator("SYSTEM");
+        closeUmTaskVo.setOperator(operatorDto.getOperator());
 
         BatchCloseUnionMemberDto batchCloseUnionMemberDto = new BatchCloseUnionMemberDto();
         batchCloseUnionMemberDto.setParentStationId(parentStationId);
-        batchCloseUnionMemberDto.setOperator("SYSTEM");
-        batchCloseUnionMemberDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+        batchCloseUnionMemberDto.copyOperatorDto(operatorDto);
         closeUmTaskVo.setParameterType(BatchCloseUnionMemberDto.class.getName());
         closeUmTaskVo.setParameter(JSON.toJSONString(batchCloseUnionMemberDto));
 
@@ -989,7 +988,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
      * @param parentStationId
      */
     @Override
-    public void submitQuitUmTask(Long parentStationId) {
+    public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto) {
         GeneralTaskDto quitUmTaskVo = new GeneralTaskDto();
         quitUmTaskVo.setBusinessNo(String.valueOf(parentStationId));
         quitUmTaskVo.setBeanName("unionMemberService");
@@ -997,12 +996,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         quitUmTaskVo.setBusinessStepNo(1L);
         quitUmTaskVo.setBusinessType(TaskBusinessTypeEnum.QUIT_UM.getCode());
         quitUmTaskVo.setBusinessStepDesc("退出优盟");
-        quitUmTaskVo.setOperator("SYSTEM");
+        quitUmTaskVo.setOperator(operatorDto.getOperator());
 
         BatchQuitUnionMemberDto batchQuitUnionMemberDto = new BatchQuitUnionMemberDto();
         batchQuitUnionMemberDto.setParentStationId(parentStationId);
-        batchQuitUnionMemberDto.setOperator("SYSTEM");
-        batchQuitUnionMemberDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+        batchQuitUnionMemberDto.copyOperatorDto(operatorDto);
         quitUmTaskVo.setParameterType(BatchCloseUnionMemberDto.class.getName());
         quitUmTaskVo.setParameter(JSON.toJSONString(batchQuitUnionMemberDto));
 
