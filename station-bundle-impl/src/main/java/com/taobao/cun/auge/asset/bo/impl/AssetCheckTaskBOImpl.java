@@ -208,8 +208,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(at.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r = new AssetCheckTask();
@@ -235,8 +235,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(r.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}
 			
@@ -251,8 +251,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(f.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r1 = new AssetCheckTask();
@@ -277,8 +277,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(r1.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}
 		} catch (Exception e) {
