@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import com.alibaba.fastjson.JSON;
 
@@ -36,7 +37,6 @@ import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
@@ -112,6 +111,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Autowired
     private StationBO stationBo;
+
+    private ExecutorService executorService = new ThreadPoolExecutor(5,30,3000, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(200));
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
@@ -448,16 +449,32 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             handledCount += resList.size();
             logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
             for (PartnerStationRel partnerStationRel : resList) {
-                List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
-                partnerInsuranceDetails.forEach(detail->{
-                    partnerInsuranceDetailMapper.insert(detail);
-                });
+
+                while(true){
+
+                    try {
+                        Future<?> future = executorService.submit(() -> {
+                            List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
+                            partnerInsuranceDetails.forEach(detail -> {
+                                partnerInsuranceDetailMapper.insert(detail);
+                            });
+                        });
+
+                        try {
+                            future.get();
+                        } catch (Exception e) {
+                            //ignore
+                        }
+                    } catch (Exception e) {
+                        logger.info("buildPartnerInsuranceDetail error  {}",e);
+
+                    }
+                    break;
+
+                }
+
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             if (resList.size()<pageSize) {
                 break;
             }
