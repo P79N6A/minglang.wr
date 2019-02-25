@@ -1001,7 +1001,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         BatchQuitUnionMemberDto batchQuitUnionMemberDto = new BatchQuitUnionMemberDto();
         batchQuitUnionMemberDto.setParentStationId(parentStationId);
         batchQuitUnionMemberDto.copyOperatorDto(operatorDto);
-        quitUmTaskVo.setParameterType(BatchCloseUnionMemberDto.class.getName());
+        quitUmTaskVo.setParameterType(BatchQuitUnionMemberDto.class.getName());
         quitUmTaskVo.setParameter(JSON.toJSONString(batchQuitUnionMemberDto));
 
         // 提交任务
