@@ -306,21 +306,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     public void openOrCloseUnionMember(UnionMemberStateChangeDto stateChangeDto) {
         BeanValidator.validateWithThrowable(stateChangeDto);
         try {
-            String operator = stateChangeDto.getOperator();
-            Long parentTaobaoUserId = Long.valueOf(operator);
             Long stationId = stateChangeDto.getStationId();
-
-            //所属村小二实例
-            PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                    parentTaobaoUserId);
 
             //优盟实例
             PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(stateChangeDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
-            if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
-            }
+            //只有村小二操作时，校验优盟归属权限
+            validateUmBelongAuthor(stateChangeDto, parentStationId);
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
             UnionMemberStateEnum targetStateEnum = stateChangeDto.getState();
