@@ -360,26 +360,19 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void quitUnionMember(Long stationId, OperatorDto operatorDto) {
         BeanValidator.validateWithThrowable(operatorDto);
         if (null == stationId || 0 == stationId) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "stationId is null");
         }
         try {
-            String operator = operatorDto.getOperator();
-            Long parentTaobaoUserId = Long.valueOf(operator);
-
-            //所属村小二实例
-            PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                    parentTaobaoUserId);
-
             //优盟实例
             PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(operatorDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
-            if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
-            }
+            //只有村小二操作时，校验优盟归属权限
+            validateUmBelongAuthor(operatorDto, parentStationId);
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
             UnionMemberStateEnum targetStateEnum = UnionMemberStateEnum.QUIT;
@@ -407,7 +400,26 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         }
     }
 
+    /**
+     * 村小二来操作优盟时，校验优盟归属权限
+     */
+    private void validateUmBelongAuthor(OperatorDto operatorDto, Long parentStationId) {
+        //只有村小二，havana类型才校验，其他不校验
+        if (!OperatorTypeEnum.HAVANA.equals(operatorDto.getOperatorType())) {
+            return;
+        }
+        Long parentTaobaoUserId = Long.valueOf(operatorDto.getOperator());
+        //所属村小二实例
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+                parentTaobaoUserId);
+
+        if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
+        }
+    }
+
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void closeUnionMembers(BatchCloseUnionMemberDto batchCloseUnionMemberDto) {
         BeanValidator.validateWithThrowable(batchCloseUnionMemberDto);
 
@@ -442,6 +454,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void quitUnionMembers(BatchQuitUnionMemberDto batchQuitUnionMemberDto) {
         BeanValidator.validateWithThrowable(batchQuitUnionMemberDto);
         Long parentStationId = batchQuitUnionMemberDto.getParentStationId();
