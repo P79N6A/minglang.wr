@@ -362,16 +362,18 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public void checkingAssetBatch(List<Long> assetIds, String operator) {
-		Assert.notNull(assetIds);
-		Assert.notNull(operator);
-		Asset record = new Asset();
-		DomainUtils.beforeUpdate(record, operator);
-		record.setCheckStatus(AssetCheckStatusEnum.CHECKING.getCode());
+		throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "盘点功能下线" );
 
-		AssetExample assetExample = new AssetExample();
-		AssetExample.Criteria criteria = assetExample.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andIdIn(assetIds);
-		assetMapper.updateByExampleSelective(record, assetExample);
+//		Assert.notNull(assetIds);
+//		Assert.notNull(operator);
+//		Asset record = new Asset();
+//		DomainUtils.beforeUpdate(record, operator);
+//		record.setCheckStatus(AssetCheckStatusEnum.CHECKING.getCode());
+//
+//		AssetExample assetExample = new AssetExample();
+//		AssetExample.Criteria criteria = assetExample.createCriteria();
+//		criteria.andIsDeletedEqualTo("n").andIdIn(assetIds);
+//		assetMapper.updateByExampleSelective(record, assetExample);
 	}
 
 	@Override
