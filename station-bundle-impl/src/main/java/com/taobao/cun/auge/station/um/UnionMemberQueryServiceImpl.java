@@ -50,7 +50,11 @@ public class UnionMemberQueryServiceImpl implements UnionMemberQueryService {
             Long parentTaobaoUserId = Long.valueOf(operatorDto.getOperator());
             //所属村小二
             PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                parentTaobaoUserId);
+                    parentTaobaoUserId);
+
+            if (null == partnerInstanceDto) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二不存在或者已经退出");
+            }
 
             Long parentStationId = partnerInstanceDto.getStationId();
             if (null != parentStationId && !parentStationId.equals(instanceDto.getParentStationId())) {
