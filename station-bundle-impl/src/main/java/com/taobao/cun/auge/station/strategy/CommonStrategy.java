@@ -1,15 +1,21 @@
 package com.taobao.cun.auge.station.strategy;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.um.UnionMemberQueryService;
+import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class CommonStrategy implements PartnerInstanceStrategy{
@@ -25,6 +31,9 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+
+	@Autowired
+	UnionMemberQueryService unionMemberQueryService;
 
 	public String findCloseReason(Long instanceId) {
 		// 获取停业原因
@@ -64,19 +73,43 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	public void autoClosing(Long instanceId, OperatorDto operatorDto){
 		
 	}
-	
+
 	@Override
-	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto){
-		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(),instanceId);
+	public void closed(Long instanceId, Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) {
+		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(), instanceId);
 		generalTaskSubmitService.submitClosedCainiaoStation(instanceId, operatorDto.getOperator());
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		generalTaskSubmitService.submitClosedUmTask(instance.getStationId(),operatorDto);
+
+		//关闭优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
+		Long parentStationId = instance.getStationId();
+		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, 1);
+		if (null != umList && umList.getTotal() < 200) {
+			generalTaskSubmitService.submitClosedUmTask(parentStationId, operatorDto);
+		}
 	}
 
 	@Override
-	public void quited(Long instanceId, OperatorDto operatorDto){
+	public void quited(Long instanceId, OperatorDto operatorDto) {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		generalTaskSubmitService.submitQuitUmTask(instance.getStationId(),operatorDto);
+		Long parentStationId = instance.getStationId();
+
+		//退出优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
+		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
+		if (null != umList && umList.getTotal() < 200) {
+			generalTaskSubmitService.submitQuitUmTask(parentStationId, operatorDto);
+		}
+	}
+
+	private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
+		UnionMemberPageCondition con = new UnionMemberPageCondition();
+		con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
+		con.setOperatorType(OperatorTypeEnum.SYSTEM);
+		con.setParentStationId(parentStationId);
+		con.setState(state);
+		con.setPageNum(pageNum);
+		con.setPageSize(10);
+		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+		return umList;
 	}
 }

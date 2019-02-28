@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.um.UnionMemberQueryService;
+import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,15 +36,6 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 
@@ -73,6 +70,9 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private StationService stationService;
+
+	@Autowired
+	UnionMemberQueryService unionMemberQueryService;
 
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
@@ -165,8 +165,26 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceDto.getId());
 			generalTaskSubmitService.submitQuitApprovedTask(partnerInstanceDto.getId(), partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId(),
 					quitApply.getIsQuitStation());
+
+			Long parentStationId = partnerInstanceDto.getStationId();
+			//退出优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
+			PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
+			if (null != umList && umList.getTotal() < 200) {
+				generalTaskSubmitService.submitQuitUmTask(parentStationId, partnerInstanceDto);
+			}
 		}
-		
+	}
+
+	private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
+		UnionMemberPageCondition con = new UnionMemberPageCondition();
+		con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
+		con.setOperatorType(OperatorTypeEnum.SYSTEM);
+		con.setParentStationId(parentStationId);
+		con.setState(state);
+		con.setPageNum(pageNum);
+		con.setPageSize(10);
+		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+		return umList;
 	}
 
 	@Override
