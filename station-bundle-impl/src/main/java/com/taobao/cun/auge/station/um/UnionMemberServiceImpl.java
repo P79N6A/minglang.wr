@@ -419,20 +419,24 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentStationId = batchCloseUnionMemberDto.getParentStationId();
         String operator = batchCloseUnionMemberDto.getOperator();
 
-        PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING);
-        if (CollectionUtils.isEmpty(umList.getItems())) {
-            return;
-        }
-        for (UnionMemberDto unionMemberDto : umList.getItems()) {
-            Long umInstanceId = unionMemberDto.getInstanceId();
-            Long umStationId = unionMemberDto.getStationDto().getId();
+        Integer curPageNum = 0;
+        PageDto<UnionMemberDto> umList;
+        do {
+            curPageNum++;
+            umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, curPageNum);
+            if (null != umList && CollectionUtils.isNotEmpty(umList.getItems())) {
+                for (UnionMemberDto unionMemberDto : umList.getItems()) {
+                    Long umInstanceId = unionMemberDto.getInstanceId();
+                    Long umStationId = unionMemberDto.getStationDto().getId();
 
-            stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operator);
-            partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
-                    operator);
-            //去标
-            addRemoveTagTask(unionMemberDto, batchCloseUnionMemberDto);
-        }
+                    stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operator);
+                    partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
+                            operator);
+                    //去标
+                    addRemoveTagTask(unionMemberDto, batchCloseUnionMemberDto);
+                }
+            }
+        } while (curPageNum < umList.getPages());
     }
 
     private void addRemoveTagTask(UnionMemberDto unionMemberDto, OperatorDto operatorDto) {
@@ -453,19 +457,22 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         Long parentStationId = batchQuitUnionMemberDto.getParentStationId();
         String operator = batchQuitUnionMemberDto.getOperator();
 
-        PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED);
-        if (CollectionUtils.isEmpty(umList.getItems())) {
-            return;
-        }
+        Integer curPageNum = 0;
+        PageDto<UnionMemberDto> umList;
+        do {
+            curPageNum++;
+            umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, curPageNum);
+            if (null != umList && CollectionUtils.isNotEmpty(umList.getItems())) {
+                for (UnionMemberDto unionMemberDto : umList.getItems()) {
+                    Long umInstanceId = unionMemberDto.getInstanceId();
+                    Long umStationId = unionMemberDto.getStationDto().getId();
 
-        for (UnionMemberDto unionMemberDto : umList.getItems()) {
-            Long umInstanceId = unionMemberDto.getInstanceId();
-            Long umStationId = unionMemberDto.getStationDto().getId();
-
-            partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
-                    operator);
-            stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operator);
-        }
+                    partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
+                            operator);
+                    stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operator);
+                }
+            }
+        } while (curPageNum < umList.getPages());
     }
 
     /**
@@ -475,14 +482,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
      * @param state
      * @return
      */
-    private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state) {
+    private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
         UnionMemberPageCondition con = new UnionMemberPageCondition();
         con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
         con.setOperatorType(OperatorTypeEnum.SYSTEM);
         con.setParentStationId(parentStationId);
         con.setState(state);
-        con.setPageNum(1);
-        con.setPageSize(10000);
+        con.setPageNum(pageNum);
+        con.setPageSize(500);
         PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
         return umList;
     }
