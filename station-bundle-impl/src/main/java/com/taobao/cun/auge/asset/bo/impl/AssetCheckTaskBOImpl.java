@@ -198,7 +198,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
             List<CuntaoUserRole> userRoles = cuntaoUserRoleService.getCuntaoUserRoles(orgId, "COUNTY_LEADER_AUDIT");
             
 			AssetCheckTask at = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
-			if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
+			if (at != null) {
 				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				
@@ -241,7 +241,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 			}
 			
 			AssetCheckTask f = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
-			if (f != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
+			if (f != null) {
 				f.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
