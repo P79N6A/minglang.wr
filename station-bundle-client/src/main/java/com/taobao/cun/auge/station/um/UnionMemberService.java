@@ -95,7 +95,19 @@ public interface UnionMemberService {
     @Deprecated
     public void submitQuitUmTask(Long parentStationId);
 
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param instanceId
+     */
+    @Deprecated
     public void testTpClosedEvent(Long instanceId);
 
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param instanceId
+     */
+    @Deprecated
     public void testTpQuitedEvent(Long instanceId);
 }
