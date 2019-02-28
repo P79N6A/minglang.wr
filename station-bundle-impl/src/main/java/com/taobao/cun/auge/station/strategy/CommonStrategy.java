@@ -84,7 +84,9 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 		//关闭优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
 		Long parentStationId = instance.getStationId();
 		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, 1);
-		if (null != umList && umList.getTotal() < 200) {
+
+		Integer closeUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
+		if (null != umList && umList.getTotal() < closeUmMaxNum) {
 			generalTaskSubmitService.submitClosedUmTask(parentStationId, operatorDto);
 		}
 	}
@@ -96,7 +98,8 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 
 		//退出优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
 		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
-		if (null != umList && umList.getTotal() < 200) {
+		Integer quitUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
+		if (null != umList && umList.getTotal() < quitUmMaxNum) {
 			generalTaskSubmitService.submitQuitUmTask(parentStationId, operatorDto);
 		}
 	}

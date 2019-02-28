@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.um.UnionMemberQueryService;
@@ -76,6 +77,9 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private PartnerQualifyApplyService partnerQualifyApplyService;
+
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
@@ -187,7 +191,8 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			Long parentStationId = partnerInstanceDto.getStationId();
 			//退出优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
 			PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
-			if (null != umList && umList.getTotal() < 200) {
+			Integer quitUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
+			if (null != umList && umList.getTotal() < quitUmMaxNum) {
 				generalTaskSubmitService.submitQuitUmTask(parentStationId, partnerInstanceDto);
 			}
 		}
