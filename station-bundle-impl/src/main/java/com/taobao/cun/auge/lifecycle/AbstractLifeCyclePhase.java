@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.um.UnionMemberQueryService;
+import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
+import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,14 +39,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStateEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
@@ -68,6 +66,10 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
     private BizActionLogBo bizActionLogBo;
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
+
+    @Autowired
+    UnionMemberQueryService unionMemberQueryService;
+
 	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		stationDto.setState(StationStateEnum.INVALID);
@@ -223,5 +225,17 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 		PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
+    }
+
+    protected PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
+        UnionMemberPageCondition con = new UnionMemberPageCondition();
+        con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
+        con.setOperatorType(OperatorTypeEnum.SYSTEM);
+        con.setParentStationId(parentStationId);
+        con.setState(state);
+        con.setPageNum(pageNum);
+        con.setPageSize(10);
+        PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+        return umList;
     }
 }

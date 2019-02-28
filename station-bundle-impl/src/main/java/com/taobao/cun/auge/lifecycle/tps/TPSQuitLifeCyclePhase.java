@@ -71,9 +71,6 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private StationService stationService;
 
-	@Autowired
-	UnionMemberQueryService unionMemberQueryService;
-
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -173,18 +170,6 @@ public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 				generalTaskSubmitService.submitQuitUmTask(parentStationId, partnerInstanceDto);
 			}
 		}
-	}
-
-	private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
-		UnionMemberPageCondition con = new UnionMemberPageCondition();
-		con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
-		con.setOperatorType(OperatorTypeEnum.SYSTEM);
-		con.setParentStationId(parentStationId);
-		con.setState(state);
-		con.setPageNum(pageNum);
-		con.setPageSize(10);
-		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
-		return umList;
 	}
 
 	@Override
