@@ -112,7 +112,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     @Autowired
     private StationBO stationBo;
 
-    private ExecutorService executorService = new ThreadPoolExecutor(5,30,3000, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(200));
+    private ExecutorService executorService = new ThreadPoolExecutor(5,30,60000, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(200));
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
@@ -451,26 +451,20 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             for (PartnerStationRel partnerStationRel : resList) {
 
                 while(true){
-
                     try {
-                        Future<?> future = executorService.submit(() -> {
+                        executorService.submit(() -> {
                             List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
                             partnerInsuranceDetails.forEach(detail -> {
                                 partnerInsuranceDetailMapper.insert(detail);
                             });
                         });
-
-                        try {
-                            future.get();
-                        } catch (Exception e) {
-                            //ignore
-                        }
+                    } catch (RejectedExecutionException e) {
+                        continue;
                     } catch (Exception e) {
                         logger.info("buildPartnerInsuranceDetail error  {}",e);
-
+                        break;
                     }
                     break;
-
                 }
 
             }
