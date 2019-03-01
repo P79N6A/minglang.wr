@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.store.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -10,8 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.cuntao.ctsm.client.dto.enums.ChannelEnum;
+import com.alibaba.cuntao.ctsm.client.dto.enums.ServiceCodeEnum;
+import com.alibaba.cuntao.ctsm.client.dto.enums.WhiteListTypeEnum;
 import com.alibaba.cuntao.ctsm.client.service.write.StoreSWriteService;
+import com.alibaba.cuntao.ctsm.client.service.write.WhiteListWriteService;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
+import com.taobao.cun.auge.common.utils.DateUtil;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
@@ -27,22 +36,27 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class StoreWriteServiceImpl implements StoreWriteService {
 	@Resource
 	private StoreWriteBO storeWriteBO;
-	
+
 	@Autowired
 	private StoreSWriteService storeSWriteService;
 	@Autowired
 	private StoreReadBO storeReadBO;
-	
+	@Autowired
+	private WhiteListWriteService whiteListWriteService;
+
+	@Autowired
+	private PartnerInstanceBO partnerInstanceBO;
+
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteServiceImpl.class);
 
 	@Override
-	public Long create(StoreCreateDto dto) throws StoreException{
+	public Long create(StoreCreateDto dto) throws StoreException {
 		return storeWriteBO.create(dto);
 	}
 
 	@Override
-	public Boolean updateStoreTag(Long shareStoreId,StoreCategory category) {
-		return storeWriteBO.updateStoreTag(shareStoreId,category);
+	public Boolean updateStoreTag(Long shareStoreId, StoreCategory category) {
+		return storeWriteBO.updateStoreTag(shareStoreId, category);
 	}
 
 	@Override
@@ -51,7 +65,7 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	}
 
 	@Override
-	public Boolean createSupplyStore(Long stationId){
+	public Boolean createSupplyStore(Long stationId) {
 		return storeWriteBO.createSupplyStore(stationId);
 	}
 
@@ -87,14 +101,14 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
 	@Override
 	public Boolean batchInitStoreWarehouse(List<Long> stationIds) {
-			for(Long stationId : stationIds){
-				try {
-					storeWriteBO.initStoreWarehouse(stationId);
-				} catch (Exception e) {
-					logger.error("batchInitStoreWarehouse error["+stationId+"]", e);
-				}
+		for (Long stationId : stationIds) {
+			try {
+				storeWriteBO.initStoreWarehouse(stationId);
+			} catch (Exception e) {
+				logger.error("batchInitStoreWarehouse error[" + stationId + "]", e);
 			}
-			return true;
+		}
+		return true;
 	}
 
 	@Override
@@ -103,7 +117,7 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	}
 
 	@Override
-	public void batchInitStoreEndorOrg(){
+	public void batchInitStoreEndorOrg() {
 		storeWriteBO.batchInitStoreEndorOrg();
 	}
 
@@ -124,17 +138,17 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
 	@Override
 	public void batchInitStoreEmployees(List<Long> stationIds) {
-		for(Long stationId:stationIds){
+		for (Long stationId : stationIds) {
 			storeWriteBO.initStoreEmployees(stationId);
 		}
 	}
 
 	@Override
 	public void batchInitStoreEndorOrg(List<Long> stationIds) {
-		for(Long stationId:stationIds){
+		for (Long stationId : stationIds) {
 			storeWriteBO.initStoreEndorOrg(stationId);
 		}
-		
+
 	}
 
 	@Override
@@ -154,20 +168,51 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
 	@Override
 	public Boolean disableByTabaoUserId(Long taobaoUserId) {
-		  StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
-		  if (dto != null && dto.getShareStoreId() != null) {
-			 com.alibaba.cuntao.ctsm.client.common.Operator  op = new com.alibaba.cuntao.ctsm.client.common.Operator();
+		StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
+		if (dto != null && dto.getShareStoreId() != null) {
+			com.alibaba.cuntao.ctsm.client.common.Operator op = new com.alibaba.cuntao.ctsm.client.common.Operator();
 			op.setChannelEnum(ChannelEnum.CTBOPS);
 			op.setOperatorId(String.valueOf(taobaoUserId));
 			op.setStoreId(dto.getShareStoreId());
-			com.taobao.cun.shared.base.result.SimpleResult  res = storeSWriteService.disableByStoreId(op, dto.getShareStoreId());
+			com.taobao.cun.shared.base.result.SimpleResult res = storeSWriteService.disableByStoreId(op,
+					dto.getShareStoreId());
 			if (res.isSuccess()) {
 				return Boolean.TRUE;
-			}else {
+			} else {
 				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
-						res.getErrorCode()+res.getErrorMsg());
+						res.getErrorCode() + res.getErrorMsg());
 			}
-		  }
-		  return Boolean.TRUE;
+		}
+		return Boolean.TRUE;
+	}
+
+	@Override
+	public Boolean addWhiteListForSHRH(Long taobaoUserId) {
+		PartnerStationRel r = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		if (!PartnerInstanceStateEnum.DECORATING.getCode().equals(r.getState()) && !PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+					"state not match");
+		}
+		Date d = new Date();
+		if (!IncomeModeEnum.MODE_2019_NEW_STATION.getCode().equals(r.getIncomeMode())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+					"MODE_2019_NEW_STATION not equals");
+		}
+		if (r.getIncomeModeBeginTime().getTime() - d.getTime() > 0) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+					"IncomeModeBeginTime not begin");
+		}
+		StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
+		if (dto != null && dto.getShareStoreId() != null) {
+			com.taobao.cun.shared.base.result.SimpleResult res = whiteListWriteService.addWhiteList(
+					ServiceCodeEnum.CTS_SHSM_DSBG, WhiteListTypeEnum.ABILITY_APPLY, dto.getShareStoreId());
+			if (res.isSuccess()) {
+				return Boolean.TRUE;
+			} else {
+				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
+						res.getErrorCode() + res.getErrorMsg());
+			}
+		}
+		return Boolean.FALSE;
 	}
 }
