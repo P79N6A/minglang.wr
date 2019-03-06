@@ -528,10 +528,30 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             return resultList;
         }
         PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                null,null, null,0L,partner.getName(),stationId,stationName,"x",state);
+                null,null, null,-10000L,partner.getName(),stationId,stationName,"x",state);
         resultList.add(insuranceDetail);
         return resultList;
     }
+
+
+    public static void main(String[] args) {
+
+        int durDate = -10000;
+
+        Date nowTime = new Date();
+
+        int newDurDate = DateUtil.daysBetween(nowTime, new Date(1546275661000L));
+
+        if(newDurDate > durDate){
+            durDate = newDurDate;
+
+        }
+
+        System.out.println(Long.valueOf(durDate));
+
+    }
+
+
 
 
     private PartnerInsuranceDetail buildPartnerInsuranceDetail(Long taobaoUserId, String idenNum,Date effectStartTime,Date effectEndTime,String status,Long expiredDay ,String parnterName,Long stationId,String stationName,String isOld,String state) {
