@@ -509,6 +509,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             int durDate = -10000;
             for (InsPolicyDTO insPolicyDTONew : insure.getModel()) {
                 int newDurDate = DateUtil.daysBetween(nowTime, insPolicyDTONew.getEffectEndTime());
+                logger.info("newDurDate = {}",newDurDate);
                 if(newDurDate > durDate ){
                     durDate = newDurDate;
                     insPolicyDTO = insPolicyDTONew;
@@ -531,24 +532,6 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 null,null, null,-10000L,partner.getName(),stationId,stationName,"x",state);
         resultList.add(insuranceDetail);
         return resultList;
-    }
-
-
-    public static void main(String[] args) {
-
-        int durDate = -10000;
-
-        Date nowTime = new Date();
-
-        int newDurDate = DateUtil.daysBetween(nowTime, new Date(1546275661000L));
-
-        if(newDurDate > durDate){
-            durDate = newDurDate;
-
-        }
-
-        System.out.println(Long.valueOf(durDate));
-
     }
 
 
