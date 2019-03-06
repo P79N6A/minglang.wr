@@ -453,7 +453,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 while(true){
                     try {
                         executorService.submit(() -> {
-                            List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null);
+                            List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null,partnerStationRel.getState());
                             partnerInsuranceDetails.forEach(detail -> {
                                 partnerInsuranceDetailMapper.insert(detail);
                             });
@@ -478,7 +478,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     }
 
 
-    private List<PartnerInsuranceDetail> buildPartnerInsuranceDetailList(Long taobaoUserId, Long stationId, String stationName) {
+    private List<PartnerInsuranceDetail> buildPartnerInsuranceDetailList(Long taobaoUserId, Long stationId, String stationName,String state) {
 
         // 查询新平台的保险数据
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
@@ -495,7 +495,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 //找到距离保险止期最大的
                 int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime()) ;
                 PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                        policy.getEffectStartTime(),policy.getEffectEndTime(),policy.getPolicyStatus(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"n");
+                        policy.getEffectStartTime(),policy.getEffectEndTime(),policy.getPolicyStatus(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"n",state);
                 resultList.add(insuranceDetail);
             }
             //如果已经在新平台购买过保险了，那么就不再去查询老平台保险
@@ -506,7 +506,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
         if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
             InsPolicyDTO insPolicyDTO = null ;
-            int durDate = 0;
+            int durDate = -10000;
             for (InsPolicyDTO insPolicyDTONew : insure.getModel()) {
                 int newDurDate = DateUtil.daysBetween(nowTime, insPolicyDTONew.getEffectEndTime());
                 if(newDurDate > durDate ){
@@ -517,24 +517,24 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             }
             if(insPolicyDTO != null){
                 PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                        insPolicyDTO.getEffectStartTime(),insPolicyDTO.getEffectEndTime(), InsuranceStateEnum.valueof(Integer.valueOf(insPolicyDTO.getStatus())).getDesc(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"y");
+                        insPolicyDTO.getEffectStartTime(),insPolicyDTO.getEffectEndTime(), InsuranceStateEnum.valueof(Integer.valueOf(insPolicyDTO.getStatus())).getDesc(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"y",state);
                 resultList.add(insuranceDetail);
             }else{
                 PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                        null,null, null,Long.valueOf(durDate),partner.getName(),stationId,stationName,"y");
+                        null,null, null,Long.valueOf(durDate),partner.getName(),stationId,stationName,"y",state);
                 resultList.add(insuranceDetail);
             }
 
             return resultList;
         }
         PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                null,null, null,0L,partner.getName(),stationId,stationName,"x");
+                null,null, null,0L,partner.getName(),stationId,stationName,"x",state);
         resultList.add(insuranceDetail);
         return resultList;
     }
 
 
-    private PartnerInsuranceDetail buildPartnerInsuranceDetail(Long taobaoUserId, String idenNum,Date effectStartTime,Date effectEndTime,String status,Long expiredDay ,String parnterName,Long stationId,String stationName,String isOld) {
+    private PartnerInsuranceDetail buildPartnerInsuranceDetail(Long taobaoUserId, String idenNum,Date effectStartTime,Date effectEndTime,String status,Long expiredDay ,String parnterName,Long stationId,String stationName,String isOld,String state) {
         Station station = stationBo.getStationById(stationId);
         PartnerInsuranceDetail insuranceDetail = new PartnerInsuranceDetail();
         insuranceDetail.setTaobaoUserId(taobaoUserId);
@@ -544,18 +544,16 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         insuranceDetail.setCreator("system");
         insuranceDetail.setGmtCreate(new Date());
         insuranceDetail.setGmtModified(new Date());
-        if(expiredDay<0){
-            expiredDay = 0L;
-        }
         insuranceDetail.setExpiredDay(expiredDay);
         insuranceDetail.setIsOld(isOld);
         insuranceDetail.setStatus(status);
+        insuranceDetail.setType(state);
         insuranceDetail.setIsDeleted("n");
         insuranceDetail.setName(parnterName);
         insuranceDetail.setStationId(stationId);
         insuranceDetail.setStationName(station.getName());
         insuranceDetail.setOrgId(station.getApplyOrg());
-        insuranceDetail.setExtInfo(expiredDay.equals(0L)?"n":"y");
+        insuranceDetail.setExtInfo(expiredDay<=0?"n":"y");
         return insuranceDetail;
     }
 
