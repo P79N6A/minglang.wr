@@ -450,22 +450,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
             for (PartnerStationRel partnerStationRel : resList) {
 
-               /* while(true){
-                    try {
-                        Future<?> future = executorService.submit(() -> {
-                        });
-                        //阻塞，改成单线程
-                        //future.get();
-                    } catch (RejectedExecutionException e) {
-                        continue;
-                    } catch (Exception e) {
-                        logger.info("buildPartnerInsuranceDetail error  {}",e);
-                        break;
-                    }
-                    break;
-                }*/
-                buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
 
+                List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
+
+                partnerInsuranceDetails.forEach(pid -> {
+                    partnerInsuranceDetailMapper.insert(pid);
+                        }
+                );
             }
 
             if (resList.size()<pageSize) {
@@ -477,15 +468,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     }
 
 
-    private void buildPartnerInsuranceDetailList(Long taobaoUserId, Long stationId, String stationName,String state) {
+    private List<PartnerInsuranceDetail> buildPartnerInsuranceDetailList(Long taobaoUserId, Long stationId, String stationName,String state) {
 
         // 查询新平台的保险数据
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
         if (partner == null || StringUtils.isBlank(partner.getIdenNum())) {
-            return ;
+            return null;
         }
-        boolean flag = false;
-
         List<PartnerInsuranceDetail> resultList = new ArrayList<PartnerInsuranceDetail>();
         Date nowTime = new Date();
         InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "GUARANTEE");
@@ -499,9 +488,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                         policy.getEffectStartTime(),policy.getEffectEndTime(),policy.getPolicyStatus(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"n",state);
                 resultList.add(insuranceDetail);
             }
-            flag = true;
             //如果已经在新平台购买过保险了，那么就不再去查询老平台保险
-            //return resultList;
+            return resultList;
         }
         // 2.查询老平台保险数据
         AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
@@ -526,27 +514,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                         null,null, null,Long.valueOf(durDate),partner.getName(),stationId,stationName,"y",state);
                 resultList.add(insuranceDetail);
             }
-            flag = true;
 
-           // return resultList;
+            return resultList;
         }
-
-        if(!flag){
-
-            PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
-                    null,null, null,-10000L,partner.getName(),stationId,stationName,"x",state);
-            resultList.add(insuranceDetail);
-        }
-
-        //return resultList;
-
-        resultList.forEach(insuranceDetail->{
-
-            partnerInsuranceDetailMapper.insert(insuranceDetail);
-
-        });
-
-
+        PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                null,null, null,0L,partner.getName(),stationId,stationName,"x",state);
+        resultList.add(insuranceDetail);
+        return resultList;
     }
 
 
