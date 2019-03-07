@@ -456,7 +456,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                             buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
                         });
                         //阻塞，改成单线程
-                        future.get();
+                        //future.get();
                     } catch (RejectedExecutionException e) {
                         continue;
                     } catch (Exception e) {
@@ -541,6 +541,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         //return resultList;
 
         resultList.forEach(insuranceDetail->{
+
             partnerInsuranceDetailMapper.insert(insuranceDetail);
 
         });
