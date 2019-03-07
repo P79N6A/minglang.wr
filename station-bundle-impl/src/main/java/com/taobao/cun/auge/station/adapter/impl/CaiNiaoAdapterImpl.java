@@ -32,6 +32,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.warehouse.CreateWarehouseByOrgPar
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseListParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseOption;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
+import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
@@ -59,6 +60,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private CountyDomainWriteService countyDomainWriteService;
 	@Resource
 	private StationWriteService stationWriteService;
+	@Resource
+	private StationReadService stationReadService;
 	@Resource
 	private StationUserWriteService stationUserWriteService;
 	@Resource
@@ -651,5 +654,27 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
+	}
+	@Override
+	public Map<String, String> getFeatureByCainiaoStationId(Long id) {
+		com.alibaba.cainiao.cuntaonetwork.result.Result<com.alibaba.cainiao.cuntaonetwork.dto.station.StationDTO>  res = stationReadService.queryStationById(id);
+		if (res.isSuccess()) {
+			if (res.getData() != null ) {
+				return res.getData().getFeature().asMap();
+			}
+			return null;
+		}
+		throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,id+"|"+res.getErrorCode()+"|"+res.getErrorMessage());
+	}
+	@Override
+	public WarehouseDTO queryWarehouseByCainiaoCountyId(Long id) {
+		QueryWarehouseOption option = new QueryWarehouseOption();
+		QueryWarehouseListParam listParam = new QueryWarehouseListParam();
+		listParam.setOrgId(id);
+		Result<WarehouseDTO> res = warehouseReadService.queryWarehouseById(id, option);
+		if (!res.isSuccess()) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,id+"|"+res.getErrorCode()+"|"+res.getErrorMessage());
+		} 
+		return res.getData();
 	}
 }

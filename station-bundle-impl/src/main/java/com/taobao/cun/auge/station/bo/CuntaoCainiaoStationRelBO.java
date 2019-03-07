@@ -22,6 +22,15 @@ public interface CuntaoCainiaoStationRelBO {
 	public CuntaoCainiaoStationRel queryCuntaoCainiaoStationRel(Long objectId,CuntaoCainiaoStationRelTypeEnum type) ;
 	
 	/**
+	 * 查询菜鸟物流关系
+	 * @param cainiaoStationId
+	 * @param type
+	 * @return
+	 * @
+	 */
+	public CuntaoCainiaoStationRel queryCuntaoCainiaoStationRelByCainiaoStationId(Long cainiaoStationId,CuntaoCainiaoStationRelTypeEnum type) ;
+	
+	/**
 	 * 删除菜鸟物流关系
 	 * @param objectId
 	 * @param type
