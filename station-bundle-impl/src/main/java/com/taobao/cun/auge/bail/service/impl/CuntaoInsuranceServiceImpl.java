@@ -450,10 +450,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
             for (PartnerStationRel partnerStationRel : resList) {
 
-                while(true){
+               /* while(true){
                     try {
                         Future<?> future = executorService.submit(() -> {
-                            buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
                         });
                         //阻塞，改成单线程
                         //future.get();
@@ -464,7 +463,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                         break;
                     }
                     break;
-                }
+                }*/
+                buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
 
             }
 
