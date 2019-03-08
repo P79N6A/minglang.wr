@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.dal.domain.TownLevelRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelRuleMapper;
+import com.taobao.cun.auge.level.bo.TownLevelElecGMVBo;
 import com.taobao.cun.auge.level.dto.TownLevelCalcResult;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelRuleDto;
@@ -38,12 +39,15 @@ public class TownLevelResolver implements InitializingBean{
 	private static final String[] LEVELS = new String[] {"X", "A", "B"};
 	@Resource
 	private TownLevelRuleMapper townLevelRuleMapper;
+	@Resource
+	private TownLevelElecGMVBo townLevelElecGMVBo;
 	
 	private LoadingCache<String, List<Map<String, TownLevelRuleDto>>> townLevelRuleGroupByLevelCache;
 	
 	private final ExpressionParser expressionParser = new SpelExpressionParser();
 	
 	public TownLevelCalcResult levelResolve(TownLevelDto townLevelDto) {
+		townLevelDto.setElecPredictionGmv(townLevelElecGMVBo.calc(townLevelDto));
 		townLevelDto.setCoverageRate(calcCoverageRate(townLevelDto));
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		try {
