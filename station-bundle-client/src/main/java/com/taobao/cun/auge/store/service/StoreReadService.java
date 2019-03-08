@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.store.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
@@ -105,5 +106,5 @@ public interface StoreReadService {
 	  * 批量查询 要开送货入户权限的门店信息
 	  * @return
 	  */
-	 public PageDto<Long> queryListForShrhPermission(int pageName,int pageSize);
+	 public List<Long> queryListForShrhPermission(Date beginDate);
 }
