@@ -22,5 +22,8 @@ public interface AssetSynBO {
 	
 	
 	 public Boolean disAsset(String aliNo,Long userAreaId,String userName,String userId);
+	 
+	//618优品售卖范围扩大项目
+	 public boolean initStationFeatureToCainiao(String key,String value);
 	
 }

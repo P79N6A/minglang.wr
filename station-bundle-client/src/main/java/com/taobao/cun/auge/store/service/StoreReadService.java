@@ -100,4 +100,10 @@ public interface StoreReadService {
 	  * @return
 	  */
 	 public Boolean serviceJudgmentForStoreQuit(Long storeId);
+	 
+	 /**
+	  * 批量查询 要开送货入户权限的门店信息
+	  * @return
+	  */
+	 public PageDto<Long> queryListForShrhPermission(int pageName,int pageSize);
 }

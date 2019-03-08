@@ -1,7 +1,10 @@
 package com.taobao.cun.auge.store.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,11 @@ import org.springframework.util.Assert;
 
 import com.alibaba.cuntao.ctsm.client.dto.read.ServiceJudgmentForStoreQuitDTO;
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -19,14 +27,22 @@ import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
+import com.taobao.cun.auge.dal.domain.CuntaoStore;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
+import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -51,6 +67,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+	
+	 @Autowired
+	PartnerStationRelMapper partnerStationRelMapper;
 	
 	@Autowired
 	private StationBO sationBO;
@@ -171,6 +190,46 @@ public class StoreReadServiceImpl implements StoreReadService {
 		}
 		throw new AugeBusinessException(AugeErrorCodes.SYSTEM_ERROR_CODE,
 				"门店服务退出校验，系统异常");
+	}
+
+	@Override
+	public PageDto<Long> queryListForShrhPermission(int pageName,int pageSize) {
+//		PageHelper.startPage(pageName, pageSize);
+//		PartnerStationRelExample example = new PartnerStationRelExample();
+//		List<String> slist = new ArrayList<String>();
+//		slist.add(PartnerInstanceStateEnum.DECORATING.getCode());
+//		slist.add(PartnerInstanceStateEnum.SERVICING.getCode());
+//		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n").andStateIn(slist).andTypeEqualTo("TP").andIncomeModeEqualTo(IncomeModeEnum.MODE_2019_NEW_STATION.getCode());//andIncomeModeBeginTimeLessThanOrEqualTo(value);
+//		if(StringUtils.isNotEmpty(storeQueryPageCondition.getName())){
+//			criteria.andNameLike("%"+storeQueryPageCondition.getName()+"%");
+//		}
+//		if(CollectionUtils.isNotEmpty(storeQueryPageCondition.getStoreCategorys())){
+//			criteria.andStoreCategoryIn(storeQueryPageCondition.getStoreCategorys());
+//		}
+//		Page<CuntaoStore> cuntaoStores = (Page<CuntaoStore>) cuntaoStoreMapper.selectByExample(example);
+//		List<StoreDto> stores = Lists.newArrayList();
+//		for(CuntaoStore store : cuntaoStores){
+//			Station station = stationBO.getStationById(store.getStationId());
+//			StationDto stationDto = StationConverter.toStationDto(station);
+//			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
+//			StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
+//			stores.add(storeDto);
+//		}
+//		PageInfo<CuntaoStore> pageInfo = new PageInfo<CuntaoStore>(cuntaoStores);
+//
+//		PageDto<StoreDto> result = new PageDto<StoreDto>();
+//
+//		result.setPageNum(cuntaoStores.getPageNum());
+//		result.setPageSize(pageInfo.getPageSize());
+//		result.setTotal(pageInfo.getTotal());
+//		result.setCurPagesize(pageInfo.getSize());
+//		result.setPages(pageInfo.getPages());
+//		result.setFirstPage(pageInfo.getFirstPage());
+//		result.setLastPage(pageInfo.getLastPage());
+//		result.setNextPage(pageInfo.getNextPage());
+//		result.setPrePage(pageInfo.getPrePage());
+//		result.setItems(stores);
+		return null;
 	}
 
 }
