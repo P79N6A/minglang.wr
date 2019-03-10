@@ -52,6 +52,7 @@ import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.cun.shared.base.result.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.util.CollectionUtils;
 
 @HSFProvider(serviceInterface = StoreReadService.class)
 @Service("storeReadService")
@@ -216,6 +217,11 @@ public class StoreReadServiceImpl implements StoreReadService {
         List<Long> lastStationIds = stationIds.stream()
 				.filter(i -> caiNiaoService.checkCainiaoCountyIsOperating(i))
 				.collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(lastStationIds)){
+        	return Lists.newArrayList();
+		}
+
         CuntaoStoreExample csExample = new CuntaoStoreExample();
         CuntaoStoreExample.Criteria csCriteria = csExample.createCriteria();
         csCriteria.andIsDeletedEqualTo("n");
