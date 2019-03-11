@@ -655,18 +655,23 @@ public class DataTransferServiceImpl implements DataTransferService{
             LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
             features.put(key, value);
             for(String cainiaoStationId: cainiaoIds){
-                Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
-                if (b && "noWarehouseSta".equals(key) && "n".equals(value)) {
-                	CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRelByCainiaoStationId(Long.valueOf(cainiaoStationId), CuntaoCainiaoStationRelTypeEnum.STATION);
-                	Long stationId = rel.getObjectId();
-                	PartnerStationRel pRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-                	if (pRel.getTaobaoUserId() != null) {
-                		storeWriteService.addWhiteListForSHRH(pRel.getTaobaoUserId());
-                	}
-                }
+            	  try {
+	                Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+	                if (b && "noWarehouseSta".equals(key) && "n".equals(value)) {
+	                	CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRelByCainiaoStationId(Long.valueOf(cainiaoStationId), CuntaoCainiaoStationRelTypeEnum.STATION);
+	                	Long stationId = rel.getObjectId();
+	                	PartnerStationRel pRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+	                	if (pRel.getTaobaoUserId() != null) {
+	                		storeWriteService.addWhiteListForSHRH(pRel.getTaobaoUserId());
+	                	}
+	                }
+            	  } catch (Exception e1) {
+            		  logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e1);
+						continue;
+                  }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("initStationFeatureToCainiao.error", e);
         }
         return true;
     }
