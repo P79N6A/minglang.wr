@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -173,5 +174,10 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public void startService(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum typeEnum,
 			OperatorDto operatorDto) {
 		strategy.get(typeEnum.getCode()).startService(instanceId, taobaoUserId, operatorDto);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void quited(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) {
+		strategy.get(typeEnum.getCode()).quited(instanceId, operatorDto);
 	}
 }

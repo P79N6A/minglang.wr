@@ -83,6 +83,8 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			//服务中
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 		    partnerInstanceHandler.startService(instanceId, taobaoUserId, partnerType, stateChangeEvent);
+		}else if(PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
+			partnerInstanceHandler.quited(instanceId, partnerType, stateChangeEvent);
 		}
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}

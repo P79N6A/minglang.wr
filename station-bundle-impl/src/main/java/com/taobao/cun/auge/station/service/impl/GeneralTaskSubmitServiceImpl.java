@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.taobao.cun.auge.station.um.dto.BatchCloseUnionMemberDto;
+import com.taobao.cun.auge.station.um.dto.BatchQuitUnionMemberDto;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -952,4 +954,59 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         taskSubmitService.submitTask(cainiaoTaskVo);
         logger.info("submitClosedCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
     }
+
+    /**
+     * 关闭优盟任务
+     *
+     * @param parentStationId
+     */
+    @Override
+    public void submitClosedUmTask(Long parentStationId, OperatorDto operatorDto) {
+        GeneralTaskDto closeUmTaskVo = new GeneralTaskDto();
+        closeUmTaskVo.setBusinessNo(String.valueOf(parentStationId));
+        closeUmTaskVo.setBeanName("unionMemberService");
+        closeUmTaskVo.setMethodName("closeUnionMembers");
+        closeUmTaskVo.setBusinessStepNo(1L);
+        closeUmTaskVo.setBusinessType(TaskBusinessTypeEnum.CLOSED_UM.getCode());
+        closeUmTaskVo.setBusinessStepDesc("关闭优盟");
+        closeUmTaskVo.setOperator(operatorDto.getOperator());
+
+        BatchCloseUnionMemberDto batchCloseUnionMemberDto = new BatchCloseUnionMemberDto();
+        batchCloseUnionMemberDto.setParentStationId(parentStationId);
+        batchCloseUnionMemberDto.copyOperatorDto(operatorDto);
+        closeUmTaskVo.setParameterType(BatchCloseUnionMemberDto.class.getName());
+        closeUmTaskVo.setParameter(JSON.toJSONString(batchCloseUnionMemberDto));
+
+        // 提交任务
+        taskSubmitService.submitTask(closeUmTaskVo);
+        logger.info("submitClosedUmTask : {}", JSON.toJSONString(closeUmTaskVo));
+    }
+
+    /**
+     * 关闭优盟任务
+     *
+     * @param parentStationId
+     */
+    @Override
+    public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto) {
+        GeneralTaskDto quitUmTaskVo = new GeneralTaskDto();
+        quitUmTaskVo.setBusinessNo(String.valueOf(parentStationId));
+        quitUmTaskVo.setBeanName("unionMemberService");
+        quitUmTaskVo.setMethodName("quitUnionMembers");
+        quitUmTaskVo.setBusinessStepNo(1L);
+        quitUmTaskVo.setBusinessType(TaskBusinessTypeEnum.QUIT_UM.getCode());
+        quitUmTaskVo.setBusinessStepDesc("退出优盟");
+        quitUmTaskVo.setOperator(operatorDto.getOperator());
+
+        BatchQuitUnionMemberDto batchQuitUnionMemberDto = new BatchQuitUnionMemberDto();
+        batchQuitUnionMemberDto.setParentStationId(parentStationId);
+        batchQuitUnionMemberDto.copyOperatorDto(operatorDto);
+        quitUmTaskVo.setParameterType(BatchQuitUnionMemberDto.class.getName());
+        quitUmTaskVo.setParameter(JSON.toJSONString(batchQuitUnionMemberDto));
+
+        // 提交任务
+        taskSubmitService.submitTask(quitUmTaskVo);
+        logger.info("submitQuitUmTask : {}", JSON.toJSONString(quitUmTaskVo));
+    }
+
 }
