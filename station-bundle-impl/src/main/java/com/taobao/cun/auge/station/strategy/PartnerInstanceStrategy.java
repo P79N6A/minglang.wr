@@ -152,4 +152,11 @@ public interface PartnerInstanceStrategy {
 	 * @param operatorDto
 	 */
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto);
+
+	/**
+	 * 进入已退出
+	 * @param instanceId
+	 * @param operatorDto
+	 */
+	void quited(Long instanceId, OperatorDto operatorDto);
 }

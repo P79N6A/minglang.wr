@@ -510,6 +510,12 @@
             "desc": "合伙人station_apply QUIT_APPLY_CONFIRMED",
             "partnerInstanceState": "CLOSED",
             "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT",
+            "desc": "合伙人station_apply QUIT",
+            "partnerInstanceState": "QUIT",
+            "condition": {}
         }
     ]
 }

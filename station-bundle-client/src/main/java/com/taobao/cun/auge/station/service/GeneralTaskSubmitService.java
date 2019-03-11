@@ -152,4 +152,18 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitCreateUnionAdzoneTask(PartnerInstanceDto instance, String operator);
 
+	/**
+	 * 创建关闭优盟任务
+	 *
+	 * @param parentStationId
+	 */
+	public void submitClosedUmTask(Long parentStationId, OperatorDto operatorDto);
+
+	/**
+	 * 创建退出优盟任务
+	 *
+	 * @param parentStationId
+	 */
+	public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto);
+
 }
