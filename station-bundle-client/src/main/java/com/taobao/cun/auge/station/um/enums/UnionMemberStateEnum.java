@@ -27,12 +27,18 @@ public class UnionMemberStateEnum implements Serializable {
      */
     public static final UnionMemberStateEnum CLOSED = new UnionMemberStateEnum("CLOSED", "已关闭");
 
+    /**
+     * 已退出
+     */
+    public static final UnionMemberStateEnum QUIT = new UnionMemberStateEnum("QUIT", "已退出");
+
     private static final Map<String, UnionMemberStateEnum> MAPPINGS = new HashMap<String, UnionMemberStateEnum>();
 
     static {
         MAPPINGS.put("SETTLING", SETTLING);
         MAPPINGS.put("SERVICING", SERVICING);
         MAPPINGS.put("CLOSED", CLOSED);
+        MAPPINGS.put("QUIT", QUIT);
     }
 
     private String code;
@@ -70,7 +76,7 @@ public class UnionMemberStateEnum implements Serializable {
         if (!(obj instanceof UnionMemberStateEnum)) {
             return false;
         }
-        UnionMemberStateEnum objType = (UnionMemberStateEnum)obj;
+        UnionMemberStateEnum objType = (UnionMemberStateEnum) obj;
         return objType.getCode().equals(this.getCode());
     }
 

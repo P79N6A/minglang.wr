@@ -41,10 +41,10 @@ public class DiamondConfiguredProperties {
 
     @Value("${asset.assetOrg}")
     private String assetOrg;
-    
+
     @Value("${asset.assetUse}")
     private String assetUse;
-    
+
     @Value("${asset.acceptanceStandard}")
     private String acceptanceStandard;
 
@@ -62,62 +62,62 @@ public class DiamondConfiguredProperties {
 
     @Value("#{'${insurance.cp.codes}'.split(',')}")
     private List<String> insureCpCodes;
-    
+
     @Value("#{'${com.taobao.cun.admin.alipay.whitelist}'.split(',')}")
     private List<Long> insureWhiteListConfig;
-    
+
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${train.purchase.province}')}")
     private Map<String, String> purchaseProvinceMap;
 
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.transfer.error}')}")
     private Map<String, String> assetTransferErrorMap;
-    
+
     @Value("${store.categoryId}")
     private Integer storeCategoryId;
-    
+
     @Value("${store.storeMainUserId}")
     private Long storeMainUserId;
 
     @Value("${store.cuntaoStoreTag}")
     private Integer storeTag;
-    
+
     @Value("${paymentSignReturnUrl}")
     private String paymentSignReturnUrl;
-    
-    
+
+
     @Value("${alipay.provideHostName:none}")
     private String alipayProvideHostName;
-    
+
     @Value("${isCheckVendorAlipayAccount}")
     private boolean isCheckVendorAlipayAccount;
-    
+
     @Value("${replenishOrderUrl}")
     private String replenishOrderUrl;
-    
+
     @Value("${replenishFrozenUrl}")
     private String replenishFrozenUrl;
-    
+
     @Value("#{'${ignoreSupplyStoreTownList.whitelist}'.split(',')}")
     private List<Long> ignoreSupplyStoreTownList;
-    
+
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${station.name.map}')}")
     private Map<String, String> stationNameMap;
-    
+
     @Value("#{'${stationNameSuffix}'.split(',')}")
     private List<String> stationNameSuffix;
-    
+
     @Value("#{'${can.confirm.stationOpeningProtocolList}'.split(',')}")
     private List<Long> canConfirmStationOpeningProtocolList;
-    
+
     @Value("${storeImagePerfix}")
     private String storeImagePerfix;
-    
+
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
-    
+
     @Value("${checkStoreStock}")
     private boolean checkStoreStock;
-    
+
     @Value("${decorateCountyAuditActivityId}")
     private String decorateCountyAuditActivityId;
 
@@ -138,17 +138,20 @@ public class DiamondConfiguredProperties {
     //供应商Id,村淘自营门店对应uic的userId为3405569954
     @Value("${supplierTbId}")
     private Long supplierTbId;
-    
+
     @Value("${serviceAbilitySHRHCountyAuditActivityId}")
     private String serviceAbilitySHRHCountyAuditActivityId;
-    
-    
+
+
     @Value("${cainiao.switch}")
     private String cainiaoSwitch;
 
     @Value("${station.new.customer.rate.time}")
     private Integer stationNewCustomerRateTime;
-    
+
+    @Value("${batch.close.or.quit.um.max.num}")
+    private Integer batchCloseOrQuitUmNum;
+
     public String getCainiaoSwitch() {
 		return cainiaoSwitch;
 	}
@@ -223,11 +226,11 @@ public class DiamondConfiguredProperties {
     public List<Long> getInsureWhiteListConfig() {
         return insureWhiteListConfig;
     }
-    
+
     public Map<String, String> getPurchaseProvinceMap() {
         return purchaseProvinceMap;
     }
-    
+
     public Map<Long, Long> getStationValueMap() {
         return stationValueMap;
     }
@@ -389,5 +392,13 @@ public class DiamondConfiguredProperties {
 
     public void setStationNewCustomerRateTime(Integer stationNewCustomerRateTime) {
         this.stationNewCustomerRateTime = stationNewCustomerRateTime;
+    }
+
+    public Integer getBatchCloseOrQuitUmNum() {
+        return batchCloseOrQuitUmNum;
+    }
+
+    public void setBatchCloseOrQuitUmNum(Integer batchCloseOrQuitUmNum) {
+        this.batchCloseOrQuitUmNum = batchCloseOrQuitUmNum;
     }
 }

@@ -3,8 +3,13 @@ package com.taobao.cun.auge.station.um;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
@@ -17,25 +22,23 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
+import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
-import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
+import com.taobao.cun.auge.station.um.dto.*;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +91,12 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Autowired
     private StationNumConfigBO stationNumConfigBO;
 
+    @Autowired
+    private UnionMemberQueryService unionMemberQueryService;
+
+    @Autowired
+    private GeneralTaskSubmitService generalTaskSubmitService;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public AliPaymentAccountDto checkUnionMember(UnionMemberCheckDto checkDto) {
@@ -97,8 +106,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             String taobaoNick = checkDto.getTaobaoNick();
 
             AliPaymentAccountDto paymentAccountDto = paymentAccountQueryService
-                .queryStationMemberPaymentAccountByNick(
-                    taobaoNick);
+                    .queryStationMemberPaymentAccountByNick(
+                            taobaoNick);
             Long taobaoUserId = paymentAccountDto.getTaobaoUserId();
 
             if (taobaoAccountBo.isTaobaoBuyerOrSellerBlack(taobaoUserId)) {
@@ -140,7 +149,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             if (!lockResult) {
                 logger.error("distributeLock failed: {}", JSON.toJSONString(addDto));
                 throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,
-                    "请勿重复提交");
+                        "请勿重复提交");
             }
 
             AliPaymentAccountDto aliPaymentAccountDto = paymentAccountQueryService
@@ -158,7 +167,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //优盟店铺地址必须和当前村小二在同一个行政市域内（第二级地址保持一致）
             if (null != parentCityCode && !parentCityCode.equals(address.getCity())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-                    "优盟店地址必须和当前村小二在同一个行政市域内");
+                        "优盟店地址必须和当前村小二在同一个行政市域内");
             }
 
             StationDto sDto = new StationDto();
@@ -200,7 +209,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         } catch (Exception e) {
             logger.error(JSON.toJSONString(addDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
-        }finally {
+        } finally {
             distributeLock.unlock("unionMember-addUnionMember", taobaoNick);
         }
     }
@@ -214,7 +223,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             Long parentTaobaoUserId = Long.valueOf(operator);
             //所属村小二
             PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                parentTaobaoUserId);
+                    parentTaobaoUserId);
 
             //优盟实例
             Long stationId = updateDto.getStationId();
@@ -230,7 +239,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //优盟店铺地址必须和当前村小二在同一个行政市域内（第二级地址保持一致）
             if (null != parentCityCode && !parentCityCode.equals(address.getCity())) {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,
-                    "优盟店地址必须和当前村小二在同一个行政市域内");
+                        "优盟店地址必须和当前村小二在同一个行政市域内");
             }
 
             //前置条件校验
@@ -297,21 +306,14 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     public void openOrCloseUnionMember(UnionMemberStateChangeDto stateChangeDto) {
         BeanValidator.validateWithThrowable(stateChangeDto);
         try {
-            String operator = stateChangeDto.getOperator();
-            Long parentTaobaoUserId = Long.valueOf(operator);
             Long stationId = stateChangeDto.getStationId();
-
-            //所属村小二实例
-            PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                parentTaobaoUserId);
 
             //优盟实例
             PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(stateChangeDto, stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
-            if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
-            }
+            //只有村小二操作时，校验优盟归属权限
+            validateUmBelongAuthor(stateChangeDto, parentStationId);
 
             PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
             UnionMemberStateEnum targetStateEnum = stateChangeDto.getState();
@@ -323,9 +325,9 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             if (UnionMemberStateEnum.SERVICING.equals(targetStateEnum)) {
                 //当前状态必须为未开通和已关闭
                 if (PartnerInstanceStateEnum.SETTLING.equals(nowStateEnum) || PartnerInstanceStateEnum.CLOSED.equals(
-                    nowStateEnum)) {
+                        nowStateEnum)) {
                     LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
-                        StateMachineEvent.SERVICING_EVENT);
+                            StateMachineEvent.SERVICING_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
                     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可开通");
@@ -335,7 +337,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
                 //只有已开通，可以关闭
                 if (PartnerInstanceStateEnum.SERVICING.equals(nowStateEnum)) {
                     LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
-                        StateMachineEvent.CLOSED_EVENT);
+                            StateMachineEvent.CLOSED_EVENT);
                     stateMachineService.executePhase(phaseEvent);
                 } else {
                     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可关闭");
@@ -348,6 +350,148 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             logger.error(JSON.toJSONString(stateChangeDto), e);
             throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
         }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void quitUnionMember(Long stationId, OperatorDto operatorDto) {
+        BeanValidator.validateWithThrowable(operatorDto);
+        if (null == stationId || 0 == stationId) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "stationId is null");
+        }
+        try {
+            //优盟实例
+            PartnerInstanceDto umInstanceDto = getUmPartnerInstanceDto(operatorDto, stationId);
+            Long parentStationId = umInstanceDto.getParentStationId();
+
+            //只有村小二操作时，校验优盟归属权限
+            validateUmBelongAuthor(operatorDto, parentStationId);
+
+            PartnerInstanceStateEnum nowStateEnum = umInstanceDto.getState();
+            UnionMemberStateEnum targetStateEnum = UnionMemberStateEnum.QUIT;
+
+            //组装操作人
+            umInstanceDto.copyOperatorDto(operatorDto);
+
+            if (!UnionMemberStateEnum.QUIT.equals(targetStateEnum)) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟目标状态必须为已退出");
+            }
+            //只有已关闭，可以退出
+            if (PartnerInstanceStateEnum.CLOSED.equals(nowStateEnum)) {
+                LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(umInstanceDto,
+                        StateMachineEvent.QUIT_EVENT);
+                stateMachineService.executePhase(phaseEvent);
+            } else {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "优盟店当前状态不可退出");
+            }
+        } catch (AugeBusinessException e) {
+            logger.warn("stationId=" + stationId + "operator=" + JSON.toJSONString(operatorDto), e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("stationId=" + stationId + "operator=" + JSON.toJSONString(operatorDto), e);
+            throw new AugeSystemException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "系统异常");
+        }
+    }
+
+    /**
+     * 村小二来操作优盟时，校验优盟归属权限
+     */
+    private void validateUmBelongAuthor(OperatorDto operatorDto, Long parentStationId) {
+        //只有村小二，havana类型才校验，其他不校验
+        if (!OperatorTypeEnum.HAVANA.equals(operatorDto.getOperatorType())) {
+            return;
+        }
+        Long parentTaobaoUserId = Long.valueOf(operatorDto.getOperator());
+        //所属村小二实例
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
+                parentTaobaoUserId);
+
+        if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "不能管理非自己名下的优盟店");
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void closeUnionMembers(BatchCloseUnionMemberDto batchCloseUnionMemberDto) {
+        BeanValidator.validateWithThrowable(batchCloseUnionMemberDto);
+
+        Long parentStationId = batchCloseUnionMemberDto.getParentStationId();
+        String operator = batchCloseUnionMemberDto.getOperator();
+
+        Integer curPageNum = 0;
+        PageDto<UnionMemberDto> umList;
+        do {
+            curPageNum++;
+            umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, curPageNum);
+            if (null != umList && CollectionUtils.isNotEmpty(umList.getItems())) {
+                for (UnionMemberDto unionMemberDto : umList.getItems()) {
+                    Long umInstanceId = unionMemberDto.getInstanceId();
+                    Long umStationId = unionMemberDto.getStationDto().getId();
+
+                    stationBO.changeState(umStationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSED, operator);
+                    partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED,
+                            operator);
+                    //去标
+                    addRemoveTagTask(unionMemberDto, batchCloseUnionMemberDto);
+                }
+            }
+        } while (curPageNum < umList.getPages());
+    }
+
+    private void addRemoveTagTask(UnionMemberDto unionMemberDto, OperatorDto operatorDto) {
+        Long instanceId = unionMemberDto.getInstanceId();
+
+        String operatorId = operatorDto.getOperator();
+        Long taobaoUserId = unionMemberDto.getPartnerDto().getTaobaoUserId();
+        String taobaoNick = unionMemberDto.getPartnerDto().getTaobaoNick();
+        PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.UM;
+        generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId,
+                instanceId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void quitUnionMembers(BatchQuitUnionMemberDto batchQuitUnionMemberDto) {
+        BeanValidator.validateWithThrowable(batchQuitUnionMemberDto);
+        Long parentStationId = batchQuitUnionMemberDto.getParentStationId();
+        String operator = batchQuitUnionMemberDto.getOperator();
+
+        Integer curPageNum = 0;
+        PageDto<UnionMemberDto> umList;
+        do {
+            curPageNum++;
+            umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, curPageNum);
+            if (null != umList && CollectionUtils.isNotEmpty(umList.getItems())) {
+                for (UnionMemberDto unionMemberDto : umList.getItems()) {
+                    Long umInstanceId = unionMemberDto.getInstanceId();
+                    Long umStationId = unionMemberDto.getStationDto().getId();
+
+                    partnerInstanceBO.changeState(umInstanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUIT,
+                            operator);
+                    stationBO.changeState(umStationId, StationStatusEnum.CLOSED, StationStatusEnum.QUIT, operator);
+                }
+            }
+        } while (curPageNum < umList.getPages());
+    }
+
+    /**
+     * 根据父站点id，查询某种状态的优盟
+     *
+     * @param parentStationId
+     * @param state
+     * @return
+     */
+    private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
+        UnionMemberPageCondition con = new UnionMemberPageCondition();
+        con.setOperator(OperatorTypeEnum.SYSTEM.getCode());
+        con.setOperatorType(OperatorTypeEnum.SYSTEM);
+        con.setParentStationId(parentStationId);
+        con.setState(state);
+        con.setPageNum(pageNum);
+        con.setPageSize(500);
+        PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+        return umList;
     }
 
     private PartnerInstanceDto getUmPartnerInstanceDto(OperatorDto operatorDto, Long stationId) {
@@ -379,11 +523,11 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
             //所属村小二实例
             PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getActivePartnerInstance(
-                parentTaobaoUserId);
+                    parentTaobaoUserId);
 
             //优盟实例
             PartnerInstanceDto umInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(
-                stationId);
+                    stationId);
             Long parentStationId = umInstanceDto.getParentStationId();
 
             if (null != parentStationId && !parentStationId.equals(partnerInstanceDto.getStationId())) {
@@ -410,7 +554,7 @@ public class UnionMemberServiceImpl implements UnionMemberService {
         }
     }
 
-    private void restartPartnerApply(Long taobaoUserId){
+    private void restartPartnerApply(Long taobaoUserId) {
         PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
         partnerApplyDto.setTaobaoUserId(taobaoUserId);
 
@@ -421,21 +565,21 @@ public class UnionMemberServiceImpl implements UnionMemberService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void updateUmstationNum(String stationNums) {
-        if(StringUtils.isEmpty(stationNums)){
+        if (StringUtils.isEmpty(stationNums)) {
             return;
         }
         String[] stationNumArray = stationNums.split(",");
 
-        for(String stationNum:stationNumArray){
+        for (String stationNum : stationNumArray) {
             StationNumConfigTypeEnum typeEnum = StationNumConfigTypeEnum.UM;
 
             Station station = stationBO.getStationByStationNum(stationNum);
-            if(null == station){
+            if (null == station) {
                 continue;
             }
 
             String province = station.getProvince();
-            if(null == province||""==province){
+            if (null == province || "" == province) {
                 continue;
             }
 
@@ -443,5 +587,31 @@ public class UnionMemberServiceImpl implements UnionMemberService {
 
             stationBO.updateStationNum(station.getId(), newStationNum);
         }
+    }
+
+    @Override
+    public void submitClosedUmTask(Long parentStationId) {
+        generalTaskSubmitService.submitClosedUmTask(parentStationId, OperatorDto.defaultOperator());
+    }
+
+    @Override
+    public void submitQuitUmTask(Long parentStationId) {
+        generalTaskSubmitService.submitQuitUmTask(parentStationId, OperatorDto.defaultOperator());
+    }
+
+    @Override
+    public void testTpClosedEvent(Long instanceId) {
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceDto,
+                OperatorDto.defaultOperator());
+        EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+    }
+
+    @Override
+    public void testTpQuitedEvent(Long instanceId) {
+        PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT, partnerInstanceDto,
+                OperatorDto.defaultOperator());
+        EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
     }
 }
