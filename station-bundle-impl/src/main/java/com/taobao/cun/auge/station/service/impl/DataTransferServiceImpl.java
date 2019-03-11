@@ -12,6 +12,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.lang.StringUtils;
+import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
+import org.esb.finance.service.contract.EsbFinanceContractAdapter;
+import org.mule.esb.model.tcc.result.EsbResultModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.crm.finance.dataobject.BaseDto;
@@ -37,12 +55,11 @@ import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
 import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
 import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
-
-import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -60,11 +77,13 @@ import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.payment.protocol.impl.AlipayAgreementServiceImpl;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -72,25 +91,10 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.lang.StringUtils;
-import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
-import org.esb.finance.service.contract.EsbFinanceContractAdapter;
-import org.mule.esb.model.tcc.result.EsbResultModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 
 
@@ -126,6 +130,8 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Autowired
 	EsbFinanceContractAdapter esbFinanceContractAdapter;
+	@Autowired
+	StoreWriteService storeWriteService;
 	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
@@ -162,6 +168,9 @@ public class DataTransferServiceImpl implements DataTransferService{
     
     @Autowired
     CaiNiaoService caiNiaoService;
+    
+    @Autowired
+	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
     
     private static Logger logger = LoggerFactory.getLogger(AlipayAgreementServiceImpl.class);
     
@@ -646,10 +655,23 @@ public class DataTransferServiceImpl implements DataTransferService{
             LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
             features.put(key, value);
             for(String cainiaoStationId: cainiaoIds){
-                caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+            	  try {
+	                Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+	                if (b && "noWarehouseSta".equals(key) && "n".equals(value)) {
+	                	CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRelByCainiaoStationId(Long.valueOf(cainiaoStationId), CuntaoCainiaoStationRelTypeEnum.STATION);
+	                	Long stationId = rel.getObjectId();
+	                	PartnerStationRel pRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+	                	if (pRel.getTaobaoUserId() != null) {
+	                		storeWriteService.addWhiteListForSHRH(pRel.getTaobaoUserId());
+	                	}
+	                }
+            	  } catch (Exception e1) {
+            		  logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e1);
+						continue;
+                  }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("initStationFeatureToCainiao.error", e);
         }
         return true;
     }

@@ -47,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 @HSFProvider(serviceInterface = AssetService.class)
 public class AssetServiceImpl implements AssetService{
 
+	
 	@Autowired
 	private AssetBO assetBO;
 
@@ -301,6 +302,11 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public Boolean disAsset(String aliNo, Long userAreaId, String userName, String userId) {
 		return assetSynBO.disAsset(aliNo, userAreaId, userName, userId);
+	}
+
+	@Override
+	public boolean initStationFeatureToCainiao(String key, String value) {
+		return assetSynBO.initStationFeatureToCainiao(key, value);
 	}
 
 }

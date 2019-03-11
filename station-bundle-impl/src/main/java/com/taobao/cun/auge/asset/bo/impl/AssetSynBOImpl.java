@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,7 @@ import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
@@ -65,11 +68,14 @@ import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 
 @Component
@@ -114,6 +120,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 	@Autowired
 	private StationBO stationBO;
+	
+	 @Autowired
+	 CaiNiaoAdapter caiNiaoAdapter;
 
 
 	@HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
@@ -859,4 +868,29 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 		return true;
 	}
+	
+	
+	 public boolean initStationFeatureToCainiao(String key,String value) {
+	        try {
+	            if(StringUtils.isEmpty(value) || StringUtils.isEmpty(key)){
+	                throw new IllegalStateException("参数不为空");
+	            } 
+	            String rm = Diamond.getConfig("com.taobao.cun:stationFeatureBy618.json", "DEFAULT_GROUP", 3000);
+	            String[] cainiaoIds = rm.split(",");
+	            LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+	            features.put(key, value);
+	            for(String cainiaoStationId: cainiaoIds){
+	                try {
+						Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+					} catch (Exception e) {
+						logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e);
+						continue;
+					}
+	             
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return true;
+	    }
 }

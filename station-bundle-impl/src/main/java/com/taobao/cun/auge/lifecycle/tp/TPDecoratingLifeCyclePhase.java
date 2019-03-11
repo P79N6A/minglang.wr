@@ -214,6 +214,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			if(!result){
 				logger.error("createStationSupplyStore error["+partnerInstanceDto.getStationId()+"]");
 			}
+			
+			storeWriteService.addWhiteListForSHRH(partnerInstanceDto.getTaobaoUserId());
 		}
 		
 	}

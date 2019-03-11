@@ -36,6 +36,20 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		return ResultUtils.selectOne(cuntaoCainiaoStationRelMapper.selectByExample(example));
 	}
 	
+	@Override
+	public CuntaoCainiaoStationRel queryCuntaoCainiaoStationRelByCainiaoStationId(Long cainiaoStationId,
+			CuntaoCainiaoStationRelTypeEnum type) {
+		ValidateUtils.notNull(cainiaoStationId);
+		ValidateUtils.notNull(type);
+		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andCainiaoStationIdEqualTo(cainiaoStationId);
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTypeEqualTo(type.getCode());
+		return ResultUtils.selectOne(cuntaoCainiaoStationRelMapper.selectByExample(example));
+	}
+	
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Integer deleteCuntaoCainiaoStationRel(Long objectId, CuntaoCainiaoStationRelTypeEnum type)
@@ -96,4 +110,5 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		cuntaoCainiaoStationRelMapper.updateByPrimaryKeySelective(stationRel);
 		return true;
 	}
+
 }

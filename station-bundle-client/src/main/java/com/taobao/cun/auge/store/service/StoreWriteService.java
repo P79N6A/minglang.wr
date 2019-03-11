@@ -119,5 +119,10 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean disableByTabaoUserId(Long taobaoUserId);
+	
+	 /**
+     * 增加服务白名单 送货入户。
+     */
+	 public Boolean addWhiteListForSHRH(Long taobaoUserId);
 
 }

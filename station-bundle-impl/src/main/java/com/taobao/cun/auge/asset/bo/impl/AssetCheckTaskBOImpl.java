@@ -198,7 +198,7 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
             List<CuntaoUserRole> userRoles = cuntaoUserRoleService.getCuntaoUserRoles(orgId, "COUNTY_LEADER_AUDIT");
             
 			AssetCheckTask at = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_CHECK.getCode());
-			if (at != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
+			if (at != null) {
 				at.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				
@@ -208,8 +208,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(at.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r = new AssetCheckTask();
@@ -235,13 +235,13 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(r.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}
 			
 			AssetCheckTask f = getTaskForCounty(orgId,AssetCheckTaskTaskTypeEnum.COUNTY_FOLLOW.getCode());
-			if (f != null && AssetCheckTaskTaskStatusEnum.DONE.getCode().equals(at.getTaskStatus())) {
+			if (f != null) {
 				f.setTaskStatus(AssetCheckTaskTaskStatusEnum.DOING.getCode());
 				DomainUtils.beforeUpdate(at, "SYSTEM");
 				assetCheckTaskMapper.updateByPrimaryKeySelective(at);
@@ -251,8 +251,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(f.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}else {
 				AssetCheckTask r1 = new AssetCheckTask();
@@ -277,8 +277,8 @@ public class AssetCheckTaskBOImpl implements AssetCheckTaskBO {
 		        startProcessDto.setBusinessId(r1.getId());
 		        startProcessDto.setBusinessName(o.getName());
 		        startProcessDto.setBusinessOrgId(orgId);
-		        startProcessDto.setOperator("SYSTEM");
-		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+		        startProcessDto.setOperator("68694");
+		        startProcessDto.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.BUC);
 		        processService.startApproveProcess(startProcessDto);
 			}
 		} catch (Exception e) {

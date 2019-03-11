@@ -130,4 +130,10 @@ public interface CaiNiaoService {
 	 * @return
 	 */
 	CaiNiaoStationRelDto getCaiNiaoStationRelByStation(Long stationId);
+	/**
+	 * 根据服务站ID 查询所属菜鸟县仓 是否在 运营中（不是虚拟县仓）
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean checkCainiaoCountyIsOperating(Long stationId);
 }

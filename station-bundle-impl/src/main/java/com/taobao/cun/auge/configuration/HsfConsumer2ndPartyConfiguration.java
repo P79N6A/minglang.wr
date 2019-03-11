@@ -111,6 +111,10 @@ public class HsfConsumer2ndPartyConfiguration  {
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationWriteService}",serviceGroup="HSF")
 	private StationWriteService stationWriteService;
 	
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationWriteService}",serviceGroup="HSF")
+	private StationReadService StationReadService;
+	
+	
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationUserWriteService}",serviceGroup="HSF")
 	private StationUserWriteService stationUserWriteService;
 	
