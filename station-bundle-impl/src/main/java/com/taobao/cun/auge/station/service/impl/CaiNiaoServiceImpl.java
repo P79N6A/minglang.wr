@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -23,6 +25,7 @@ import com.taobao.cun.auge.dal.domain.LogisticsStationApply;
 import com.taobao.cun.auge.dal.domain.LogisticsStationApplyExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
@@ -31,6 +34,7 @@ import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
@@ -72,6 +76,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
     LogisticsStationBO logisticsStationBO;
     @Autowired
     LogisticsStationApplyMapper logisticsStationApplyMapper;
+    @Autowired
+	StationBO stationBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -658,5 +664,33 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 		
 		return BeanCopy.copy(CaiNiaoStationRelDto.class, cuntaoCainiaoStationRel);
+	}
+
+	@Override
+	public Boolean checkCainiaoCountyIsOperating(Long stationId) {
+		Station s = stationBO.getStationById(stationId);
+		if (s == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"station is null"); 
+		}
+		Long cnCountyId = getCountyCainiaoStationId(s.getApplyOrg());
+		if (cnCountyId == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"cnCountyId is null"); 
+		}
+		
+		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
+		if (!w.isUse()) {
+			return false;
+		}
+		
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel==null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"cainiaostation is null"); 
+		}
+		 Map<String,String>  m = caiNiaoAdapter.getFeatureByCainiaoStationId(rel.getCainiaoStationId());
+		 if (m.containsKey("noWarehouseSta") && "y".equals(m.get("noWarehouseSta"))) {
+			 return false;
+		 }
+		return true;
 	}
 }

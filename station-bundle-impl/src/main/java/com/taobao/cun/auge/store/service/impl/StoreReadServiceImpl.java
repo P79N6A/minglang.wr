@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.store.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,24 +14,37 @@ import org.springframework.util.Assert;
 
 import com.alibaba.cuntao.ctsm.client.dto.read.ServiceJudgmentForStoreQuitDTO;
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
+import com.google.common.collect.Lists;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
+import com.taobao.cun.auge.dal.domain.CuntaoStore;
+import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
@@ -35,6 +52,7 @@ import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.cun.shared.base.result.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.util.CollectionUtils;
 
 @HSFProvider(serviceInterface = StoreReadService.class)
 @Service("storeReadService")
@@ -52,10 +70,17 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
+	 @Autowired
+	PartnerStationRelMapper partnerStationRelMapper;
+	 @Autowired
+	 CuntaoStoreMapper cuntaoStoreMapper;
 	@Autowired
 	private StationBO sationBO;
 	@Autowired
 	private StoreSReadService storeSReadService;
+	
+	@Autowired
+	private CaiNiaoService caiNiaoService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -171,6 +196,41 @@ public class StoreReadServiceImpl implements StoreReadService {
 		}
 		throw new AugeBusinessException(AugeErrorCodes.SYSTEM_ERROR_CODE,
 				"门店服务退出校验，系统异常");
+	}
+
+	@Override
+	 public List<Long> queryListForShrhPermission(Date beginDate) {
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		List<String> slist = new ArrayList<String>();
+		slist.add(PartnerInstanceStateEnum.DECORATING.getCode());
+		slist.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		 example.createCriteria().
+				andIsDeletedEqualTo("n")
+				.andStateIn(slist).andTypeEqualTo("TP").
+				andIncomeModeEqualTo(IncomeModeEnum.MODE_2019_NEW_STATION.getCode())
+				.andIncomeModeBeginTimeLessThanOrEqualTo(new Date())
+				.andIncomeModeBeginTimeGreaterThanOrEqualTo(beginDate);
+		
+		List<PartnerStationRel>  rList = partnerStationRelMapper.selectByExample(example);
+        List<Long> stationIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
+
+        List<Long> lastStationIds = stationIds.stream()
+				.filter(i -> caiNiaoService.checkCainiaoCountyIsOperating(i))
+				.collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(lastStationIds)){
+        	return Lists.newArrayList();
+		}
+
+        CuntaoStoreExample csExample = new CuntaoStoreExample();
+        CuntaoStoreExample.Criteria csCriteria = csExample.createCriteria();
+        csCriteria.andIsDeletedEqualTo("n");
+        csCriteria.andStationIdIn(lastStationIds);
+        List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(csExample);
+
+        return Optional.ofNullable(cuntaoStores).orElse(Lists.newArrayList()).stream().map(CuntaoStore::getShareStoreId).collect(Collectors.toList());
+        
+		
 	}
 
 }

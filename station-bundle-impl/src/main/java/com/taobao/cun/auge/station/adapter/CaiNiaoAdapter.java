@@ -182,4 +182,17 @@ public interface CaiNiaoAdapter {
 	 * @
 	 */
 	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) ;
+	
+	/**
+	 * 根据菜鸟服务站ID  查询对应feature;
+	 * @param id
+	 * @return
+	 */
+	public  Map<String,String> getFeatureByCainiaoStationId(Long id);
+	/**
+	 * 根据菜鸟县仓ID  查询信息;
+	 * @param id
+	 * @return
+	 */
+	public WarehouseDTO queryWarehouseByCainiaoCountyId(Long id);
 }
