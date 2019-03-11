@@ -257,16 +257,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			}
 		}
 		
-		UnionMemberPageCondition  con = new UnionMemberPageCondition();
-		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
-		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
-		con.setParentStationId(instance.getStationId());
-		con.setPageNum(1);
-		con.setPageSize(10);
-		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
-		if (CollectionUtils.isNotEmpty(umList.getItems())) {
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
-		}
+//		UnionMemberPageCondition  con = new UnionMemberPageCondition();
+//		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
+//		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+//		con.setParentStationId(instance.getStationId());
+//		con.setPageNum(1);
+//		con.setPageSize(10);
+//		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+//		if (CollectionUtils.isNotEmpty(umList.getItems())) {
+//			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
+//		}
 	}
 	
 	@Override
@@ -279,16 +279,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
 		
-		UnionMemberPageCondition  con = new UnionMemberPageCondition();
-		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
-		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
-		con.setParentStationId(partnerStationRel.getStationId());
-		con.setPageNum(1);
-		con.setPageSize(10);
-		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
-		if (CollectionUtils.isNotEmpty(umList.getItems())) {
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
-		}
+//		UnionMemberPageCondition  con = new UnionMemberPageCondition();
+//		con.setOperator(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM.getCode());
+//		con.setOperatorType(com.taobao.cun.auge.station.enums.OperatorTypeEnum.SYSTEM);
+//		con.setParentStationId(partnerStationRel.getStationId());
+//		con.setPageNum(1);
+//		con.setPageSize(10);
+//		PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
+//		if (CollectionUtils.isNotEmpty(umList.getItems())) {
+//			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在优盟，请先删除优盟，才可以停业。");
+//		}
 		
 		/**CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
 		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());

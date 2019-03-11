@@ -154,8 +154,16 @@ public interface GeneralTaskSubmitService {
 
 	/**
 	 * 创建关闭优盟任务
-	 * @param taobaoUserId
+	 *
+	 * @param parentStationId
 	 */
-	public void submitClosedUmTask(Long taobaoUserId);
+	public void submitClosedUmTask(Long parentStationId, OperatorDto operatorDto);
+
+	/**
+	 * 创建退出优盟任务
+	 *
+	 * @param parentStationId
+	 */
+	public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto);
 
 }

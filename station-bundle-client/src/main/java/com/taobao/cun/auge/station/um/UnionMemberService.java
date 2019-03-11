@@ -2,10 +2,7 @@ package com.taobao.cun.auge.station.um;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberAddDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberCheckDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberStateChangeDto;
-import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
+import com.taobao.cun.auge.station.um.dto.*;
 
 /**
  * 优盟管理服务
@@ -53,18 +50,18 @@ public interface UnionMemberService {
     void quitUnionMember(Long stationId, OperatorDto operatorDto);
 
     /**
-     * 批量关闭优盟
+     * 根据所属村小二站点id，批量关闭优盟
      *
-     * @param parentStationId
+     * @param batchCloseUnionMemberDto
      */
-    void closeUnionMembers(Long parentStationId);
+    void closeUnionMembers(BatchCloseUnionMemberDto batchCloseUnionMemberDto);
 
     /**
-     * 批量退出优盟
+     * 根据所属村小二站点id，批量退出优盟
      *
-     * @param parentStationId
+     * @param batchQuitUnionMemberDto
      */
-    void quitUnionMembers(Long parentStationId);
+    void quitUnionMembers(BatchQuitUnionMemberDto batchQuitUnionMemberDto);
 
     /**
      * 删除优盟
@@ -81,4 +78,36 @@ public interface UnionMemberService {
      */
     @Deprecated
     public void updateUmstationNum(String stationNums);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param parentStationId
+     */
+    @Deprecated
+    public void submitClosedUmTask(Long parentStationId);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param parentStationId
+     */
+    @Deprecated
+    public void submitQuitUmTask(Long parentStationId);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param instanceId
+     */
+    @Deprecated
+    public void testTpClosedEvent(Long instanceId);
+
+    /**
+     * 测试接口，不可对外暴露
+     *
+     * @param instanceId
+     */
+    @Deprecated
+    public void testTpQuitedEvent(Long instanceId);
 }
