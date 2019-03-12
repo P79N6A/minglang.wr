@@ -14,7 +14,7 @@ import com.taobao.cun.auge.level.dto.TownLevelDto;
 public class TownLevelElecGMVBo {
 	public long calc(TownLevelDto townLevelDto) {
 		if(townLevelDto.getTaobaoGmv() == 0 || townLevelDto.getTownPopulation() == 0) {
-			return 0L;
+			return 7999999L;
 		}
 		
 		return Math.round(townLevelDto.getTownPopulation() * 300 * getMarketFactor(townLevelDto));
