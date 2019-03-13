@@ -1,11 +1,13 @@
 package com.taobao.cun.auge.level.enterrule.setting.rule;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.mapper.ext.StationLevelExtMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
@@ -24,7 +26,7 @@ public class XSettingRuleParse implements SettingRuleParse {
 	private StationLevelExtMapper stationLevelExtMapper;
 	
 	@Override
-	public RuleResult doParse(TownLevelDto townLevelDto, TownLevelStationRuleDto townLevelStationRuleDto) {
+	public List<RuleResult> doParse(TownLevelDto townLevelDto, TownLevelStationRuleDto townLevelStationRuleDto) {
 		//优品体验店数
 		int storeNum = stationLevelExtMapper.countTownTPS(townLevelDto.getTownCode());
 		//转型、升级中的优品体验店数
@@ -34,9 +36,9 @@ public class XSettingRuleParse implements SettingRuleParse {
 			Map<String, Object> param = Maps.newHashMap();
 			param.put("storeNum", storeNum);
 			param.put("transingStoreNum", transingStoreNum);
-			return new RuleResult("CLOSE", MessageHelper.rend(MESSAGE, param));
+			return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE, param)));
 		}else {
-			return new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc());
+			return Lists.newArrayList(new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc()));
 		}
 	}
 }

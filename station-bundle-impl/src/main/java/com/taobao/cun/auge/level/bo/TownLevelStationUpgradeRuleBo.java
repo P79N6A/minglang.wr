@@ -26,7 +26,7 @@ public class TownLevelStationUpgradeRuleBo {
 	public TownLevelStationSetting getTownLevelStationRule(long stationId) {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		StationDto stationDto = partnerInstanceDto.getStationDto();
-		TownLevelStationSetting townLevelStationSetting = townLevelStationEnterRuleBo.getTownLevelStationRule(stationDto.getAddress().getTown());
+		TownLevelStationSetting townLevelStationSetting = townLevelStationEnterRuleBo.getTownLevelStationRules(stationDto.getAddress().getTown()).get(0);
 		
 		if(!townLevelStationSetting.getStationTypeCode().equals("CLOSE")) {
 			if(!isValidUpgradeType(townLevelStationSetting, partnerInstanceDto.getId())) {
