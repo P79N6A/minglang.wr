@@ -7,7 +7,6 @@ import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
 import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
 import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
-import com.taobao.cun.recruit.train.service.ServiceTrainEmployeeInfoService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -184,9 +183,6 @@ public class HsfConsumer2ndPartyConfiguration  {
 
 	@HSFConsumer(serviceVersion="${serviceAbilityApplyService.version}",serviceGroup="HSF")
 	private ServiceAbilityApplyService serviceAbilityApplyService;
-
-	@HSFConsumer(serviceVersion="${serviceAbilityApplyService.version}",serviceGroup="HSF")
-	private ServiceTrainEmployeeInfoService serviceTrainEmployeeInfoService;
 
 	@Bean
 	public SQLIDQueryAPI sqlIDQueryAPI(HsfConsumerContext hsfConsumerContext) {

@@ -6,9 +6,6 @@ import java.util.Map;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
 import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
-import com.taobao.cun.recruit.train.dto.ServiceTrainApplyAuditDto;
-import com.taobao.cun.recruit.train.enums.ServiceTrainEmployeeInfoStateEnum;
-import com.taobao.cun.recruit.train.service.ServiceTrainEmployeeInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,9 +153,6 @@ public class ProcessProcessor {
     @Autowired
     private ServiceAbilityApplyService serviceAbilityApplyService;
 
-    @Autowired
-    private ServiceTrainEmployeeInfoService serviceTrainEmployeeInfoService;
-
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
         String msgType = strMessage.getMessageType();
@@ -233,18 +227,7 @@ public class ProcessProcessor {
                 auditDto.setId(businessId);
                 auditDto.setOperator("system");
                 serviceAbilityApplyService.auditApply(auditDto);
-            } else if (ProcessBusinessEnum.serviceTrainAudit.getCode().equals(businessCode)) {
-                ServiceTrainApplyAuditDto auditDto = new ServiceTrainApplyAuditDto();
-                if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-                    auditDto.setState(ServiceTrainEmployeeInfoStateEnum.AUDIT_PASS);
-                } else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)) {
-                    auditDto.setState(ServiceTrainEmployeeInfoStateEnum.AUDIT_UNPASS);
-                }
-                auditDto.setAuditOpinion(ob.getString("taskRemark"));
-                auditDto.setId(businessId);
-                auditDto.setOperator("system");
-                serviceTrainEmployeeInfoService.auditApply(auditDto);
-            } else if (ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)) {
+            }else if (ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)) {
                 AddressInfoDecisionAuditDto aidDto = new AddressInfoDecisionAuditDto();
                 if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
                     aidDto.setStatus(AddressInfoDecisionStatusEnum.AUDIT_PASS);
@@ -332,13 +315,7 @@ public class ProcessProcessor {
                 auditDto.setId(businessId);
                 auditDto.setOperator("system");
                 serviceAbilityApplyService.saveApplyAuditOpinion(auditDto);
-            }  else if (ProcessBusinessEnum.serviceTrainAudit.getCode().equals(businessCode)) {
-                ServiceTrainApplyAuditDto auditDto = new ServiceTrainApplyAuditDto();
-                auditDto.setAuditOpinion(ob.getString("taskRemark"));
-                auditDto.setId(businessId);
-                auditDto.setOperator("system");
-                serviceTrainEmployeeInfoService.saveApplyAuditOpinion(auditDto);
-            } else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
+            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
                 StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
                 String taskId = ob.getString("taskId");
                 CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
