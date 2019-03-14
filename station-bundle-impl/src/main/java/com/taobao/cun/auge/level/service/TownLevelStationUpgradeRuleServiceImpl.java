@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.level.bo.TownLevelStationUpgradeRuleBo;
@@ -12,7 +14,7 @@ public class TownLevelStationUpgradeRuleServiceImpl implements TownLevelStationU
 	private TownLevelStationUpgradeRuleBo townLevelStationUpgradeRuleBo;
 	
 	@Override
-	public TownLevelStationSetting getTownLevelStationRule(long stationId) {
+	public List<TownLevelStationSetting> getTownLevelStationRule(long stationId) {
 		return townLevelStationUpgradeRuleBo.getTownLevelStationRule(stationId);
 	}
 

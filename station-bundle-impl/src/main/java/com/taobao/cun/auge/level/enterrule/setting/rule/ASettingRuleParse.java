@@ -1,11 +1,13 @@
 package com.taobao.cun.auge.level.enterrule.setting.rule;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.mapper.ext.StationLevelExtMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
@@ -26,7 +28,7 @@ public class ASettingRuleParse implements SettingRuleParse {
 	private StationLevelExtMapper stationLevelExtMapper;
 	
 	@Override
-	public RuleResult doParse(TownLevelDto townLevelDto, TownLevelStationRuleDto townLevelStationRuleDto) {
+	public List<RuleResult> doParse(TownLevelDto townLevelDto, TownLevelStationRuleDto townLevelStationRuleDto) {
 		int storeNum = stationLevelExtMapper.countTownTPS(townLevelDto.getTownCode());
 		int tpElecNum = stationLevelExtMapper.countTownHZD(townLevelDto.getTownCode());
 		int transingHzdNum = stationLevelExtMapper.countTransHZD(townLevelDto.getTownCode());
@@ -37,25 +39,28 @@ public class ASettingRuleParse implements SettingRuleParse {
 		param.put("tpElecNum", tpElecNum);
 		param.put("transingHzdNum", transingHzdNum);
 		
-		//如果没有体验店、合作店、转型中的合作店，那么可以开一家合作店
+		//如果没有体验店、合作店、转型中的合作店，那么可以开一家合作店或者体验店
 		if(storeNum + tpElecNum + transingHzdNum == 0) {
-			return new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc());
+			PartnerApplyConfirmIntentionEnum intention = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
+			return Lists.newArrayList(
+					new RuleResult(intention.getCode(), intention.getDesc()),
+					new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc()));
 		}else if(storeNum + tpElecNum + transingHzdNum > 1) { //存在体验店、合作店、转型中的合作店，并且他们之和大于1了，那么就不能再开了
-			return new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_1, param));
+			return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_1, param)));
 		}else { //storeNum + tpElecNum + transingHzdNum == 1 如果有一家体验店、合作店、转型中的合作店，如果人口数大于6w，并且没有优品服务站或者转型中的优品服务站，那么可以再开一家优品服务站
 			int youpinNum = stationLevelExtMapper.countTownYoupin(townLevelDto.getTownCode());
 			int youpinTransingNum = stationLevelExtMapper.countTownYoupin(townLevelDto.getTownCode());
 			if(population >= 60000) {
 				if(youpinNum + youpinTransingNum == 0) {
 					PartnerApplyConfirmIntentionEnum intention = PartnerApplyConfirmIntentionEnum.TP_YOUPIN;
-					return new RuleResult(intention.getCode(), intention.getDesc());
+					return Lists.newArrayList(new RuleResult(intention.getCode(), intention.getDesc()));
 				}else {
 					param.put("youpinNum", youpinNum);
 					param.put("youpinTransingNum", youpinTransingNum);
-					return new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_2, param));
+					return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_2, param)));
 				}
 			}else {
-				return new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_1, param));
+				return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE_1, param)));
 			}
 		}
 	}
