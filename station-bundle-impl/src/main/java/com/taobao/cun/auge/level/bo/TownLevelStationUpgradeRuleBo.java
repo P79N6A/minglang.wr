@@ -17,23 +17,35 @@ import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
 
 @Component
 public class TownLevelStationUpgradeRuleBo {
-	private final static List<String> UPGRADE_ORDER = Lists.newArrayList("TPS_ELEC", "TP_ELEC", "TP_YOUPIN", "STATION"); 
+	private final static List<String> UPGRADE_ORDER = Lists.newArrayList(/*"TPS_ELEC", */"TP_ELEC", "TP_YOUPIN", "STATION"); 
 	@Resource
 	private PartnerInstanceQueryService partnerInstanceQueryService;
 	@Resource
 	private TownLevelStationEnterRuleBo townLevelStationEnterRuleBo;
 	
-	public TownLevelStationSetting getTownLevelStationRule(long stationId) {
+	public List<TownLevelStationSetting> getTownLevelStationRule(long stationId) {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		StationDto stationDto = partnerInstanceDto.getStationDto();
-		TownLevelStationSetting townLevelStationSetting = townLevelStationEnterRuleBo.getTownLevelStationRules(stationDto.getAddress().getTown()).get(0);
-		
-		if(!townLevelStationSetting.getStationTypeCode().equals("CLOSE")) {
-			if(!isValidUpgradeType(townLevelStationSetting, partnerInstanceDto.getId())) {
-				return invalidTownLevelStationSetting(townLevelStationSetting);
+		return filter(townLevelStationEnterRuleBo.getTownLevelStationRules(stationDto.getAddress().getTown()), partnerInstanceDto.getId());
+	}
+	
+	private List<TownLevelStationSetting> filter(List<TownLevelStationSetting> townLevelStationSettings, Long instanceId){
+		List<TownLevelStationSetting> result = Lists.newArrayList();
+		for(TownLevelStationSetting rule : townLevelStationSettings) {
+			if(rule.getStationTypeCode().equals("CLOSE")) {
+				return Lists.newArrayList(rule);
+			}
+			if(!rule.getStationTypeCode().equals("TPS_ELEC")) {//目前不允许升级到体验店，过滤掉
+				if(isValidUpgradeType(rule, instanceId)) {
+					result.add(rule);
+				}
 			}
 		}
-		return townLevelStationSetting;
+		
+		if(result.isEmpty()) {
+			result.add(invalidTownLevelStationSetting(townLevelStationSettings.get(0)));
+		}
+		return result;
 	}
 
 	private TownLevelStationSetting invalidTownLevelStationSetting(TownLevelStationSetting townLevelStationSetting) {
