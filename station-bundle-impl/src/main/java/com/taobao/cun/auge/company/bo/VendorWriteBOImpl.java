@@ -211,15 +211,34 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Boolean removeVendor(Long companyId,String operator) {
-		//TODO 
+		Long endorOrgId = deletedVendor(companyId,operator);
+		
+		storeEndorApiClient.getOrgServiceClient().delete(endorOrgId);
+
+		return true;
+	}
+
+	@Override
+	public Boolean removeNewVendor(Long companyId, String operator) {
+		deletedVendor(companyId,operator);
+		return true;
+	}
+
+	/**
+	 *
+	 * @param companyId
+	 * @param operator
+	 * @return
+	 */
+	private Long deletedVendor(Long companyId, String operator){
 		CuntaoServiceVendorExample vendorExample = new CuntaoServiceVendorExample();
 		vendorExample.createCriteria().andIdEqualTo(companyId).andIsDeletedEqualTo("n");
 		List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(vendorExample);
 		if(vendors == null || vendors.isEmpty()){
 			throw new AugeBusinessException("NOT_FIND_VENDOR","服务商["+companyId+"]不存在");
 		}
-		
-		
+
+
 		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(companyId).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
 		List<CuntaoEmployeeRel>  rels = cuntaoEmployeeRelMapper.selectByExample(example);
@@ -230,18 +249,15 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 				}
 			}
 		}
-		
-		
+
 		CuntaoServiceVendor record = new CuntaoServiceVendor();
 		record.setId(companyId);
 		record.setGmtModified(new Date());
 		record.setModifier(operator);
 		record.setIsDeleted("y");
 		cuntaoServiceVendorMapper.updateByPrimaryKeySelective(record);
-		
-		//TODO删除组织
-		storeEndorApiClient.getOrgServiceClient().delete(vendors.iterator().next().getEndorOrgId());
-		return true;
+
+		return vendors.iterator().next().getEndorOrgId();
 	}
 
 }

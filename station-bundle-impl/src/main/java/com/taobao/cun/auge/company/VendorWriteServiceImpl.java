@@ -267,6 +267,11 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	}
 
 	@Override
+	public Result<Boolean> removeNewVendor(Long companyId, String operator) {
+		return null;
+	}
+
+	@Override
 	public Result<Boolean> updateVendor(CuntaoServiceVendorDto cuntaoVendorDto) {
 		Result<Boolean> result = null;
 		ErrorInfo errorInfo = checkUpdateCuntaoVendorDto(cuntaoVendorDto);
