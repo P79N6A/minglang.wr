@@ -31,6 +31,7 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.diamond.client.Diamond;
@@ -64,6 +65,9 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 
 	@Autowired
 	private ManualReleaseDistributeLock distributeLock;
+	
+	@Autowired
+	private PartnerAdzoneService partnerAdzoneService;
 
 	@Override
 	public Boolean addLxPartner(LxPartnerAddDto param) {
@@ -81,6 +85,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "请稍后重试");
 			}
 			addLx(param, taobaoUserId);
+			partnerAdzoneService.createAdzone(taobaoUserId);
 		} catch (Exception e) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "创建拉新伙伴失败，请稍后重试");
 		} finally {
