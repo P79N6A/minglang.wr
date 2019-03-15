@@ -1117,7 +1117,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
-            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateEqualTo(PartnerInstanceStateEnum.SERVICING.getCode()).andIsCurrentEqualTo("y");
+            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
         return partnerStationRelMapper.countByExample(example);
 	}
 
@@ -1130,7 +1130,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		//查关系
 		PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
-            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateEqualTo(PartnerInstanceStateEnum.SERVICING.getCode()).andIsCurrentEqualTo("y");
+            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
         
         List<PartnerStationRel> rList = partnerStationRelMapper.selectByExample(example);
         List<Long> partnerIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
