@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -19,17 +22,20 @@ import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.dto.InstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -50,10 +56,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class PartnerInstanceConverter {
 
@@ -178,6 +180,41 @@ public final class PartnerInstanceConverter {
 		instanceDto.setOpenDate(psRel.getOpenDate());
 		instanceDto.setApplierType(psRel.getApplierType());
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(psRel.getType()));
+		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
+
+		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(psRel.getCloseType()));
+		instanceDto.setTaobaoUserId(psRel.getTaobaoUserId());
+		instanceDto.setStationId(psRel.getStationId());
+		instanceDto.setPartnerId(psRel.getPartnerId());
+		instanceDto.setVersion(psRel.getVersion());
+		instanceDto.setSellerId(psRel.getSellerId());
+		instanceDto.setMode(psRel.getMode());
+		instanceDto.setTransStatusEnum(PartnerInstanceTransStatusEnum.valueof(psRel.getTransStatus()));
+		instanceDto.setShopId(psRel.getShopId());
+		instanceDto.setDistributionChannelId(psRel.getDistributionChannelId());
+		instanceDto.setDistributorCode(psRel.getDistributorCode());
+		return instanceDto;
+	}
+	
+	public static InstanceDto convertToInstanceDto(PartnerStationRel psRel) {
+		if (null == psRel) {
+			return null;
+		}
+
+		InstanceDto instanceDto = new InstanceDto();
+
+		instanceDto.setId(psRel.getId());
+		instanceDto.setApplierId(psRel.getApplierId());
+		instanceDto.setApplyTime(psRel.getApplyTime());
+		instanceDto.setServiceBeginTime(psRel.getServiceBeginTime());
+		instanceDto.setServiceEndTime(psRel.getServiceEndTime());
+		instanceDto.setParentStationId(psRel.getParentStationId());
+
+		instanceDto.setState(PartnerInstanceStateEnum.valueof(psRel.getState()));
+		instanceDto.setBit(psRel.getBit());
+		instanceDto.setOpenDate(psRel.getOpenDate());
+		instanceDto.setApplierType(psRel.getApplierType());
+		instanceDto.setType(InstanceTypeEnum.valueof(psRel.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
 
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(psRel.getCloseType()));
