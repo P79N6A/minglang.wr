@@ -3,15 +3,12 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
-import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
-import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
-import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ProductService;
@@ -47,8 +44,11 @@ import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
+import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
+import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
+import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
@@ -59,10 +59,12 @@ import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
+import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 import com.taobao.mmp.client.permission.service.MmpAuthReadService;
+import com.taobao.mtee.fmac.IdentifyRisk;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
@@ -485,6 +487,30 @@ public class HsfConsumer2ndPartyConfiguration  {
     	placeServiceContext.setHsfConsumerVersion(version);
     	placeServiceContext.setAppName("place");
     	return placeServiceContext;
+    }
+    
+    @HSFConsumer(serviceVersion="${jaq.requestService.version}",serviceGroup="HSF")
+    private com.taobao.mtee.service.RequestService requestService;
+
+    @HSFConsumer(serviceVersion="${jaq.requestServiceForMtee3.version}",serviceGroup="HSF")
+    private com.alibaba.security.tenant.common.service.RequestService requestServiceForMtee3;
+    
+    @Bean(initMethod = "init")
+    public IdentifyRisk identifyRisk() {
+
+        IdentifyRisk identifyRisk = new IdentifyRisk("auge", 0);
+        identifyRisk.setRequestService(requestService);
+        identifyRisk.setRequestServiceForMtee3(requestServiceForMtee3);
+
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setCorePoolSize(5);
+        threadPoolTaskExecutor.setMaxPoolSize(5);
+        //threadPoolTaskExecutor.setQueueCapacity(500);
+        threadPoolTaskExecutor.setKeepAliveSeconds(300);
+        threadPoolTaskExecutor.initialize();
+
+        identifyRisk.setAsyncTaskExecutor(threadPoolTaskExecutor);
+        return identifyRisk;
     }
     
     
