@@ -9,9 +9,10 @@ import javax.validation.constraints.NotNull;
 /**
  * 合伙人实例表 类型枚举
  * 
- * @author quanzhu.wangqz
+ *  这个类里 引用了枚举  会导致老版本用户反序列化失败 以后用PartnerInstanceTypeEnums
  *
  */
+@Deprecated
 public class PartnerInstanceTypeEnum implements Serializable {
 
 	private static final long serialVersionUID = 7138576667532117709L;

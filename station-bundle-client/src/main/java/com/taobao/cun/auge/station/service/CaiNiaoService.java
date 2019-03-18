@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
@@ -136,4 +137,6 @@ public interface CaiNiaoService {
 	 * @return
 	 */
 	public Boolean checkCainiaoCountyIsOperating(Long stationId);
+	
+	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId);
 }
