@@ -489,10 +489,10 @@ public class HsfConsumer2ndPartyConfiguration  {
     	return placeServiceContext;
     }
     
-    @HSFConsumer(serviceVersion="${jaq.requestService.version}",serviceGroup="HSF")
+    @HSFConsumer(serviceVersion="1.0.0",serviceGroup="HSF")
     private com.taobao.mtee.service.RequestService requestService;
 
-    @HSFConsumer(serviceVersion="${jaq.requestServiceForMtee3.version}",serviceGroup="HSF")
+    @HSFConsumer(serviceVersion="1.0.0_ali_taobao",serviceGroup="HSF")
     private com.alibaba.security.tenant.common.service.RequestService requestServiceForMtee3;
     
     @Bean(initMethod = "init")
