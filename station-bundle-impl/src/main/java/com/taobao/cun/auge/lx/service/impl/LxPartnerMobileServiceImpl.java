@@ -17,8 +17,10 @@ import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
 import com.taobao.cun.auge.lx.service.LxPartnerMobileService;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.diamond.client.Diamond;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.mtee.fmac.IdentifyRisk;
 
+@HSFProvider(serviceInterface = LxPartnerMobileService.class)
 @Service("lxPartnerMobileService")
 public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 
@@ -81,7 +83,7 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 		}else {
 			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId,r.getRmbResult().getErrorMsg());
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, r.getRmbResult().getErrorMsg());
-			return Result.of(Boolean.TRUE);
+			return Result.of(errorInfo);
 		}
 	}
 }
