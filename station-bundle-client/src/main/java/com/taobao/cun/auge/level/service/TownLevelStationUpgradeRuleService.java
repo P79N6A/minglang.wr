@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
 
 /**
@@ -15,5 +17,5 @@ public interface TownLevelStationUpgradeRuleService {
 	 * @param stationId
 	 * @return
 	 */
-	TownLevelStationSetting getTownLevelStationRule(long stationId);
+	List<TownLevelStationSetting> getTownLevelStationRule(long stationId);
 }

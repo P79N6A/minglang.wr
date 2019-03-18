@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.level.bo.TownLevelStationEnterRuleBo;
@@ -12,8 +14,8 @@ public class TownLevelStationEnterRuleServiceImpl implements TownLevelStationEnt
 	private TownLevelStationEnterRuleBo townLevelStationEnterRuleBo;
 	
 	@Override
-	public TownLevelStationSetting getTownLevelStationRule(String townCode) {
-		return townLevelStationEnterRuleBo.getTownLevelStationRule(townCode);
+	public List<TownLevelStationSetting> getTownLevelStationRules(String townCode) {
+		return townLevelStationEnterRuleBo.getTownLevelStationRules(townCode);
 	}
 
 }

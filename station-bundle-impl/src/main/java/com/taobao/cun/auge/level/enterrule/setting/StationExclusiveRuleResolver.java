@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.enterrule.setting;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -29,7 +31,7 @@ public class StationExclusiveRuleResolver {
 	 * @param townLevelStationRuleDto
 	 * @return
 	 */
-	public TownLevelStationSetting resolve(TownLevelDto townLevelDto) {
+	public List<TownLevelStationSetting> resolve(TownLevelDto townLevelDto) {
 		TownLevelStationRuleDto townLevelStationRuleDto = townLevelDto.getTownLevelStationRuleDto();
 		Preconditions.checkNotNull(townLevelStationRuleDto, "规则配置不能为空");
 		return settingRuleParseFactory.getSettingRuleParse(townLevelStationRuleDto.getRule()).parse(townLevelDto);

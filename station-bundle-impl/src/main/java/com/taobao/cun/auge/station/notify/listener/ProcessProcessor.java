@@ -215,7 +215,8 @@ public class ProcessProcessor {
                 pqaDto.setId(businessId);
                 pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
-            } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode) || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
+            } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode)
+                || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
                 ServiceAbilityApplyAuditDto auditDto = new ServiceAbilityApplyAuditDto();
                 if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
                     auditDto.setState(ServiceAbilityApplyStateEnum.AUDIT_PASS);
@@ -226,8 +227,7 @@ public class ProcessProcessor {
                 auditDto.setId(businessId);
                 auditDto.setOperator("system");
                 serviceAbilityApplyService.auditApply(auditDto);
-            }
-            else if (ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)) {
+            }else if (ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)) {
                 AddressInfoDecisionAuditDto aidDto = new AddressInfoDecisionAuditDto();
                 if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
                     aidDto.setStatus(AddressInfoDecisionStatusEnum.AUDIT_PASS);
@@ -308,14 +308,14 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
                 addressInfoDecisionService.updateAddressInfoMemo(sdd);
-            } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode) || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
+            } else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode)
+                || ProcessBusinessEnum.serviceAbilitySHRHDecision.getCode().equals(businessCode)) {
                 ServiceAbilityApplyAuditDto auditDto = new ServiceAbilityApplyAuditDto();
                 auditDto.setAuditOpinion(ob.getString("taskRemark"));
                 auditDto.setId(businessId);
                 auditDto.setOperator("system");
                 serviceAbilityApplyService.saveApplyAuditOpinion(auditDto);
-            }
-            else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
+            }else if (ProcessBusinessEnum.decorationDesignAudit.getCode().equals(businessCode)) {
                 StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
                 String taskId = ob.getString("taskId");
                 CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
@@ -552,7 +552,8 @@ public class ProcessProcessor {
 				}
 
 				// 处理合伙人、淘帮手、村拍档不一样的业务
-				partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
+				partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance
+				.getType()));
 
 				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
 						quitApply.getIsQuitStation());
@@ -567,7 +568,8 @@ public class ProcessProcessor {
 
 				/*
 				// 合伙人实例已停业
-				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);
+				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum
+				.CLOSED, operator);
 				// 村点已停业
 				if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 					stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
@@ -577,7 +579,8 @@ public class ProcessProcessor {
 				quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
 
 				// 更新什么周期表
-				PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.QUITING,
+				PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.QUITING,
 						PartnerLifecycleCurrentStepEnum.PROCESSING);
 
 				PartnerLifecycleDto param = new PartnerLifecycleDto();
