@@ -23,4 +23,7 @@ public interface LxPartnerMobileService {
 	 * @return
 	 */
 	public Result<LxPartnerListDto> listLxPartner(Long taobaoUserId);
+	
+	
+	public  Result<Boolean> checkFkByTaobaoUserId(Long taobaoUserId);
 }
