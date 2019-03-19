@@ -1,6 +1,10 @@
-package com.taobao.cun.auge.cuncounty.dto;
+package com.taobao.cun.auge.cuncounty.dto.edit;
 
 import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 政府签约信息
@@ -8,51 +12,40 @@ import java.util.Date;
  * @author chengyu.zhoucy
  *
  */
-public class CuntaoCountyContractDto {
-    private Long id;
-    /**
-     * 县服务中心ID
-     */
+public class CuntaoCountyContractEditDto {
+    @NotNull(message="县服务中心不能为空")
     private Long countyId;
 
-    /**
-     * 协议编号
-     */
+    @NotBlank(message="协议编号不能为空")
     private String serialNum;
 
-    /**
-     * 签约主体
-     */
+    @NotBlank(message="签约主体不能为空")
     private String signatory;
 
-    /**
-     * 协议开始时间
-     */
+    @NotBlank(message="协议开始时间不能为空")
     private Date gmtStart;
 
-    /**
-     * 协议结束时间
-     */
+    @NotBlank(message="协议结束时间不能为空")
     private Date gmtEnd;
 
-    /**
-     * 补贴金额
-     */
+    @NotBlank(message="资金补贴不能为空")
     private String allowance;
 
-    /**
-     * 宣传
-     */
+    @NotBlank(message="宣传支持不能为空")
     private String publicity;
-
+    
+    @NotBlank(message="协议不能为空")
     private String attachments;
+    
+    @NotBlank(message="操作人不能为空")
+    private String operator;
 
-	public Long getId() {
-		return id;
+	public String getOperator() {
+		return operator;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 	public Long getCountyId() {

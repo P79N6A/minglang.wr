@@ -1,7 +1,15 @@
 package com.taobao.cun.auge.cuncounty.dto.edit;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * 政府联系人
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 public class CuntaoCountyGovContactAddDto {
 	@NotBlank(message="姓名不能为空")
     private String name;
@@ -11,12 +19,14 @@ public class CuntaoCountyGovContactAddDto {
     private String department;
     @NotBlank(message="电话不能为空")
     private String telephone;
-
-    private String memo;
-
+    @NotNull(message="县服务中心不能为空")
     private Long countyId;
     @NotBlank(message="创建人不能为空")
     private String operator;
+    /**
+     * 备注
+     */
+    private String memo;
 
 	public String getOperator() {
 		return operator;

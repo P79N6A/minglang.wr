@@ -7,17 +7,15 @@ import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitename;
 
 public class BeanConvertUtils {
 	
 	public static CuntaoCountyWhitenameDto convert(CuntaoCountyWhitename cuntaoCountyWhitename) {
 		return BeanCopy.copy(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitename);
-	}
-	
-	public static List<CuntaoCountyWhitenameDto> convert(List<CuntaoCountyWhitename> cuntaoCountyWhitenames) {
-		return BeanCopy.copyList(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames);
 	}
 	
 	public static CuntaoCounty convert(CuntaoCountyAddDto cuntaoCountyAddDto, Long orgId, CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto) {
@@ -31,5 +29,18 @@ public class BeanConvertUtils {
 		cuntaoCounty.setOrgId(orgId);
 		cuntaoCounty.setState(CuntaoCountyStateEnum.PLANNING.getCode());
 		return cuntaoCounty;
+	}
+	
+	public static CuntaoCountyGovContact convert(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
+		CuntaoCountyGovContact cuntaoCountyGovContact = BeanCopy.copy(CuntaoCountyGovContact.class, cuntaoCountyGovContactAddDto);
+		cuntaoCountyGovContact.setGmtCreate(new Date());
+		cuntaoCountyGovContact.setGmtModified(new Date());
+		cuntaoCountyGovContact.setCreator(cuntaoCountyGovContactAddDto.getOperator());
+		cuntaoCountyGovContact.setModifier(cuntaoCountyGovContactAddDto.getOperator());
+		return cuntaoCountyGovContact;
+	}
+	
+	public static <T, S> List<T> listConvert(Class<T> targetClass, List<S> sources){
+		return BeanCopy.copyList(targetClass, sources);
 	}
 }
