@@ -925,7 +925,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			String model = m.get("model");
 			String ownerName = m.get("ownerName");
 			String ownerWorkno = m.get("ownerWorkno");
-			String poNo = m.get("poNo");
+			//String poNo = m.get("poNo");
 			String serialNo = m.get("serialNo");
 			String orgName =  m.get("orgName");
 			
@@ -940,7 +940,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			a.setOwnerName(ownerName);
 			a.setOwnerOrgId(ownerOrgId);
 			a.setOwnerWorkno(ownerWorkno);
-			a.setPoNo(poNo);
+			//a.setPoNo(poNo);
 			a.setSerialNo(serialNo);
 			a.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
 			a.setUseAreaId(ownerOrgId);
