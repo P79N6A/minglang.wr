@@ -18,7 +18,8 @@ import com.taobao.cun.auge.lx.service.LxPartnerMobileService;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.mtee.fmac.IdentifyRisk;
+import com.taobao.mtee.rmb.RmbResult;
+import com.taobao.mtee.rmb.RmbService;
 
 @HSFProvider(serviceInterface = LxPartnerMobileService.class)
 @Service("lxPartnerMobileService")
@@ -29,7 +30,8 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 	@Autowired
 	private LxPartnerBO lxPartnerBO;
 	@Autowired
-	private IdentifyRisk identifyRisk;
+	private RmbService rmbService;
+
 
 	@Override
 	public Result<Boolean> addLxPartner(LxPartnerAddDto param) {
@@ -66,8 +68,8 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 
 	@Override
 	public  Result<Boolean> checkFkByTaobaoUserId(Long taobaoUserId) {
-		com.taobao.mtee.rmb.RmbParameter p = new com.taobao.mtee.rmb.RmbParameter();
-		p.setUserId(String.valueOf(taobaoUserId));
+		com.taobao.mtee.rmb.RmbParameter param = new com.taobao.mtee.rmb.RmbParameter();
+		param.setUserId(String.valueOf(taobaoUserId));
 		String asac="";
 		try {
 			asac= Diamond.getConfig("auge.lx.identifyrisk.asac", "DEFAULT_GROUP", 3000);
@@ -76,13 +78,13 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
-		p.setAsac(asac);
-		com.taobao.mtee.rmb.RmbTokenResult  r = identifyRisk.identifyRisk(p);
-		if (r.getRmbResult().isSafe()) {
+		param.setAsac(asac);
+	    RmbResult rmbResult = rmbService.identifyRisk(param);
+		if (rmbResult.isSafe()) {
 			return Result.of(Boolean.TRUE);
 		}else {
-			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId,r.getRmbResult().getErrorMsg());
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, r.getRmbResult().getErrorMsg());
+			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId,rmbResult.getErrorMsg());
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, rmbResult.getErrorMsg());
 			return Result.of(errorInfo);
 		}
 	}
