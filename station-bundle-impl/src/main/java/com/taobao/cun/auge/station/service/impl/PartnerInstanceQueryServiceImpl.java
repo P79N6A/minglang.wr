@@ -940,6 +940,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         if (null == rel) {
             return null;
         }
+        if(StationBizTypeEnum.TPA.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.TPA;
+        }else if(StationBizTypeEnum.UM.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.UM;
+        }
+
         Station station = stationBO.getStationById(rel.getStationId());
         if (null == station) {
             return null;
