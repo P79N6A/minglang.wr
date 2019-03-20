@@ -506,7 +506,7 @@
 			<dependency>
 				<groupId>com.taobao.common.division</groupId>
 				<artifactId>common-division</artifactId>
-				<version>2.3.0</version>
+				<version>3.0.28</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.commons</groupId>

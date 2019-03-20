@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper">
-  <select id="getCuntaoCountyGovContract" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContractMapper.BaseResultMap">
+  <select id="getCuntaoCountyGovContract" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContractMapper.BaseResultMap">
   select * from cuntao_county_gov_contract where county_id=#{countyId} and is_deleted='n'
   </select>
   
-  <select id="getCuntaoCountyGovProtocol" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovProtocolMapper.BaseResultMap">
+  <select id="getCuntaoCountyGovProtocol" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovProtocolMapper.BaseResultMap">
   select * from cuntao_county_gov_protocol where county_id=#{countyId}  and is_deleted='n' and state='valid'
   </select>
   
-  <select id="getCuntaoCountyGovContacts" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContactMapper.BaseResultMap">
+  <select id="getCuntaoCountyGovContacts" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContactMapper.BaseResultMap">
   select * from cuntao_county_gov_contact where county_id=#{countyId} and is_deleted='n' order by id desc
   </select>
   
-  <select id="getCuntaoCountyOffice" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyOfficeMapper.BaseResultMap">
+  <select id="getCuntaoCountyOffice" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyOfficeMapper.BaseResultMap">
   select * from cuntao_county_office where county_id=#{countyId} and is_deleted='n'
   </select>
   
-  <select id="getCainiaoCounty" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CainiaoCountyMapper.BaseResultMap">
+  <select id="getCainiaoCounty" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CainiaoCountyMapper.BaseResultMap">
   select * from cainiao_county where county_id=#{countyId} and is_deleted='n'
   </select>
   

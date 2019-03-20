@@ -22,10 +22,10 @@ public class CuntaoCountyGovContractEditDto {
     @NotBlank(message="政府签约信息:签约主体不能为空")
     private String signatory;
 
-    @NotBlank(message="政府签约信息:协议开始时间不能为空")
+    @NotNull(message="政府签约信息:协议开始时间不能为空")
     private Date gmtStart;
 
-    @NotBlank(message="政府签约信息:协议结束时间不能为空")
+    @NotNull(message="政府签约信息:协议结束时间不能为空")
     private Date gmtEnd;
 
     @NotBlank(message="政府签约信息:资金补贴不能为空")
