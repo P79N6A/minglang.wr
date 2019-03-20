@@ -42,6 +42,20 @@ public class LxPartnerDto implements Serializable{
      * 状态
      */
     private PartnerInstanceStateEnum stateEnum;
+    
+    /**
+     * 阿里妈妈生成的pid
+     */
+    private String pid;
+    
+
+	public String getPid() {
+		return pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
+	}
 
 	public String getTaobaoNick() {
 		return taobaoNick;

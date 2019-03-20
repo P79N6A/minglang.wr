@@ -78,6 +78,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -147,6 +148,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private BizActionLogBo bizActionLogBo;
     @Autowired
     private CountyTransferStateMgrBo countyTransferStateMgrBo;
+    
+    @Autowired
+	private PartnerAdzoneService partnerAdzoneService;
     
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
@@ -1157,7 +1161,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (map.containsKey(p.getId()) ) {
 			pDto.setNum(String.valueOf(map.get(p.getId()).getId()));
 			pDto.setStateEnum(PartnerInstanceStateEnum.valueof(map.get(p.getId()).getState()));
+			pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), map.get(p.getId()).getStationId()));
 		}
+		
 		return pDto;
 	}
 	
