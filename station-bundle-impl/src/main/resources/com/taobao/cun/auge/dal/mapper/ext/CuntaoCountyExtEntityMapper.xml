@@ -13,7 +13,15 @@
   select * from cuntao_county_gov_contact where county_id=#{countyId} and is_deleted='n' order by id desc
   </select>
   
+  <select id="getCuntaoCountyOffice" parameterType="long" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyOfficeMapper.BaseResultMap">
+  select * from cuntao_county_office where county_id=#{countyId} and is_deleted='n'
+  </select>
+  
   <update id="invalidProtocols" parameterType="map">
   update cuntao_county_gov_protocol set state='invalid',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and state='valid' and is_deleted='n'
+  </update>
+  
+  <update id="deleteCuntaoCountyOffice" parameterType="map">
+  update cuntao_county_office set is_deleted='y',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and is_deleted='n'
   </update>
 </mapper>

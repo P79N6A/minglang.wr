@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
 
 /**
  * 县服务中心
@@ -39,4 +40,17 @@ public interface CuntaoCountyExtMapper {
 	 * 失效掉协议
 	 */
 	void invalidProtocols(@Param("countyId") Long countyId, @Param("operator")String operator);
+	
+	/**
+	 * 获取办公场地信息
+	 * @param countyId
+	 * @return
+	 */
+	CuntaoCountyOffice getCuntaoCountyOffice(@Param("countyId") Long countyId);
+	
+	/**
+	 * 删除办公场地信息
+	 * @param countyId
+	 */
+	void deleteCuntaoCountyOffice(@Param("countyId") Long countyId, @Param("operator")String operator);
 }

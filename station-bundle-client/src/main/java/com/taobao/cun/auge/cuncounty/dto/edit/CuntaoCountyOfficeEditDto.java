@@ -25,8 +25,16 @@ public class CuntaoCountyOfficeEditDto {
     private String attachments;
     @NotNull(message="县服务中心不能为空")
     private Long countyId;
-    @NotBlank(message="创建人不能为空")
+    @NotBlank(message="操作人不能为空")
     private String operator;
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 
 	public Long getCountyId() {
 		return countyId;

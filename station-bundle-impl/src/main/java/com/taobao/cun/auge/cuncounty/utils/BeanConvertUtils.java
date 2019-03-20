@@ -10,10 +10,12 @@ import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContractEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyOfficeEditDto;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
 
 public class BeanConvertUtils {
 	/**
@@ -48,6 +50,20 @@ public class BeanConvertUtils {
 		cuntaoCountyGovContact.setCreator(cuntaoCountyGovContactAddDto.getOperator());
 		cuntaoCountyGovContact.setModifier(cuntaoCountyGovContactAddDto.getOperator());
 		return cuntaoCountyGovContact;
+	}
+	
+	/**
+	 * 办公场地
+	 * @param cuntaoCountyOfficeEditDto
+	 * @return
+	 */
+	public static CuntaoCountyOffice convert(CuntaoCountyOfficeEditDto cuntaoCountyOfficeEditDto) {
+		CuntaoCountyOffice cuntaoCountyOffice = BeanCopy.copy(CuntaoCountyOffice.class, cuntaoCountyOfficeEditDto);
+		cuntaoCountyOffice.setGmtCreate(new Date());
+		cuntaoCountyOffice.setGmtModified(new Date());
+		cuntaoCountyOffice.setCreator(cuntaoCountyOfficeEditDto.getOperator());
+		cuntaoCountyOffice.setModifier(cuntaoCountyOfficeEditDto.getOperator());
+		return cuntaoCountyOffice;
 	}
 	
 	/**
