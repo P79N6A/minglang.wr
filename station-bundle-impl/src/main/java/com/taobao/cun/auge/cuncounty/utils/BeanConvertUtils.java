@@ -90,7 +90,9 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCountyGovProtocol convert(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
-		return createBean(CuntaoCountyGovProtocol.class, cuntaoCountyGovProtocolAddDto);
+		CuntaoCountyGovProtocol protocol = createBean(CuntaoCountyGovProtocol.class, cuntaoCountyGovProtocolAddDto);
+		protocol.setState("valid");
+		return protocol;
 	}
 	
 	/**
@@ -99,7 +101,9 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CainiaoCounty convert(CainiaoCountyEditDto cainiaoCountyEditDto) {
-		return createBean(CainiaoCounty.class, cainiaoCountyEditDto);
+		CainiaoCounty cainiaoCounty = createBean(CainiaoCounty.class, cainiaoCountyEditDto);
+		cainiaoCounty.setState("new");
+		return cainiaoCounty;
 	}
 	
 	public static <T, S> List<T> listConvert(Class<T> targetClass, List<S> sources){
