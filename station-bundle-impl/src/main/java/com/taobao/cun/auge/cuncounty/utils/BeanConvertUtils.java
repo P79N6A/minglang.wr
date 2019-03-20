@@ -8,12 +8,21 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContractEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
 
 public class BeanConvertUtils {
+	/**
+	 * 县服务中心
+	 * @param cuntaoCountyAddDto
+	 * @param orgId
+	 * @param cuntaoCountyWhitenameDto
+	 * @return
+	 */
 	public static CuntaoCounty convert(CuntaoCountyAddDto cuntaoCountyAddDto, Long orgId, CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto) {
 		CuntaoCounty cuntaoCounty = BeanCopy.copy(CuntaoCounty.class, cuntaoCountyWhitenameDto);
 		cuntaoCounty.setCreator(cuntaoCountyAddDto.getOperator());
@@ -27,6 +36,11 @@ public class BeanConvertUtils {
 		return cuntaoCounty;
 	}
 	
+	/**
+	 * 政府联系人
+	 * @param cuntaoCountyGovContactAddDto
+	 * @return
+	 */
 	public static CuntaoCountyGovContact convert(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
 		CuntaoCountyGovContact cuntaoCountyGovContact = BeanCopy.copy(CuntaoCountyGovContact.class, cuntaoCountyGovContactAddDto);
 		cuntaoCountyGovContact.setGmtCreate(new Date());
@@ -36,6 +50,25 @@ public class BeanConvertUtils {
 		return cuntaoCountyGovContact;
 	}
 	
+	/**
+	 * 政府签约信息
+	 * @param cuntaoCountyGovContractEditDto
+	 * @return
+	 */
+	public static CuntaoCountyGovContract convert(CuntaoCountyGovContractEditDto cuntaoCountyGovContractEditDto) {
+		CuntaoCountyGovContract cuntaoCountyGovContract = BeanCopy.copy(CuntaoCountyGovContract.class, cuntaoCountyGovContractEditDto);
+		cuntaoCountyGovContract.setGmtCreate(new Date());
+		cuntaoCountyGovContract.setGmtModified(new Date());
+		cuntaoCountyGovContract.setCreator(cuntaoCountyGovContractEditDto.getOperator());
+		cuntaoCountyGovContract.setModifier(cuntaoCountyGovContractEditDto.getOperator());
+		return cuntaoCountyGovContract;
+	}
+	
+	/**
+	 * 政府协议
+	 * @param cuntaoCountyGovProtocolAddDto
+	 * @return
+	 */
 	public static CuntaoCountyGovProtocol convert(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
 		CuntaoCountyGovProtocol cuntaoCountyGovProtocol = BeanCopy.copy(CuntaoCountyGovProtocol.class, cuntaoCountyGovProtocolAddDto);
 		cuntaoCountyGovProtocol.setGmtCreate(new Date());

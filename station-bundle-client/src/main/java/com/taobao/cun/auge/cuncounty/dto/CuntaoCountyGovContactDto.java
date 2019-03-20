@@ -1,16 +1,32 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+/**
+ * 政府联系人
+ * @author chengyu.zhoucy
+ *
+ */
 public class CuntaoCountyGovContactDto {
     private Long id;
-
+    /**
+     * 姓名
+     */
     private String name;
-
+    /**
+     * 职务
+     */
     private String position;
-
+    /**
+     * 部门
+     */
     private String department;
-
+    /**
+     * 电话
+     */
     private String telephone;
 
+    /**
+     * 备注
+     */
     private String memo;
 
     private Long countyId;

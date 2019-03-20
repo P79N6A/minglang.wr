@@ -1,24 +1,47 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+/**
+ * 县服务中心
+ * @author chengyu.zhoucy
+ *
+ */
 public class CuntaoCountyDto {
     private Long id;
-
+    /**
+     * 县服务中心名
+     */
     private String name;
-
+    /**
+     * 所属组织
+     */
     private Long orgId;
-
+    /**
+     * 状态
+     */
     private String state;
-
+    /**
+     * 省名
+     */
     private String provinceName;
-
+    /**
+     * 省行政CODE
+     */
     private String provinceCode;
-
+    /**
+     * 市名
+     */
     private String cityName;
-
+    /**
+     * 市行政CODE
+     */
     private String cityCode;
-
+    /**
+     * 县名
+     */
     private String countyName;
-
+    /**
+     * 县行政CODE
+     */
     private String countyCode;
 
 

@@ -2,19 +2,42 @@ package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
 
+/**
+ * 政府协议
+ * @author chengyu.zhoucy
+ *
+ */
 public class CuntaoCountyGovProtocolDto {
     private Long id;
 
+    /**
+	 * 县服务中心
+	 */
     private Long countyId;
-
+    
+    /**
+     * 协议编号
+     */
     private String serialNum;
-
+    
+    /**
+     * 签约主体
+     */
     private String signatory;
 
+    /**
+     * 协议开始时间
+     */
     private Date gmtStart;
 
+    /**
+     * 协议结束时间
+     */
     private Date gmtEnd;
 
+    /**
+     * 协议附件
+     */
     private String attachments;
 
 	public Long getId() {

@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovProtocolDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
@@ -29,6 +30,7 @@ public class CuntaoCountyGovProtocolBo {
 	 * 保存协议
 	 * @param cuntaoCountyProtocolAddDto
 	 */
+	@Transactional(rollbackFor=Throwable.class)
 	void save(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
 		if(!isExists(cuntaoCountyGovProtocolAddDto)) {
 			//先失效掉历史协议

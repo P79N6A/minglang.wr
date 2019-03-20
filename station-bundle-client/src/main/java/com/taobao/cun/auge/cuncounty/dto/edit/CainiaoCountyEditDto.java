@@ -1,6 +1,10 @@
-package com.taobao.cun.auge.cuncounty.dto;
+package com.taobao.cun.auge.cuncounty.dto.edit;
 
 import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 菜鸟县仓
@@ -8,41 +12,31 @@ import java.util.Date;
  * @author chengyu.zhoucy
  *
  */
-public class CainiaoCountyDto {
-    private Long id;
-    /**
-     * 县服务中心CODE
-     */
+public class CainiaoCountyEditDto {
+	@NotNull(message="县服务中心不能为空")
     private Long countyId;
-    /**
-     * 详细地址
-     */
+	@NotBlank(message="详细地址不能为空")
     private String address;
-    /**
-     * 仓储面积
-     */
+	@NotBlank(message="仓储面积不能为空")
     private String storageArea;
-    /**
-     * 租赁开始时间
-     */
+	@NotNull(message="租赁开始时间不能为空")
     private Date gmtRentStart;
-    /**
-     * 租赁结束时间
-     */
+	@NotNull(message="租赁结束时间不能为空")
     private Date gmtRentEnd;
-    /**
-     * 租赁协议
-     */
+    @NotBlank(message="租赁协议不能为空")
     private String attachments;
-
-    /**
-     * 省名
-     */
+    @NotBlank(message="省不能为空")
     private String provinceName;
-    /**
-     * 省行政CODE
-     */
+    @NotBlank(message="省行政CODE不能为空")
     private String provinceCode;
+    @NotBlank(message="县不能为空")
+    private String countyName;
+    @NotBlank(message="县行政CODE不能为空")
+    private String countyCode;
+    @NotBlank(message="镇不能为空")
+    private String townName;
+    @NotBlank(message="镇行政CODE不能为空")
+    private String townCode;
     /**
      * 市名
      */
@@ -51,32 +45,6 @@ public class CainiaoCountyDto {
      * 市行政CODE
      */
     private String cityCode;
-    /**
-     * 县名
-     */
-    private String countyName;
-    /**
-     * 县行政CODE
-     */
-    private String countyCode;
-
-    /**
-     * 镇名
-     */
-    private String townName;
-
-    /**
-     * 镇行政CODE
-     */
-    private String townCode;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Long getCountyId() {
 		return countyId;

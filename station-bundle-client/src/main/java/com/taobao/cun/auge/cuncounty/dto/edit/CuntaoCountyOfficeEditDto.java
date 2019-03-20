@@ -1,6 +1,10 @@
-package com.taobao.cun.auge.cuncounty.dto;
+package com.taobao.cun.auge.cuncounty.dto.edit;
 
 import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 办公场地信息
@@ -8,45 +12,21 @@ import java.util.Date;
  * @author chengyu.zhoucy
  *
  */
-public class CuntaoCountyOfficeDto {
-    private Long id;
-    /**
-     * 县服务中心ID
-     */
-    private Long countyId;
-
-    /**
-     * 办公地址
-     */
+public class CuntaoCountyOfficeEditDto {
+	@NotBlank(message="办公地址不能为空")
     private String address;
-    
-    /**
-     * 办公面积
-     */
+	@NotNull(message="办公面积不能为空")
     private Integer buildingArea;
-
-    /**
-     * 租赁起始时间
-     */
+	@NotNull(message="租赁起始时间不能为空")
     private Date gmtRentStart;
-
-    /**
-     * 租赁结束时间
-     */
+	@NotNull(message="租赁结束时间不能为空")
     private Date gmtRentEnd;
-
-    /**
-     * 租赁协议
-     */
+	@NotBlank(message="租赁协议不能为空")
     private String attachments;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @NotNull(message="县服务中心不能为空")
+    private Long countyId;
+    @NotBlank(message="创建人不能为空")
+    private String operator;
 
 	public Long getCountyId() {
 		return countyId;

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovContactDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
@@ -27,6 +28,7 @@ public class CuntaoCountyGovContactBo {
 	@Resource
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	
+	@Transactional(rollbackFor=Throwable.class)
 	public void save(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
 		if(!isExists(cuntaoCountyGovContactAddDto)) {
 			cuntaoCountyGovContactMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovContactAddDto));
