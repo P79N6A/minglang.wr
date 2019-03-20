@@ -10,8 +10,9 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovContactDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
-import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContactExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContactMapper;
+import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 
 /**
  * 县政府联系人
@@ -23,6 +24,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContactMapper;
 public class CuntaoCountyGovContactBo {
 	@Resource
 	private CuntaoCountyGovContactMapper cuntaoCountyGovContactMapper;
+	@Resource
+	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	
 	public void save(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
 		if(!isExists(cuntaoCountyGovContactAddDto)) {
@@ -31,10 +34,10 @@ public class CuntaoCountyGovContactBo {
 	}
 
 	private boolean isExists(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
-		List<CuntaoCountyGovContactDto> list = getCuntaoCountyGovContacts(cuntaoCountyGovContactAddDto.getCountyId());
+		List<CuntaoCountyGovContact> list = cuntaoCountyExtMapper.getCuntaoCountyGovContacts(cuntaoCountyGovContactAddDto.getCountyId());
 		if(!CollectionUtils.isEmpty(list)) {
-			for(CuntaoCountyGovContactDto dto : list) {
-				CuntaoCountyGovContactAddDto old = BeanConvertUtils.convert(CuntaoCountyGovContactAddDto.class, dto);
+			for(CuntaoCountyGovContact contact : list) {
+				CuntaoCountyGovContactAddDto old = BeanConvertUtils.convert(CuntaoCountyGovContactAddDto.class, contact);
 				if(old.isContentSame(cuntaoCountyGovContactAddDto)) {
 					return true;
 				}
@@ -44,9 +47,6 @@ public class CuntaoCountyGovContactBo {
 	}
 	
 	public List<CuntaoCountyGovContactDto> getCuntaoCountyGovContacts(Long countyId){
-		CuntaoCountyGovContactExample example = new CuntaoCountyGovContactExample();
-		example.createCriteria().andCountyIdEqualTo(countyId).andIsDeletedEqualTo("n");
-		example.setOrderByClause(" id desc ");
-		return BeanConvertUtils.listConvert(CuntaoCountyGovContactDto.class, cuntaoCountyGovContactMapper.selectByExample(example));
+		return BeanConvertUtils.listConvert(CuntaoCountyGovContactDto.class, cuntaoCountyExtMapper.getCuntaoCountyGovContacts(countyId));
 	}
 }

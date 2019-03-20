@@ -1,20 +1,17 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovProtocolDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
-import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocolExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyGovProtocolMapper;
+import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 
 /**
  * 县服务中心协议
@@ -26,6 +23,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCountyGovProtocolMapper;
 public class CuntaoCountyGovProtocolBo {
 	@Resource
 	private CuntaoCountyGovProtocolMapper cuntaoCountyGovProtocolMapper;
+	@Resource
+	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	/**
 	 * 保存协议
 	 * @param cuntaoCountyProtocolAddDto
@@ -40,9 +39,9 @@ public class CuntaoCountyGovProtocolBo {
 	}
 
 	private boolean isExists(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
-		Optional<CuntaoCountyGovProtocolDto> optional = getValidProtocol(cuntaoCountyGovProtocolAddDto.getCountyId());
-		if(optional.isPresent()) {
-			CuntaoCountyGovProtocolAddDto old = BeanConvertUtils.convert(CuntaoCountyGovProtocolAddDto.class, optional.get());
+		CuntaoCountyGovProtocol cuntaoCountyGovProtocol = cuntaoCountyExtMapper.getCuntaoCountyGovProtocol(cuntaoCountyGovProtocolAddDto.getCountyId());
+		if(cuntaoCountyGovProtocol != null) {
+			CuntaoCountyGovProtocolAddDto old = BeanConvertUtils.convert(CuntaoCountyGovProtocolAddDto.class, cuntaoCountyGovProtocol);
 			if(old.isContentSame(cuntaoCountyGovProtocolAddDto)) {
 				return true;
 			}
@@ -51,26 +50,10 @@ public class CuntaoCountyGovProtocolBo {
 	}
 	
 	private void invalid(Long countyId, String operator) {
-		CuntaoCountyGovProtocolExample example = new CuntaoCountyGovProtocolExample();
-		example.createCriteria().andCountyIdEqualTo(countyId).andIsDeletedEqualTo("n").andStateEqualTo("valid");
-		List<CuntaoCountyGovProtocol> result = cuntaoCountyGovProtocolMapper.selectByExample(example);
-		if(!CollectionUtils.isEmpty(result)) {
-			for(CuntaoCountyGovProtocol p : result) {
-				p.setGmtModified(new Date());
-				p.setModifier(operator);
-				cuntaoCountyGovProtocolMapper.updateByPrimaryKey(p);
-			}
-		}
+		cuntaoCountyExtMapper.invalidProtocols(countyId, operator);
 	}
 
 	Optional<CuntaoCountyGovProtocolDto> getValidProtocol(Long countyId) {
-		CuntaoCountyGovProtocolExample example = new CuntaoCountyGovProtocolExample();
-		example.createCriteria().andCountyIdEqualTo(countyId).andIsDeletedEqualTo("n").andStateEqualTo("valid");
-		List<CuntaoCountyGovProtocol> result = cuntaoCountyGovProtocolMapper.selectByExample(example);
-		if(CollectionUtils.isEmpty(result)) {
-			return Optional.empty();
-		}else {
-			return Optional.of(BeanConvertUtils.convert(CuntaoCountyGovProtocolDto.class, result.get(0)));
-		}
+		return Optional.of(BeanConvertUtils.convert(CuntaoCountyGovProtocolDto.class, cuntaoCountyExtMapper.getCuntaoCountyGovProtocol(countyId)));
 	}
 }
