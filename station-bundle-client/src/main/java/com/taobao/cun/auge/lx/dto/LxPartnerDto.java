@@ -39,9 +39,9 @@ public class LxPartnerDto implements Serializable{
     private String num;
     
     /**
-     * 状态
+     * 状态 SERVICING 表示 开启，CLOSED 表示关闭
      */
-    private PartnerInstanceStateEnum stateEnum;
+    private String state;
     
     /**
      * 阿里妈妈生成的pid
@@ -97,13 +97,11 @@ public class LxPartnerDto implements Serializable{
 		this.num = num;
 	}
 
-	public PartnerInstanceStateEnum getStateEnum() {
-		return stateEnum;
+	public String getState() {
+		return state;
 	}
 
-	public void setStateEnum(PartnerInstanceStateEnum stateEnum) {
-		this.stateEnum = stateEnum;
+	public void setState(String state) {
+		this.state = state;
 	}
-    
-    
 }

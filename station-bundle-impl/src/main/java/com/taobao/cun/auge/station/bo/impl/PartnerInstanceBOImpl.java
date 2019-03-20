@@ -1160,7 +1160,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		pDto.setTaobaoUserId(p.getTaobaoUserId());
 		if (map.containsKey(p.getId()) ) {
 			pDto.setNum(String.valueOf(map.get(p.getId()).getId()));
-			pDto.setStateEnum(PartnerInstanceStateEnum.valueof(map.get(p.getId()).getState()));
+			pDto.setState(map.get(p.getId()).getState());
 			pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), map.get(p.getId()).getStationId()));
 		}
 		
