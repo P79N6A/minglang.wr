@@ -48,7 +48,7 @@ public class CuntaoCountyWhitenameBo {
 		if(CollectionUtils.isEmpty(cuntaoCountyWhitenames)) {
 			return Optional.empty();
 		}else {
-			return Optional.of(BeanConvertUtils.convert(cuntaoCountyWhitenames.get(0)));
+			return Optional.of(BeanConvertUtils.convert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames.get(0)));
 		}
 	}
 	

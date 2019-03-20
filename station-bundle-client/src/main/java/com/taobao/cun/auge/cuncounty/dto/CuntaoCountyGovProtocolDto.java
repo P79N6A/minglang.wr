@@ -2,7 +2,7 @@ package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
 
-public class CuntaoCountyProtocolDto {
+public class CuntaoCountyGovProtocolDto {
     private Long id;
 
     private Long countyId;
@@ -72,5 +72,4 @@ public class CuntaoCountyProtocolDto {
 	public void setAttachments(String attachments) {
 		this.attachments = attachments;
 	}
-
 }

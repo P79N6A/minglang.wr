@@ -2,44 +2,47 @@ package com.taobao.cun.auge.cuncounty.dto.edit;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
- * 政府签约信息
+ * 添加协议
  * 
  * @author chengyu.zhoucy
  *
  */
-public class CuntaoCountyContractEditDto {
-    @NotNull(message="县服务中心不能为空")
+public class CuntaoCountyGovProtocolAddDto {
+	/**
+	 * 县服务中心
+	 */
     private Long countyId;
-
-    @NotBlank(message="协议编号不能为空")
+    
+    /**
+     * 协议编号
+     */
     private String serialNum;
-
-    @NotBlank(message="签约主体不能为空")
+    
+    /**
+     * 签约主体
+     */
     private String signatory;
 
-    @NotBlank(message="协议开始时间不能为空")
+    /**
+     * 协议开始时间
+     */
     private Date gmtStart;
 
-    @NotBlank(message="协议结束时间不能为空")
+    /**
+     * 协议结束时间
+     */
     private Date gmtEnd;
 
-    @NotBlank(message="资金补贴不能为空")
-    private String allowance;
-
-    @NotBlank(message="宣传支持不能为空")
-    private String publicity;
-    
-    @NotBlank(message="协议不能为空")
+    /**
+     * 协议附件
+     */
     private String attachments;
     
-    @NotBlank(message="操作人不能为空")
     private String operator;
-
+    
 	public String getOperator() {
 		return operator;
 	}
@@ -88,22 +91,6 @@ public class CuntaoCountyContractEditDto {
 		this.gmtEnd = gmtEnd;
 	}
 
-	public String getAllowance() {
-		return allowance;
-	}
-
-	public void setAllowance(String allowance) {
-		this.allowance = allowance;
-	}
-
-	public String getPublicity() {
-		return publicity;
-	}
-
-	public void setPublicity(String publicity) {
-		this.publicity = publicity;
-	}
-
 	public String getAttachments() {
 		return attachments;
 	}
@@ -112,4 +99,7 @@ public class CuntaoCountyContractEditDto {
 		this.attachments = attachments;
 	}
 
+	public boolean isContentSame(CuntaoCountyGovProtocolAddDto cuntaoCountyProtocolDto) {
+		return EqualsBuilder.reflectionEquals(this, cuntaoCountyProtocolDto, "operator");
+	}
 }
