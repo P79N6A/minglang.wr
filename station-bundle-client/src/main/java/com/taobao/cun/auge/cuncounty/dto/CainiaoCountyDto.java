@@ -69,6 +69,19 @@ public class CainiaoCountyDto {
      * 镇行政CODE
      */
     private String townCode;
+    
+    /**
+     * 状态
+     */
+    private String state;
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
 
 	public Long getId() {
 		return id;
