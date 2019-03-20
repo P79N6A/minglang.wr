@@ -74,7 +74,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -141,8 +140,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	private GroupSequence groupSequence;
     @Autowired
     private BizActionLogBo bizActionLogBo;
-    @Autowired
-    private CountyTransferStateMgrBo countyTransferStateMgrBo;
     
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
@@ -346,7 +343,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         bizActionLogAddDto.setOpOrgId(station.getApplyOrg());
         bizActionLogAddDto.setOpWorkId(operator);
         bizActionLogAddDto.setValue1(String.valueOf(partnerStationRel.getTaobaoUserId()));
-        bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(station.getApplyOrg()));
+        bizActionLogAddDto.setDept("opdept");
         bizActionLogBo.addLog(bizActionLogAddDto);
     }
 
