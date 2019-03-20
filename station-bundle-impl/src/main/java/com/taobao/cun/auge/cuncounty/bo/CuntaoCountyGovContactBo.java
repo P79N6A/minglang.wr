@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovContactDto;
@@ -23,8 +24,23 @@ public class CuntaoCountyGovContactBo {
 	@Resource
 	private CuntaoCountyGovContactMapper cuntaoCountyGovContactMapper;
 	
-	public void addContact(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
-		cuntaoCountyGovContactMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovContactAddDto));
+	public void save(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
+		if(!isExists(cuntaoCountyGovContactAddDto)) {
+			cuntaoCountyGovContactMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovContactAddDto));
+		}
+	}
+
+	private boolean isExists(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
+		List<CuntaoCountyGovContactDto> list = getCuntaoCountyGovContacts(cuntaoCountyGovContactAddDto.getCountyId());
+		if(!CollectionUtils.isEmpty(list)) {
+			for(CuntaoCountyGovContactDto dto : list) {
+				CuntaoCountyGovContactAddDto old = BeanConvertUtils.convert(CuntaoCountyGovContactAddDto.class, dto);
+				if(old.isContentSame(cuntaoCountyGovContactAddDto)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public List<CuntaoCountyGovContactDto> getCuntaoCountyGovContacts(Long countyId){

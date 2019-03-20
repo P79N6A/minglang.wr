@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,16 +31,38 @@ public class CuntaoCountyGovProtocolBo {
 	 * @param cuntaoCountyProtocolAddDto
 	 */
 	void save(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
+		if(!isExists(cuntaoCountyGovProtocolAddDto)) {
+			//先失效掉历史协议
+			invalid(cuntaoCountyGovProtocolAddDto.getCountyId(), cuntaoCountyGovProtocolAddDto.getOperator());
+			//添加新协议
+			cuntaoCountyGovProtocolMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovProtocolAddDto));
+		}
+	}
+
+	private boolean isExists(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
 		Optional<CuntaoCountyGovProtocolDto> optional = getValidProtocol(cuntaoCountyGovProtocolAddDto.getCountyId());
 		if(optional.isPresent()) {
 			CuntaoCountyGovProtocolAddDto old = BeanConvertUtils.convert(CuntaoCountyGovProtocolAddDto.class, optional.get());
 			if(old.isContentSame(cuntaoCountyGovProtocolAddDto)) {
-				return;
+				return true;
 			}
 		}
-		cuntaoCountyGovProtocolMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovProtocolAddDto));
+		return false;
 	}
 	
+	private void invalid(Long countyId, String operator) {
+		CuntaoCountyGovProtocolExample example = new CuntaoCountyGovProtocolExample();
+		example.createCriteria().andCountyIdEqualTo(countyId).andIsDeletedEqualTo("n").andStateEqualTo("valid");
+		List<CuntaoCountyGovProtocol> result = cuntaoCountyGovProtocolMapper.selectByExample(example);
+		if(!CollectionUtils.isEmpty(result)) {
+			for(CuntaoCountyGovProtocol p : result) {
+				p.setGmtModified(new Date());
+				p.setModifier(operator);
+				cuntaoCountyGovProtocolMapper.updateByPrimaryKey(p);
+			}
+		}
+	}
+
 	Optional<CuntaoCountyGovProtocolDto> getValidProtocol(Long countyId) {
 		CuntaoCountyGovProtocolExample example = new CuntaoCountyGovProtocolExample();
 		example.createCriteria().andCountyIdEqualTo(countyId).andIsDeletedEqualTo("n").andStateEqualTo("valid");
