@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyOfficeEditDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
@@ -26,6 +27,10 @@ public class CuntaoCountyOfficeBo {
 	private CuntaoCountyOfficeMapper cuntaoCountyOfficeMapper;
 	
 	void save(CuntaoCountyOfficeEditDto cuntaoCountyOfficeEditDto) {
+		//如果没有办公场地信息则直接返回
+		if(cuntaoCountyOfficeEditDto == null) {
+			return;
+		}
 		CuntaoCountyOffice cuntaoCountyOffice = cuntaoCountyExtMapper.getCuntaoCountyOffice(cuntaoCountyOfficeEditDto.getCountyId());
 		if(cuntaoCountyOffice == null) {
 			insert(cuntaoCountyOfficeEditDto);
@@ -50,7 +55,7 @@ public class CuntaoCountyOfficeBo {
 		cuntaoCountyExtMapper.deleteCuntaoCountyOffice(countyId, operator);
 	}
 	
-	Optional<CuntaoCountyOffice> getCuntaoCountyOffice(Long countyId) {
-		return Optional.ofNullable(BeanConvertUtils.convert(CuntaoCountyOffice.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId)));
+	Optional<CuntaoCountyOfficeDto> getCuntaoCountyOffice(Long countyId) {
+		return Optional.ofNullable(BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId)));
 	}
 }

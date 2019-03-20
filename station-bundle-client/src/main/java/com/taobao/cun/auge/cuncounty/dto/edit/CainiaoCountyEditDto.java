@@ -13,29 +13,29 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class CainiaoCountyEditDto {
-	@NotNull(message="县服务中心不能为空")
+	@NotNull(message="菜鸟县仓:县服务中心不能为空")
     private Long countyId;
-	@NotBlank(message="详细地址不能为空")
+	@NotBlank(message="菜鸟县仓:详细地址不能为空")
     private String address;
-	@NotBlank(message="仓储面积不能为空")
+	@NotBlank(message="菜鸟县仓:仓储面积不能为空")
     private String storageArea;
-	@NotNull(message="租赁开始时间不能为空")
+	@NotNull(message="菜鸟县仓:租赁开始时间不能为空")
     private Date gmtRentStart;
-	@NotNull(message="租赁结束时间不能为空")
+	@NotNull(message="菜鸟县仓:租赁结束时间不能为空")
     private Date gmtRentEnd;
-    @NotBlank(message="租赁协议不能为空")
+    @NotBlank(message="菜鸟县仓:租赁协议不能为空")
     private String attachments;
-    @NotBlank(message="省不能为空")
+    @NotBlank(message="菜鸟县仓:省不能为空")
     private String provinceName;
-    @NotBlank(message="省行政CODE不能为空")
+    @NotBlank(message="菜鸟县仓:省行政CODE不能为空")
     private String provinceCode;
-    @NotBlank(message="县不能为空")
+    @NotBlank(message="菜鸟县仓:县不能为空")
     private String countyName;
-    @NotBlank(message="县行政CODE不能为空")
+    @NotBlank(message="菜鸟县仓:县行政CODE不能为空")
     private String countyCode;
-    @NotBlank(message="镇不能为空")
+    @NotBlank(message="菜鸟县仓:镇不能为空")
     private String townName;
-    @NotBlank(message="镇行政CODE不能为空")
+    @NotBlank(message="菜鸟县仓:镇行政CODE不能为空")
     private String townCode;
     /**
      * 市名

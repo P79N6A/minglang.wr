@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
@@ -28,6 +30,16 @@ public class CuntaoCountyWriteBo {
 	private CuntaoOrgBO cuntaoOrgBO;
 	@Resource
 	private CuntaoCountyMapper cuntaoCountyMapper;
+	@Resource
+	private CuntaoCountyGovContactBo cuntaoCountyGovContactBo;
+	@Resource
+	private CuntaoCountyGovProtocolBo cuntaoCountyGovProtocolBo;
+	@Resource
+	private CuntaoCountyGovContractBo cuntaoCountyGovContractBo;
+	@Resource
+	private CuntaoCountyOfficeBo cuntaoCountyOfficeBo;
+	@Resource
+	private CainiaoCountyBo cainiaoCountyBo;
 	
 	@Transactional(rollbackFor=Throwable.class)
 	public Long createCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto) {
@@ -38,7 +50,24 @@ public class CuntaoCountyWriteBo {
 		return doCreateCuntaoCounty(cuntaoCountyAddDto, orgId);
 	}
 	
-	
+	@Transactional(rollbackFor=Throwable.class)
+	public void updateCuntaoCounty(CuntaoCountyUpdateDto cuntaoCountyUpdateDto) {
+		cuntaoCountyPredicate.checkUpdateCounty(cuntaoCountyUpdateDto);
+		
+		//添加联系人
+		for(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto : cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos()) {
+			cuntaoCountyGovContactBo.save(cuntaoCountyGovContactAddDto);
+		}
+		
+		//添加政府签约信息
+		cuntaoCountyGovContractBo.save(cuntaoCountyUpdateDto.getCuntaoCountyGovContractEditDto());
+		
+		//添加办公场地信息
+		cuntaoCountyOfficeBo.save(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
+		
+		//添加菜鸟县仓信息
+		cainiaoCountyBo.save(cuntaoCountyUpdateDto.getCainiaoCountyEditDto());
+	}
 	
 	private Long createCuntaoOrg(CuntaoCountyAddDto cuntaoCountyAddDto) {
 		CuntaoOrg addCuntaoOrg = new CuntaoOrg();

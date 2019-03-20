@@ -13,19 +13,19 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class CuntaoCountyOfficeEditDto {
-	@NotBlank(message="办公地址不能为空")
+	@NotBlank(message="办公场地信息:办公地址不能为空")
     private String address;
-	@NotNull(message="办公面积不能为空")
+	@NotNull(message="办公场地信息:办公面积不能为空")
     private Integer buildingArea;
-	@NotNull(message="租赁起始时间不能为空")
+	@NotNull(message="办公场地信息:租赁起始时间不能为空")
     private Date gmtRentStart;
-	@NotNull(message="租赁结束时间不能为空")
+	@NotNull(message="办公场地信息:租赁结束时间不能为空")
     private Date gmtRentEnd;
-	@NotBlank(message="租赁协议不能为空")
+	@NotBlank(message="办公场地信息:租赁协议不能为空")
     private String attachments;
-    @NotNull(message="县服务中心不能为空")
+    @NotNull(message="办公场地信息:县服务中心不能为空")
     private Long countyId;
-    @NotBlank(message="操作人不能为空")
+    @NotBlank(message="办公场地信息:操作人不能为空")
     private String operator;
 
 	public String getOperator() {

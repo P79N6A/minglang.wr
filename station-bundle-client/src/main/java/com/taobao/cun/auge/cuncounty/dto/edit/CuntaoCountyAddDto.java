@@ -11,13 +11,13 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class CuntaoCountyAddDto {
-	@NotBlank(message="县服务中心名称不能为空")
+	@NotBlank(message="县服务中心:县服务中心名称不能为空")
     private String name;
-	@NotBlank(message="县行政CODE不能为空")
+	@NotBlank(message="县服务中心:县行政CODE不能为空")
 	private String countyCode;
-	@NotNull(message="所属组织不能为空")
+	@NotNull(message="县服务中心:所属组织不能为空")
     private Long parentOrgId;
-	@NotBlank(message="操作人不能为空")
+	@NotBlank(message="县服务中心:操作人不能为空")
     private String operator;
 	public String getName() {
 		return name;

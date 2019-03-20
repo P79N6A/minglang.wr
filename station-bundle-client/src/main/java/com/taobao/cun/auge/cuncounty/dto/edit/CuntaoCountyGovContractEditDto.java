@@ -13,31 +13,31 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class CuntaoCountyGovContractEditDto {
-    @NotNull(message="县服务中心不能为空")
+    @NotNull(message="政府签约信息:县服务中心不能为空")
     private Long countyId;
 
-    @NotBlank(message="协议编号不能为空")
+    @NotBlank(message="政府签约信息:协议编号不能为空")
     private String serialNum;
 
-    @NotBlank(message="签约主体不能为空")
+    @NotBlank(message="政府签约信息:签约主体不能为空")
     private String signatory;
 
-    @NotBlank(message="协议开始时间不能为空")
+    @NotBlank(message="政府签约信息:协议开始时间不能为空")
     private Date gmtStart;
 
-    @NotBlank(message="协议结束时间不能为空")
+    @NotBlank(message="政府签约信息:协议结束时间不能为空")
     private Date gmtEnd;
 
-    @NotBlank(message="资金补贴不能为空")
+    @NotBlank(message="政府签约信息:资金补贴不能为空")
     private String allowance;
 
-    @NotBlank(message="宣传支持不能为空")
+    @NotBlank(message="政府签约信息:宣传支持不能为空")
     private String publicity;
     
-    @NotBlank(message="协议不能为空")
+    @NotBlank(message="政府签约信息:协议不能为空")
     private String attachments;
     
-    @NotBlank(message="操作人不能为空")
+    @NotBlank(message="政府签约信息:操作人不能为空")
     private String operator;
 
 	public String getOperator() {

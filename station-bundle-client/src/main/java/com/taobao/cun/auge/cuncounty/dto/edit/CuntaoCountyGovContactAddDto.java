@@ -12,17 +12,17 @@ import org.hibernate.validator.constraints.NotBlank;
  *
  */
 public class CuntaoCountyGovContactAddDto {
-	@NotBlank(message="姓名不能为空")
+	@NotBlank(message="政府联系人:姓名不能为空")
     private String name;
-	@NotBlank(message="职务不能为空")
+	@NotBlank(message="政府联系人:职务不能为空")
     private String position;
-	@NotBlank(message="部门不能为空")
+	@NotBlank(message="政府联系人:部门不能为空")
     private String department;
-    @NotBlank(message="电话不能为空")
+    @NotBlank(message="政府联系人:电话不能为空")
     private String telephone;
-    @NotNull(message="县服务中心不能为空")
+    @NotNull(message="政府联系人:县服务中心不能为空")
     private Long countyId;
-    @NotBlank(message="创建人不能为空")
+    @NotBlank(message="政府联系人:创建人不能为空")
     private String operator;
     /**
      * 备注

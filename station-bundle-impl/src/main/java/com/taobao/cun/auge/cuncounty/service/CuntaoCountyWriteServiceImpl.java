@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyWriteBo;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Validated
@@ -19,4 +20,8 @@ public class CuntaoCountyWriteServiceImpl implements CuntaoCountyWriteService{
 		return cuntaoCountyWriteBo.createCuntaoCounty(cuntaoCountyAddDto);
 	}
 
+	@Override
+	public void updateCuntaoCounty(CuntaoCountyUpdateDto cuntaoCountyUpdateDto) {
+		cuntaoCountyWriteBo.updateCuntaoCounty(cuntaoCountyUpdateDto);
+	}
 }
