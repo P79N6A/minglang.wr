@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
@@ -53,4 +54,11 @@ public interface CuntaoCountyExtMapper {
 	 * @param countyId
 	 */
 	void deleteCuntaoCountyOffice(@Param("countyId") Long countyId, @Param("operator")String operator);
+	
+	/**
+	 * 获取菜鸟县仓
+	 * @param countyId
+	 * @return
+	 */
+	CainiaoCounty getCainiaoCounty(@Param("countyId") Long countyId);
 }

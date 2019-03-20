@@ -3,21 +3,45 @@ package com.taobao.cun.auge.cuncounty.utils;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContractEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyOfficeEditDto;
+import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
 
+/**
+ * 对象转换
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 public class BeanConvertUtils {
+	static <T> T createBean(Class<T> targetClass, Object sourceBean) {
+		T bean = BeanCopy.copy(targetClass, sourceBean);
+		try {
+			String operator = BeanUtils.getProperty(sourceBean, "operator");
+			BeanUtils.setProperty(bean, "creator", operator);
+			BeanUtils.setProperty(bean, "modifier", operator);
+			BeanUtils.setProperty(bean, "gmtCreate", new Date());
+			BeanUtils.setProperty(bean, "gmtModified", new Date());
+			BeanUtils.setProperty(bean, "isDeleted", "n");
+		}catch(Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return bean;
+	}
 	/**
 	 * 县服务中心
 	 * @param cuntaoCountyAddDto
@@ -26,12 +50,7 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCounty convert(CuntaoCountyAddDto cuntaoCountyAddDto, Long orgId, CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto) {
-		CuntaoCounty cuntaoCounty = BeanCopy.copy(CuntaoCounty.class, cuntaoCountyWhitenameDto);
-		cuntaoCounty.setCreator(cuntaoCountyAddDto.getOperator());
-		cuntaoCounty.setModifier(cuntaoCountyAddDto.getOperator());
-		cuntaoCounty.setGmtCreate(new Date());
-		cuntaoCounty.setGmtModified(new Date());
-		cuntaoCounty.setIsDeleted("n");
+		CuntaoCounty cuntaoCounty = createBean(CuntaoCounty.class, cuntaoCountyWhitenameDto);
 		cuntaoCounty.setName(cuntaoCountyAddDto.getName());
 		cuntaoCounty.setOrgId(orgId);
 		cuntaoCounty.setState(CuntaoCountyStateEnum.PLANNING.getCode());
@@ -44,12 +63,7 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCountyGovContact convert(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {
-		CuntaoCountyGovContact cuntaoCountyGovContact = BeanCopy.copy(CuntaoCountyGovContact.class, cuntaoCountyGovContactAddDto);
-		cuntaoCountyGovContact.setGmtCreate(new Date());
-		cuntaoCountyGovContact.setGmtModified(new Date());
-		cuntaoCountyGovContact.setCreator(cuntaoCountyGovContactAddDto.getOperator());
-		cuntaoCountyGovContact.setModifier(cuntaoCountyGovContactAddDto.getOperator());
-		return cuntaoCountyGovContact;
+		return createBean(CuntaoCountyGovContact.class, cuntaoCountyGovContactAddDto);
 	}
 	
 	/**
@@ -58,12 +72,7 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCountyOffice convert(CuntaoCountyOfficeEditDto cuntaoCountyOfficeEditDto) {
-		CuntaoCountyOffice cuntaoCountyOffice = BeanCopy.copy(CuntaoCountyOffice.class, cuntaoCountyOfficeEditDto);
-		cuntaoCountyOffice.setGmtCreate(new Date());
-		cuntaoCountyOffice.setGmtModified(new Date());
-		cuntaoCountyOffice.setCreator(cuntaoCountyOfficeEditDto.getOperator());
-		cuntaoCountyOffice.setModifier(cuntaoCountyOfficeEditDto.getOperator());
-		return cuntaoCountyOffice;
+		return createBean(CuntaoCountyOffice.class, cuntaoCountyOfficeEditDto);
 	}
 	
 	/**
@@ -72,12 +81,7 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCountyGovContract convert(CuntaoCountyGovContractEditDto cuntaoCountyGovContractEditDto) {
-		CuntaoCountyGovContract cuntaoCountyGovContract = BeanCopy.copy(CuntaoCountyGovContract.class, cuntaoCountyGovContractEditDto);
-		cuntaoCountyGovContract.setGmtCreate(new Date());
-		cuntaoCountyGovContract.setGmtModified(new Date());
-		cuntaoCountyGovContract.setCreator(cuntaoCountyGovContractEditDto.getOperator());
-		cuntaoCountyGovContract.setModifier(cuntaoCountyGovContractEditDto.getOperator());
-		return cuntaoCountyGovContract;
+		return createBean(CuntaoCountyGovContract.class, cuntaoCountyGovContractEditDto);
 	}
 	
 	/**
@@ -86,12 +90,16 @@ public class BeanConvertUtils {
 	 * @return
 	 */
 	public static CuntaoCountyGovProtocol convert(CuntaoCountyGovProtocolAddDto cuntaoCountyGovProtocolAddDto) {
-		CuntaoCountyGovProtocol cuntaoCountyGovProtocol = BeanCopy.copy(CuntaoCountyGovProtocol.class, cuntaoCountyGovProtocolAddDto);
-		cuntaoCountyGovProtocol.setGmtCreate(new Date());
-		cuntaoCountyGovProtocol.setGmtModified(new Date());
-		cuntaoCountyGovProtocol.setCreator(cuntaoCountyGovProtocolAddDto.getOperator());
-		cuntaoCountyGovProtocol.setModifier(cuntaoCountyGovProtocolAddDto.getOperator());
-		return cuntaoCountyGovProtocol;
+		return createBean(CuntaoCountyGovProtocol.class, cuntaoCountyGovProtocolAddDto);
+	}
+	
+	/**
+	 * 菜鸟县仓
+	 * @param cainiaoCountyEditDto
+	 * @return
+	 */
+	public static CainiaoCounty convert(CainiaoCountyEditDto cainiaoCountyEditDto) {
+		return createBean(CainiaoCounty.class, cainiaoCountyEditDto);
 	}
 	
 	public static <T, S> List<T> listConvert(Class<T> targetClass, List<S> sources){
