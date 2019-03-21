@@ -1176,8 +1176,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		pDto.setMobile(pmap.get(p.getPartnerId()).getMobile());
 		pDto.setName(pmap.get(p.getPartnerId()).getName());
 		pDto.setTaobaoUserId(p.getTaobaoUserId());
-//		pDto.setState(p.getState());
-//			pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), p.getStationId()));
+		pDto.setState(p.getState());
+		pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), p.getStationId()));
+		pDto.setStationName(smap.get(p.getStationId()).getName());
 		
 		return pDto;
 	}
