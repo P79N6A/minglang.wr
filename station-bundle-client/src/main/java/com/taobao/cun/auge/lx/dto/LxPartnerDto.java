@@ -2,8 +2,6 @@ package com.taobao.cun.auge.lx.dto;
 
 import java.io.Serializable;
 
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-
 /**
  * 伙伴dto
  * @author quanzhu.wangqz
@@ -32,11 +30,6 @@ public class LxPartnerDto implements Serializable{
      * 姓名
      */
     private String name;
-    
-    /**
-     * 编号
-     */
-    private String num;
     
     /**
      * 状态 SERVICING 表示 开启，CLOSED 表示关闭
@@ -98,14 +91,6 @@ public class LxPartnerDto implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getNum() {
-		return num;
-	}
-
-	public void setNum(String num) {
-		this.num = num;
 	}
 
 	public String getState() {
