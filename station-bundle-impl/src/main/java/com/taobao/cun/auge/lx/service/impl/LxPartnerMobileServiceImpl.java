@@ -15,7 +15,9 @@ import com.taobao.cun.auge.lx.bo.LxPartnerBO;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
 import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
 import com.taobao.cun.auge.lx.service.LxPartnerMobileService;
+import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.mtee.rmb.RmbResult;
@@ -25,12 +27,15 @@ import com.taobao.mtee.rmb.RmbService;
 @Service("lxPartnerMobileService")
 public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 
+	
 	private static final Logger logger = LoggerFactory.getLogger(LxPartnerMobileService.class);
 
 	@Autowired
 	private LxPartnerBO lxPartnerBO;
 	@Autowired
 	private RmbService rmbService;
+	@Autowired
+	private PartnerAdzoneService partnerAdzoneService;
 
 
 	@Override
@@ -88,4 +93,20 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 			return Result.of(errorInfo);
 		}
 	}
+
+//	@Override
+//	public Result<Boolean> isServicing(String pid) {
+//		try {
+//			PartnerAdzoneInfoDto lx = partnerAdzoneService.getPartnerAdzoneInfoByPid(pid);
+//			
+//			return Result.of(partnerAdzoneService.getPartnerAdzoneInfoByPid(pid));
+//		} catch (AugeBusinessException e1) {
+//			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, null, e1.getMessage());
+//			return Result.of(errorInfo);
+//		} catch (Exception e) {
+//			logger.error("LxPartnerMobileService.addLxPartner error! param:" + taobaoUserId, e);
+//			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+//			return Result.of(errorInfo);
+//		}
+//	}
 }
