@@ -44,10 +44,12 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
@@ -108,6 +110,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Autowired
     PartnerMapper partnerMapper;
+    @Autowired
+    StationMapper stationMapper;
+
 
     @Autowired
     PartnerStationRelMapper partnerStationRelMapper;
@@ -1137,13 +1142,26 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
             .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
         
         List<PartnerStationRel> rList = partnerStationRelMapper.selectByExample(example);
+        
         List<Long> partnerIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
-        Map<Long, PartnerStationRel> map = rList.stream().collect(Collectors.toMap(PartnerStationRel::getPartnerId,java.util.function.Function.identity(),(key1, key2) -> key1));
+        List<Long> stationIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
+        
+        //查station
+        StationExample example2 = new StationExample();
+      	example2.createCriteria().andIsDeletedEqualTo("n").andIdIn(stationIds);
+        List<Station> sList =  stationMapper.selectByExample(example2);
+        
         //查partner
         PartnerExample example1 = new PartnerExample();
         example1.createCriteria().andIsDeletedEqualTo("n").andIdIn(partnerIds);
         List<Partner> pList =  partnerMapper.selectByExample(example1);
-		return pList.stream().map(p -> bulidLx(p,map)).collect(Collectors.toList());
+        
+        Map<Long, Partner> pmap = pList.stream().collect(Collectors.toMap(Partner::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
+        Map<Long, Station> smap = sList.stream().collect(Collectors.toMap(Station::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
+        
+        Map<Long, PartnerStationRel> rmap = rList.stream().collect(Collectors.toMap(PartnerStationRel::getPartnerId,java.util.function.Function.identity(),(key1, key2) -> key1));
+        
+		return rList.stream().map(p -> bulidLx(p,pmap,smap)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -1152,17 +1170,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	 * @param map
 	 * @return
 	 */
-	private LxPartnerDto bulidLx(Partner p,Map<Long, PartnerStationRel> map){
+	private LxPartnerDto bulidLx(PartnerStationRel p, Map<Long, Partner> pmap,Map<Long, Station> smap){
 		LxPartnerDto pDto = new LxPartnerDto();
-		pDto.setTaobaoNick(p.getTaobaoNick());
-		pDto.setMobile(p.getMobile());
-		pDto.setName(p.getName());
+		pDto.setTaobaoNick(pmap.get(p.getPartnerId()).getTaobaoNick());
+		pDto.setMobile(pmap.get(p.getPartnerId()).getMobile());
+		pDto.setName(pmap.get(p.getPartnerId()).getName());
 		pDto.setTaobaoUserId(p.getTaobaoUserId());
-		if (map.containsKey(p.getId()) ) {
-			pDto.setNum(String.valueOf(map.get(p.getId()).getId()));
-			pDto.setState(map.get(p.getId()).getState());
-			pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), map.get(p.getId()).getStationId()));
-		}
+			//pDto.setNum(String.valueOf(map.get(p.getId()).getId()));
+//			pDto.setState(p.getState());
+//			pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), p.getStationId()));
 		
 		return pDto;
 	}

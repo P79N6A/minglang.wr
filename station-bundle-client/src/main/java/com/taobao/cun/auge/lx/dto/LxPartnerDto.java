@@ -47,7 +47,18 @@ public class LxPartnerDto implements Serializable{
      * 阿里妈妈生成的pid
      */
     private String pid;
+    /**
+     * 服务站名称
+     */
+    private String stationName;
     
+	public String getStationName() {
+		return stationName;
+	}
+
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
 
 	public String getPid() {
 		return pid;

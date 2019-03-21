@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.failure.LxErrorCodes;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.lx.bo.LxPartnerBO;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
@@ -82,12 +82,12 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		try {
 			lockResult = distributeLock.lock("lxPartner-taobaoUserId", String.valueOf(taobaoUserId), 5);
 			if (!lockResult) {
-				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "请稍后重试");
+				throw new AugeBusinessException(LxErrorCodes.CONCURRENT_UPDATE_ERROR_CODE, "请稍后重试");
 			}
 			addLx(param, taobaoUserId);
 			partnerAdzoneService.createAdzone(taobaoUserId);
 		} catch (Exception e) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "创建拉新伙伴失败，请稍后重试");
+			throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "创建拉新伙伴失败，请稍后重试");
 		} finally {
 			if (lockResult) {
 				distributeLock.unlock("lxPartner-taobaoUserId", String.valueOf(taobaoUserId));
@@ -100,11 +100,11 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		// 账号必须是存在的，不能为空 账号必须和填写的手机号绑定
 		ResultDO<BaseUserDO> baseUserDOresult = uicReadServiceClient.getBaseUserByNick(param.getTaobaoNick());
 		if (baseUserDOresult == null || !baseUserDOresult.isSuccess() || baseUserDOresult.getModule() == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "该淘宝账号不存在或状态异常，请与申请人核实!");
+			throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_STATUS_ERROR_CODE, "该淘宝账号不存在或状态异常，请与申请人核实!");
 		}
 		BaseUserDO baseUserDO = baseUserDOresult.getModule();
 		if (baseUserDO.getMobilePhone() == null || !baseUserDO.getMobilePhone().equals(param.getMobile())) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "请填写该账号绑定的手机号");
+			throw new AugeBusinessException(LxErrorCodes.MOBILE_CHECK_ERROR_CODE, "请填写该账号绑定的手机号");
 		}
 		Long taobaoUserId = baseUserDO.getUserId();
 		// TODO: 校验账号是否黑灰账号
@@ -114,21 +114,21 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		if (null != pi) {
 			if (PartnerInstanceTypeEnum.LX.getCode().equals(pi.getType())
 					&& PartnerInstanceStateEnum.CLOSED.getCode().equals(pi.getState())) {
-				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
+				throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_BUSI_CHECK_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
 			}
-			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,
+			throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_OTHER_BUSI_CHECK_ERROR_CODE,
 					"不支持邀请村小二/淘帮手/优盟/村拍档的淘宝账号成为拉新伙伴，请尝试其他淘宝账号");
 		}
 		// 判断手机号是否已经被使用
 		if (!partnerInstanceBO.judgeMobileUseble(taobaoUserId, null, param.getMobile())) {
-			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "该手机号已被使用");
+			throw new AugeBusinessException(LxErrorCodes.MOBILE_USED_ERROR_CODE, "该手机号已被使用");
 		}
 		Integer maxCount = getMaxCount();
 
 		Integer curCount = partnerInstanceBO.getActiveLxPartnerByParentStationId(taobaoUserId);
 		// 校验可剩余名额>0
 		if (maxCount-curCount <= 0) {
-			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "当前邀请名额已用完，无法再邀请拉新伙伴");
+			throw new AugeBusinessException(LxErrorCodes.QUOTA_CHECK_ERROR_CODE, "当前邀请名额已用完，无法再邀请拉新伙伴");
 		}
 		return taobaoUserId;
 	}
@@ -152,7 +152,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(lxPartnerAddDto.getpTaobaoUserId());
 		if (null == rel) {
-			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "所属村小二不存在");
+			throw new AugeBusinessException(LxErrorCodes.PARENT_PARTNER_INFO_CHECK_ERROR, "所属村小二不存在");
 		}
 		Station station = stationBO.getStationById(rel.getStationId());
 
@@ -209,6 +209,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		stationDto.setTaobaoNick(lxPartnerAddDto.getTaobaoNick());
 		stationDto.setTaobaoUserId(taobaoUserId);
 		stationDto.setApplyOrg(station.getApplyOrg());
+		stationDto.setName(lxPartnerAddDto.getName()+"-"+lxPartnerAddDto.getMobile().substring(7, lxPartnerAddDto.getMobile().length()));
 
 		stationDto.setOwnDept(countyTransferStateMgrBo.getCountyDeptByOrgId(station.getApplyOrg()));
 		if (stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
