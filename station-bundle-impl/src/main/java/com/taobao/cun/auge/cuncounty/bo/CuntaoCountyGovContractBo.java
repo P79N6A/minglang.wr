@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -36,7 +34,7 @@ public class CuntaoCountyGovContractBo {
 		cuntaoCountyGovContractMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovContractEditDto));
 	}
 	
-	Optional<CuntaoCountyGovContractDto> getCuntaoCountyGovContract(Long countyId){
-		return Optional.ofNullable(BeanConvertUtils.convert(CuntaoCountyGovContractDto.class,cuntaoCountyExtMapper.getCuntaoCountyGovContract(countyId)));
+	CuntaoCountyGovContractDto getCuntaoCountyGovContract(Long countyId){
+		return BeanConvertUtils.convert(CuntaoCountyGovContractDto.class,cuntaoCountyExtMapper.getCuntaoCountyGovContract(countyId));
 	}
 }

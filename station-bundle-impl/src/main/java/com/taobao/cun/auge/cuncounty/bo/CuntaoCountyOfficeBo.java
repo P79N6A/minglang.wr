@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -55,7 +53,7 @@ public class CuntaoCountyOfficeBo {
 		cuntaoCountyExtMapper.deleteCuntaoCountyOffice(countyId, operator);
 	}
 	
-	Optional<CuntaoCountyOfficeDto> getCuntaoCountyOffice(Long countyId) {
-		return Optional.ofNullable(BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId)));
+	CuntaoCountyOfficeDto getCuntaoCountyOffice(Long countyId) {
+		return BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId));
 	}
 }

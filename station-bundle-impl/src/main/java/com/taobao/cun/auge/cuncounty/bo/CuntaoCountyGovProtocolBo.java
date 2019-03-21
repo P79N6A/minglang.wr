@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -55,7 +53,7 @@ public class CuntaoCountyGovProtocolBo {
 		cuntaoCountyExtMapper.invalidProtocols(countyId, operator);
 	}
 
-	Optional<CuntaoCountyGovProtocolDto> getValidProtocol(Long countyId) {
-		return Optional.of(BeanConvertUtils.convert(CuntaoCountyGovProtocolDto.class, cuntaoCountyExtMapper.getCuntaoCountyGovProtocol(countyId)));
+	CuntaoCountyGovProtocolDto getValidProtocol(Long countyId) {
+		return BeanConvertUtils.convert(CuntaoCountyGovProtocolDto.class, cuntaoCountyExtMapper.getCuntaoCountyGovProtocol(countyId));
 	}
 }

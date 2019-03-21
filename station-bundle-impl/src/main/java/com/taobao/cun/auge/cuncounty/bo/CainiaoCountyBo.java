@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -52,7 +50,7 @@ public class CainiaoCountyBo {
 		cainiaoCountyMapper.insert(cainiaoCounty);
 	}
 	
-	Optional<CainiaoCountyDto> getCainiaoCountyDto(Long countyId) {
-		return Optional.ofNullable(BeanConvertUtils.convert(CainiaoCountyDto.class, cuntaoCountyExtMapper.getCainiaoCounty(countyId)));
+	CainiaoCountyDto getCainiaoCountyDto(Long countyId) {
+		return BeanConvertUtils.convert(CainiaoCountyDto.class, cuntaoCountyExtMapper.getCainiaoCounty(countyId));
 	}
 }
