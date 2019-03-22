@@ -174,6 +174,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
         dto.setPartnerId(partnerId);
         dto.setType(PartnerInstanceTypeEnum.LX);
         dto.copyOperatorDto(lxPartnerAddDto);
+        dto.setTaobaoUserId(taobaoUserId);
         
         //TODO:创建pid
         return partnerInstanceBO.addPartnerStationRel(dto);
