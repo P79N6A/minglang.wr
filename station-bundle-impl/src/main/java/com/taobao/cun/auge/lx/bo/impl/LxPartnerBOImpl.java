@@ -172,6 +172,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
         dto.setStationId(stationId);
         dto.setPartnerId(partnerId);
         dto.setType(PartnerInstanceTypeEnum.LX);
+        dto.copyOperatorDto(lxPartnerAddDto);
         
         //TODO:创建pid
         return partnerInstanceBO.addPartnerStationRel(dto);
@@ -180,8 +181,8 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 	private Long addLxPartner(LxPartnerAddDto lxPartnerAddDto, Long taobaoUserId) {
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
         PartnerDto partnerDto =new  PartnerDto();
+        partnerDto.copyOperatorDto(lxPartnerAddDto);
         if (partner == null) {
-            partnerDto.copyOperatorDto(lxPartnerAddDto);
             partnerDto.setState(PartnerStateEnum.NORMAL);
             partnerDto.setName(lxPartnerAddDto.getName());
             partnerDto.setTaobaoNick(lxPartnerAddDto.getTaobaoNick());
