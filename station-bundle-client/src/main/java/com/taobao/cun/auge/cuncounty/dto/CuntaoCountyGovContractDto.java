@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.google.common.base.Splitter;
 
 /**
  * 政府签约信息
@@ -46,6 +50,13 @@ public class CuntaoCountyGovContractDto {
     private String publicity;
 
     private String attachments;
+    
+    public List<String> getAttachmentArray(){
+    	if(attachments != null) {
+    		return new ArrayList<String>();
+    	}
+    	return Splitter.on(";").splitToList(attachments);
+    }
 
 	public Long getId() {
 		return id;
