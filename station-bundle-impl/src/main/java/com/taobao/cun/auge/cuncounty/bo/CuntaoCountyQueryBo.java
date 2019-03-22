@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.common.utils.DateUtil;
@@ -69,6 +70,10 @@ public class CuntaoCountyQueryBo {
 	}
 
 	public PageOutput<CuntaoCountyListItem> query(CuntaoCountyCondition condition){
+		if(Strings.isNullOrEmpty(condition.getFullIdPath())) {
+			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(condition.getOrgId());
+			condition.setFullIdPath(cuntaoOrgDto.getFullIdPath());
+		}
 		int total = cuntaoCountyExtMapper.count(condition);
 		List<CuntaoCountyListItem> cuntaoCountyListItems = null;
 		

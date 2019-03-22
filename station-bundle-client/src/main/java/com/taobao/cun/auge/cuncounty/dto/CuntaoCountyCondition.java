@@ -16,9 +16,19 @@ public class CuntaoCountyCondition extends PageInput {
 	
 	private Long orgId;
 	
+	private String fullIdPath;
+	
 	private Date protocolStartDate;
 	
 	private Date protocolEndDate;
+
+	public String getFullIdPath() {
+		return fullIdPath;
+	}
+
+	public void setFullIdPath(String fullIdPath) {
+		this.fullIdPath = fullIdPath;
+	}
 
 	public String getName() {
 		return name;

@@ -61,13 +61,15 @@
 			and q3.is_deleted = 'n'
 			AND q1.is_deleted = 'n' 
 			AND q2.is_deleted = 'n' 
+			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
+			</if>
 			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
 		) AS a
 	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
 	where 1=1
-	<if test="protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
-	<if test="protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
+	<if test="condition.protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
+	<if test="condition.protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
 	order by a.id desc
 	limit #{condition.startItem},#{condition.pageSize}
   </select>
@@ -86,12 +88,14 @@
 			and q3.is_deleted = 'n'
 			AND q1.is_deleted = 'n' 
 			AND q2.is_deleted = 'n' 
+			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
+			</if>
 			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
 		) AS a
 	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
 	where 1=1
-	<if test="protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
-	<if test="protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
+	<if test="condition.protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
+	<if test="condition.protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
   </select>
 </mapper>
