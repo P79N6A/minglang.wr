@@ -19,8 +19,8 @@ import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.NewuserOrderStat;
 import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
 @Component
 public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
@@ -61,10 +61,14 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         dto.setTaobaoUserId(adzone.getTaobaoUserId());
         
         PartnerStationRel r = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(adzone.getTaobaoUserId());
-        if (r != null && PartnerInstanceTypeEnum.LX.getCode().equals(r.getType()) && PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
-        	 dto.setLxState(true);
+        if (r != null && InstanceTypeEnum.LX.getCode().equals(r.getType())) {
+        	if (PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
+        		 dto.setLxState(true);
+        	}else {
+        		 dto.setLxState(false);
+        	}
         }else {
-        	 dto.setLxState(false);
+        	dto.setLxState(true);
         }
         return dto;
     }

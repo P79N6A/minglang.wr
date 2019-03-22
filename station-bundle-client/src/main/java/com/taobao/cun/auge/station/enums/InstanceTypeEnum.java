@@ -17,6 +17,7 @@ public class InstanceTypeEnum implements Serializable {
 	public static final InstanceTypeEnum TPT = new InstanceTypeEnum("TPT", "镇小二");
 	public static final InstanceTypeEnum TPS = new InstanceTypeEnum("TPS", "店小二");
 	public static final InstanceTypeEnum UM = new InstanceTypeEnum("UM", "优盟");
+	public static final InstanceTypeEnum LX = new InstanceTypeEnum("LX", "拉新");
 
 
 	private static final Map<String, InstanceTypeEnum> mappings = new HashMap<String, InstanceTypeEnum>();
@@ -27,6 +28,7 @@ public class InstanceTypeEnum implements Serializable {
 		mappings.put("TPT", TPT);
 		mappings.put("TPS", TPS);
 		mappings.put("UM", UM);
+		mappings.put("LX", LX);
 	}
 	@NotNull
 	private String code;
