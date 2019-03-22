@@ -4,7 +4,10 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 
 @Component
 public class CuntaoCountyQueryBo {
@@ -36,5 +39,9 @@ public class CuntaoCountyQueryBo {
 		//办公场地
 		cuntaoCountyDetailDto.setCuntaoCountyOfficeDto(cuntaoCountyOfficeBo.getCuntaoCountyOffice(countyId));
 		return cuntaoCountyDetailDto;
+	}
+	
+	public PageDto<CuntaoCountyListItem> query(CuntaoCountyCondition condition){
+		return null;
 	}
 }

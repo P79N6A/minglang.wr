@@ -19,14 +19,14 @@ public class CuntaoCountyStateEnum implements Serializable {
     private String desc;
 
 	public static final CuntaoCountyStateEnum PLANNING = new CuntaoCountyStateEnum("PLANNING", "筹划中");
-	public static final CuntaoCountyStateEnum OPERATING = new CuntaoCountyStateEnum("OPERATING", "运营中");
-	public static final CuntaoCountyStateEnum STOP_OPERATION = new CuntaoCountyStateEnum("STOP_OPERATION", "停止运营");
+	public static final CuntaoCountyStateEnum OPEN_AUDIT = new CuntaoCountyStateEnum("OPEN_AUDIT", "待开业审批");
+	public static final CuntaoCountyStateEnum WAIT_OPEN = new CuntaoCountyStateEnum("WAIT_OPEN", "待开业");
 	public static final CuntaoCountyStateEnum OPENING = new CuntaoCountyStateEnum("OPENING", "已开业");
 
     static {
     	mappings.put("PLANNING", PLANNING);
-		mappings.put("OPERATING", OPERATING);
-		mappings.put("STOP_OPERATION", STOP_OPERATION);
+		mappings.put("OPEN_AUDIT", OPEN_AUDIT);
+		mappings.put("WAIT_OPEN", WAIT_OPEN);
 		mappings.put("OPENING", OPENING);
 
     }

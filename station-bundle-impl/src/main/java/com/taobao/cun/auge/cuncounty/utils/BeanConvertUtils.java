@@ -30,8 +30,13 @@ import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
 public class BeanConvertUtils {
 	static <T> T createBean(Class<T> targetClass, Object sourceBean) {
 		T bean = BeanCopy.copy(targetClass, sourceBean);
+		
+		String operator = null;
 		try {
-			String operator = BeanUtils.getProperty(sourceBean, "operator");
+			operator = BeanUtils.getProperty(sourceBean, "operator");
+		}catch(Exception e) {}
+		
+		try {
 			BeanUtils.setProperty(bean, "creator", operator);
 			BeanUtils.setProperty(bean, "modifier", operator);
 			BeanUtils.setProperty(bean, "gmtCreate", new Date());
@@ -54,6 +59,8 @@ public class BeanConvertUtils {
 		cuntaoCounty.setName(cuntaoCountyAddDto.getName());
 		cuntaoCounty.setOrgId(orgId);
 		cuntaoCounty.setState(CuntaoCountyStateEnum.PLANNING.getCode());
+		cuntaoCounty.setCreator(cuntaoCountyAddDto.getOperator());
+		cuntaoCounty.setModifier(cuntaoCountyAddDto.getOperator());
 		return cuntaoCounty;
 	}
 	
