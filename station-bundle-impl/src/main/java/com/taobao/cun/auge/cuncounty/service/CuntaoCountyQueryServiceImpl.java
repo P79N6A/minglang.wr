@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
@@ -23,7 +23,7 @@ public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {
 	}
 
 	@Override
-	public PageDto<CuntaoCountyListItem> query(CuntaoCountyCondition condition) {
+	public PageOutput<CuntaoCountyListItem> query(CuntaoCountyCondition condition) {
 		return cuntaoCountyQueryBo.query(condition);
 	}
 
