@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -55,5 +57,9 @@ public class CuntaoCountyOfficeBo {
 	
 	CuntaoCountyOfficeDto getCuntaoCountyOffice(Long countyId) {
 		return BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId));
+	}
+	
+	List<CuntaoCountyOfficeDto> getCuntaoCountyOffices(List<Long> countyIds) {
+		return BeanConvertUtils.listConvert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffices(countyIds));
 	}
 }

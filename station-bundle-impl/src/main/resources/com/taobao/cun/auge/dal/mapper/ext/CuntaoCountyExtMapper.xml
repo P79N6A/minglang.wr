@@ -17,6 +17,12 @@
   select * from cuntao_county_office where county_id=#{countyId} and is_deleted='n'
   </select>
   
+  <select id="getCuntaoCountyOffices" parameterType="list" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyOfficeMapper.BaseResultMap">
+  select * from cuntao_county_office where county_id in 
+  <foreach collection="countyIds" index="countyId" separator="," open="(" close=")">#{countyId}</foreach>
+  is_deleted='n'
+  </select>
+  
   <select id="getCainiaoCounty" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CainiaoCountyMapper.BaseResultMap">
   select * from cainiao_county where county_id=#{countyId} and is_deleted='n'
   </select>
@@ -28,4 +34,64 @@
   <update id="deleteCuntaoCountyOffice" parameterType="map">
   update cuntao_county_office set is_deleted='y',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and is_deleted='n'
   </update>
+  
+  <select id="query" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO">
+	SELECT
+		a.id,
+		a.name,
+		a.state,
+		a.province_name as provinceName,
+		a.city_name as cityName,
+		a.county_name as countyName,
+		b.gmt_start as gmtProtocolStartDate,
+		b.gmt_end as gmtProtocolEndDate,
+		org_id as orgId,
+		full_name_path as fullNamePath,
+		full_id_path as fullIdPath
+	FROM
+		(
+		SELECT
+			q1.*,
+			q2.temp_full_id_path AS full_id_path,
+			q2.temp_full_name_path AS full_name_path 
+		FROM
+			cuntao_county q1,cuntao_org q2 
+		WHERE
+			q1.org_id = q2.id 
+			and q3.is_deleted = 'n'
+			AND q1.is_deleted = 'n' 
+			AND q2.is_deleted = 'n' 
+			and q1.name like CONCAT('%', #{condition.name}, '%')
+			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
+		) AS a
+	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
+	where 1=1
+	<if test="protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
+	<if test="protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
+	order by a.id desc
+	limit #{condition.startItem},#{condition.pageSize}
+  </select>
+  
+  <select id="count" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="int">
+	SELECT count(0) FROM
+		(
+		SELECT
+			q1.*,
+			q2.temp_full_id_path AS full_id_path,
+			q2.temp_full_name_path AS full_name_path 
+		FROM
+			cuntao_county q1,cuntao_org q2 
+		WHERE
+			q1.org_id = q2.id 
+			and q3.is_deleted = 'n'
+			AND q1.is_deleted = 'n' 
+			AND q2.is_deleted = 'n' 
+			and q1.name like CONCAT('%', #{condition.name}, '%')
+			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
+		) AS a
+	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
+	where 1=1
+	<if test="protocolStartDate != null"><![CDATA[and b.gmt_start >= #{condition.protocolStartDate}]]></if>
+	<if test="protocolEndDate != null"><![CDATA[and b.gmt_end <= #{condition.protocolEndDate}]]></if>
+  </select>
 </mapper>

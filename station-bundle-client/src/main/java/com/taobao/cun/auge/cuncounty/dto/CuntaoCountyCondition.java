@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
-import com.taobao.cun.auge.common.PageQuery;
+import java.util.Date;
+
+import com.taobao.cun.auge.common.PageInput;
 
 /**
  * 查询条件
@@ -8,8 +10,45 @@ import com.taobao.cun.auge.common.PageQuery;
  * @author chengyu.zhoucy
  *
  */
-public class CuntaoCountyCondition extends PageQuery {
+public class CuntaoCountyCondition extends PageInput {
 
-	private static final long serialVersionUID = 5609631295073068209L;
+	private String name;
+	
+	private Long orgId;
+	
+	private Date protocolStartDate;
+	
+	private Date protocolEndDate;
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
+
+	public Date getProtocolStartDate() {
+		return protocolStartDate;
+	}
+
+	public void setProtocolStartDate(Date protocolStartDate) {
+		this.protocolStartDate = protocolStartDate;
+	}
+
+	public Date getProtocolEndDate() {
+		return protocolEndDate;
+	}
+
+	public void setProtocolEndDate(Date protocolEndDate) {
+		this.protocolEndDate = protocolEndDate;
+	}
 }

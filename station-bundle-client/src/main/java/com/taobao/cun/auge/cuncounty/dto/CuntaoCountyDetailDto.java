@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class CuntaoCountyDetailDto {
 	/**
+	 * 县点所属组织信息
+	 */
+	private CuntaoCountyOrgDto cuntaoCountyOrgDto;
+	/**
 	 * 县服务中心
 	 */
 	private CuntaoCountyDto cuntaoCountyDto;
@@ -33,6 +37,14 @@ public class CuntaoCountyDetailDto {
 	 * 菜鸟县仓
 	 */
 	private CainiaoCountyDto cainiaoCountyDto;
+
+	public CuntaoCountyOrgDto getCuntaoCountyOrgDto() {
+		return cuntaoCountyOrgDto;
+	}
+
+	public void setCuntaoCountyOrgDto(CuntaoCountyOrgDto cuntaoCountyOrgDto) {
+		this.cuntaoCountyOrgDto = cuntaoCountyOrgDto;
+	}
 
 	public CuntaoCountyDto getCuntaoCountyDto() {
 		return cuntaoCountyDto;

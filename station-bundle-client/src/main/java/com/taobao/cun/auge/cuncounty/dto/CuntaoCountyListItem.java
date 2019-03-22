@@ -22,9 +22,18 @@ public class CuntaoCountyListItem {
      */
     private Long orgId;
     /**
+     * 组织id path
+     */
+    private String fullIdPath;
+    
+    /**
+     * 组织name path
+     */
+    private String fullNamePath;
+    /**
      * 状态
      */
-    private CuntaoCountyStateEnum cuntaoCountyStateEnum;
+    private CuntaoCountyStateEnum cuntaoCountyState;
     /**
      * 省名
      */
@@ -59,11 +68,6 @@ public class CuntaoCountyListItem {
     private List<CuntaoUserOrgVO> provinceLeaders;
     
     /**
-     * 组织
-     */
-    private String orgFullNamePath;
-    
-    /**
      * 协议开始时间
      */
     private String protocolStartDate;
@@ -72,6 +76,22 @@ public class CuntaoCountyListItem {
      * 协议结束时间
      */
     private String protocolEndDate;
+
+	public String getFullIdPath() {
+		return fullIdPath;
+	}
+
+	public void setFullIdPath(String fullIdPath) {
+		this.fullIdPath = fullIdPath;
+	}
+
+	public String getFullNamePath() {
+		return fullNamePath;
+	}
+
+	public void setFullNamePath(String fullNamePath) {
+		this.fullNamePath = fullNamePath;
+	}
 
 	public Long getId() {
 		return id;
@@ -97,12 +117,12 @@ public class CuntaoCountyListItem {
 		this.orgId = orgId;
 	}
 
-	public CuntaoCountyStateEnum getCuntaoCountyStateEnum() {
-		return cuntaoCountyStateEnum;
+	public CuntaoCountyStateEnum getCuntaoCountyState() {
+		return cuntaoCountyState;
 	}
 
-	public void setCuntaoCountyStateEnum(CuntaoCountyStateEnum cuntaoCountyStateEnum) {
-		this.cuntaoCountyStateEnum = cuntaoCountyStateEnum;
+	public void setCuntaoCountyState(CuntaoCountyStateEnum cuntaoCountyState) {
+		this.cuntaoCountyState = cuntaoCountyState;
 	}
 
 	public String getProvinceName() {
@@ -159,14 +179,6 @@ public class CuntaoCountyListItem {
 
 	public void setProvinceLeaders(List<CuntaoUserOrgVO> provinceLeaders) {
 		this.provinceLeaders = provinceLeaders;
-	}
-
-	public String getOrgFullNamePath() {
-		return orgFullNamePath;
-	}
-
-	public void setOrgFullNamePath(String orgFullNamePath) {
-		this.orgFullNamePath = orgFullNamePath;
 	}
 
 	public String getProtocolStartDate() {

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
+import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
 import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
@@ -50,6 +52,13 @@ public interface CuntaoCountyExtMapper {
 	CuntaoCountyOffice getCuntaoCountyOffice(@Param("countyId") Long countyId);
 	
 	/**
+	 * 获取办公场地信息
+	 * @param countyId
+	 * @return
+	 */
+	List<CuntaoCountyOffice> getCuntaoCountyOffices(@Param("countyIds") List<Long> countyIds);
+	
+	/**
 	 * 删除办公场地信息
 	 * @param countyId
 	 */
@@ -61,4 +70,18 @@ public interface CuntaoCountyExtMapper {
 	 * @return
 	 */
 	CainiaoCounty getCainiaoCounty(@Param("countyId") Long countyId);
+	
+	/**
+	 * 分页查询
+	 * @param condition
+	 * @return
+	 */
+	List<CuntaoCountyListItemVO> query(@Param("condition") CuntaoCountyCondition condition);
+	
+	/**
+	 * 分页查询总数
+	 * @param condition
+	 * @return
+	 */
+	int count(@Param("condition") CuntaoCountyCondition condition);
 }
