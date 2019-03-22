@@ -24,14 +24,6 @@ public interface LxPartnerMobileService {
 	 */
 	public Result<LxPartnerListDto> listLxPartner(Long taobaoUserId);
 	
-//	/**
-//	 * 根据pid判断拉新伙伴是否生效
-//	 * @param pid
-//	 * @return
-//	 */
-//	public Result<Boolean> isServicing(String pid);
-	
-	
 	
 	public  Result<Boolean> checkFkByTaobaoUserId(Long taobaoUserId);
 }
