@@ -143,7 +143,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 			e.printStackTrace();
 		}
 		if (StringUtils.isNotEmpty(lxPartnerMaxCount)) {
-			maxCount = Integer.getInteger(lxPartnerMaxCount);
+			maxCount = Integer.parseInt(lxPartnerMaxCount);
 		}
 		return maxCount;
 	}

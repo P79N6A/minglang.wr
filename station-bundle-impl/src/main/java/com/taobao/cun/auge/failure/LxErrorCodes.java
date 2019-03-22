@@ -47,4 +47,9 @@ public interface LxErrorCodes {
 	 * 所属村小二业务信息检查异常
 	 */
 	public static final String PARENT_PARTNER_INFO_CHECK_ERROR = "B-00008";
+	
+	/**
+	 * 风控异常：无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号
+	 */
+	public static final String TAOBAONICK_FK_CHECK_ERROR_CODE = "B-00009";
 }
