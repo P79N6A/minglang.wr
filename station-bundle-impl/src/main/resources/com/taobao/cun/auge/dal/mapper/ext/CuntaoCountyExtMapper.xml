@@ -58,7 +58,6 @@
 			cuntao_county q1,cuntao_org q2 
 		WHERE
 			q1.org_id = q2.id 
-			and q3.is_deleted = 'n'
 			AND q1.is_deleted = 'n' 
 			AND q2.is_deleted = 'n' 
 			<if test="condition.name != null">
@@ -85,7 +84,6 @@
 			cuntao_county q1,cuntao_org q2 
 		WHERE
 			q1.org_id = q2.id 
-			and q3.is_deleted = 'n'
 			AND q1.is_deleted = 'n' 
 			AND q2.is_deleted = 'n' 
 			<if test="condition.name != null">
