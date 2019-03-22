@@ -103,9 +103,10 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 			throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_STATUS_ERROR_CODE, "该淘宝账号不存在或状态异常，请与申请人核实!");
 		}
 		BaseUserDO baseUserDO = baseUserDOresult.getModule();
-		if (baseUserDO.getMobilePhone() == null || !baseUserDO.getMobilePhone().equals(param.getMobile())) {
-			throw new AugeBusinessException(LxErrorCodes.MOBILE_CHECK_ERROR_CODE, "请填写该账号绑定的手机号");
-		}
+		// TODO: 校验账号是否黑灰账号  临时注释掉
+//		if (baseUserDO.getMobilePhone() == null || !baseUserDO.getMobilePhone().equals(param.getMobile())) {
+//			throw new AugeBusinessException(LxErrorCodes.MOBILE_CHECK_ERROR_CODE, "请填写该账号绑定的手机号");
+//		}
 		Long taobaoUserId = baseUserDO.getUserId();
 		// TODO: 校验账号是否黑灰账号
 
