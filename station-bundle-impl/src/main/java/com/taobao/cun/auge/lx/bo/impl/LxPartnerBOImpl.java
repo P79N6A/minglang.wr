@@ -5,17 +5,23 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.result.ErrorInfo;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.failure.LxErrorCodes;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.lx.bo.LxPartnerBO;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
 import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
+import com.taobao.cun.auge.lx.service.LxPartnerMobileService;
 import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -35,6 +41,8 @@ import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.diamond.client.Diamond;
+import com.taobao.mtee.rmb.RmbResult;
+import com.taobao.mtee.rmb.RmbService;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
@@ -47,6 +55,8 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
  */
 @Component("lxPartnerBO")
 public class LxPartnerBOImpl implements LxPartnerBO {
+	
+	private static final Logger logger = LoggerFactory.getLogger(LxPartnerMobileService.class);
 
 	@Autowired
 	private StationBO stationBO;
@@ -68,6 +78,9 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 	
 	@Autowired
 	private PartnerAdzoneService partnerAdzoneService;
+	
+	@Autowired
+	private RmbService rmbService;
 
 	@Override
 	public Boolean addLxPartner(LxPartnerAddDto param) {
@@ -104,12 +117,15 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		}
 		BaseUserDO baseUserDO = baseUserDOresult.getModule();
 		// TODO: 校验账号是否黑灰账号  临时注释掉
-//		if (baseUserDO.getMobilePhone() == null || !baseUserDO.getMobilePhone().equals(param.getMobile())) {
-//			throw new AugeBusinessException(LxErrorCodes.MOBILE_CHECK_ERROR_CODE, "请填写该账号绑定的手机号");
-//		}
+		
+		if (baseUserDO.getMobilePhone() == null || !baseUserDO.getMobilePhone().equals(param.getMobile())) {
+			throw new AugeBusinessException(LxErrorCodes.MOBILE_CHECK_ERROR_CODE, "请填写该账号绑定的手机号");
+		}
 		Long taobaoUserId = baseUserDO.getUserId();
 		// TODO: 校验账号是否黑灰账号
-
+		if (!checkFkByTaobaoUserId(taobaoUserId)) {
+			throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_FK_CHECK_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
+		}
 		// 判断淘宝账号是否使用中
 		PartnerStationRel pi = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null != pi) {
@@ -230,5 +246,26 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		res.setMaxCount(getMaxCount());
 		res.setLxPartners( partnerInstanceBO.getActiveLxListrByParentStationId(taobaoUserId));
 		return res;
+	}
+	
+	private Boolean checkFkByTaobaoUserId(Long taobaoUserId) {
+		String isCheck="";
+		try {
+			isCheck= Diamond.getConfig("auge.lx.identifyrisk.asac", "DEFAULT_GROUP", 3000);
+		} catch (IOException e) {
+			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId, e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Boolean.FALSE;
+		}
+		if ("y".equals(isCheck)) {
+			com.taobao.mtee.rmb.RmbParameter param = new com.taobao.mtee.rmb.RmbParameter();
+			param.setUserId(String.valueOf(taobaoUserId));
+			param.setAsac("1A193134QEPGFXYYXX7IHG");
+		    RmbResult rmbResult = rmbService.identifyRisk(param);
+		    return  rmbResult.isSafe();
+		}
+		return Boolean.TRUE;
+		
+		
 	}
 }
