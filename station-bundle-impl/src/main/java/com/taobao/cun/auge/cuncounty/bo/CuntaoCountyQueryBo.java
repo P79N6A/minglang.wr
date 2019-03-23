@@ -161,7 +161,7 @@ public class CuntaoCountyQueryBo {
 		for(CuntaoCountyListItem item : cuntaoCountyListItems) {
 			CuntaoCountyOfficeDto office = officeMap.get(item.getId());
 			if(office != null) {
-				item.setAddress(office.getAddress());
+				item.setOfficeAddress(office.getAddress());
 			}
 		}
 	}

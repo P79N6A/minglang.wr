@@ -52,7 +52,7 @@ public class CuntaoCountyListItem {
     /**
      * office详细地址
      */
-    private String address;
+    private String officeAddress;
     
     /**
      * 县小二
@@ -151,12 +151,12 @@ public class CuntaoCountyListItem {
 		this.countyName = countyName;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getOfficeAddress() {
+		return officeAddress;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setOfficeAddress(String officeAddress) {
+		this.officeAddress = officeAddress;
 	}
 
 	public List<CuntaoUserOrgVO> getCountyLeaders() {
