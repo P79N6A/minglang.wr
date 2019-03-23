@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -8,12 +9,14 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOrgDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
@@ -22,6 +25,8 @@ import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
+import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
+import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 
 @Component
@@ -88,18 +93,20 @@ public class CuntaoCountyQueryBo {
 		List<CuntaoCountyListItem> cuntaoCountyListItems = Lists.newArrayList();
 		
 		List<Long> countyIds = Lists.newArrayList();
-		List<Long> countyOrgIds = Lists.newArrayList();
-		List<Long> areaOrgIds = Lists.newArrayList();
-		List<Long> provinceOrgIds = Lists.newArrayList();
+		
+		
+		Map<Long, CountyOrgInfo> countyOrgInfos = Maps.newHashMap();
 		for(CuntaoCountyListItemVO vo : cuntaoCountyListItemVOs) {
 			countyIds.add(vo.getId());
-			countyOrgIds.add(vo.getOrgId());
+			
+			CountyOrgInfo countyOrgInfo = new CountyOrgInfo();
+			countyOrgInfo.countyId = vo.getId();
+			countyOrgInfo.countyOrgId = vo.getOrgId();
 			//区域运营中心组织ID
-			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getAncestor(vo.getOrgId(), OrgRangeType.SPECIALTEAM);
-			areaOrgIds.add(cuntaoOrgDto.getId());
+			countyOrgInfo.areaOrgId = cuntaoOrgServiceClient.getAncestor(vo.getOrgId(), OrgRangeType.SPECIALTEAM).getId();
 			//省组织ID
-			cuntaoOrgDto = cuntaoOrgServiceClient.getAncestor(vo.getOrgId(), OrgRangeType.PROVINCE);
-			provinceOrgIds.add(cuntaoOrgDto.getId());
+			countyOrgInfo.provinceOrgId = cuntaoOrgServiceClient.getAncestor(vo.getOrgId(), OrgRangeType.PROVINCE).getId();
+			countyOrgInfos.put(vo.getId(), countyOrgInfo);
 			
 			CuntaoCountyListItem cuntaoCountyListItem = BeanConvertUtils.convert(CuntaoCountyListItem.class, vo);
 			cuntaoCountyListItem.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(vo.getState()));
@@ -108,6 +115,62 @@ public class CuntaoCountyQueryBo {
 			cuntaoCountyListItems.add(cuntaoCountyListItem);
 		}
 		
+		initOffice(cuntaoCountyListItems, countyIds);
+		initLeader(cuntaoCountyListItems, countyOrgInfos);
+		
 		return cuntaoCountyListItems;
+	}
+
+	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {
+		List<Long> orgIds = Lists.newArrayList();
+		countyOrgInfos.values().forEach(v->{
+			orgIds.add(v.countyOrgId);
+			orgIds.add(v.areaOrgId);
+			orgIds.add(v.provinceOrgId);
+		});
+		
+		List<CuntaoUserOrgVO> cuntaoUserOrgVOs = cuntaoUserOrgService.getCuntaoOrgUsers(orgIds, Lists.newArrayList(
+				UserRoleEnum.COUNTY_LEADER.getCode(),
+				UserRoleEnum.TEAM_LEADER.getCode(),
+				UserRoleEnum.PROVINCE_LEADER.getCode()));
+		
+		Map<Long, List<CuntaoUserOrgVO>> cuntaoUserOrgVOMap = Maps.newHashMap();
+		cuntaoUserOrgVOs.forEach(c->{
+			List<CuntaoUserOrgVO> list = cuntaoUserOrgVOMap.get(c.getOrgId());
+			if(list == null) {
+				list = Lists.newArrayList();
+				cuntaoUserOrgVOMap.put(c.getOrgId(), list);
+			}
+			list.add(c);
+		});
+		
+		cuntaoCountyListItems.forEach(item->{
+			CountyOrgInfo countyOrgInfo = countyOrgInfos.get(item.getId());
+			item.setCountyLeaders(cuntaoUserOrgVOMap.get(countyOrgInfo.countyOrgId));
+			item.setAreaLeaders(cuntaoUserOrgVOMap.get(countyOrgInfo.areaOrgId));
+			item.setProvinceLeaders(cuntaoUserOrgVOMap.get(countyOrgInfo.provinceOrgId));
+		});
+	}
+
+	private void initOffice(List<CuntaoCountyListItem> cuntaoCountyListItems, List<Long> countyIds) {
+		List<CuntaoCountyOfficeDto> offices = cuntaoCountyOfficeBo.getCuntaoCountyOffices(countyIds);
+		Map<Long, CuntaoCountyOfficeDto> officeMap = Maps.newHashMap();
+		for(CuntaoCountyOfficeDto office : offices) {
+			officeMap.put(office.getCountyId(), office);
+		}
+		for(CuntaoCountyListItem item : cuntaoCountyListItems) {
+			CuntaoCountyOfficeDto office = officeMap.get(item.getId());
+			item.setAddress(office.getAddress());
+		}
+	}
+	
+	class CountyOrgInfo{
+		Long countyId;
+		
+		Long provinceOrgId;
+		
+		Long areaOrgId;
+		
+		Long countyOrgId;
 	}
 }

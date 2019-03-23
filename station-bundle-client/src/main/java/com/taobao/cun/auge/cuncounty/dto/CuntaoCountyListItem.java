@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 
 /**
@@ -55,17 +57,17 @@ public class CuntaoCountyListItem {
     /**
      * 县小二
      */
-    private List<CuntaoUserOrgVO> countyLeaders;
+    private List<CuntaoUserOrgVO> countyLeaders = Lists.newArrayList();
     
     /**
      * 区域经理
      */
-    private List<CuntaoUserOrgVO> areaLeaders;
+    private List<CuntaoUserOrgVO> areaLeaders = Lists.newArrayList();
     
     /**
      * 省负责人
      */
-    private List<CuntaoUserOrgVO> provinceLeaders;
+    private List<CuntaoUserOrgVO> provinceLeaders = Lists.newArrayList();
     
     /**
      * 协议开始时间
@@ -76,7 +78,7 @@ public class CuntaoCountyListItem {
      * 协议结束时间
      */
     private String protocolEndDate;
-
+    
 	public String getFullIdPath() {
 		return fullIdPath;
 	}
@@ -158,7 +160,7 @@ public class CuntaoCountyListItem {
 	}
 
 	public List<CuntaoUserOrgVO> getCountyLeaders() {
-		return countyLeaders;
+		return countyLeaders == null ? new ArrayList<CuntaoUserOrgVO>() : countyLeaders;
 	}
 
 	public void setCountyLeaders(List<CuntaoUserOrgVO> countyLeaders) {
@@ -166,7 +168,7 @@ public class CuntaoCountyListItem {
 	}
 
 	public List<CuntaoUserOrgVO> getAreaLeaders() {
-		return areaLeaders;
+		return areaLeaders == null ? new ArrayList<CuntaoUserOrgVO>() : areaLeaders;
 	}
 
 	public void setAreaLeaders(List<CuntaoUserOrgVO> areaLeaders) {
@@ -174,7 +176,7 @@ public class CuntaoCountyListItem {
 	}
 
 	public List<CuntaoUserOrgVO> getProvinceLeaders() {
-		return provinceLeaders;
+		return provinceLeaders == null ? new ArrayList<CuntaoUserOrgVO>() : provinceLeaders;
 	}
 
 	public void setProvinceLeaders(List<CuntaoUserOrgVO> provinceLeaders) {
