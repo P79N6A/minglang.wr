@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,9 +22,8 @@ public class CuntaoCountyPredicate {
 	private CainiaoCountyBo cainiaoCountyBo;
 	
 	void checkCreateCounty(String countyCode) {
-		Optional<CuntaoCountyWhitenameDto> optional = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(countyCode);
-		if(optional.isPresent()) {
-			CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto = optional.get();
+		CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(countyCode);
+		if(cuntaoCountyWhitenameDto != null) {
 			if(cuntaoCountyWhitenameDto.getCountyId() > 0) {
 				throw new RuntimeException(cuntaoCountyWhitenameDto.getCountyName() + "已经开了县点");
 			}

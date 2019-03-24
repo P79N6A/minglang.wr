@@ -84,6 +84,7 @@ public class CuntaoCountyQueryBo {
 			CuntaoCountyStateCountDto dto = new CuntaoCountyStateCountDto();
 			dto.setNum(num);
 			dto.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(state));
+			result.add(dto);
 		});
 		return result;
 	}

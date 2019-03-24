@@ -2,7 +2,6 @@ package com.taobao.cun.auge.cuncounty.bo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -41,14 +40,14 @@ public class CuntaoCountyWhitenameBo {
 	 * @param countyCode
 	 * @return
 	 */
-	public Optional<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenameByCountyCode(String countyCode){
+	public CuntaoCountyWhitenameDto getCuntaoCountyWhitenameByCountyCode(String countyCode){
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(countyCode);
 		List<CuntaoCountyWhitename> cuntaoCountyWhitenames = cuntaoCountyWhitenameMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoCountyWhitenames)) {
-			return Optional.empty();
+			return null;
 		}else {
-			return Optional.of(BeanConvertUtils.convert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames.get(0)));
+			return BeanConvertUtils.convert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames.get(0));
 		}
 	}
 	
@@ -58,10 +57,12 @@ public class CuntaoCountyWhitenameBo {
 	 * @param id
 	 * @param countyId
 	 */
-	public void updateCountyId(Long id, Long countyId) {
-		CuntaoCountyWhitename cuntaoCountyWhitename = cuntaoCountyWhitenameMapper.selectByPrimaryKey(id);
-		cuntaoCountyWhitename.setGmtModified(new Date());
-		cuntaoCountyWhitename.setCountyId(countyId);
-		cuntaoCountyWhitenameMapper.updateByPrimaryKey(cuntaoCountyWhitename);
+	public void updateCountyId(String countyCode, Long countyId) {
+		CuntaoCountyWhitename record = new CuntaoCountyWhitename();
+		record.setGmtModified(new Date());
+		record.setCountyId(countyId);
+		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
+		example.createCriteria().andCountyCodeEqualTo(countyCode);
+		cuntaoCountyWhitenameMapper.updateByExample(record, example);
 	}
 }

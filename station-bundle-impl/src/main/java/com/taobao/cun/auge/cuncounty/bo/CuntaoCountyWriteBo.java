@@ -1,12 +1,11 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
@@ -40,6 +39,8 @@ public class CuntaoCountyWriteBo {
 	private CuntaoCountyOfficeBo cuntaoCountyOfficeBo;
 	@Resource
 	private CainiaoCountyBo cainiaoCountyBo;
+	@Resource
+	private CuntaoOrgAdminAddressBo cuntaoOrgAdminAddressBo;
 	
 	@Transactional(rollbackFor=Throwable.class)
 	public Long createCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto) {
@@ -47,7 +48,15 @@ public class CuntaoCountyWriteBo {
 		//创建组织
 		Long orgId = createCuntaoOrg(cuntaoCountyAddDto);
 		//创建县服务中心
-		return doCreateCuntaoCounty(cuntaoCountyAddDto, orgId);
+		CuntaoCounty cuntaoCounty = doCreateCuntaoCounty(cuntaoCountyAddDto, orgId);
+		//更新白名单
+		cuntaoCountyWhitenameBo.updateCountyId(cuntaoCounty.getCountyCode(), cuntaoCounty.getId());
+		//报名分发地址
+		CuntaoCountyDto cuntaoCountyDto = BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCounty);
+		cuntaoOrgAdminAddressBo.create(cuntaoCountyDto, cuntaoCountyAddDto.getOperator());
+		//激活分发
+		cuntaoOrgAdminAddressBo.activeRefusedPartner(cuntaoCountyDto, cuntaoCountyAddDto.getOperator());
+		return cuntaoCounty.getId();
 	}
 	
 	@Transactional(rollbackFor=Throwable.class)
@@ -80,11 +89,10 @@ public class CuntaoCountyWriteBo {
         return cuntaoOrgBO.addOrg(addCuntaoOrg, cuntaoCountyAddDto.getOperator());
 	}
 
-	private Long doCreateCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto, Long orgId) {
-		Optional<CuntaoCountyWhitenameDto> optional = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(cuntaoCountyAddDto.getCountyCode());
-		CuntaoCounty record = BeanConvertUtils.convert(cuntaoCountyAddDto, orgId, optional.get());
-		cuntaoCountyMapper.insert(record);
-		cuntaoCountyWhitenameBo.updateCountyId(optional.get().getId(), record.getId());
-		return record.getId();
+	private CuntaoCounty doCreateCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto, Long orgId) {
+		CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(cuntaoCountyAddDto.getCountyCode());
+		CuntaoCounty cuntaoCounty = BeanConvertUtils.convert(cuntaoCountyAddDto, orgId, cuntaoCountyWhitenameDto);
+		cuntaoCountyMapper.insert(cuntaoCounty);
+		return cuntaoCounty;
 	}
 }
