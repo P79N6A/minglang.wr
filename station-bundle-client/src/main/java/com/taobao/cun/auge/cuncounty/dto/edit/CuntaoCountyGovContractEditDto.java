@@ -23,10 +23,10 @@ public class CuntaoCountyGovContractEditDto {
     private String signatory;
 
     @NotNull(message="政府签约信息:协议开始时间不能为空")
-    private Date gmtStart;
+    private Date gmtProtocolStart;
 
     @NotNull(message="政府签约信息:协议结束时间不能为空")
-    private Date gmtEnd;
+    private Date gmtProtocolEnd;
 
     @NotBlank(message="政府签约信息:资金补贴不能为空")
     private String allowance;
@@ -72,20 +72,20 @@ public class CuntaoCountyGovContractEditDto {
 		this.signatory = signatory;
 	}
 
-	public Date getGmtStart() {
-		return gmtStart;
+	public Date getGmtProtocolStart() {
+		return gmtProtocolStart;
 	}
 
-	public void setGmtStart(Date gmtStart) {
-		this.gmtStart = gmtStart;
+	public void setGmtProtocolStart(Date gmtProtocolStart) {
+		this.gmtProtocolStart = gmtProtocolStart;
 	}
 
-	public Date getGmtEnd() {
-		return gmtEnd;
+	public Date getGmtProtocolEnd() {
+		return gmtProtocolEnd;
 	}
 
-	public void setGmtEnd(Date gmtEnd) {
-		this.gmtEnd = gmtEnd;
+	public void setGmtProtocolEnd(Date gmtProtocolEnd) {
+		this.gmtProtocolEnd = gmtProtocolEnd;
 	}
 
 	public String getAllowance() {

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.service;
 
+import javax.validation.Valid;
+
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
@@ -23,5 +25,5 @@ public interface CuntaoCountyQueryService {
 	 * 按条件查询
 	 * @return
 	 */
-	PageOutput<CuntaoCountyListItem> query(CuntaoCountyCondition condition);
+	PageOutput<CuntaoCountyListItem> query(@Valid CuntaoCountyCondition condition);
 }

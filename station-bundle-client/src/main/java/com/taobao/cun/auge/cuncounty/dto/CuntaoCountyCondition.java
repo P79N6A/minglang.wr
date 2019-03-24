@@ -2,6 +2,8 @@ package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.PageInput;
 
 /**
@@ -13,14 +15,14 @@ import com.taobao.cun.auge.common.PageInput;
 public class CuntaoCountyCondition extends PageInput {
 
 	private String name;
-	
+	@NotNull(message="组织ID不能为空")
 	private Long orgId;
 	
 	private String fullIdPath;
 	
-	private Date protocolStartDate;
+	private Date protocolEndDateFrom;
 	
-	private Date protocolEndDate;
+	private Date protocolEndDateTo;
 
 	public String getFullIdPath() {
 		return fullIdPath;
@@ -46,19 +48,19 @@ public class CuntaoCountyCondition extends PageInput {
 		this.orgId = orgId;
 	}
 
-	public Date getProtocolStartDate() {
-		return protocolStartDate;
+	public Date getProtocolEndDateFrom() {
+		return protocolEndDateFrom;
 	}
 
-	public void setProtocolStartDate(Date protocolStartDate) {
-		this.protocolStartDate = protocolStartDate;
+	public void setProtocolEndDateFrom(Date protocolEndDateFrom) {
+		this.protocolEndDateFrom = protocolEndDateFrom;
 	}
 
-	public Date getProtocolEndDate() {
-		return protocolEndDate;
+	public Date getProtocolEndDateTo() {
+		return protocolEndDateTo;
 	}
 
-	public void setProtocolEndDate(Date protocolEndDate) {
-		this.protocolEndDate = protocolEndDate;
+	public void setProtocolEndDateTo(Date protocolEndDateTo) {
+		this.protocolEndDateTo = protocolEndDateTo;
 	}
 }

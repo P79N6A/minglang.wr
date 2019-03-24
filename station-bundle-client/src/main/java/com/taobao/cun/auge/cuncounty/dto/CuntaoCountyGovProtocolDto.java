@@ -28,12 +28,12 @@ public class CuntaoCountyGovProtocolDto {
     /**
      * 协议开始时间
      */
-    private Date gmtStart;
+    private Date gmtProtocolStart;
 
     /**
      * 协议结束时间
      */
-    private Date gmtEnd;
+    private Date gmtProtocolEnd;
 
     /**
      * 协议附件
@@ -72,20 +72,20 @@ public class CuntaoCountyGovProtocolDto {
 		this.signatory = signatory;
 	}
 
-	public Date getGmtStart() {
-		return gmtStart;
+	public Date getGmtProtocolStart() {
+		return gmtProtocolStart;
 	}
 
-	public void setGmtStart(Date gmtStart) {
-		this.gmtStart = gmtStart;
+	public void setGmtProtocolStart(Date gmtProtocolStart) {
+		this.gmtProtocolStart = gmtProtocolStart;
 	}
 
-	public Date getGmtEnd() {
-		return gmtEnd;
+	public Date getGmtProtocolEnd() {
+		return gmtProtocolEnd;
 	}
 
-	public void setGmtEnd(Date gmtEnd) {
-		this.gmtEnd = gmtEnd;
+	public void setGmtProtocolEnd(Date gmtProtocolEnd) {
+		this.gmtProtocolEnd = gmtProtocolEnd;
 	}
 
 	public String getAttachments() {

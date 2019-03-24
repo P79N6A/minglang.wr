@@ -785,123 +785,123 @@ public class CuntaoCountyGovContractExample {
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartIsNull() {
-            addCriterion("gmt_start is null");
+        public Criteria andGmtProtocolStartIsNull() {
+            addCriterion("gmt_protocol_start is null");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartIsNotNull() {
-            addCriterion("gmt_start is not null");
+        public Criteria andGmtProtocolStartIsNotNull() {
+            addCriterion("gmt_protocol_start is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartEqualTo(Date value) {
-            addCriterion("gmt_start =", value, "gmtStart");
+        public Criteria andGmtProtocolStartEqualTo(Date value) {
+            addCriterion("gmt_protocol_start =", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartNotEqualTo(Date value) {
-            addCriterion("gmt_start <>", value, "gmtStart");
+        public Criteria andGmtProtocolStartNotEqualTo(Date value) {
+            addCriterion("gmt_protocol_start <>", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartGreaterThan(Date value) {
-            addCriterion("gmt_start >", value, "gmtStart");
+        public Criteria andGmtProtocolStartGreaterThan(Date value) {
+            addCriterion("gmt_protocol_start >", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartGreaterThanOrEqualTo(Date value) {
-            addCriterion("gmt_start >=", value, "gmtStart");
+        public Criteria andGmtProtocolStartGreaterThanOrEqualTo(Date value) {
+            addCriterion("gmt_protocol_start >=", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartLessThan(Date value) {
-            addCriterion("gmt_start <", value, "gmtStart");
+        public Criteria andGmtProtocolStartLessThan(Date value) {
+            addCriterion("gmt_protocol_start <", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartLessThanOrEqualTo(Date value) {
-            addCriterion("gmt_start <=", value, "gmtStart");
+        public Criteria andGmtProtocolStartLessThanOrEqualTo(Date value) {
+            addCriterion("gmt_protocol_start <=", value, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartIn(List<Date> values) {
-            addCriterion("gmt_start in", values, "gmtStart");
+        public Criteria andGmtProtocolStartIn(List<Date> values) {
+            addCriterion("gmt_protocol_start in", values, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartNotIn(List<Date> values) {
-            addCriterion("gmt_start not in", values, "gmtStart");
+        public Criteria andGmtProtocolStartNotIn(List<Date> values) {
+            addCriterion("gmt_protocol_start not in", values, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartBetween(Date value1, Date value2) {
-            addCriterion("gmt_start between", value1, value2, "gmtStart");
+        public Criteria andGmtProtocolStartBetween(Date value1, Date value2) {
+            addCriterion("gmt_protocol_start between", value1, value2, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtStartNotBetween(Date value1, Date value2) {
-            addCriterion("gmt_start not between", value1, value2, "gmtStart");
+        public Criteria andGmtProtocolStartNotBetween(Date value1, Date value2) {
+            addCriterion("gmt_protocol_start not between", value1, value2, "gmtProtocolStart");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndIsNull() {
-            addCriterion("gmt_end is null");
+        public Criteria andGmtProtocolEndIsNull() {
+            addCriterion("gmt_protocol_end is null");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndIsNotNull() {
-            addCriterion("gmt_end is not null");
+        public Criteria andGmtProtocolEndIsNotNull() {
+            addCriterion("gmt_protocol_end is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndEqualTo(Date value) {
-            addCriterion("gmt_end =", value, "gmtEnd");
+        public Criteria andGmtProtocolEndEqualTo(Date value) {
+            addCriterion("gmt_protocol_end =", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndNotEqualTo(Date value) {
-            addCriterion("gmt_end <>", value, "gmtEnd");
+        public Criteria andGmtProtocolEndNotEqualTo(Date value) {
+            addCriterion("gmt_protocol_end <>", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndGreaterThan(Date value) {
-            addCriterion("gmt_end >", value, "gmtEnd");
+        public Criteria andGmtProtocolEndGreaterThan(Date value) {
+            addCriterion("gmt_protocol_end >", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndGreaterThanOrEqualTo(Date value) {
-            addCriterion("gmt_end >=", value, "gmtEnd");
+        public Criteria andGmtProtocolEndGreaterThanOrEqualTo(Date value) {
+            addCriterion("gmt_protocol_end >=", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndLessThan(Date value) {
-            addCriterion("gmt_end <", value, "gmtEnd");
+        public Criteria andGmtProtocolEndLessThan(Date value) {
+            addCriterion("gmt_protocol_end <", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndLessThanOrEqualTo(Date value) {
-            addCriterion("gmt_end <=", value, "gmtEnd");
+        public Criteria andGmtProtocolEndLessThanOrEqualTo(Date value) {
+            addCriterion("gmt_protocol_end <=", value, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndIn(List<Date> values) {
-            addCriterion("gmt_end in", values, "gmtEnd");
+        public Criteria andGmtProtocolEndIn(List<Date> values) {
+            addCriterion("gmt_protocol_end in", values, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndNotIn(List<Date> values) {
-            addCriterion("gmt_end not in", values, "gmtEnd");
+        public Criteria andGmtProtocolEndNotIn(List<Date> values) {
+            addCriterion("gmt_protocol_end not in", values, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndBetween(Date value1, Date value2) {
-            addCriterion("gmt_end between", value1, value2, "gmtEnd");
+        public Criteria andGmtProtocolEndBetween(Date value1, Date value2) {
+            addCriterion("gmt_protocol_end between", value1, value2, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
-        public Criteria andGmtEndNotBetween(Date value1, Date value2) {
-            addCriterion("gmt_end not between", value1, value2, "gmtEnd");
+        public Criteria andGmtProtocolEndNotBetween(Date value1, Date value2) {
+            addCriterion("gmt_protocol_end not between", value1, value2, "gmtProtocolEnd");
             return (Criteria) this;
         }
 
