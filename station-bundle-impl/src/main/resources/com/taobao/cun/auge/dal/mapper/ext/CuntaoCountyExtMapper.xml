@@ -104,7 +104,7 @@
   </select>
   
   <select id="groupByState" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="map">
-	SELECT q1.state, count(0) as num FROM
+	SELECT state, count(0) as num FROM
 		(
 		SELECT
 			q1.*,
