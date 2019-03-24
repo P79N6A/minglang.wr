@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.dal.mapper.ext;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -84,4 +85,11 @@ public interface CuntaoCountyExtMapper {
 	 * @return
 	 */
 	int count(@Param("condition") CuntaoCountyCondition condition);
+	
+	/**
+	 * 按状态统计县点数
+	 * @param condition
+	 * @return
+	 */
+	Map<String, Integer> groupByState(@Param("condition") CuntaoCountyCondition condition);
 }

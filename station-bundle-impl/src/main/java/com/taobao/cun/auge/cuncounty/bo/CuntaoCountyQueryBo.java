@@ -18,6 +18,7 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOrgDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
@@ -68,6 +69,17 @@ public class CuntaoCountyQueryBo {
 		//办公场地
 		cuntaoCountyDetailDto.setCuntaoCountyOfficeDto(cuntaoCountyOfficeBo.getCuntaoCountyOffice(countyId));
 		return cuntaoCountyDetailDto;
+	}
+	
+	public List<CuntaoCountyStateCountDto> groupCountyByState(CuntaoCountyCondition condition) {
+		Map<String, Integer> map = cuntaoCountyExtMapper.groupByState(condition);
+		List<CuntaoCountyStateCountDto> result = Lists.newArrayList();
+		map.forEach((k,v)->{
+			CuntaoCountyStateCountDto dto = new CuntaoCountyStateCountDto();
+			dto.setNum(v);
+			dto.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(k));
+		});
+		return result;
 	}
 	
 	private CuntaoCountyOrgDto createCuntaoCountyOrg(Long orgId) {

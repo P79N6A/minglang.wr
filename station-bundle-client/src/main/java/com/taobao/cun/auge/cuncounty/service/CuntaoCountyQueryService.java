@@ -1,11 +1,14 @@
 package com.taobao.cun.auge.cuncounty.service;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 
 /**
  * 县服务中心查询
@@ -26,4 +29,11 @@ public interface CuntaoCountyQueryService {
 	 * @return
 	 */
 	PageOutput<CuntaoCountyListItem> query(@Valid CuntaoCountyCondition condition);
+	
+	/**
+	 * 按状态分组统计
+	 * @param condition
+	 * @return
+	 */
+	List<CuntaoCountyStateCountDto> groupCountyByState(@Valid CuntaoCountyCondition condition);
 }

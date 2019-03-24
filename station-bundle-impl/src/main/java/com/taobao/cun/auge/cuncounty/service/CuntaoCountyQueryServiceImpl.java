@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.validation.annotation.Validated;
@@ -9,6 +11,7 @@ import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Validated
@@ -25,6 +28,11 @@ public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {
 	@Override
 	public PageOutput<CuntaoCountyListItem> query(CuntaoCountyCondition condition) {
 		return cuntaoCountyQueryBo.query(condition);
+	}
+
+	@Override
+	public List<CuntaoCountyStateCountDto> groupCountyByState(CuntaoCountyCondition condition) {
+		return cuntaoCountyQueryBo.groupCountyByState(condition);
 	}
 
 }

@@ -18,11 +18,24 @@ public class CuntaoCountyCondition extends PageInput {
 	@NotNull(message="组织ID不能为空")
 	private Long orgId;
 	
+	/**
+	 * 县点状态
+	 */
+	private String state;
+	
 	private String fullIdPath;
 	
 	private Date protocolEndDateFrom;
 	
 	private Date protocolEndDateTo;
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
 
 	public String getFullIdPath() {
 		return fullIdPath;
