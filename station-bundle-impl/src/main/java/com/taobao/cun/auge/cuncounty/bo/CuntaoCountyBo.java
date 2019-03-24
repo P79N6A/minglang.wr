@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
+import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper;
 
 /**
@@ -20,6 +21,12 @@ public class CuntaoCountyBo {
 	private CuntaoCountyMapper cuntaoCountyMapper;
 	
 	CuntaoCountyDto getCuntaoCounty(Long id) {
-		return BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyMapper.selectByPrimaryKey(id));
+		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(id);
+		if(cuntaoCounty == null) {
+			return null;
+		}
+		CuntaoCountyDto cuntaoCountyDto = BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyMapper.selectByPrimaryKey(id));
+		cuntaoCountyDto.setState(cuntaoCounty.getState());
+		return cuntaoCountyDto;
 	}
 }

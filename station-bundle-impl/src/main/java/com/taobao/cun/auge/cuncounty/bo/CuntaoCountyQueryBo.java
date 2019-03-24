@@ -129,6 +129,7 @@ public class CuntaoCountyQueryBo {
 			
 			CuntaoCountyListItem cuntaoCountyListItem = BeanConvertUtils.convert(CuntaoCountyListItem.class, vo);
 			cuntaoCountyListItem.setProtocolStartDate(DateUtil.format(vo.getGmtProtocolStartDate(), "yyyy-MM-dd"));
+			cuntaoCountyListItem.setState(vo.getState());
 			cuntaoCountyListItem.setProtocolEndDate(DateUtil.format(vo.getGmtProtocolEndDate(), "yyyy-MM-dd"));
 			cuntaoCountyListItems.add(cuntaoCountyListItem);
 		}
