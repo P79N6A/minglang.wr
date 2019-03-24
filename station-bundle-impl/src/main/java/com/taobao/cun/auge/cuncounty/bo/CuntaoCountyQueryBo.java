@@ -80,7 +80,7 @@ public class CuntaoCountyQueryBo {
 		List<CuntaoCountyStateCountDto> result = Lists.newArrayList();
 		list.forEach(v->{
 			String state = (String) v.get("state");
-			int num = (int) v.get("num");
+			Long num = (Long) v.get("num");
 			CuntaoCountyStateCountDto dto = new CuntaoCountyStateCountDto();
 			dto.setNum(num);
 			dto.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(state));

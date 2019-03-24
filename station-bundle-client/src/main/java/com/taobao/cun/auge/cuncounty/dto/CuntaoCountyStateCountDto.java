@@ -14,17 +14,17 @@ public class CuntaoCountyStateCountDto {
 	/**
 	 * 县点数
 	 */
-	private int num;
+	private Long num;
 	public CuntaoCountyStateEnum getCuntaoCountyState() {
 		return cuntaoCountyState;
 	}
 	public void setCuntaoCountyState(CuntaoCountyStateEnum cuntaoCountyState) {
 		this.cuntaoCountyState = cuntaoCountyState;
 	}
-	public int getNum() {
+	public Long getNum() {
 		return num;
 	}
-	public void setNum(int num) {
+	public void setNum(Long num) {
 		this.num = num;
 	}
 }
