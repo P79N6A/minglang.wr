@@ -20,6 +20,8 @@ public class CuntaoCountyPredicate {
 	private CuntaoCountyOfficeBo cuntaoCountyOfficeBo;
 	@Resource
 	private CainiaoCountyBo cainiaoCountyBo;
+	@Resource
+	private CuntaoOrgAdminAddressBo cuntaoOrgAdminAddressBo;
 	
 	void checkCreateCounty(String countyCode) {
 		CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(countyCode);
@@ -29,6 +31,10 @@ public class CuntaoCountyPredicate {
 			}
 		}else {
 			throw new RuntimeException("该县不在白名单里，暂不能开县");
+		}
+		
+		if(cuntaoOrgAdminAddressBo.isExistCountyCode(countyCode)) {
+			throw new RuntimeException("分发地址已经存在：" + countyCode);
 		}
 	}
 

@@ -26,12 +26,14 @@ public class CuntaoOrgAdminAddressBo {
 	@Resource
 	private PartnerApplyService partnerApplyService;
 	
-	public void create(CuntaoCountyDto cuntaoCountyDto, String operator) {
+	boolean isExistCountyCode(String countyCode) {
 		CuntaoOrgAdminAddressExample example = new CuntaoOrgAdminAddressExample();
-		example.createCriteria().andAddressCodeEqualTo(cuntaoCountyDto.getCountyCode()).andIsDeletedEqualTo("n");
-		if(cuntaoOrgAdminAddressMapper.countByExample(example) == 0) {
-			cuntaoOrgAdminAddressMapper.insert(createCuntaoOrgAdminAddressAddDto(cuntaoCountyDto, operator));
-		}
+		example.createCriteria().andAddressCodeEqualTo(countyCode).andIsDeletedEqualTo("n");
+		return cuntaoOrgAdminAddressMapper.countByExample(example) > 0;
+	}
+	
+	public void create(CuntaoCountyDto cuntaoCountyDto, String operator) {
+		cuntaoOrgAdminAddressMapper.insert(createCuntaoOrgAdminAddressAddDto(cuntaoCountyDto, operator));
 	}
 	
 	public void activeRefusedPartner(CuntaoCountyDto cuntaoCountyDto,String operator) {
