@@ -72,6 +72,10 @@ public class CuntaoCountyQueryBo {
 	}
 	
 	public List<CuntaoCountyStateCountDto> groupCountyByState(CuntaoCountyCondition condition) {
+		if(Strings.isNullOrEmpty(condition.getFullIdPath())) {
+			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(condition.getOrgId());
+			condition.setFullIdPath(cuntaoOrgDto.getFullIdPath());
+		}
 		Map<String, Integer> map = cuntaoCountyExtMapper.groupByState(condition);
 		List<CuntaoCountyStateCountDto> result = Lists.newArrayList();
 		map.forEach((k,v)->{
