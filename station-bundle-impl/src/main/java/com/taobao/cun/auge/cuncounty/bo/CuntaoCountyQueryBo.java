@@ -76,12 +76,14 @@ public class CuntaoCountyQueryBo {
 			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(condition.getOrgId());
 			condition.setFullIdPath(cuntaoOrgDto.getFullIdPath());
 		}
-		Map<String, Integer> map = cuntaoCountyExtMapper.groupByState(condition);
+		List<Map<String, Object>> list = cuntaoCountyExtMapper.groupByState(condition);
 		List<CuntaoCountyStateCountDto> result = Lists.newArrayList();
-		map.forEach((k,v)->{
+		list.forEach(v->{
+			String state = (String) v.get("state");
+			int num = (int) v.get("num");
 			CuntaoCountyStateCountDto dto = new CuntaoCountyStateCountDto();
-			dto.setNum(v);
-			dto.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(k));
+			dto.setNum(num);
+			dto.setCuntaoCountyState(CuntaoCountyStateEnum.valueof(state));
 		});
 		return result;
 	}
