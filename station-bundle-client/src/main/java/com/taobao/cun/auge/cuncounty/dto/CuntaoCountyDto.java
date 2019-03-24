@@ -18,7 +18,7 @@ public class CuntaoCountyDto {
     /**
      * 状态
      */
-    private String state;
+    private CuntaoCountyStateEnum state;
     /**
      * 省名
      */
@@ -69,12 +69,12 @@ public class CuntaoCountyDto {
 		this.orgId = orgId;
 	}
 
-	public String getState() {
+	public CuntaoCountyStateEnum getState() {
 		return state;
 	}
 
 	public void setState(String state) {
-		this.state = state;
+		this.state = CuntaoCountyStateEnum.valueof(state);
 	}
 
 	public String getProvinceName() {
