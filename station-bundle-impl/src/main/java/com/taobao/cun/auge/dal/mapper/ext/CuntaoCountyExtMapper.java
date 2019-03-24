@@ -3,8 +3,7 @@ package com.taobao.cun.auge.dal.mapper.ext;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.MapKey;
-
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
@@ -93,6 +92,6 @@ public interface CuntaoCountyExtMapper {
 	 * @param condition
 	 * @return
 	 */
-	@MapKey(name="state")
+	@MapKey("state")
 	Map<String, Integer> groupByState(@Param("condition") CuntaoCountyCondition condition);
 }
