@@ -35,7 +35,7 @@ public class CuntaoCountyListItem {
     /**
      * 状态
      */
-    private CuntaoCountyStateEnum cuntaoCountyState;
+    private CuntaoCountyStateEnum state;
     /**
      * 省名
      */
@@ -119,12 +119,12 @@ public class CuntaoCountyListItem {
 		this.orgId = orgId;
 	}
 
-	public CuntaoCountyStateEnum getCuntaoCountyState() {
-		return cuntaoCountyState;
+	public CuntaoCountyStateEnum getState() {
+		return state;
 	}
 
-	public void setCuntaoCountyState(CuntaoCountyStateEnum cuntaoCountyState) {
-		this.cuntaoCountyState = cuntaoCountyState;
+	public void setState(String state) {
+		this.state = CuntaoCountyStateEnum.valueof(state);
 	}
 
 	public String getProvinceName() {
