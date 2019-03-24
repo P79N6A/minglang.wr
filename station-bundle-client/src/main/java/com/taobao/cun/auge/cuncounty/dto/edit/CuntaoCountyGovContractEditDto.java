@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.cuncounty.dto.edit;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -77,7 +79,7 @@ public class CuntaoCountyGovContractEditDto {
 	}
 
 	public void setGmtProtocolStart(Date gmtProtocolStart) {
-		this.gmtProtocolStart = gmtProtocolStart;
+		this.gmtProtocolStart = DateUtils.truncate(gmtProtocolStart, Calendar.DATE);
 	}
 
 	public Date getGmtProtocolEnd() {
@@ -85,7 +87,7 @@ public class CuntaoCountyGovContractEditDto {
 	}
 
 	public void setGmtProtocolEnd(Date gmtProtocolEnd) {
-		this.gmtProtocolEnd = gmtProtocolEnd;
+		this.gmtProtocolEnd = DateUtils.truncate(gmtProtocolEnd, Calendar.DATE);
 	}
 
 	public String getAllowance() {
