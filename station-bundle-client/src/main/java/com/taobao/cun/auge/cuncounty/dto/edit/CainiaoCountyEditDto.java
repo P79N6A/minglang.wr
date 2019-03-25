@@ -45,6 +45,16 @@ public class CainiaoCountyEditDto {
      * 市行政CODE
      */
     private String cityCode;
+    @NotBlank(message="县服务中心:操作人不能为空")
+    private String operator;
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 
 	public Long getCountyId() {
 		return countyId;
