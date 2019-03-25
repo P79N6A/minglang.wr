@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
@@ -22,12 +25,15 @@ public class CuntaoCountyWaitOpenProcessBo {
 	public void start(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(countyId);
 		if(checkState(cuntaoCountyDto)) {
+			Map<String, String> initData = Maps.newHashMap();
+			initData.put("orgId", String.valueOf(cuntaoCountyDto.getOrgId()));
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 			startDto.setBusinessCode(TASK_CODE);
 			startDto.setBusinessId(String.valueOf(cuntaoCountyDto.getId()));
 			startDto.setApplierId(operator);
 			startDto.setApplierUserType(UserTypeEnum.BUC);
 			startDto.setBusinessName("[" + cuntaoCountyDto.getName() + "]申请待开业");
+			startDto.setInitData(initData);
 			ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if(!result.isSuccess()) {
 				throw new RuntimeException("创建流程失败：" + result.getException().getMessage());
