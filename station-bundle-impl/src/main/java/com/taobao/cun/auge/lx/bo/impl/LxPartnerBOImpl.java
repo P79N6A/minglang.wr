@@ -103,6 +103,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 			addLx(param, taobaoUserId);
 			partnerAdzoneService.createAdzone(taobaoUserId);
 		} catch (Exception e) {
+			logger.error("LxPartnerBOImpl.addLxPartner error! param:" + taobaoUserId, e);
 			throw new AugeBusinessException(LxErrorCodes.LX_CREATE_PID_ERROR, "今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦");
 		} finally {
 			if (lockResult) {
