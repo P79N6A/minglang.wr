@@ -25,7 +25,7 @@ public interface LxPartnerMobileService {
 	public Result<LxPartnerListDto> listLxPartner(Long taobaoUserId);
 	
 	/**
-	 * 
+	 * 测试风控
 	 * @param taobaoUserId
 	 * @return
 	 */

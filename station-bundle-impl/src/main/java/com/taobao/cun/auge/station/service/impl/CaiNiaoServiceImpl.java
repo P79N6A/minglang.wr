@@ -697,9 +697,9 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId) {
 		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
-		if (w == null) 
+		if (w == null) {
 			return null;
-		{}
+		}
 		return w.isUse();
 	}
 }

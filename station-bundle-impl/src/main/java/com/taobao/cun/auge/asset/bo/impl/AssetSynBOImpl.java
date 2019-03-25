@@ -881,7 +881,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			features.put(key, value);
 			for (String cainiaoStationId : cainiaoIds) {
 				try {
-					Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+					caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
 				} catch (Exception e) {
 					logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e);
 					continue;
@@ -925,7 +925,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 			String model = m.get("model");
 			String ownerName = m.get("ownerName");
 			String ownerWorkno = m.get("ownerWorkno");
-			//String poNo = m.get("poNo");
 			String serialNo = m.get("serialNo");
 			String orgName =  m.get("orgName");
 			
@@ -940,7 +939,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 			a.setOwnerName(ownerName);
 			a.setOwnerOrgId(ownerOrgId);
 			a.setOwnerWorkno(ownerWorkno);
-			//a.setPoNo(poNo);
 			a.setSerialNo(serialNo);
 			a.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
 			a.setUseAreaId(ownerOrgId);
