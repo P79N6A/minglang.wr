@@ -5,6 +5,12 @@ import javax.annotation.Resource;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyWaitOpenProcessBo;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 县服务中心待开业审批流程
+
+ * @author chengyu.zhoucy
+ *
+ */
 @HSFProvider(serviceInterface = CuntaoCountyWaitOpenProcessService.class)
 public class CuntaoCountyWaitOpenProcessServiceImpl implements CuntaoCountyWaitOpenProcessService {
 	@Resource

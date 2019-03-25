@@ -14,6 +14,12 @@ import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
+/**
+ * 县服务中心待开业审批流程
+
+ * @author chengyu.zhoucy
+ *
+ */
 @Component
 public class CuntaoCountyWaitOpenProcessBo {
 	private static final String TASK_CODE = "countyWaitOpen";
