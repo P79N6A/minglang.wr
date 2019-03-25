@@ -259,8 +259,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		try {
 			isSync= Diamond.getConfig("auge.lx.isSync.alimama", "DEFAULT_GROUP", 3000);
 		} catch (IOException e) {
-			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId, e);
-			return Boolean.FALSE;
+			return Boolean.TRUE;
 		}
 		if ("y".equals(isSync)) {
 			return Boolean.TRUE;
