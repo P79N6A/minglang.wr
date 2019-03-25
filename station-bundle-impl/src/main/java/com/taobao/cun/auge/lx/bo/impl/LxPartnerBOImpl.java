@@ -280,6 +280,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 			partnerInstanceBO.deletePartnerStationRel(pi.getId(), "system");
 			partnerBO.deletePartner(pi.getPartnerId(), "system");
 			stationBO.deleteStation(pi.getStationId(), "system");
+			return Boolean.TRUE;
 		}
 		throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "当前账号没有找到");
 	}
@@ -290,6 +291,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		if (null != pi && InstanceTypeEnum.LX.getCode().equals(pi.getType())) {
 			stationBO.changeState(pi.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSED,"system");
 			partnerInstanceBO.changeState(pi.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED, "system");
+			return Boolean.TRUE;
 
 		}
 		throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "当前账号没有找到");
