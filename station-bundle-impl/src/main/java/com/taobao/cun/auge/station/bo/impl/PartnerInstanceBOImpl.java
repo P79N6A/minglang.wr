@@ -66,6 +66,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
@@ -1134,17 +1135,21 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public List<LxPartnerDto> getActiveLxListrByParentStationId(Long taobaoUserId) {
 		PartnerStationRel  r = this.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
 		if (r == null) {
-			return null;
+			return new ArrayList<LxPartnerDto>();
 		}
 		//查关系
 		PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
-            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
+            .andTypeEqualTo(InstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
         
         List<PartnerStationRel> rList = partnerStationRelMapper.selectByExample(example);
         
-        List<Long> partnerIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
-        List<Long> stationIds = Optional.ofNullable(rList).orElse(Lists.newArrayList()).stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
+        if (rList == null || rList.size()<=0) {
+        	return new ArrayList<LxPartnerDto>();
+        }
+        
+        List<Long> partnerIds =rList.stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
+        List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
         
         //查station
         StationExample example2 = new StationExample();
@@ -1158,9 +1163,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         
         Map<Long, Partner> pmap = pList.stream().collect(Collectors.toMap(Partner::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
         Map<Long, Station> smap = sList.stream().collect(Collectors.toMap(Station::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
-        
-        Map<Long, PartnerStationRel> rmap = rList.stream().collect(Collectors.toMap(PartnerStationRel::getPartnerId,java.util.function.Function.identity(),(key1, key2) -> key1));
-        
 		return rList.stream().map(p -> bulidLx(p,pmap,smap)).collect(Collectors.toList());
 	}
 	

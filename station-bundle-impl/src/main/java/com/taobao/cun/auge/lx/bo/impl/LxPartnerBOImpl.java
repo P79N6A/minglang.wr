@@ -9,9 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
-import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -29,6 +30,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -81,7 +83,8 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 	
 	@Autowired
 	private RmbService rmbService;
-
+	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean addLxPartner(LxPartnerAddDto param) {
 		Objects.requireNonNull(param, "参数不能为空");
@@ -129,7 +132,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		// 判断淘宝账号是否使用中
 		PartnerStationRel pi = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null != pi) {
-			if (PartnerInstanceTypeEnum.LX.getCode().equals(pi.getType())
+			if (InstanceTypeEnum.LX.getCode().equals(pi.getType())
 					&& PartnerInstanceStateEnum.CLOSED.getCode().equals(pi.getState())) {
 				throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_BUSI_CHECK_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
 			}
@@ -142,7 +145,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		}
 		Integer maxCount = getMaxCount();
 
-		Integer curCount = partnerInstanceBO.getActiveLxPartnerByParentStationId(taobaoUserId);
+		Integer curCount = partnerInstanceBO.getActiveLxPartnerByParentStationId(param.getpTaobaoUserId());
 		// 校验可剩余名额>0
 		if (maxCount-curCount <= 0) {
 			throw new AugeBusinessException(LxErrorCodes.QUOTA_CHECK_ERROR_CODE, "当前邀请名额已用完，无法再邀请拉新伙伴");
@@ -164,7 +167,8 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		}
 		return maxCount;
 	}
-
+	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addLx(LxPartnerAddDto lxPartnerAddDto, Long taobaoUserId) {
 
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(lxPartnerAddDto.getpTaobaoUserId());
@@ -191,8 +195,6 @@ public class LxPartnerBOImpl implements LxPartnerBO {
         dto.setType(PartnerInstanceTypeEnum.LX);
         dto.copyOperatorDto(lxPartnerAddDto);
         dto.setTaobaoUserId(taobaoUserId);
-        
-        //TODO:创建pid
         return partnerInstanceBO.addPartnerStationRel(dto);
 	}
 

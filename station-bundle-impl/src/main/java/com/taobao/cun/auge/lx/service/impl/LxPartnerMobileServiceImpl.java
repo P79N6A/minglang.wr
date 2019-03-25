@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.result.ErrorInfo;
@@ -37,7 +39,8 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 	@Autowired
 	private PartnerAdzoneService partnerAdzoneService;
 
-
+	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Result<Boolean> addLxPartner(LxPartnerAddDto param) {
 		try {
