@@ -84,7 +84,6 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 	@Autowired
 	private RmbService rmbService;
 	
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Boolean addLxPartner(LxPartnerAddDto param) {
 		Objects.requireNonNull(param, "参数不能为空");
@@ -173,7 +172,6 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		return maxCount;
 	}
 	
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addLx(LxPartnerAddDto lxPartnerAddDto, Long taobaoUserId) {
 
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(lxPartnerAddDto.getpTaobaoUserId());

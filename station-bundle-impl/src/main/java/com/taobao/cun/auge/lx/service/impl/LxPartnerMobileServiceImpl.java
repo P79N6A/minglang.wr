@@ -36,7 +36,6 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 	private RmbService rmbService;
 
 	
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Result<Boolean> addLxPartner(LxPartnerAddDto param) {
 		try {
