@@ -99,7 +99,9 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 				throw new AugeBusinessException(LxErrorCodes.CONCURRENT_UPDATE_ERROR_CODE, "请稍后重试");
 			}
 			addLx(param, taobaoUserId);
+			if(isSync()){
 			partnerAdzoneService.createAdzone(taobaoUserId);
+			}
 		} catch (Exception e) {
 			logger.error("LxPartnerBOImpl.addLxPartner error! param:" + taobaoUserId, e);
 			throw new AugeBusinessException(LxErrorCodes.LX_CREATE_PID_ERROR, "今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦");
@@ -250,6 +252,24 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		res.setMaxCount(getMaxCount());
 		res.setLxPartners( partnerInstanceBO.getActiveLxListrByParentStationId(taobaoUserId));
 		return res;
+	}
+	
+	private Boolean isSync() {
+		String isSync="y";
+		try {
+			isSync= Diamond.getConfig("auge.lx.isSync.alimama", "DEFAULT_GROUP", 3000);
+		} catch (IOException e) {
+			logger.error("LxPartnerMobileService.checkFkByTaobaoUserId error! param:" + taobaoUserId, e);
+			return Boolean.FALSE;
+		}
+		if ("y".equals(isSync)) {
+			return Boolean.TRUE;
+		}else {
+			return Boolean.FALSE;
+		}
+		
+		
+		
 	}
 	
 	private Boolean checkFkByTaobaoUserId(Long taobaoUserId) {
