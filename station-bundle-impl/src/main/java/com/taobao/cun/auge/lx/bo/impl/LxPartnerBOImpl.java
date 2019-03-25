@@ -140,6 +140,10 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 					&& PartnerInstanceStateEnum.CLOSED.getCode().equals(pi.getState())) {
 				throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_BUSI_CHECK_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
 			}
+			if (InstanceTypeEnum.LX.getCode().equals(pi.getType())
+					&& PartnerInstanceStateEnum.SERVICING.getCode().equals(pi.getState())) {
+				throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_SAME_LX_ERROR_CODE, "无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号");
+			}
 			throw new AugeBusinessException(LxErrorCodes.TAOBAONICK_OTHER_BUSI_CHECK_ERROR_CODE,
 					"不支持邀请村小二/淘帮手/优盟/村拍档的淘宝账号成为拉新伙伴，请尝试其他淘宝账号");
 		}

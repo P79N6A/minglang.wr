@@ -56,4 +56,10 @@ public interface LxErrorCodes {
 	 *今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦
 	 */
 	public static final String LX_CREATE_PID_ERROR = "B-00010";
+	
+	
+	/**
+	 * 冲突提交
+	 */
+	public static final  String TAOBAONICK_SAME_LX_ERROR_CODE = "B-00011";
 }
