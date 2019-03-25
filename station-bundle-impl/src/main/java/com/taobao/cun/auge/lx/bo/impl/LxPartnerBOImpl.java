@@ -268,4 +268,16 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		
 		
 	}
+
+	@Override
+	public Boolean deleteByTaobaoUserId(Long taobaoUserId) {
+		// 判断淘宝账号是否使用中
+		PartnerStationRel pi = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (null != pi && InstanceTypeEnum.LX.getCode().equals(pi.getType())) {
+			partnerInstanceBO.deletePartnerStationRel(pi.getId(), "system");
+			partnerBO.deletePartner(pi.getPartnerId(), "system");
+			stationBO.deleteStation(pi.getStationId(), "system");
+		}
+		throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "当前账号没有找到");
+	}
 }

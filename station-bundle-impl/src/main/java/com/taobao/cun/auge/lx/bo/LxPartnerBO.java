@@ -23,4 +23,10 @@ public interface LxPartnerBO {
 	 * @return
 	 */
 	public LxPartnerListDto listLxPartner(Long taobaoUserId);
+	/**
+	 * 测试使用
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Boolean deleteByTaobaoUserId(Long taobaoUserId);
 }

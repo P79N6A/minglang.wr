@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.failure.LxErrorCodes;
 import com.taobao.cun.auge.lx.bo.LxPartnerBO;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
 import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
@@ -46,7 +45,7 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 			return Result.of(errorInfo);
 		} catch (Exception e) {
 			logger.error("LxPartnerMobileService.addLxPartner error! param:" + JSON.toJSONString(param), e);
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			ErrorInfo errorInfo = ErrorInfo.of(LxErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
 	}
@@ -56,11 +55,11 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 		try {
 			return Result.of(lxPartnerBO.listLxPartner(taobaoUserId));
 		} catch (AugeBusinessException e1) {
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, null, e1.getMessage());
+			ErrorInfo errorInfo = ErrorInfo.of(e1.getExceptionCode(), null, e1.getMessage());
 			return Result.of(errorInfo);
 		} catch (Exception e) {
 			logger.error("LxPartnerMobileService.addLxPartner error! param:" + taobaoUserId, e);
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			ErrorInfo errorInfo = ErrorInfo.of(LxErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
 	}
@@ -90,7 +89,16 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 
 	@Override
 	public Result<Boolean> deleteByTaobaoUserId(Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Result.of(lxPartnerBO.deleteByTaobaoUserId(taobaoUserId));
+		} 
+		catch (AugeBusinessException e1) {
+			ErrorInfo errorInfo = ErrorInfo.of(e1.getExceptionCode(), null, e1.getMessage());
+			return Result.of(errorInfo);
+		} catch (Exception e) {
+			logger.error("LxPartnerMobileService.deleteByTaobaoUserId error! param:" +taobaoUserId, e);
+			ErrorInfo errorInfo = ErrorInfo.of(LxErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
 	}
 }
