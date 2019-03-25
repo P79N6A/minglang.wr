@@ -891,11 +891,6 @@
 				<artifactId>cun-partner-api</artifactId>
 				<version>1.3.4</version>
 			</dependency>
-			<dependency>
-				<groupId>io.projectreactor</groupId>
-				<artifactId>reactor-core</artifactId>
-				<version>3.2.6.RELEASE</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

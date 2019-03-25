@@ -556,10 +556,6 @@
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cun-partner-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-core</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
