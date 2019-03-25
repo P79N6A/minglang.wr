@@ -32,6 +32,7 @@ public class CuntaoCountyWaitOpenProcessBo {
 			if(!result.isSuccess()) {
 				throw new RuntimeException("创建流程失败：" + result.getException().getMessage());
 			}
+			cuntaoCountyBo.updateState(countyId, CuntaoCountyStateEnum.WAIT_OPEN_AUDIT.getCode(), operator);
 		}else {
 			throw new RuntimeException("当前状态下不能发起开业待审批流程");
 		}
