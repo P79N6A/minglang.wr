@@ -250,7 +250,7 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 	}
 	
 	private Boolean checkFkByTaobaoUserId(Long taobaoUserId) {
-		String isCheck="n";
+		String isCheck="y";
 		try {
 			isCheck= Diamond.getConfig("auge.lx.identifyrisk.asac", "DEFAULT_GROUP", 3000);
 		} catch (IOException e) {
