@@ -42,7 +42,6 @@ public interface LxErrorCodes {
 	 */
 	public static final String SYSTEM_ERROR_CODE = "B-00007";
 
-	
 	/**
 	 * 所属村小二业务信息检查异常
 	 */
@@ -52,4 +51,9 @@ public interface LxErrorCodes {
 	 * 风控异常：无法邀请该账号成为拉新伙伴，请尝试其他淘宝账号
 	 */
 	public static final String TAOBAONICK_FK_CHECK_ERROR_CODE = "B-00009";
+	
+	/**
+	 *今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦
+	 */
+	public static final String LX_CREATE_PID_ERROR = "B-00010";
 }
