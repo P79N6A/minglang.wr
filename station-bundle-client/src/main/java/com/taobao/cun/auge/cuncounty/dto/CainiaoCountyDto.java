@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.google.common.base.Splitter;
 
 /**
  * 菜鸟县仓
@@ -74,6 +78,13 @@ public class CainiaoCountyDto {
      * 状态
      */
     private String state;
+    
+    public List<String> getAttachmentArray(){
+    	if(attachments == null) {
+    		return new ArrayList<String>();
+    	}
+    	return Splitter.on(";").splitToList(attachments);
+    }
 
 	public String getState() {
 		return state;

@@ -52,7 +52,7 @@ public class CuntaoCountyGovContractDto {
     private String attachments;
     
     public List<String> getAttachmentArray(){
-    	if(attachments != null) {
+    	if(attachments == null) {
     		return new ArrayList<String>();
     	}
     	return Splitter.on(";").splitToList(attachments);
