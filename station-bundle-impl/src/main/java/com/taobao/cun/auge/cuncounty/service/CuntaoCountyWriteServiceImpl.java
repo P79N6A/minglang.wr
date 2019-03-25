@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyUpdateFacade;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyWriteBo;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
@@ -14,6 +15,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class CuntaoCountyWriteServiceImpl implements CuntaoCountyWriteService{
 	@Resource
 	private CuntaoCountyWriteBo cuntaoCountyWriteBo;
+	@Resource
+	private CuntaoCountyUpdateFacade cuntaoCountyUpdateFacade;
 	
 	@Override
 	public Long createCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto) {
@@ -22,6 +25,6 @@ public class CuntaoCountyWriteServiceImpl implements CuntaoCountyWriteService{
 
 	@Override
 	public void updateCuntaoCounty(CuntaoCountyUpdateDto cuntaoCountyUpdateDto) {
-		cuntaoCountyWriteBo.updateCuntaoCounty(cuntaoCountyUpdateDto);
+		cuntaoCountyUpdateFacade.update(cuntaoCountyUpdateDto);
 	}
 }

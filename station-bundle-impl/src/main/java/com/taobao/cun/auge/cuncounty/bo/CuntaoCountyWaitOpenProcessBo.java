@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
+import com.taobao.cun.auge.cuncounty.exception.IllegalCountyStateException;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -30,7 +31,7 @@ public class CuntaoCountyWaitOpenProcessBo {
 	
 	public void start(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(countyId);
-		if(checkState(cuntaoCountyDto)) {
+		if(isNeedAuditState(cuntaoCountyDto)) {
 			Map<String, String> initData = Maps.newHashMap();
 			initData.put("orgId", String.valueOf(cuntaoCountyDto.getOrgId()));
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
@@ -46,11 +47,11 @@ public class CuntaoCountyWaitOpenProcessBo {
 			}
 			cuntaoCountyBo.updateState(countyId, CuntaoCountyStateEnum.WAIT_OPEN_AUDIT.getCode(), operator);
 		}else {
-			throw new RuntimeException("当前状态下不能发起开业待审批流程");
+			throw new IllegalCountyStateException("当前状态下不能发起开业待审批流程");
 		}
 	}
 
-	private boolean checkState(CuntaoCountyDto cuntaoCountyDto) {
+	public boolean isNeedAuditState(CuntaoCountyDto cuntaoCountyDto) {
 		return cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.PLANNING.getCode()) || 
 			cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.WAIT_OPEN_AUDIT_FAIL.getCode());
 	}

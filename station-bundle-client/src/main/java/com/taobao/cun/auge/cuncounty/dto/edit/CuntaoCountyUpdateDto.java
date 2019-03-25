@@ -33,6 +33,16 @@ public class CuntaoCountyUpdateDto {
 	 * 县服务中心ID
 	 */
 	private Long countyId;
+	
+	private String operator;
+	
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 
 	public Long getCountyId() {
 		return countyId;
