@@ -290,4 +290,14 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
 		return order;
 	}
 
+	@Override
+	public void clearTairByPid(String pid) {
+		Assert.notNull(pid, "pid is null");
+		String cacheKey = ADZONE_CACHE_PRE + (pid == null ? "" : pid);
+		PartnerAdzoneInfoDto d = tairCache.get(cacheKey);
+		if (null != d) {
+			tairCache.invalid(cacheKey);
+		}
+	}
+
 }

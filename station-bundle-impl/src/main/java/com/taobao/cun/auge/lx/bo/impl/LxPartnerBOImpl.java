@@ -310,6 +310,11 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		if (null != pi && InstanceTypeEnum.LX.getCode().equals(pi.getType())) {
 			stationBO.changeState(pi.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSED,"system");
 			partnerInstanceBO.changeState(pi.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED, "system");
+			String pid = partnerAdzoneService.getUnionPid(taobaoUserId, pi.getStationId());
+			if (StringUtils.isNotEmpty(pid)) {
+				partnerAdzoneService.clearTairByPid(pid);
+			}
+			
 			return Boolean.TRUE;
 
 		}
