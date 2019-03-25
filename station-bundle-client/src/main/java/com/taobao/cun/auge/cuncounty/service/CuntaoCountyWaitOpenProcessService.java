@@ -5,12 +5,12 @@ package com.taobao.cun.auge.cuncounty.service;
  * @author chengyu.zhoucy
  *
  */
-public interface CuntaoCountyWaitOpenProcess {
+public interface CuntaoCountyWaitOpenProcessService {
 	/**
 	 * 发起流程
 	 * @param countyId
 	 */
-	void start(Long countyId);
+	void start(Long countyId, String operator);
 	/**
 	 * 同意
 	 * @param countyId

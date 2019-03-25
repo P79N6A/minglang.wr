@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -20,7 +22,7 @@ public class CuntaoCountyBo {
 	@Resource
 	private CuntaoCountyMapper cuntaoCountyMapper;
 	
-	CuntaoCountyDto getCuntaoCounty(Long id) {
+	public CuntaoCountyDto getCuntaoCounty(Long id) {
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(id);
 		if(cuntaoCounty == null) {
 			return null;
@@ -28,5 +30,17 @@ public class CuntaoCountyBo {
 		CuntaoCountyDto cuntaoCountyDto = BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyMapper.selectByPrimaryKey(id));
 		cuntaoCountyDto.setState(cuntaoCounty.getState());
 		return cuntaoCountyDto;
+	}
+	
+	public void updateState(Long countyId, String state, String operator) {
+		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(countyId);
+		if(cuntaoCounty != null) {
+			cuntaoCounty.setState(state);
+			if(operator != null) {
+				cuntaoCounty.setModifier(operator);
+			}
+			cuntaoCounty.setGmtModified(new Date());
+			cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
+		}
 	}
 }
