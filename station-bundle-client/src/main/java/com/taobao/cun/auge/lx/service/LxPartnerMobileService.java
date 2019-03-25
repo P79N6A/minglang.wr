@@ -24,6 +24,16 @@ public interface LxPartnerMobileService {
 	 */
 	public Result<LxPartnerListDto> listLxPartner(Long taobaoUserId);
 	
-	
+	/**
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
 	public  Result<Boolean> checkFkByTaobaoUserId(Long taobaoUserId);
+	/**
+	 * 测试删除
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Result<Boolean> deleteByTaobaoUserId(Long taobaoUserId);
 }

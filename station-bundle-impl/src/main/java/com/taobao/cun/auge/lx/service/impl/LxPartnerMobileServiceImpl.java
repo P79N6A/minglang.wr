@@ -41,12 +41,8 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 		try {
 			return Result.of(lxPartnerBO.addLxPartner(param));
 		} 
-		catch (NullPointerException e2) {
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, null, e2.getMessage());
-			return Result.of(errorInfo);
-		}
 		catch (AugeBusinessException e1) {
-			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, null, e1.getMessage());
+			ErrorInfo errorInfo = ErrorInfo.of(e1.getExceptionCode(), null, e1.getMessage());
 			return Result.of(errorInfo);
 		} catch (Exception e) {
 			logger.error("LxPartnerMobileService.addLxPartner error! param:" + JSON.toJSONString(param), e);
@@ -90,5 +86,11 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, rmbResult.getErrorMsg());
 			return Result.of(errorInfo);
 		}
+	}
+
+	@Override
+	public Result<Boolean> deleteByTaobaoUserId(Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
