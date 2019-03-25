@@ -36,4 +36,11 @@ public interface LxPartnerMobileService {
 	 * @return
 	 */
 	public Result<Boolean> deleteByTaobaoUserId(Long taobaoUserId);
+	
+	/**
+	 * 测试停用
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Result<Boolean> closedByTaobaoUserId(Long taobaoUserId);
 }

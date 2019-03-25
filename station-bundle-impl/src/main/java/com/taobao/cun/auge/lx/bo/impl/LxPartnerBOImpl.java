@@ -280,4 +280,15 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		}
 		throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "当前账号没有找到");
 	}
+
+	@Override
+	public Boolean closedByTaobaoUserId(Long taobaoUserId) {
+		PartnerStationRel pi = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (null != pi && InstanceTypeEnum.LX.getCode().equals(pi.getType())) {
+			stationBO.changeState(pi.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSED,"system");
+			partnerInstanceBO.changeState(pi.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED, "system");
+
+		}
+		throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "当前账号没有找到");
+	}
 }

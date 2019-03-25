@@ -101,4 +101,19 @@ public class LxPartnerMobileServiceImpl implements LxPartnerMobileService {
 			return Result.of(errorInfo);
 		}
 	}
+
+	@Override
+	public Result<Boolean> closedByTaobaoUserId(Long taobaoUserId) {
+		try {
+			return Result.of(lxPartnerBO.closedByTaobaoUserId(taobaoUserId));
+		} 
+		catch (AugeBusinessException e1) {
+			ErrorInfo errorInfo = ErrorInfo.of(e1.getExceptionCode(), null, e1.getMessage());
+			return Result.of(errorInfo);
+		} catch (Exception e) {
+			logger.error("LxPartnerMobileService.closedByTaobaoUserId error! param:" +taobaoUserId, e);
+			ErrorInfo errorInfo = ErrorInfo.of(LxErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
 }

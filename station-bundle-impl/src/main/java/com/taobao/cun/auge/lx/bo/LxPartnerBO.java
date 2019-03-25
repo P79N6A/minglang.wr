@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.lx.bo;
 
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
 import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
 
@@ -24,9 +25,16 @@ public interface LxPartnerBO {
 	 */
 	public LxPartnerListDto listLxPartner(Long taobaoUserId);
 	/**
-	 * 测试使用
+	 * 测试使用 删除
 	 * @param taobaoUserId
 	 * @return
 	 */
 	public Boolean deleteByTaobaoUserId(Long taobaoUserId);
+	
+	/**
+	 * 测试使用  停用
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Boolean closedByTaobaoUserId(Long taobaoUserId)；
 }
