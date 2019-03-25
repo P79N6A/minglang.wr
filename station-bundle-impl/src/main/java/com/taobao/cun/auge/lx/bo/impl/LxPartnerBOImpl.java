@@ -101,13 +101,9 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 				throw new AugeBusinessException(LxErrorCodes.CONCURRENT_UPDATE_ERROR_CODE, "请稍后重试");
 			}
 			addLx(param, taobaoUserId);
-			try {
-				partnerAdzoneService.createAdzone(taobaoUserId);
-			} catch (Exception e) {
-				throw new AugeBusinessException(LxErrorCodes.LX_CREATE_PID_ERROR, "今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦");
-			}
+			partnerAdzoneService.createAdzone(taobaoUserId);
 		} catch (Exception e) {
-			throw new AugeBusinessException(LxErrorCodes.SYSTEM_ERROR_CODE, "创建拉新伙伴失败，请稍后重试");
+			throw new AugeBusinessException(LxErrorCodes.LX_CREATE_PID_ERROR, "今日已无法再邀请拉新伙伴。请稍安勿躁，明天再尝试哦");
 		} finally {
 			if (lockResult) {
 				distributeLock.unlock("lxPartner-taobaoUserId", String.valueOf(taobaoUserId));
