@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 
@@ -17,6 +18,13 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
  *
  */
 public interface CuntaoCountyQueryService {
+	/**
+	 * 获取县点基本信息
+	 * 
+	 * @param countyId
+	 * @return
+	 */
+	CuntaoCountyDto getCuntaoCounty(Long countyId);
 	/**
 	 * 查询一个县服务中心详情
 	 * @param countyId

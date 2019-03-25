@@ -48,6 +48,15 @@ public class CuntaoCountyQueryBo {
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	@Resource
 	private CuntaoUserOrgService cuntaoUserOrgService;
+	
+	/**
+	 * 县点基本信息
+	 * @param countyId
+	 * @return
+	 */
+	public CuntaoCountyDto getCuntaoCounty(Long countyId) {
+		return cuntaoCountyBo.getCuntaoCounty(countyId);
+	}
 	/**
 	 * 查询详情
 	 * @param countyId

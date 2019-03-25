@@ -10,6 +10,7 @@ import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -33,6 +34,11 @@ public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {
 	@Override
 	public List<CuntaoCountyStateCountDto> groupCountyByState(CuntaoCountyCondition condition) {
 		return cuntaoCountyQueryBo.groupCountyByState(condition);
+	}
+
+	@Override
+	public CuntaoCountyDto getCuntaoCounty(Long countyId) {
+		return cuntaoCountyQueryBo.getCuntaoCounty(countyId);
 	}
 
 }
