@@ -18,12 +18,18 @@ public class StationBizTypeEnum implements Serializable {
 	public static final StationBizTypeEnum YOUPIN_ELEC = new StationBizTypeEnum("YOUPIN_ELEC",
 			"天猫优品服务站(电器合作店)");
 	public static final StationBizTypeEnum TPS_ELEC = new StationBizTypeEnum("TPS_ELEC", "天猫优品电器体验店");
+	public static final StationBizTypeEnum UM = new StationBizTypeEnum("UM", "优盟");
+	public static final StationBizTypeEnum TPA = new StationBizTypeEnum("TPA", "淘帮手");
+
+
 
 	static {
 		MAPPING.put("STATION", STATION);
 		MAPPING.put("YOUPIN", YOUPIN);
 		MAPPING.put("YOUPIN_ELEC", YOUPIN_ELEC);
 		MAPPING.put("TPS_ELEC", TPS_ELEC);
+		MAPPING.put("UM", UM);
+		MAPPING.put("TPA", TPA);
 	}
 
 	public StationBizTypeEnum(String code, String desc) {
