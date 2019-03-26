@@ -58,11 +58,11 @@ public class CuntaoCountyPredicate {
 			BeanValidator.validateWithThrowable(dto);
 		}
 		
-		//办公场地校验，如果之前已经有办公场地了，那么更新的时候也必须有办公场地，不允许删除
+		//办公场地校验，如果之前已经有办公场地了，那么更新的时候也必须有办公场地，不允许为空
 		CuntaoCountyOfficeDto cuntaoCountyOfficeDto = cuntaoCountyOfficeBo.getCuntaoCountyOffice(cuntaoCountyUpdateDto.getCountyId());
 		if(cuntaoCountyOfficeDto != null) {
 			if(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto() == null) {
-				throw new IllegalArgumentException("不允许删除办公场地信息");
+				throw new IllegalArgumentException("办公场地信息不能为空");
 			}
 		}
 		
@@ -70,11 +70,11 @@ public class CuntaoCountyPredicate {
 			BeanValidator.validateWithThrowable(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
 		}
 		
-		//校验菜鸟县仓
+		//校验菜鸟县仓，如果之前已经有菜鸟县仓了，那么更新的时候也必须有菜鸟县仓，不允许为空
 		CainiaoCountyDto cainiaoCountyDto = cainiaoCountyBo.getCainiaoCountyDto(cuntaoCountyUpdateDto.getCountyId());
 		if(cainiaoCountyDto != null) {
 			if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() == null) {
-				throw new IllegalArgumentException("不允许删除菜鸟县仓");
+				throw new IllegalArgumentException("菜鸟县仓信息不能为空");
 			}
 		}
 		if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() != null) {
