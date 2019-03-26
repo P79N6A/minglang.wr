@@ -63,6 +63,6 @@ public class CuntaoCountyWhitenameBo {
 		record.setCountyId(countyId);
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		example.createCriteria().andCountyCodeEqualTo(countyCode);
-		cuntaoCountyWhitenameMapper.updateByExample(record, example);
+		cuntaoCountyWhitenameMapper.updateByExampleSelective(record, example);
 	}
 }
