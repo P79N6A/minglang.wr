@@ -4,8 +4,12 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.NewRevenueCommunicationBO;
 import com.taobao.cun.auge.station.condition.NewRevenueCommunicationCondition;
 import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -16,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service("newRevenueCommunicationService")
@@ -27,6 +33,8 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
 
     @Autowired
     NewRevenueCommunicationBO newRevenueCommunicationBO;
+    @Autowired
+    GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
     public void commitNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto) {
@@ -38,6 +46,22 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         Assert.notNull(newRevenueCommunicationDto.getCommuAddress(), "commuAddress is null");
         Assert.notNull(newRevenueCommunicationDto.getCommuContent(), "commuContent is null");
         newRevenueCommunicationBO.addNewRevenueCommunication(newRevenueCommunicationDto);
+
+        //提交审批任务
+        ApproveProcessTask processTask=new ApproveProcessTask();
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("commuTime",newRevenueCommunicationDto.getCommuTime().toString());
+        params.put("commuAddress",newRevenueCommunicationDto.getCommuAddress());
+        params.put("commuContent",newRevenueCommunicationDto.getCommuContent());
+        processTask.setBusiness(ProcessBusinessEnum.stationTransHandOverInviteAudit);
+        processTask.setBusinessId(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
+        processTask.setBusinessName(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode());
+        processTask.setBusinessOrgId(newRevenueCommunicationDto.getOperatorOrgId());
+        processTask.setOperator(newRevenueCommunicationDto.getOperator());
+        processTask.setOperatorOrgId(newRevenueCommunicationDto.getOperatorOrgId());
+        processTask.setOperatorType(OperatorTypeEnum.BUC);
+        processTask.setParams(params);
+        generalTaskSubmitService.submitApproveProcessTask(processTask);
     }
 
     @Override
