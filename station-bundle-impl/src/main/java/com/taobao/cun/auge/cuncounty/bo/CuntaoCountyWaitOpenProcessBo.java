@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
@@ -28,6 +29,8 @@ public class CuntaoCountyWaitOpenProcessBo {
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	@Resource
 	private CuntaoCountyBo cuntaoCountyBo;
+	@Resource
+	private CainiaoCountySyncBo cainiaoCountySyncBo;
 	
 	public void start(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(countyId);
@@ -56,8 +59,10 @@ public class CuntaoCountyWaitOpenProcessBo {
 			cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.WAIT_OPEN_AUDIT_FAIL.getCode());
 	}
 
+	@Transactional(rollbackFor=Throwable.class)
 	public void agree(Long countyId) {
 		cuntaoCountyBo.updateState(countyId, CuntaoCountyStateEnum.WAIT_OPEN.getCode(), null);
+		cainiaoCountySyncBo.syncCainiaoCounty(countyId);
 	}
 
 	public void deny(Long countyId) {

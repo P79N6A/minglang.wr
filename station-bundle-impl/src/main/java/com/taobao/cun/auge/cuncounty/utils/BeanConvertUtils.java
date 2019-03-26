@@ -7,7 +7,6 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.BeanCopy;
-import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
@@ -123,17 +122,17 @@ public class BeanConvertUtils {
 		return BeanCopy.copy(targetClass, source);
 	}
 	
-	public static Address convertAddress(CainiaoCountyDto cainiaoCountyDto) {
+	public static Address convertAddress(CainiaoCounty cainiaoCounty) {
 		Address address = new Address();
-        address.setProvince(cainiaoCountyDto.getProvinceCode());
-        address.setProvinceDetail(cainiaoCountyDto.getProvinceName());
-        address.setCity(cainiaoCountyDto.getCityCode());
-        address.setCityDetail(cainiaoCountyDto.getCityName());
-        address.setCounty(cainiaoCountyDto.getCountyCode());
-        address.setCountyDetail(cainiaoCountyDto.getCountyName());
-        address.setTown(cainiaoCountyDto.getTownCode());
-        address.setTownDetail(cainiaoCountyDto.getTownName());
-        address.setAddressDetail(cainiaoCountyDto.getAddress());
+        address.setProvince(cainiaoCounty.getProvinceCode());
+        address.setProvinceDetail(cainiaoCounty.getProvinceName());
+        address.setCity(cainiaoCounty.getCityCode());
+        address.setCityDetail(cainiaoCounty.getCityName());
+        address.setCounty(cainiaoCounty.getCountyCode());
+        address.setCountyDetail(cainiaoCounty.getCountyName());
+        address.setTown(cainiaoCounty.getTownCode());
+        address.setTownDetail(cainiaoCounty.getTownName());
+        address.setAddressDetail(cainiaoCounty.getAddress());
         return address;
 	}
 }

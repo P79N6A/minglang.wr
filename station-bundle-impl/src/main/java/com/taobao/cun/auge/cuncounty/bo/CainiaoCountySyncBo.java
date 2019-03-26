@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
-import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
+import com.taobao.cun.auge.dal.domain.CainiaoCounty;
+import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -34,31 +35,34 @@ public class CainiaoCountySyncBo {
 	private EnhancedUserQueryService enhancedUserQueryService;
 	@Resource
 	private CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	@Resource
+	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	
-	void syncNewCounty(CainiaoCountyDto cainiaoCountyDto, String operator){
-		Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(toCainiaoStationDto(cainiaoCountyDto, operator));
+	void syncCainiaoCounty(Long countyId){
+		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);
+		Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(toCainiaoStationDto(cainiaoCounty));
         if (caiNiaostationId == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "同步菜鸟驿站失败");
         } else {
         	CuntaoCainiaoStationRelDto relDO = new CuntaoCainiaoStationRelDto();
-            relDO.setObjectId(cainiaoCountyDto.getCountyId());
+            relDO.setObjectId(countyId);
             relDO.setCainiaoStationId(caiNiaostationId);
             relDO.setType(CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
-            relDO.setOperator(operator);
+            relDO.setOperator(cainiaoCounty.getCreator());
             cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDO);
         }
 	}
 	
-	private CaiNiaoStationDto toCainiaoStationDto(CainiaoCountyDto cainiaoCountyDto, String operator) {
-		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(cainiaoCountyDto.getCountyId());
+	private CaiNiaoStationDto toCainiaoStationDto(CainiaoCounty cainiaoCounty) {
+		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(cainiaoCounty.getCountyId());
     	CaiNiaoStationDto stationDto = new CaiNiaoStationDto();
         stationDto.setStationName(cuntaoCountyDto.getName());
-        stationDto.setStationAddress(BeanConvertUtils.convertAddress(cainiaoCountyDto));
-        String contact = getUserName(operator);
-        stationDto.setContact(contact == null ? operator : contact);
+        stationDto.setStationAddress(BeanConvertUtils.convertAddress(cainiaoCounty));
+        String contact = getUserName(cainiaoCounty.getCreator());
+        stationDto.setContact(contact == null ? cainiaoCounty.getCreator() : contact);
         stationDto.setStationType(4);
-        stationDto.setLoginId(operator);
-        stationDto.setStationId(cainiaoCountyDto.getCountyId());
+        stationDto.setLoginId(cainiaoCounty.getCreator());
+        stationDto.setStationId(cainiaoCounty.getCountyId());
         return stationDto;
     }
 	
