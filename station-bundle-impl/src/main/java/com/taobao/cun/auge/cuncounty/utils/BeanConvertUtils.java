@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.BeanCopy;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
@@ -119,5 +121,19 @@ public class BeanConvertUtils {
 	
 	public static <T, S> T convert(Class<T> targetClass, S source){
 		return BeanCopy.copy(targetClass, source);
+	}
+	
+	public static Address convertAddress(CainiaoCountyDto cainiaoCountyDto) {
+		Address address = new Address();
+        address.setProvince(cainiaoCountyDto.getProvinceCode());
+        address.setProvinceDetail(cainiaoCountyDto.getProvinceName());
+        address.setCity(cainiaoCountyDto.getCityCode());
+        address.setCityDetail(cainiaoCountyDto.getCityName());
+        address.setCounty(cainiaoCountyDto.getCountyCode());
+        address.setCountyDetail(cainiaoCountyDto.getCountyName());
+        address.setTown(cainiaoCountyDto.getTownCode());
+        address.setTownDetail(cainiaoCountyDto.getTownName());
+        address.setAddressDetail(cainiaoCountyDto.getAddress());
+        return address;
 	}
 }

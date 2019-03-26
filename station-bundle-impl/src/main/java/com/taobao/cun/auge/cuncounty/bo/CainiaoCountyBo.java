@@ -23,6 +23,8 @@ public class CainiaoCountyBo {
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	@Resource
 	private CainiaoCountyMapper cainiaoCountyMapper;
+	@Resource
+	private CainiaoCountySyncBo cainiaoCountySyncBo;
 	
 	void save(CainiaoCountyEditDto cainiaoCountyEditDto) {
 		//如果没有菜鸟县仓信息则直接返回
@@ -31,7 +33,8 @@ public class CainiaoCountyBo {
 		}
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(cainiaoCountyEditDto.getCountyId());
 		if(cainiaoCounty == null) {
-			insert(cainiaoCountyEditDto);
+			cainiaoCounty = insert(cainiaoCountyEditDto);
+			cainiaoCountySyncBo.syncNewCounty(BeanConvertUtils.convert(CainiaoCountyDto.class, cainiaoCounty), cainiaoCountyEditDto.getOperator());
 		}else {
 			update(cainiaoCounty, cainiaoCountyEditDto);
 		}
@@ -45,9 +48,10 @@ public class CainiaoCountyBo {
 		cainiaoCountyMapper.updateByPrimaryKey(newCainiaoCounty);
 	}
 
-	private void insert(CainiaoCountyEditDto cainiaoCountyEditDto) {
+	private CainiaoCounty insert(CainiaoCountyEditDto cainiaoCountyEditDto) {
 		CainiaoCounty cainiaoCounty = BeanConvertUtils.convert(cainiaoCountyEditDto);
 		cainiaoCountyMapper.insert(cainiaoCounty);
+		return cainiaoCounty;
 	}
 	
 	CainiaoCountyDto getCainiaoCountyDto(Long countyId) {
