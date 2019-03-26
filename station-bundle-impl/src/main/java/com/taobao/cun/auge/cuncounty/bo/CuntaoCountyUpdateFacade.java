@@ -24,6 +24,10 @@ public class CuntaoCountyUpdateFacade {
 	private CuntaoCountyQueryBo cuntaoCountyQueryBo;
 	@Resource
 	private CuntaoCountyWaitOpenProcessBo cuntaoCountyWaitOpenProcessBo;
+	@Resource
+	private CainiaoCountyBo cainiaoCountyBo;
+	@Resource
+	private CainiaoCountySyncBo cainiaoCountySyncBo;
 	
 	@Transactional(rollbackFor=Throwable.class)
 	public void update(CuntaoCountyUpdateDto cuntaoCountyUpdateDto) {
@@ -37,6 +41,5 @@ public class CuntaoCountyUpdateFacade {
 		if(cuntaoCountyWaitOpenProcessBo.isNeedAuditState(cuntaoCountyDto)) {
 			cuntaoCountyWaitOpenProcessBo.start(cuntaoCountyUpdateDto.getCountyId(), cuntaoCountyUpdateDto.getOperator());
 		}
-		
 	}
 }

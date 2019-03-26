@@ -38,8 +38,11 @@ public class CainiaoCountySyncBo {
 	@Resource
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	
-	void syncCainiaoCounty(Long countyId){
+	void createCainiaoCounty(Long countyId){
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);
+		if(cainiaoCounty == null) {
+			return;
+		}
 		Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(toCainiaoStationDto(cainiaoCounty));
         if (caiNiaostationId == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "同步菜鸟驿站失败");
@@ -77,5 +80,9 @@ public class CainiaoCountySyncBo {
 		} catch (BucException e) {
 			return null;
 		}
+	}
+
+	public void updateCainiaoCounty(Long countyId) {
+		
 	}
 }

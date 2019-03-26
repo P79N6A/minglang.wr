@@ -62,7 +62,7 @@ public class CuntaoCountyWaitOpenProcessBo {
 	@Transactional(rollbackFor=Throwable.class)
 	public void agree(Long countyId) {
 		cuntaoCountyBo.updateState(countyId, CuntaoCountyStateEnum.WAIT_OPEN.getCode(), null);
-		cainiaoCountySyncBo.syncCainiaoCounty(countyId);
+		cainiaoCountySyncBo.createCainiaoCounty(countyId);
 	}
 
 	public void deny(Long countyId) {
