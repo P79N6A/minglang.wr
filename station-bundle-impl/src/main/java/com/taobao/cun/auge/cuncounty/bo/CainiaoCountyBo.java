@@ -53,7 +53,10 @@ public class CainiaoCountyBo {
 		cainiaoCountyMapper.updateByPrimaryKey(newCainiaoCounty);
 		//待开业后才需要更新
 		if(isSyncCainiaoCountyState(cuntaoCountyDto) && isCainiaoAddressChanged(cainiaoCounty, cainiaoCountyEditDto)) {
-			cainiaoCountySyncBo.updateCainiaoCounty(cuntaoCountyDto.getId());
+			cainiaoCountySyncBo.updateCainiaoCounty(
+					cuntaoCountyDto,
+					BeanConvertUtils.convert(CainiaoCountyDto.class, cainiaoCounty), 
+					BeanConvertUtils.convert(CainiaoCountyDto.class, newCainiaoCounty));
 		}
 	}
 

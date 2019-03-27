@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
+import com.taobao.cun.auge.cuncounty.mail.CainiaoCountyUpdateMessage;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
@@ -37,6 +39,8 @@ public class CainiaoCountySyncBo {
 	private CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	@Resource
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
+	@Resource
+	private CainiaoCountyUpdateMessage cainiaoCountyUpdateMessage;
 	
 	void createCainiaoCounty(Long countyId){
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);
@@ -82,7 +86,7 @@ public class CainiaoCountySyncBo {
 		}
 	}
 
-	public void updateCainiaoCounty(Long countyId) {
-		
+	public void updateCainiaoCounty(CuntaoCountyDto cuntaoCounty, CainiaoCountyDto oldCainiaoCounty, CainiaoCountyDto newCainiaoCounty) {
+		cainiaoCountyUpdateMessage.sendEmail(cuntaoCounty, oldCainiaoCounty, newCainiaoCounty);
 	}
 }

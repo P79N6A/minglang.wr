@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 /**
  * 菜鸟县仓
@@ -214,4 +215,11 @@ public class CainiaoCountyDto {
 		this.townCode = townCode;
 	}
 
+	public String toAdressDetail() {
+		return Strings.nullToEmpty(provinceName) + 
+				Strings.nullToEmpty(cityName)+ 
+				Strings.nullToEmpty(countyName)+ 
+				Strings.nullToEmpty(townName) + 
+				Strings.nullToEmpty(address);
+	}
 }
