@@ -20,6 +20,7 @@ import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 
 /**
  * 菜鸟县仓同步
@@ -28,7 +29,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  *
  */
 @Component
-public class CainiaoCountySyncBo {
+public class CainiaoCountyRemoteBo {
 	@Resource
 	private CaiNiaoAdapter caiNiaoAdapter;
 	@Resource
@@ -41,11 +42,13 @@ public class CainiaoCountySyncBo {
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	@Resource
 	private CainiaoCountyUpdateMessage cainiaoCountyUpdateMessage;
+	@Resource
+	private CaiNiaoService caiNiaoService;
 	
-	void createCainiaoCounty(Long countyId){
+	Long createCainiaoCounty(Long countyId){
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);
 		if(cainiaoCounty == null) {
-			return;
+			return 0L;
 		}
 		Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(toCainiaoStationDto(cainiaoCounty));
         if (caiNiaostationId == null) {
@@ -57,6 +60,7 @@ public class CainiaoCountySyncBo {
             relDO.setType(CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
             relDO.setOperator(cainiaoCounty.getCreator());
             cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDO);
+            return caiNiaostationId;
         }
 	}
 	
@@ -88,5 +92,9 @@ public class CainiaoCountySyncBo {
 
 	public void updateCainiaoCounty(CuntaoCountyDto cuntaoCounty, CainiaoCountyDto oldCainiaoCounty, CainiaoCountyDto newCainiaoCounty) {
 		cainiaoCountyUpdateMessage.sendEmail(cuntaoCounty, oldCainiaoCounty, newCainiaoCounty);
+	}
+	
+	public boolean isOperating(Long countyId) {
+		return caiNiaoService.checkCainiaoCountyIsOperatingByCountyId(countyId);
 	}
 }

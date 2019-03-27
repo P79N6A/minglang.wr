@@ -7,9 +7,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
  * 县服务中心
@@ -21,6 +24,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper;
 public class CuntaoCountyBo {
 	@Resource
 	private CuntaoCountyMapper cuntaoCountyMapper;
+	@Resource
+	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
 	
 	public CuntaoCountyDto getCuntaoCounty(Long id) {
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(id);
@@ -42,5 +47,12 @@ public class CuntaoCountyBo {
 			cuntaoCounty.setGmtModified(new Date());
 			cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
 		}
+	}
+	
+	public void applyOpen(Long countyId, String operator) {
+		if(!cainiaoCountyRemoteBo.isOperating(countyId)) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "菜鸟侧的县仓尚未开业，不具备县点开业条件");
+		}
+		updateState(countyId, CuntaoCountyStateEnum.OPENING.getCode(), operator);
 	}
 }

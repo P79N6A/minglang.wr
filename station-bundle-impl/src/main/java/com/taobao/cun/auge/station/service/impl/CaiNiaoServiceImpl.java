@@ -693,4 +693,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		 }
 		return true;
 	}
+
+	@Override
+	public boolean checkCainiaoCountyIsOperatingByCountyId(Long countyId) {
+		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(countyId);
+		return w != null && w.isUse();
+	}
 }

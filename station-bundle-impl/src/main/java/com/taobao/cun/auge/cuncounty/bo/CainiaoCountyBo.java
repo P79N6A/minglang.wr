@@ -29,7 +29,7 @@ public class CainiaoCountyBo {
 	@Resource
 	private CuntaoCountyBo cuntaoCountyBo;
 	@Resource
-	private CainiaoCountySyncBo cainiaoCountySyncBo;
+	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
 	
 	void save(CainiaoCountyEditDto cainiaoCountyEditDto) {
 		//如果没有菜鸟县仓信息则直接返回
@@ -53,7 +53,7 @@ public class CainiaoCountyBo {
 		cainiaoCountyMapper.updateByPrimaryKey(newCainiaoCounty);
 		//待开业后才需要更新
 		if(isSyncCainiaoCountyState(cuntaoCountyDto) && isCainiaoAddressChanged(cainiaoCounty, cainiaoCountyEditDto)) {
-			cainiaoCountySyncBo.updateCainiaoCounty(
+			cainiaoCountyRemoteBo.updateCainiaoCounty(
 					cuntaoCountyDto,
 					BeanConvertUtils.convert(CainiaoCountyDto.class, cainiaoCounty), 
 					BeanConvertUtils.convert(CainiaoCountyDto.class, newCainiaoCounty));
@@ -62,11 +62,11 @@ public class CainiaoCountyBo {
 
 	private void insert(CainiaoCountyEditDto cainiaoCountyEditDto, CuntaoCountyDto cuntaoCountyDto) {
 		CainiaoCounty cainiaoCounty = BeanConvertUtils.convert(cainiaoCountyEditDto);
-		cainiaoCountyMapper.insert(cainiaoCounty);
 		//在待开业之前，需要审批过了之后才能同步到菜鸟
 		if(isSyncCainiaoCountyState(cuntaoCountyDto)) {
-			cainiaoCountySyncBo.createCainiaoCounty(cuntaoCountyDto.getId());
+			cainiaoCounty.setCainiaoCountyId(cainiaoCountyRemoteBo.createCainiaoCounty(cuntaoCountyDto.getId()));
 		}
+		cainiaoCountyMapper.insert(cainiaoCounty);
 	}
 	
 	CainiaoCountyDto getCainiaoCountyDto(Long countyId) {

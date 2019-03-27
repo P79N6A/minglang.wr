@@ -27,6 +27,7 @@
     <result column="town_name" jdbcType="VARCHAR" property="townName" />
     <result column="town_code" jdbcType="VARCHAR" property="townCode" />
     <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="cainiao_county_id" jdbcType="BIGINT" property="cainiaoCountyId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -101,7 +102,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, county_id, address, 
     storage_area, gmt_rent_start, gmt_rent_end, attachments, province_name, province_code, 
-    city_name, city_code, county_name, county_code, town_name, town_code, state
+    city_name, city_code, county_name, county_code, town_name, town_code, state, cainiao_county_id
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CainiaoCountyExample" resultMap="BaseResultMap">
     <!--
@@ -164,14 +165,16 @@
       gmt_rent_end, attachments, province_name, 
       province_code, city_name, city_code, 
       county_name, county_code, town_name, 
-      town_code, state)
+      town_code, state, cainiao_county_id
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{countyId,jdbcType=BIGINT}, 
       #{address,jdbcType=VARCHAR}, #{storageArea,jdbcType=VARCHAR}, #{gmtRentStart,jdbcType=TIMESTAMP}, 
       #{gmtRentEnd,jdbcType=TIMESTAMP}, #{attachments,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, 
       #{provinceCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
       #{countyName,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, #{townName,jdbcType=VARCHAR}, 
-      #{townCode,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+      #{townCode,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{cainiaoCountyId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CainiaoCounty">
     <!--
@@ -243,6 +246,9 @@
       <if test="state != null">
         state,
       </if>
+      <if test="cainiaoCountyId != null">
+        cainiao_county_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -304,6 +310,9 @@
       </if>
       <if test="state != null">
         #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="cainiaoCountyId != null">
+        #{cainiaoCountyId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -387,6 +396,9 @@
       <if test="record.state != null">
         state = #{record.state,jdbcType=VARCHAR},
       </if>
+      <if test="record.cainiaoCountyId != null">
+        cainiao_county_id = #{record.cainiaoCountyId,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -418,7 +430,8 @@
       county_code = #{record.countyCode,jdbcType=VARCHAR},
       town_name = #{record.townName,jdbcType=VARCHAR},
       town_code = #{record.townCode,jdbcType=VARCHAR},
-      state = #{record.state,jdbcType=VARCHAR}
+      state = #{record.state,jdbcType=VARCHAR},
+      cainiao_county_id = #{record.cainiaoCountyId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -490,6 +503,9 @@
       <if test="state != null">
         state = #{state,jdbcType=VARCHAR},
       </if>
+      <if test="cainiaoCountyId != null">
+        cainiao_county_id = #{cainiaoCountyId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -518,7 +534,8 @@
       county_code = #{countyCode,jdbcType=VARCHAR},
       town_name = #{townName,jdbcType=VARCHAR},
       town_code = #{townCode,jdbcType=VARCHAR},
-      state = #{state,jdbcType=VARCHAR}
+      state = #{state,jdbcType=VARCHAR},
+      cainiao_county_id = #{cainiaoCountyId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -80,7 +80,20 @@ public class CainiaoCountyDto {
      */
     private String state;
     
-    public List<String> getAttachmentArray(){
+    /**
+     * 菜鸟县仓ID
+     */
+    private Long cainiaoCountyId;
+    
+    public Long getCainiaoCountyId() {
+		return cainiaoCountyId;
+	}
+
+	public void setCainiaoCountyId(Long cainiaoCountyId) {
+		this.cainiaoCountyId = cainiaoCountyId;
+	}
+
+	public List<String> getAttachmentArray(){
     	if(attachments == null) {
     		return new ArrayList<String>();
     	}

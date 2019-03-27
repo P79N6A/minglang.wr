@@ -27,7 +27,7 @@ public class CuntaoCountyUpdateFacade {
 	@Resource
 	private CainiaoCountyBo cainiaoCountyBo;
 	@Resource
-	private CainiaoCountySyncBo cainiaoCountySyncBo;
+	private CainiaoCountyRemoteBo cainiaoCountySyncBo;
 	
 	@Transactional(rollbackFor=Throwable.class)
 	public void update(CuntaoCountyUpdateDto cuntaoCountyUpdateDto) {

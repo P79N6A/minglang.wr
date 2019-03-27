@@ -30,7 +30,7 @@ public class CuntaoCountyWaitOpenProcessBo {
 	@Resource
 	private CuntaoCountyBo cuntaoCountyBo;
 	@Resource
-	private CainiaoCountySyncBo cainiaoCountySyncBo;
+	private CainiaoCountyRemoteBo cainiaoCountySyncBo;
 	
 	public void start(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(countyId);

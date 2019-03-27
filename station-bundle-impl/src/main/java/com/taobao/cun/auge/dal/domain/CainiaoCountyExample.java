@@ -1604,6 +1604,66 @@ public class CainiaoCountyExample {
             addCriterion("state not between", value1, value2, "state");
             return (Criteria) this;
         }
+
+        public Criteria andCainiaoCountyIdIsNull() {
+            addCriterion("cainiao_county_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdIsNotNull() {
+            addCriterion("cainiao_county_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdEqualTo(Long value) {
+            addCriterion("cainiao_county_id =", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdNotEqualTo(Long value) {
+            addCriterion("cainiao_county_id <>", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdGreaterThan(Long value) {
+            addCriterion("cainiao_county_id >", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("cainiao_county_id >=", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdLessThan(Long value) {
+            addCriterion("cainiao_county_id <", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdLessThanOrEqualTo(Long value) {
+            addCriterion("cainiao_county_id <=", value, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdIn(List<Long> values) {
+            addCriterion("cainiao_county_id in", values, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdNotIn(List<Long> values) {
+            addCriterion("cainiao_county_id not in", values, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdBetween(Long value1, Long value2) {
+            addCriterion("cainiao_county_id between", value1, value2, "cainiaoCountyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCainiaoCountyIdNotBetween(Long value1, Long value2) {
+            addCriterion("cainiao_county_id not between", value1, value2, "cainiaoCountyId");
+            return (Criteria) this;
+        }
     }
 
     /**
