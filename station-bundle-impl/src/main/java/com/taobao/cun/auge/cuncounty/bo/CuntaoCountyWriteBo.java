@@ -41,6 +41,8 @@ public class CuntaoCountyWriteBo {
 	private CainiaoCountyBo cainiaoCountyBo;
 	@Resource
 	private CuntaoOrgAdminAddressBo cuntaoOrgAdminAddressBo;
+	@Resource
+	private CountyActionLogBo countyActionLogBo;
 	
 	@Transactional(rollbackFor=Throwable.class)
 	public Long createCuntaoCounty(CuntaoCountyAddDto cuntaoCountyAddDto) {
@@ -56,6 +58,8 @@ public class CuntaoCountyWriteBo {
 		cuntaoOrgAdminAddressBo.create(cuntaoCountyDto, cuntaoCountyAddDto.getOperator());
 		//激活分发
 		cuntaoOrgAdminAddressBo.activeRefusedPartner(cuntaoCountyDto, cuntaoCountyAddDto.getOperator());
+		//记录创建日志
+		countyActionLogBo.addCreateLog(cuntaoCounty.getId(), cuntaoCounty.getCreator());
 		return cuntaoCounty.getId();
 	}
 	

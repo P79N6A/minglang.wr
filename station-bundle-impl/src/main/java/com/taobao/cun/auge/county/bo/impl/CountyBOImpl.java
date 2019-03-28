@@ -1137,7 +1137,7 @@ public class CountyBOImpl implements CountyBO {
     public CountyDto startOperate(CountyDto countyDto, Operator operator){
         validateStartOperateParam(countyDto);
         countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
-        addCountyStationActionLog(countyDto.getId(), BizActionEnum.countystation_operate, operator);
+        addCountyStationActionLog(countyDto.getId(), BizActionEnum.countystation_opening, operator);
         return saveCountyStation(countyDto, operator);
 	}
 
@@ -1206,7 +1206,7 @@ public class CountyBOImpl implements CountyBO {
 		record.setGmtModified(new Date());
 		record.setModifier(operator.getOpWorkId());
 		record.setGmtStartOpen(new Date());
-		addCountyStationActionLog(countyStationId, BizActionEnum.countystation_open, operator);
+		addCountyStationActionLog(countyStationId, BizActionEnum.countystation_opening, operator);
 		countyStationMapper.updateByPrimaryKeySelective(record);
 		return true;
 	}

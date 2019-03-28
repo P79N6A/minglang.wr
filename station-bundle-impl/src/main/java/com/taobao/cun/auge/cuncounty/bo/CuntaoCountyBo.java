@@ -26,6 +26,8 @@ public class CuntaoCountyBo {
 	private CuntaoCountyMapper cuntaoCountyMapper;
 	@Resource
 	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
+	@Resource
+	private CountyActionLogBo countyActionLogBo;
 	
 	public CuntaoCountyDto getCuntaoCounty(Long id) {
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(id);
@@ -46,6 +48,7 @@ public class CuntaoCountyBo {
 			}
 			cuntaoCounty.setGmtModified(new Date());
 			cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
+			countyActionLogBo.addStateLog(countyId, state, cuntaoCounty.getModifier());
 		}
 	}
 	
