@@ -20,7 +20,25 @@ public class PartnerAdzoneInfoDto implements Serializable {
      */
     private String pid;
     
+    /**
+     *拉新开通状态
+     */
     private Boolean lxState;
+
+    /**
+     *当前合伙人类型 (tp,tps,um,lx) InstanceTypeEnum
+     */
+    private String  type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
     
     public Boolean getLxState() {
 		return lxState;

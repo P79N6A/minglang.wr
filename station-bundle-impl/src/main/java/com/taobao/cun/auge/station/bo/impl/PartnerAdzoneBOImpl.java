@@ -61,6 +61,9 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         dto.setTaobaoUserId(adzone.getTaobaoUserId());
         
         PartnerStationRel r = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(adzone.getTaobaoUserId());
+        if (r != null) {
+            dto.setType(r.getType());
+        }
         if (r != null && InstanceTypeEnum.LX.getCode().equals(r.getType())) {
         	if (PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
         		 dto.setLxState(true);
