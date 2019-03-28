@@ -725,52 +725,62 @@ public class CuntaoCountyOfficeExample {
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaEqualTo(Integer value) {
+        public Criteria andBuildingAreaEqualTo(String value) {
             addCriterion("building_area =", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaNotEqualTo(Integer value) {
+        public Criteria andBuildingAreaNotEqualTo(String value) {
             addCriterion("building_area <>", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaGreaterThan(Integer value) {
+        public Criteria andBuildingAreaGreaterThan(String value) {
             addCriterion("building_area >", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaGreaterThanOrEqualTo(Integer value) {
+        public Criteria andBuildingAreaGreaterThanOrEqualTo(String value) {
             addCriterion("building_area >=", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaLessThan(Integer value) {
+        public Criteria andBuildingAreaLessThan(String value) {
             addCriterion("building_area <", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaLessThanOrEqualTo(Integer value) {
+        public Criteria andBuildingAreaLessThanOrEqualTo(String value) {
             addCriterion("building_area <=", value, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaIn(List<Integer> values) {
+        public Criteria andBuildingAreaLike(String value) {
+            addCriterion("building_area like", value, "buildingArea");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuildingAreaNotLike(String value) {
+            addCriterion("building_area not like", value, "buildingArea");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuildingAreaIn(List<String> values) {
             addCriterion("building_area in", values, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaNotIn(List<Integer> values) {
+        public Criteria andBuildingAreaNotIn(List<String> values) {
             addCriterion("building_area not in", values, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaBetween(Integer value1, Integer value2) {
+        public Criteria andBuildingAreaBetween(String value1, String value2) {
             addCriterion("building_area between", value1, value2, "buildingArea");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingAreaNotBetween(Integer value1, Integer value2) {
+        public Criteria andBuildingAreaNotBetween(String value1, String value2) {
             addCriterion("building_area not between", value1, value2, "buildingArea");
             return (Criteria) this;
         }

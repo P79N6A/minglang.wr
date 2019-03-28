@@ -14,7 +14,7 @@
     <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
     <result column="county_id" jdbcType="BIGINT" property="countyId" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="building_area" jdbcType="INTEGER" property="buildingArea" />
+    <result column="building_area" jdbcType="VARCHAR" property="buildingArea" />
     <result column="gmt_rent_start" jdbcType="TIMESTAMP" property="gmtRentStart" />
     <result column="gmt_rent_end" jdbcType="TIMESTAMP" property="gmtRentEnd" />
     <result column="attachments" jdbcType="VARCHAR" property="attachments" />
@@ -154,7 +154,7 @@
       gmt_rent_end, attachments)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{countyId,jdbcType=BIGINT}, 
-      #{address,jdbcType=VARCHAR}, #{buildingArea,jdbcType=INTEGER}, #{gmtRentStart,jdbcType=TIMESTAMP}, 
+      #{address,jdbcType=VARCHAR}, #{buildingArea,jdbcType=VARCHAR}, #{gmtRentStart,jdbcType=TIMESTAMP}, 
       #{gmtRentEnd,jdbcType=TIMESTAMP}, #{attachments,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoCountyOffice">
@@ -224,7 +224,7 @@
         #{address,jdbcType=VARCHAR},
       </if>
       <if test="buildingArea != null">
-        #{buildingArea,jdbcType=INTEGER},
+        #{buildingArea,jdbcType=VARCHAR},
       </if>
       <if test="gmtRentStart != null">
         #{gmtRentStart,jdbcType=TIMESTAMP},
@@ -279,7 +279,7 @@
         address = #{record.address,jdbcType=VARCHAR},
       </if>
       <if test="record.buildingArea != null">
-        building_area = #{record.buildingArea,jdbcType=INTEGER},
+        building_area = #{record.buildingArea,jdbcType=VARCHAR},
       </if>
       <if test="record.gmtRentStart != null">
         gmt_rent_start = #{record.gmtRentStart,jdbcType=TIMESTAMP},
@@ -309,7 +309,7 @@
       is_deleted = #{record.isDeleted,jdbcType=CHAR},
       county_id = #{record.countyId,jdbcType=BIGINT},
       address = #{record.address,jdbcType=VARCHAR},
-      building_area = #{record.buildingArea,jdbcType=INTEGER},
+      building_area = #{record.buildingArea,jdbcType=VARCHAR},
       gmt_rent_start = #{record.gmtRentStart,jdbcType=TIMESTAMP},
       gmt_rent_end = #{record.gmtRentEnd,jdbcType=TIMESTAMP},
       attachments = #{record.attachments,jdbcType=VARCHAR}
@@ -346,7 +346,7 @@
         address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="buildingArea != null">
-        building_area = #{buildingArea,jdbcType=INTEGER},
+        building_area = #{buildingArea,jdbcType=VARCHAR},
       </if>
       <if test="gmtRentStart != null">
         gmt_rent_start = #{gmtRentStart,jdbcType=TIMESTAMP},
@@ -373,7 +373,7 @@
       is_deleted = #{isDeleted,jdbcType=CHAR},
       county_id = #{countyId,jdbcType=BIGINT},
       address = #{address,jdbcType=VARCHAR},
-      building_area = #{buildingArea,jdbcType=INTEGER},
+      building_area = #{buildingArea,jdbcType=VARCHAR},
       gmt_rent_start = #{gmtRentStart,jdbcType=TIMESTAMP},
       gmt_rent_end = #{gmtRentEnd,jdbcType=TIMESTAMP},
       attachments = #{attachments,jdbcType=VARCHAR}

@@ -27,7 +27,7 @@ public class CuntaoCountyOfficeDto {
     /**
      * 办公面积
      */
-    private Integer buildingArea;
+    private String buildingArea;
 
     /**
      * 租赁起始时间
@@ -75,11 +75,11 @@ public class CuntaoCountyOfficeDto {
 		this.address = address;
 	}
 
-	public Integer getBuildingArea() {
+	public String getBuildingArea() {
 		return buildingArea;
 	}
 
-	public void setBuildingArea(Integer buildingArea) {
+	public void setBuildingArea(String buildingArea) {
 		this.buildingArea = buildingArea;
 	}
 

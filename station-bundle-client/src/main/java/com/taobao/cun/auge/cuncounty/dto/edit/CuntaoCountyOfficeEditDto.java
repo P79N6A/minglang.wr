@@ -17,8 +17,8 @@ import org.hibernate.validator.constraints.NotBlank;
 public class CuntaoCountyOfficeEditDto {
 	@NotBlank(message="办公场地信息:办公地址不能为空")
     private String address;
-	@NotNull(message="办公场地信息:办公面积不能为空")
-    private Integer buildingArea;
+	@NotBlank(message="办公场地信息:办公面积不能为空")
+    private String buildingArea;
 	@NotNull(message="办公场地信息:租赁起始时间不能为空")
     private Date gmtRentStart;
 	@NotNull(message="办公场地信息:租赁结束时间不能为空")
@@ -54,11 +54,11 @@ public class CuntaoCountyOfficeEditDto {
 		this.address = address;
 	}
 
-	public Integer getBuildingArea() {
+	public String getBuildingArea() {
 		return buildingArea;
 	}
 
-	public void setBuildingArea(Integer buildingArea) {
+	public void setBuildingArea(String buildingArea) {
 		this.buildingArea = buildingArea;
 	}
 
