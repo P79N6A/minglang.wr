@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class PartnerAdzoneInfoDto implements Serializable {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4341153662556589640L;
+	/**
      * 村淘站点ID
      */
     private Long stationId;
@@ -15,8 +19,36 @@ public class PartnerAdzoneInfoDto implements Serializable {
      * 阿里妈妈PID
      */
     private String pid;
+    
+    /**
+     *拉新开通状态
+     */
+    private Boolean lxState;
 
-    public Long getStationId() {
+    /**
+     *当前合伙人类型 (tp,tps,um,lx) InstanceTypeEnum
+     */
+    private String  type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
+    
+    public Boolean getLxState() {
+		return lxState;
+	}
+
+	public void setLxState(Boolean lxState) {
+		this.lxState = lxState;
+	}
+
+	public Long getStationId() {
         return stationId;
     }
 

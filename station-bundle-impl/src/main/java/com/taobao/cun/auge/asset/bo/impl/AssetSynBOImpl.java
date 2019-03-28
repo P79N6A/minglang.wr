@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.PubResourceDto;
@@ -29,6 +31,7 @@ import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.bo.AssetSynBO;
 import com.taobao.cun.auge.asset.convert.AssetOwner;
 import com.taobao.cun.auge.asset.convert.AssetOwnerParser;
+import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
@@ -59,7 +62,7 @@ import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
-import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
@@ -72,7 +75,6 @@ import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.diamond.client.Diamond;
@@ -120,10 +122,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 	@Autowired
 	private StationBO stationBO;
-	
-	 @Autowired
-	 CaiNiaoAdapter caiNiaoAdapter;
 
+	@Autowired
+	CaiNiaoAdapter caiNiaoAdapter;
 
 	@HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
 	private CuntaoApiService cuntaoApiService;
@@ -562,7 +563,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 					// 集团资产变更责任人
 					changeOwner(updateAsset);
-				
+
 				} catch (Exception e) {
 					logger.error("sync asset error,asset=" + JSONObject.toJSONString(a), e);
 				}
@@ -868,29 +869,125 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 		return true;
 	}
-	
-	
-	 public boolean initStationFeatureToCainiao(String key,String value) {
-	        try {
-	            if(StringUtils.isEmpty(value) || StringUtils.isEmpty(key)){
-	                throw new IllegalStateException("参数不为空");
-	            } 
-	            String rm = Diamond.getConfig("com.taobao.cun:stationFeatureBy618.json", "DEFAULT_GROUP", 3000);
-	            String[] cainiaoIds = rm.split(",");
-	            LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
-	            features.put(key, value);
-	            for(String cainiaoStationId: cainiaoIds){
-	                try {
-						Boolean b = caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
-					} catch (Exception e) {
-						logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e);
-						continue;
-					}
-	             
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        return true;
-	    }
+
+	public boolean initStationFeatureToCainiao(String key, String value) {
+		try {
+			if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
+				throw new IllegalStateException("参数不为空");
+			}
+			String rm = Diamond.getConfig("com.taobao.cun:stationFeatureBy618.json", "DEFAULT_GROUP", 3000);
+			String[] cainiaoIds = rm.split(",");
+			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+			features.put(key, value);
+			for (String cainiaoStationId : cainiaoIds) {
+				try {
+					caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+				} catch (Exception e) {
+					logger.error("initStationFeatureToCainiao.error,cainiaoStationId=" + cainiaoStationId, e);
+					continue;
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean batchDisRouter() {
+		String rm = "";
+		try {
+			rm = Diamond.getConfig("asset.dis.router.json", "DEFAULT_GROUP", 3000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			List<Map<String, String>> l = JSON.parseObject(rm, new TypeReference<List<Map<String, String>>>() {
+			});
+			for (Map<String, String> m : l) {
+				addAssetRouter(m);
+
+			}
+		
+		return true;
+	}
+
+	private void addAssetRouter(Map<String, String> m) {
+		try {
+			Long stationId = Long.parseLong(m.get("stationId"));
+			
+			Station s = stationBO.getStationById(stationId);
+			if (s == null) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发失败，服务站信息异常");
+			}
+			
+			String aliNo = m.get("aliNo");
+			String model = m.get("model");
+			String ownerName = m.get("ownerName");
+			String ownerWorkno = m.get("ownerWorkno");
+			String serialNo = m.get("serialNo");
+			String orgName =  m.get("orgName");
+			
+			Long ownerOrgId = s.getApplyOrg();
+			
+			
+			Asset a = new Asset();
+			a.setAliNo(aliNo);
+			a.setBrand("alibaba");
+			a.setCategory("ROUTER");
+			a.setModel(model);
+			a.setOwnerName(ownerName);
+			a.setOwnerOrgId(ownerOrgId);
+			a.setOwnerWorkno(ownerWorkno);
+			a.setSerialNo(serialNo);
+			a.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
+			a.setUseAreaId(ownerOrgId);
+			a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+			a.setUserId(ownerWorkno);
+			a.setUserName(ownerName);
+			a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
+			a.setRecycle(RecycleStatusEnum.N.getCode());
+
+			DomainUtils.beforeInsert(a, "system");
+			assetMapper.insert(a);
+
+			
+			String sName = s.getName();
+
+			Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
+			if (p == null) {
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发失败，合伙人信息异常");
+			}
+			// 创建出库单
+			AssetRolloutDto roDto = new AssetRolloutDto();
+			roDto.setApplierWorkno(ownerWorkno);
+			roDto.setApplierName(ownerName);
+			roDto.setStatus(AssetRolloutStatusEnum.WAIT_ROLLOUT);
+			roDto.setApplierOrgId(ownerOrgId);
+			roDto.setApplierOrgName(orgName);
+			roDto.setReceiverId(p.getTaobaoUserId().toString());
+			roDto.setReceiverName(p.getName());
+			roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.STATION);
+			roDto.setReceiverAreaName(sName);
+			roDto.setReceiverAreaId(stationId);
+			roDto.setRemark("分发至 " + sName + "-" + p.getName());
+			roDto.setType(AssetRolloutTypeEnum.DISTRIBUTION);
+
+			AssetRollout record = AssetRolloutConverter.toAssetRollout(roDto);
+			DomainUtils.beforeInsert(record, "system");
+			assetRolloutMapper.insert(record);
+
+			AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+			detail.setAssetId(a.getId());
+			detail.setCategory("ROUTER");
+			detail.setRolloutId(record.getId());
+			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+			detail.setType(AssetRolloutIncomeDetailTypeEnum.DISTRIBUTION);
+			detail.setOperatorTime(new Date());
+			detail.copyOperatorDto(OperatorDto.defaultOperator());
+			assetRolloutIncomeDetailBO.addDetail(detail);
+		} catch (Exception e) {
+			logger.error("addAssetRouter.error,stationId=" + m.get("stationId"), e);
+		}
+	}
 }

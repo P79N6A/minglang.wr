@@ -25,5 +25,8 @@ public interface AssetSynBO {
 	 
 	//618优品售卖范围扩大项目
 	 public boolean initStationFeatureToCainiao(String key,String value);
+	 
+	 
+	 public Boolean batchDisRouter();
 	
 }

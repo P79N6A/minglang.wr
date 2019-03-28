@@ -2,11 +2,10 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.common.Address;
-import com.taobao.cun.auge.station.validate.StationValidator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -30,7 +30,10 @@ import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.dto.OrgDeptType;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
 import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
@@ -41,6 +44,7 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.validate.StationValidator;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
@@ -52,6 +56,9 @@ public class StationBOImpl implements StationBO {
 
 	@Autowired
 	StationExtMapper stationExtMapper;
+	
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
 	@Override
 	public Station getStationById(Long stationId){
@@ -120,8 +127,31 @@ public class StationBOImpl implements StationBO {
 		record.setModifier(stationDto.getOperator());
 		record.setIsDeleted("n");
 		record.setVersion(0L);
+		buildTestTag(record);
 		stationMapper.insert(record);
 		return record.getId();
+	}
+
+	private void buildTestTag(Station record) {
+		try {
+			CuntaoOrgDto largearea = cuntaoOrgServiceClient.getAncestor(record.getApplyOrg(), OrgRangeType.LARGE_AREA);
+			if (largearea != null && largearea.getId().equals(500004L)) {
+				Map<String,String> m = new HashMap<String,String>();
+				m.put("isTest", "y");
+				if (StringUtils.isNotEmpty(record.getFeature())) {
+					Map<String, String> sourceMap = FeatureUtil.toMap(record.getFeature());
+					if (sourceMap != null && sourceMap.size()>0) {
+						sourceMap.putAll(m);
+						record.setFeature(FeatureUtil.toString(sourceMap));
+					}else {
+						record.setFeature(FeatureUtil.toString(m));
+					}
+				}else {
+					record.setFeature(FeatureUtil.toString(m));
+				}
+			}
+		} catch (Exception e) {
+		}
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
