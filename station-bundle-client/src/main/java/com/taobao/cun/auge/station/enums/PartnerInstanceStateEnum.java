@@ -175,6 +175,17 @@ public class PartnerInstanceStateEnum  implements Serializable {
 	}	
 	
 	/**
+	 *有效拉新
+	 * @return
+	 */
+	public static List<String>  getValidLxStatusArray(){
+		List<String> listValidStatus = new ArrayList<String>();
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED.getCode());
+		return listValidStatus;
+	}	
+	
+	/**
 	 * 获取占用名额的下一级合伙人的状态
 	 * @return
 	 */

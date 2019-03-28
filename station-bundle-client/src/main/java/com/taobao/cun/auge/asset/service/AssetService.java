@@ -241,5 +241,11 @@ public interface AssetService {
     
   //618优品售卖范围扩大项目
   	public boolean initStationFeatureToCainiao(String key,String value);
+  	
+  	/**
+  	 * 内部使用
+  	 * @return
+  	 */
+  	public Boolean batchDisRouter();
     
 }
