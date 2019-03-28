@@ -41,4 +41,8 @@ public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {
 		return cuntaoCountyQueryBo.getCuntaoCounty(countyId);
 	}
 
+	@Override
+	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {
+		return cuntaoCountyQueryBo.getCuntaoCountyByOrgId(orgId);
+	}
 }

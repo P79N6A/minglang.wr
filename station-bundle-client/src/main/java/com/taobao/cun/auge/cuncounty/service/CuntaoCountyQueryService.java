@@ -44,4 +44,11 @@ public interface CuntaoCountyQueryService {
 	 * @return
 	 */
 	List<CuntaoCountyStateCountDto> groupCountyByState(@Valid CuntaoCountyCondition condition);
+	
+	/**
+	 * 根据组织获取县
+	 * @param orgId
+	 * @return
+	 */
+	CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId);
 }

@@ -53,9 +53,17 @@ public class CuntaoCountyBo {
 	}
 	
 	public void applyOpen(Long countyId, String operator) {
-		if(!cainiaoCountyRemoteBo.isOperating(countyId)) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "菜鸟侧的县仓尚未开业，不具备县点开业条件");
+		CuntaoCountyDto cuntaoCountyDto = getCuntaoCounty(countyId);
+		if(cuntaoCountyDto == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "县服务中心不存在"); 
 		}
-		updateState(countyId, CuntaoCountyStateEnum.OPENING.getCode(), operator);
+		if(cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.WAIT_OPEN.getCode())) {
+			if(!cainiaoCountyRemoteBo.isOperating(countyId)) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "菜鸟侧的县仓尚未开业，不具备县点开业条件");
+			}
+			updateState(countyId, CuntaoCountyStateEnum.OPENING.getCode(), operator);
+		}else {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "当前状态不能申请开业");
+		}
 	}
 }

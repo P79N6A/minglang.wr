@@ -57,6 +57,15 @@ public class CuntaoCountyQueryBo {
 	public CuntaoCountyDto getCuntaoCounty(Long countyId) {
 		return cuntaoCountyBo.getCuntaoCounty(countyId);
 	}
+	
+	/**
+	 * 根据ORGID查询县点基本信息
+	 * @param countyId
+	 * @return
+	 */
+	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {
+		return BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyExtMapper.getCuntaoCountyByOrgId(orgId));
+	}
 	/**
 	 * 查询详情
 	 * @param countyId

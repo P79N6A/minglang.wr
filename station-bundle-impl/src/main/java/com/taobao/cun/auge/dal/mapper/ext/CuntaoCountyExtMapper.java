@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
 import com.taobao.cun.auge.dal.domain.CainiaoCounty;
+import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
@@ -92,4 +93,11 @@ public interface CuntaoCountyExtMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> groupByState(@Param("condition") CuntaoCountyCondition condition);
+	
+	/**
+	 * 根据组织ID获取县点
+	 * @param orgId
+	 * @return
+	 */
+	CuntaoCounty getCuntaoCountyByOrgId(@Param("orgId") Long orgId);
 }

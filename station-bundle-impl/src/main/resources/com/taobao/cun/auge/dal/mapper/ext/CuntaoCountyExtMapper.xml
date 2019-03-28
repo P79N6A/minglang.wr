@@ -27,6 +27,10 @@
   select * from cainiao_county where county_id=#{countyId} and is_deleted='n'
   </select>
   
+  <select id="getCuntaoCountyByOrgId" parameterType="map" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper.BaseResultMap">
+  select * from cuntao_county where org_id=#{orgId} and is_deleted='n'
+  </select>
+  
   <update id="invalidProtocols" parameterType="map">
   update cuntao_county_gov_protocol set state='invalid',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and state='valid' and is_deleted='n'
   </update>
