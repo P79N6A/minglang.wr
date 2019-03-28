@@ -696,7 +696,12 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 	@Override
 	public boolean checkCainiaoCountyIsOperatingByCountyId(Long countyId) {
-		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(countyId);
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel==null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"cainiaocounty is null"); 
+		}
+		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(rel.getCainiaoStationId());
 		return w != null && w.isUse();
 	}
 }
