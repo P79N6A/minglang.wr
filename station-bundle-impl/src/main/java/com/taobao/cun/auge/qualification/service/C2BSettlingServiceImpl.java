@@ -3,9 +3,12 @@ package com.taobao.cun.auge.qualification.service;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.alibaba.citrus.util.StringUtil;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -13,13 +16,12 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -236,14 +238,51 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
         C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
         try {
             PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
+			Long instanceId = parnterInstance.getId();
+			String incomeMode=parnterInstance.getIncomeMode();
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+					PartnerLifecycleBusinessTypeEnum.SETTLING);
+			if (items == null) {
+				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人不满足执行条件");
+			}
+			PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(
+					PartnerInstanceTypeEnum.valueof(parnterInstance.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
+			if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
+				if (PartnerInstanceTypeEnum.TP.getCode().equals(parnterInstance.getType())&& StringUtil.isBlank(incomeMode)) {
+					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+				}
+				return response;
+			} else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
+				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前操作不满足执行条件");
+			}
             Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
             PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
             if(settleNewProtocol != null){
+				if (PartnerInstanceTypeEnum.TP.getCode().equals(parnterInstance.getType())&& StringUtil.isBlank(incomeMode)) {
+					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+				}
                 response.setSuccessful(true);
                 return response;
             }
             partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
                     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
+
+			// 乐观锁
+			PartnerInstanceDto instance = new PartnerInstanceDto();
+			instance.setId(instanceId);
+			instance.setVersion(parnterInstance.getVersion());
+			instance.setOperator(String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+			instance.setOperatorType(OperatorTypeEnum.HAVANA);
+			partnerInstanceBO.updatePartnerStationRel(instance);
+
+			if (PartnerInstanceTypeEnum.TP.getCode().equals(parnterInstance.getType())&& StringUtil.isBlank(incomeMode)) {
+				partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+			}
             response.setSuccessful(true);
         } catch (Exception e) {
             logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);

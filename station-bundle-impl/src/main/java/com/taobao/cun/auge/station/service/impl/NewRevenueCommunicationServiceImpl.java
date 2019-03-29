@@ -7,6 +7,7 @@ import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -53,6 +54,7 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         params.put("commuTime",newRevenueCommunicationDto.getCommuTime().toString());
         params.put("commuAddress",newRevenueCommunicationDto.getCommuAddress());
         params.put("commuContent",newRevenueCommunicationDto.getCommuContent());
+        params.put("inviteType",newRevenueCommunicationDto.getBusinessCode());
         processTask.setBusiness(ProcessBusinessEnum.stationTransHandOverInviteAudit);
         processTask.setBusinessId(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
         processTask.setBusinessName(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode());
@@ -72,14 +74,14 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
     }
 
     @Override
-    public NewRevenueCommunicationDto getLastestUnFinishedNewRevenueCommunication(String businessCode, String objectId) {
+    public NewRevenueCommunicationDto getProcessNewRevenueCommunication(String businessCode, String objectId) {
 
         Assert.notNull(businessCode, "businessCode not exist");
         Assert.notNull(objectId, "objectId not exist");
         NewRevenueCommunicationCondition newRevenueCommunicationCondition=new NewRevenueCommunicationCondition();
         newRevenueCommunicationCondition.setBusinessCode(businessCode);
         newRevenueCommunicationCondition.setObjectId(objectId);
-        newRevenueCommunicationCondition.setStatus("process");
+        newRevenueCommunicationCondition.setStatus("PROCESS");
         List<NewRevenueCommunication>newRevenueCommunicationList= newRevenueCommunicationBO.getNewRevenueCommunicationDtoByCondition(newRevenueCommunicationCondition);
 
         if(CollectionUtil.isEmpty(newRevenueCommunicationList)){
@@ -106,5 +108,29 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         }
 
         return NewRevenueCommunicationConverter.toNewRevenueCommunicationDto(newRevenueCommunication);
+    }
+
+    @Override
+    public NewRevenueCommunicationDto getApprovePassNewRevenueCommunication(String businessCode, String objectId) {
+
+        Assert.notNull(businessCode, "businessCode not exist");
+        Assert.notNull(objectId, "objectId not exist");
+        NewRevenueCommunicationCondition newRevenueCommunicationCondition=new NewRevenueCommunicationCondition();
+        newRevenueCommunicationCondition.setBusinessCode(businessCode);
+        newRevenueCommunicationCondition.setObjectId(objectId);
+        newRevenueCommunicationCondition.setStatus("FINISH");
+        newRevenueCommunicationCondition.setAuditStatus(ProcessApproveResultEnum.APPROVE_PASS.getCode());
+        List<NewRevenueCommunication>newRevenueCommunicationList= newRevenueCommunicationBO.getNewRevenueCommunicationDtoByCondition(newRevenueCommunicationCondition);
+
+        if(CollectionUtil.isEmpty(newRevenueCommunicationList)){
+            return null;
+        }
+
+        if(newRevenueCommunicationList.size()==1) {
+            return NewRevenueCommunicationConverter.toNewRevenueCommunicationDto(newRevenueCommunicationList.get(0));
+        }
+        else {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点切换转型邀约成功记录不唯一");
+        }
     }
 }

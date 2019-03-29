@@ -16,6 +16,7 @@ public class NewRevenueCommunicationConverter {
         newRevenueCommunication.setCommuContent(newRevenueCommunicationDto.getCommuContent());
         newRevenueCommunication.setRemark(newRevenueCommunicationDto.getRemark());
         newRevenueCommunication.setStatus(newRevenueCommunicationDto.getStatus());
+        newRevenueCommunication.setAuditStatus(newRevenueCommunicationDto.getAuditStatus());
         return newRevenueCommunication;
     }
 
@@ -29,6 +30,7 @@ public class NewRevenueCommunicationConverter {
         newRevenueCommunicationDto.setCommuAddress(newRevenueCommunication.getCommuAddress());
         newRevenueCommunicationDto.setCommuContent(newRevenueCommunication.getCommuContent());
         newRevenueCommunicationDto.setStatus(newRevenueCommunication.getStatus());
+        newRevenueCommunicationDto.setAuditStatus(newRevenueCommunication.getAuditStatus());
         newRevenueCommunicationDto.setRemark(newRevenueCommunication.getRemark());
         return newRevenueCommunicationDto;
     }

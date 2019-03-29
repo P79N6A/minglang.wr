@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.notify.listener;
 import java.util.Date;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
 import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
@@ -47,13 +49,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -152,6 +147,9 @@ public class ProcessProcessor {
 
     @Autowired
     private ServiceAbilityApplyService serviceAbilityApplyService;
+
+    @Autowired
+    private NewRevenueCommunicationService newRevenueCommunicationService;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -264,6 +262,15 @@ public class ProcessProcessor {
                 dto.setId(businessId);
                 dto.copyOperatorDto(OperatorDto.defaultOperator());
                 stationDecorateService.auditDecorationDecision(dto);
+            }
+            else if(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode().equals(businessCode)){
+
+                String inviteType = ob.getString("inviteType");
+                NewRevenueCommunicationDto newRevenueCommunicationDto=newRevenueCommunicationService.getProcessNewRevenueCommunication(inviteType,businessId.toString());
+                if(newRevenueCommunicationDto!=null){
+                    newRevenueCommunicationDto.setAuditStatus(resultCode);
+                    newRevenueCommunicationService.completeNewRevenueCommunication(newRevenueCommunicationDto);
+                }
             }
             // 节点被激活
         } else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

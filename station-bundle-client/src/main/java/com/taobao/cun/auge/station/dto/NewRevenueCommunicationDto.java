@@ -13,6 +13,8 @@ public class NewRevenueCommunicationDto extends OperatorDto implements Serializa
 
     private String businessCode;
 
+    private String auditStatus;
+
     private String status;
 
     private Date commuTime;
@@ -87,4 +89,11 @@ public class NewRevenueCommunicationDto extends OperatorDto implements Serializa
         this.remark = remark;
     }
 
+    public String getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(String auditStatus) {
+        this.auditStatus = auditStatus;
+    }
 }

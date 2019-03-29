@@ -20,11 +20,11 @@ public interface NewRevenueCommunicationService {
 
 
     /**
-     * 获取当前正在进行中的邀约记录
+     * 获取当前邀约的记录
      * @param businessCode
      * @param objectId
      */
-    public NewRevenueCommunicationDto getLastestUnFinishedNewRevenueCommunication(String businessCode,String objectId);
+    public NewRevenueCommunicationDto getProcessNewRevenueCommunication(String businessCode,String objectId);
 
 
     /**
@@ -32,6 +32,14 @@ public interface NewRevenueCommunicationService {
      * @param id
      */
     public NewRevenueCommunicationDto getNewRevenueCommunicationById(Long id);
+
+
+    /**
+     * 获取邀约审批成功的记录(业务保证一种类型只能存在一条审批成功记录)
+     * @param businessCode
+     * @param objectId
+     */
+    public NewRevenueCommunicationDto getApprovePassNewRevenueCommunication(String businessCode,String objectId);
 
 
 

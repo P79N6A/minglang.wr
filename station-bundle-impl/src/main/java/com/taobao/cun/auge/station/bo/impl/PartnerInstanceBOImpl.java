@@ -1,26 +1,5 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
@@ -33,14 +12,8 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CriusTaskExecute;
-import com.taobao.cun.auge.dal.domain.CriusTaskExecuteExample;
-import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.domain.*;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
@@ -60,18 +33,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
@@ -89,12 +51,21 @@ import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
 import com.taobao.sellerservice.domain.ResultDO;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import com.tmall.usc.channel.client.UscChannelRelationService;
-import com.tmall.usc.channel.client.dto.distributor.BaseUserDTO;
-import com.tmall.usc.channel.client.dto.distributor.BillingInfoDTO;
-import com.tmall.usc.channel.client.dto.distributor.BizOrgRelationDTO;
-import com.tmall.usc.channel.client.dto.distributor.ChannelUserDTO;
-import com.tmall.usc.channel.client.dto.distributor.CompanyQualificationDTO;
+import com.tmall.usc.channel.client.dto.distributor.*;
 import com.tmall.usc.support.common.dto.ResultDTO;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.text.DateFormat;
+import java.util.*;
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -1104,4 +1075,30 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		
 	}
+
+    @Override
+    public void updateIncomeModeNextMonth(Long instanceId, String incomeMode, String operator) {
+
+        Date newMonth = new Date();
+        DateFormat format=DateFormat.getDateInstance();
+       // format.p
+        Calendar calendar = Calendar.getInstance();//日历对象
+        calendar.setTime(newMonth);
+        calendar.add(Calendar.MONTH,1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        newMonth=calendar.getTime();
+        if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(newMonth)) {
+            ValidateUtils.notNull(instanceId);
+            ValidateUtils.notNull(incomeMode);
+            ValidateUtils.notNull(operator);
+            PartnerStationRel updateInstance = new PartnerStationRel();
+            updateInstance.setId(instanceId);
+            updateInstance.setIncomeMode(incomeMode);
+            updateInstance.setIncomeModeBeginTime(newMonth);
+            DomainUtils.beforeUpdate(updateInstance, operator);
+            partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+        }
+    }
 }

@@ -945,7 +945,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     public PartnerInstanceRevenueStatusEnum getWaitConfirmRevenueTransInfoTypeByTaobaoUserId(Long taobaoUserId) {
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if(instance != null ){
-            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getLastestUnFinishedNewRevenueCommunication("",instance.getId().toString());
+            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
             if(newRevenueCommunicationDto!=null){
                 return PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS;
             }
@@ -969,7 +969,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         //获取收入切换类型及信息
         if(instance!=null){
-            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getLastestUnFinishedNewRevenueCommunication("",instance.getId().toString());
+            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
             if(newRevenueCommunicationDto!=null){
                 stationTransHandOverDto.setPartnerInstanceRevenueStatusEnum(PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS);
                 stationTransHandOverDto.setStationRevenueTransInfoDto(toStationRevenueTransInfoDto(instance,newRevenueCommunicationDto));

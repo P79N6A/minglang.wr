@@ -314,7 +314,23 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public void cancelShopMirror(Long taobaoUserId);
-	
+
+    /**
+     * 新收入立即生效
+     * @param instanceId
+     * @param incomeMode
+     * @param operator
+     * @return
+     */
 	public void updateIncomeMode(Long instanceId,String incomeMode,String operator);
+
+    /**
+     * 新收入下个月生效
+     * @param instanceId
+     * @param incomeMode
+     * @param operator
+     * @return
+     */
+	public void updateIncomeModeNextMonth(Long instanceId,String incomeMode,String operator);
 	
 }

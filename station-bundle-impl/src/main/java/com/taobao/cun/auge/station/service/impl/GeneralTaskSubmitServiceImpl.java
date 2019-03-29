@@ -111,7 +111,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
         // 菜鸟驿站同步 begin
         GeneralTaskDto cainiaoTaskDto;
-
+        C2BSettlingServiceImpl
         //是否是升级的合伙人
         if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId(), PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP)) {
             PartnerTypeChangeApplyDto typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());

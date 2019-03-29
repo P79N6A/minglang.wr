@@ -48,7 +48,8 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         record.setCreator(newRevenueCommunicationDto.getOperator());
         record.setModifier(newRevenueCommunicationDto.getOperator());
         record.setIsDeleted("n");
-        record.setStatus("process");
+        record.setAuditStatus("WAIT_APPROVE");
+        record.setStatus("PROCESS");
         newRevenueCommunicationMapper.insert(record);
         return record.getId();
     }
@@ -85,6 +86,10 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         if(StringUtil.isNotBlank(newRevenueCommunicationCondition.getStatus())){
             criteria.andStatusEqualTo(newRevenueCommunicationCondition.getStatus());
         }
+
+        if(StringUtil.isNotBlank(newRevenueCommunicationCondition.getAuditStatus())){
+            criteria.andAuditStatusEqualTo(newRevenueCommunicationCondition.getAuditStatus());
+        }
         return newRevenueCommunicationMapper.selectByExample(newRevenueCommunicationExample);
     }
 
@@ -99,7 +104,8 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         }
         NewRevenueCommunication record =new NewRevenueCommunication();
         record.setId(oldRecord.getId());
-        record.setStatus("finish");
+        record.setAuditStatus(newRevenueCommunicationDto.getAuditStatus());
+        record.setStatus("FINISH");
         DomainUtils.beforeUpdate(record,"sys");
         newRevenueCommunicationMapper.updateByPrimaryKeySelective(record);
     }

@@ -14,6 +14,8 @@ public class NewRevenueCommunicationCondition extends OperatorDto implements Ser
 
     private String status;
 
+    private String auditStatus;
+
     public Long getId() {
         return id;
     }
@@ -44,5 +46,13 @@ public class NewRevenueCommunicationCondition extends OperatorDto implements Ser
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(String auditStatus) {
+        this.auditStatus = auditStatus;
     }
 }
