@@ -748,6 +748,17 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 
 	@Override
+	public void updateStationDecorateById(Long id) {
+		StationDecorateDto dto  = new StationDecorateDto();
+		dto.setId(id);
+		dto.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS);
+		dto.setOperator("189428");
+		dto.setOperatorType(OperatorTypeEnum.BUC);
+		dto.setOperatorOrgId(1L);
+		stationDecorateBO.updateStationDecorate(dto);
+	}
+
+	@Override
 	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds) {
 //		PartnerStationRelExample example = new PartnerStationRelExample();
 //		example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y").andTypeEqualTo("TP").andStateIn(Lists.newArrayList("SERVICING","DECORATING"));

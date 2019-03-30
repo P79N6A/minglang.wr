@@ -216,4 +216,7 @@ public interface StationDecorateService {
  	 */
  	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 
+
+
+ 	void updateStationDecorateById(Long id);
 }
