@@ -156,12 +156,12 @@ public interface StationDecorateBO {
  	public void auditStationDecorateCheck(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
  	
  	/**
- 	 * 审核村点装修反馈信息县小二审核
+ 	 * 流程节点结束审核村点装修反馈信息
  	 * @param stationId
  	 * @param approveResultEnum
  	 * @return
  	 */
- 	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+ 	public void auditStationDecorateAfterNodeFish(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 
 	/**
 	 * 根据taobaoUserId查询装修反馈信息

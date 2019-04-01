@@ -657,21 +657,14 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	}
 
 	@Override
-	public void auditStationDecorateCheckByCountyLeader(Long stationId, ProcessApproveResultEnum approveResultEnum,
+	public void auditStationDecorateAfterNodeFish(Long stationId, ProcessApproveResultEnum approveResultEnum,
 			String auditOpinion) {
 		StationDecorate record= this.getStationDecorateByStationId(stationId);
 		StationDecorate updateRecord = new StationDecorate();
 		updateRecord.setId(record.getId());
 		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
+		//记录审核意见
 		updateRecord.setCheckAuditOpinion(auditOpinion);
-		if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(approveResultEnum.getCode())){
-			updateRecord.setStatus(StationDecorateStatusEnum.WAIT_AUDIT.getCode());
-		}else{
-			updateRecord.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode());
-			updateRecord.setAuditOpinion(auditOpinion);
-			//县小二反馈图纸审核未通过，发送metaq消息
-			stationDecorateMessageBo.pushStationDecorateFeedBackNotPassMessage(record.getPartnerUserId(),auditOpinion);
-		}
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 		
 	}
