@@ -2,8 +2,6 @@ package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import com.taobao.cun.auge.common.PageInput;
 
 /**
@@ -15,7 +13,7 @@ import com.taobao.cun.auge.common.PageInput;
 public class CuntaoCountyCondition extends PageInput {
 
 	private String name;
-	@NotNull(message="组织ID不能为空")
+	
 	private Long orgId;
 	
 	/**

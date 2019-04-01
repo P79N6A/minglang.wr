@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -115,6 +116,9 @@ public class CuntaoCountyQueryBo {
 		if(Strings.isNullOrEmpty(condition.getFullIdPath())) {
 			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(condition.getOrgId());
 			condition.setFullIdPath(cuntaoOrgDto.getFullIdPath());
+		}
+		if(Strings.isNullOrEmpty(condition.getFullIdPath())) {
+			throw new IllegalArgumentException("orgId 或者 fullIdPath 至少有一个不为空");
 		}
 		int total = cuntaoCountyExtMapper.count(condition);
 		List<CuntaoCountyListItem> cuntaoCountyListItems = null;
