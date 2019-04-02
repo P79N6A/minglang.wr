@@ -665,6 +665,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateRecord.setCheckAuditStatus(approveResultEnum.getCode());
 		//记录审核意见
 		updateRecord.setCheckAuditOpinion(auditOpinion);
+		updateRecord.setAuditOpinion(auditOpinion);
 		stationDecorateMapper.updateByPrimaryKeySelective(updateRecord);
 		
 	}
