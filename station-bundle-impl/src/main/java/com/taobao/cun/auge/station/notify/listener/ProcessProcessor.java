@@ -150,7 +150,6 @@ public class ProcessProcessor {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
-        logger.info("handle process msg,ob = {}",JSON.toJSONString(ob));
         String msgType = strMessage.getMessageType();
         String businessCode = ob.getString("businessCode");
         String objectId = ob.getString("objectId");
@@ -339,7 +338,6 @@ public class ProcessProcessor {
                 StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
                 String resultCode = ob.getString("result");
                 String desc = ob.getString("taskRemark");
-                logger.info("decorationCheckAudit =====resultCode={},desc={}",resultCode,desc);
 
                 ProcessApproveResultEnum decorationCheckAuditResult = null;
                 if ("拒绝".equals(resultCode)) {
