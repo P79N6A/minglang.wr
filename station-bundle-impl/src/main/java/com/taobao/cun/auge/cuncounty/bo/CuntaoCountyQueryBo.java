@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -111,7 +110,7 @@ public class CuntaoCountyQueryBo {
 	private CuntaoCountyOrgDto createCuntaoCountyOrg(Long orgId) {
 		return BeanConvertUtils.convert(CuntaoCountyOrgDto.class, cuntaoOrgServiceClient.getCuntaoOrg(orgId));
 	}
-
+	
 	public PageOutput<CuntaoCountyListItem> query(CuntaoCountyCondition condition){
 		if(Strings.isNullOrEmpty(condition.getFullIdPath())) {
 			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(condition.getOrgId());

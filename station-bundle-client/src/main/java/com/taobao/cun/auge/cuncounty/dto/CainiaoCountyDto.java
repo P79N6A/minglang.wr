@@ -1,10 +1,7 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 /**
@@ -92,13 +89,6 @@ public class CainiaoCountyDto {
 	public void setCainiaoCountyId(Long cainiaoCountyId) {
 		this.cainiaoCountyId = cainiaoCountyId;
 	}
-
-	public List<String> getAttachmentArray(){
-    	if(attachments == null) {
-    		return new ArrayList<String>();
-    	}
-    	return Splitter.on(";").splitToList(attachments);
-    }
 
 	public String getState() {
 		return state;
