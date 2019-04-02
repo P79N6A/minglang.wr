@@ -15,6 +15,12 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 县点查询
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Validated
 @HSFProvider(serviceInterface = CuntaoCountyQueryService.class)
 public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {

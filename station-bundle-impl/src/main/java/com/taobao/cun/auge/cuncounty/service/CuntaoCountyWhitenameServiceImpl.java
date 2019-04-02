@@ -8,6 +8,12 @@ import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyWhitenameBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 开县白名单
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @HSFProvider(serviceInterface = CuntaoCountyWhitenameService.class)
 public class CuntaoCountyWhitenameServiceImpl implements CuntaoCountyWhitenameService {
 	@Resource

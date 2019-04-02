@@ -10,6 +10,12 @@ import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 县点操作
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @Validated
 @HSFProvider(serviceInterface = CuntaoCountyWriteService.class)
 public class CuntaoCountyWriteServiceImpl implements CuntaoCountyWriteService{
