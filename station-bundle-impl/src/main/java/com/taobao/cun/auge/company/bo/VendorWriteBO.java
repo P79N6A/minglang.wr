@@ -27,8 +27,17 @@ public interface VendorWriteBO {
 	
 	/**
 	 * 删除服务供应商
-	 * @param serviceVendorId
+	 * @param companyId
+	 * @param operator
 	 * @return
 	 */
 	Boolean removeVendor(Long companyId,String operator);
+
+	/**
+	 * 删除服务供应商
+	 * @param companyId
+	 * @param operator
+	 * @return
+	 */
+	Boolean removeNewVendor(Long companyId,String operator);
 }
