@@ -51,10 +51,6 @@ public class CuntaoCountyPredicate {
 		BeanValidator.validateWithThrowable(cuntaoCountyUpdateDto.getCuntaoCountyGovContractEditDto());
 		
 		//校验政府联系人
-		if(CollectionUtils.isEmpty(cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos())){
-			throw new IllegalArgumentException("政府联系人不能为空");
-		}
-		
 		List<CuntaoCountyGovContactDto> cuntaoCountyGovContactDtos = cuntaoCountyGovContactBo.getCuntaoCountyGovContacts(cuntaoCountyUpdateDto.getCountyId());
 		int contactNum = cuntaoCountyGovContactDtos == null ? 0 : cuntaoCountyGovContactDtos.size();
 		if(contactNum + cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos().size() < 2){
