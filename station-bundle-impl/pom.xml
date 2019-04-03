@@ -522,10 +522,6 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>com.tmall.nova</groupId>
-					<artifactId>nova-client</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
