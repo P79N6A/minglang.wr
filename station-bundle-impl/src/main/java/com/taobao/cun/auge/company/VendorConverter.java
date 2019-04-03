@@ -23,6 +23,7 @@ public class VendorConverter {
 		cuntaoServiceVendorDto.setTaobaoUserId(cuntaoServiceVendor.getTaobaoUserId());
 		cuntaoServiceVendorDto.setType(CuntaoVendorType.valueOf(cuntaoServiceVendor.getType()));
 		cuntaoServiceVendorDto.setRemark(cuntaoServiceVendor.getRemark());
+		cuntaoServiceVendorDto.setEndorOrgId(cuntaoServiceVendor.getEndorOrgId());
 		return cuntaoServiceVendorDto;
 	}
 	

@@ -267,6 +267,21 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	}
 
 	@Override
+	public Result<Boolean> removeNewVendor(Long companyId, String operator) {
+		Result<Boolean> result = null;
+		try {
+			Assert.notNull(companyId,"公司ID不能为空");
+			Assert.notNull(operator,"操作人不能为空");
+			result = Result.of(vendorWriteBO.removeNewVendor(companyId,operator));
+			return result;
+		} catch (Exception e) {
+			logger.error("remove new vendor error!", e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+	@Override
 	public Result<Boolean> updateVendor(CuntaoServiceVendorDto cuntaoVendorDto) {
 		Result<Boolean> result = null;
 		ErrorInfo errorInfo = checkUpdateCuntaoVendorDto(cuntaoVendorDto);
