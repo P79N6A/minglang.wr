@@ -742,10 +742,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 
 	@Override
-	public void auditStationDecorateCheckByCountyLeader(Long stationId, ProcessApproveResultEnum approveResultEnum,
+	public void auditStationDecorateAfterNodeFish(Long stationId, ProcessApproveResultEnum approveResultEnum,
 			String auditOpinion) {
-		stationDecorateBO.auditStationDecorateCheckByCountyLeader(stationId, approveResultEnum, auditOpinion);
+		stationDecorateBO.auditStationDecorateAfterNodeFish(stationId, approveResultEnum, auditOpinion);
 	}
+
 
 	@Override
 	public void batchOpenAccessCbuMarket(List<Long> taobaoUserIds) {
