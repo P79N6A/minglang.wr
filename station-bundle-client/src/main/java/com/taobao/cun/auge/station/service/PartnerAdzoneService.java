@@ -71,5 +71,11 @@ public interface PartnerAdzoneService {
      * @return
      */
     public NewuserOrderStat getNewuserOrderStat(Long taobaoUserId, Long stationId, String statDate);
+    
+    /**
+     * 清空pid缓存
+     * @param pid
+     */
+    public void clearTairByPid(String pid);
 
 }

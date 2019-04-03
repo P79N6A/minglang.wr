@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.notify.listener;
 import java.util.Date;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
 import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
@@ -35,16 +36,6 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
-import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
-import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -105,6 +96,7 @@ public class ProcessProcessor {
 
     @Autowired
     GeneralTaskSubmitService generalTaskSubmitService;
+
     @Autowired
     BusiWorkBaseInfoService busiWorkBaseInfoService;
 
@@ -152,6 +144,9 @@ public class ProcessProcessor {
 
     @Autowired
     private ServiceAbilityApplyService serviceAbilityApplyService;
+
+    @Autowired
+    private StationDecorateBO stationDecorateBO;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -254,19 +249,19 @@ public class ProcessProcessor {
                 stationDecorateAuditDto.setId(businessId);
                 stationDecorateAuditDto.copyOperatorDto(OperatorDto.defaultOperator());
                 stationDecorateService.audit(stationDecorateAuditDto);
-            } else if (ProcessBusinessEnum.decorationInfoDecision.getCode().equals(businessCode)) {
-                DecorationInfoDecisionDto dto = new DecorationInfoDecisionDto();
-                if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-                    dto.setIsAgree(true);
-                } else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)) {
-                    dto.setIsAgree(false);
+            }else if(ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)){
+                //装修审核流程结束
+                StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
+                if(ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)){
+                    stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(),ProcessApproveResultEnum.APPROVE_PASS,stationDecrateDto.getAuditOpinion());
+                }else{
+                    //不通过
+                    stationDecorateBO.auditStationDecorateCheck(stationDecrateDto.getStationId(),ProcessApproveResultEnum.APPROVE_REFUSE,stationDecrateDto.getAuditOpinion());
                 }
-                dto.setId(businessId);
-                dto.copyOperatorDto(OperatorDto.defaultOperator());
-                stationDecorateService.auditDecorationDecision(dto);
             }
+
             // 节点被激活
-        } else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
+        }else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
             // 任务被激活
         } else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
             // 村点强制停业
@@ -339,25 +334,20 @@ public class ProcessProcessor {
                         decorationDesignAuditResult, desc);
                 }
             } else if (ProcessBusinessEnum.decorationCheckAudit.getCode().equals(businessCode)) {
+
                 StationDecorateDto stationDecrateDto = stationDecorateService.getInfoById(businessId);
-                String taskId = ob.getString("taskId");
-                CuntaoTask task = cuntaoWorkFlowService.getCuntaoTask(taskId);
                 String resultCode = ob.getString("result");
                 String desc = ob.getString("taskRemark");
+
                 ProcessApproveResultEnum decorationCheckAuditResult = null;
                 if ("拒绝".equals(resultCode)) {
                     decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_REFUSE;
                 } else {
                     decorationCheckAuditResult = ProcessApproveResultEnum.APPROVE_PASS;
                 }
-                if (diamondConfiguredProperties.getDecorateCountyAuditActivityId().equals(task.getActivityId())
-                    || "sid-99e6059f-5497-bab9-c9bb-6ba967c98b8c".equals(task.getActivityId())) {
-                    stationDecorateService.auditStationDecorateCheckByCountyLeader(stationDecrateDto.getStationId(),
+                //只保留意见,为流程结束的意见获取推送
+                stationDecorateService.auditStationDecorateAfterNodeFish(stationDecrateDto.getStationId(),
                         decorationCheckAuditResult, desc);
-                } else {
-                    stationDecorateService.auditStationDecorateCheck(stationDecrateDto.getStationId(),
-                        decorationCheckAuditResult, desc);
-                }
             }
         } else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
             if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {

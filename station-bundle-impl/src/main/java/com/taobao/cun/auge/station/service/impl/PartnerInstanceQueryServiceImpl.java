@@ -67,6 +67,7 @@ import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.InstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
@@ -121,6 +122,8 @@ import com.taobao.util.RandomUtil;
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class, clientTimeout = 7000)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
+	
+	
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
     private static final String LEVEL_CACHE_PRE = "CUN_TP_LEVEL_";
 
@@ -937,6 +940,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         if (null == rel) {
             return null;
         }
+        if(StationBizTypeEnum.TPA.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.TPA;
+        }else if(StationBizTypeEnum.UM.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.UM;
+        }
+
         Station station = stationBO.getStationById(rel.getStationId());
         if (null == station) {
             return null;
@@ -975,4 +984,34 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         return null;
     }
 
+	@Override
+	public InstanceDto getActiveInstance(Long taobaoUserId) {
+		ValidateUtils.notNull(taobaoUserId);
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (null == rel) {
+            return null;
+        }
+        InstanceDto instance = PartnerInstanceConverter.convertToInstanceDto(rel);
+
+        // 获得生命周期数据
+        PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
+            .toPartnerLifecycleDto(getLifecycleItem(rel.getId(), rel.getState()));
+        instance.setPartnerLifecycleDto(lifecycleDto);
+
+        Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+        PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+        instance.setPartnerDto(partnerDto);
+
+        Station station = stationBO.getStationById(instance.getStationId());
+        StationDto stationDto = StationConverter.toStationDto(station);
+        if (stationDto.getStationType() != null) {
+            StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationDto.getId());
+            if (storeDto != null) {
+                stationDto.setStoreDto(storeDto);
+            }
+        }
+        instance.setStationDto(stationDto);
+
+        return instance;
+	}
 }

@@ -704,4 +704,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(rel.getCainiaoStationId());
 		return w != null && w.isUse();
 	}
+	
+	@Override
+	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId) {
+		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
+		return w != null && w.isUse();
+	}
 }

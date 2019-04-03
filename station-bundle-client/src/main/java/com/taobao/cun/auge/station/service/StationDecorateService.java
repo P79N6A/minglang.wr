@@ -201,7 +201,7 @@ public interface StationDecorateService {
 	ResultModel<StationDecorateFeedBackDto> getStationDecorateFeedBackDtoByUserId(Long taobaoUserId);
 
  	/**
- 	 * 审核村点装修反馈信息
+ 	 * 流程实例结束审核村点装修反馈信息
  	 * @param stationId
  	 * @param approveResultEnum
  	 * @return
@@ -209,11 +209,12 @@ public interface StationDecorateService {
  	public void auditStationDecorateCheck(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
  	
  	/**
- 	 * 县小二审核村点装修反馈信息
+ 	 * 流程任务节点结束审核村点装修反馈信息
  	 * @param stationId
  	 * @param approveResultEnum
  	 * @param auditOpinion
  	 */
- 	public void auditStationDecorateCheckByCountyLeader(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+ 	public void auditStationDecorateAfterNodeFish(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
+
 
 }
