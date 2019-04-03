@@ -37,6 +37,8 @@ public class CuntaoServiceVendorDto implements Serializable{
 	private String operator;
 	
 	private Long id;
+
+	private Long endorOrgId;
 	
     public Long getId() {
 		return id;
@@ -111,7 +113,11 @@ public class CuntaoServiceVendorDto implements Serializable{
 		this.operator = operator;
 	}
 
+	public Long getEndorOrgId() {
+		return endorOrgId;
+	}
 
-	
-
+	public void setEndorOrgId(Long endorOrgId) {
+		this.endorOrgId = endorOrgId;
+	}
 }
