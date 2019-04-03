@@ -50,7 +50,7 @@ public class CainiaoCountyBo {
 		newCainiaoCounty.setCreator(cainiaoCounty.getCreator());
 		newCainiaoCounty.setGmtCreate(cainiaoCounty.getGmtCreate());
 		newCainiaoCounty.setId(cainiaoCounty.getId());
-		cainiaoCountyMapper.updateByPrimaryKey(newCainiaoCounty);
+		cainiaoCountyMapper.updateByPrimaryKeySelective(newCainiaoCounty);
 		//待开业后才需要更新
 		if(isSyncCainiaoCountyState(cuntaoCountyDto) && isCainiaoAddressChanged(cainiaoCounty, cainiaoCountyEditDto)) {
 			cainiaoCountyRemoteBo.updateCainiaoCounty(
