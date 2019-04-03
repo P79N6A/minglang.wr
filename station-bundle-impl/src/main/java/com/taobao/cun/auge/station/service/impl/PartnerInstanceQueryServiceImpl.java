@@ -5,10 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.taobao.cun.auge.dal.domain.StationTransInfo;
-import com.taobao.cun.auge.station.bo.StationTransInfoBO;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.common.lang.StringUtil;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
@@ -40,6 +35,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
@@ -55,6 +51,7 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
@@ -70,6 +67,7 @@ import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.InstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
@@ -90,6 +88,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -102,6 +101,7 @@ import com.taobao.cun.auge.station.enums.ReplenishStatusEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationModeEnum;
+import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -122,6 +122,8 @@ import com.taobao.util.RandomUtil;
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class, clientTimeout = 7000)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
+	
+	
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
     private static final String LEVEL_CACHE_PRE = "CUN_TP_LEVEL_";
 
@@ -938,6 +940,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         if (null == rel) {
             return null;
         }
+        if(StationBizTypeEnum.TPA.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.TPA;
+        }else if(StationBizTypeEnum.UM.getCode().equals(rel.getType())){
+            return StationBizTypeEnum.UM;
+        }
+
         Station station = stationBO.getStationById(rel.getStationId());
         if (null == station) {
             return null;
@@ -976,4 +984,34 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         return null;
     }
 
+	@Override
+	public InstanceDto getActiveInstance(Long taobaoUserId) {
+		ValidateUtils.notNull(taobaoUserId);
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (null == rel) {
+            return null;
+        }
+        InstanceDto instance = PartnerInstanceConverter.convertToInstanceDto(rel);
+
+        // 获得生命周期数据
+        PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
+            .toPartnerLifecycleDto(getLifecycleItem(rel.getId(), rel.getState()));
+        instance.setPartnerLifecycleDto(lifecycleDto);
+
+        Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+        PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+        instance.setPartnerDto(partnerDto);
+
+        Station station = stationBO.getStationById(instance.getStationId());
+        StationDto stationDto = StationConverter.toStationDto(station);
+        if (stationDto.getStationType() != null) {
+            StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationDto.getId());
+            if (storeDto != null) {
+                stationDto.setStoreDto(storeDto);
+            }
+        }
+        instance.setStationDto(stationDto);
+
+        return instance;
+	}
 }

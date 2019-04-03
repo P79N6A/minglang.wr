@@ -159,6 +159,13 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			railBusinessTags.add(tag);
 		}
 		
+		if(!Strings.isNullOrEmpty(fenceEntity.getDefaultCheck())) {
+			RailBusinessTag tag = new RailBusinessTag();
+			tag.setTagKey("defaultCheck");
+			tag.setTagValue(fenceEntity.getDefaultCheck());
+			railBusinessTags.add(tag);
+		}
+		
 		if(!Strings.isNullOrEmpty(fenceEntity.getCommodity())) {
 			Map<String, Object> commodities = JSON.parseObject(fenceEntity.getCommodity(), Map.class);
 			commodities.forEach((k,v)->{

@@ -6,8 +6,8 @@ import java.util.List;
 import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.lx.dto.LxPartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
@@ -316,5 +316,22 @@ public interface PartnerInstanceBO {
 	public void cancelShopMirror(Long taobaoUserId);
 	
 	public void updateIncomeMode(Long instanceId,String incomeMode,String operator);
+	
+	
+	 /**
+     * 根据村小二账号 获得有效的 拉新伙伴数量
+     *
+     * @param taobaoUserId
+     * @return
+     */
+    public Integer getActiveLxPartnerByParentStationId(Long taobaoUserId);
+    
+    /**
+     * 根据村小二账号 获得有效的 拉新伙伴数量
+     *
+     * @param taobaoUserId
+     * @return
+     */
+    public List<LxPartnerDto> getActiveLxListrByParentStationId(Long taobaoUserId);
 	
 }

@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.InstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
@@ -122,11 +123,22 @@ public interface PartnerInstanceQueryService {
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]
 	 * 的合伙人实例
+	 * 如果外部系统使用 要使用这个方法   改成使用	public InstanceDto getActiveInstance(Long taobaoUserId);  
+	 * 当前方法  会导致升级  PartnerInstanceTypeEnum枚举 导致   反序列化失败
 	 * 
 	 * @param taobaoUserId
 	 * @return
 	 */
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId);
+	
+	/**
+	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]
+	 * 的合伙人实例
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public InstanceDto getActiveInstance(Long taobaoUserId);
 	
 	/**
 	 * 批量查询

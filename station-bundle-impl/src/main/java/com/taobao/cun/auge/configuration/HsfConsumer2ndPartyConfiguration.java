@@ -3,15 +3,14 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
-import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
-import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
-import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ProductService;
@@ -47,8 +46,11 @@ import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
+import com.alipay.insopenprod.common.service.facade.api.InsPolicyApiFacade;
+import com.alipay.insopenprod.common.service.facade.api.InsSceneApiFacade;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
+import com.taobao.cun.auge.api.service.station.NewCustomerUnitQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
@@ -59,10 +61,13 @@ import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
+import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
+import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 import com.taobao.mmp.client.permission.service.MmpAuthReadService;
+import com.taobao.mtee.rmb.RmbService;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
@@ -487,5 +492,55 @@ public class HsfConsumer2ndPartyConfiguration  {
     	return placeServiceContext;
     }
     
+    @Bean("requestService")
+    HSFSpringConsumerBean requestService() {
+        HSFSpringConsumerBean hsfBean = new HSFSpringConsumerBean();
+        hsfBean.setInterfaceName("com.taobao.mtee.service.RequestService");
+        // 线上版本: 1.0.0，日常版本: 1.0.0.daily, 但日常不可用
+        hsfBean.setVersion("1.0.0");
+        hsfBean.setGroup("HSF");
+        return hsfBean;
+    }
+
+    @Bean("requestServiceForMtee3")
+    HSFSpringConsumerBean requestServiceForMtee3() {
+        HSFSpringConsumerBean hsfBean = new HSFSpringConsumerBean();
+        hsfBean.setInterfaceName("com.alibaba.security.tenant.common.service.RequestService");
+        // 线上版本: 1.0.0_ali_taobao, 日常版本: 1.0.0_ali_taobao
+        hsfBean.setVersion("1.0.0_ali_taobao");
+        hsfBean.setGroup("HSF");
+        return hsfBean;
+    }
+
+    @Bean("threadPoolTaskExecutor")
+    TaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(500);
+        executor.setKeepAliveSeconds(300);
+        return executor;
+    }
     
+    @Bean("rmbService")
+    RmbService rmbService(
+            @Qualifier("requestService")
+                    com.taobao.mtee.service.RequestService requestService,
+            @Qualifier("requestServiceForMtee3")
+                    com.alibaba.security.tenant.common.service.RequestService requestServiceForMtee3,
+            @Qualifier("threadPoolTaskExecutor")
+                    TaskExecutor threadPoolTaskExecutor
+    ) {
+        String appName = "auge";
+        // 0 - 通过 hsf 调用 mtee3， 1 - 通过 http 协议调用 mtee3
+        Integer httpFlag = 0;
+
+        RmbService rmbService = new RmbService();
+        rmbService.setAppName(appName);
+        rmbService.setHttpFlag(httpFlag);
+        rmbService.setRequestService(requestService);
+        rmbService.setRequestServiceForMtee3(requestServiceForMtee3);
+        rmbService.setAsyncTaskExecutor(threadPoolTaskExecutor);
+        return rmbService;
+    }
 }

@@ -136,4 +136,6 @@ public interface CaiNiaoService {
 	 * @return
 	 */
 	public Boolean checkCainiaoCountyIsOperating(Long stationId);
+	
+	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId);
 }

@@ -1,21 +1,26 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.dal.domain.UnionAdzone;
-import com.taobao.cun.auge.dal.domain.UnionAdzoneExample;
-import com.taobao.cun.auge.dal.mapper.UnionAdzoneExtMapper;
-import com.taobao.cun.auge.dal.mapper.UnionAdzoneMapper;
-import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
-import com.taobao.cun.auge.station.dto.NewuserOrderStat;
-import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.UnionAdzone;
+import com.taobao.cun.auge.dal.domain.UnionAdzoneExample;
+import com.taobao.cun.auge.dal.mapper.UnionAdzoneExtMapper;
+import com.taobao.cun.auge.dal.mapper.UnionAdzoneMapper;
+import com.taobao.cun.auge.station.bo.PartnerAdzoneBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.NewuserOrderStat;
+import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 
 @Component
 public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
@@ -23,6 +28,9 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
     private UnionAdzoneMapper unionAdzoneMapper;
     @Autowired
     private UnionAdzoneExtMapper unionAdzoneExtMapper;
+    
+    @Autowired
+    private  PartnerInstanceBO partnerInstanceBO;
 
     @Override
     public String getUnionPid(Long taobaoUserId, Long stationId) {
@@ -51,6 +59,20 @@ public class PartnerAdzoneBOImpl implements PartnerAdzoneBO {
         dto.setPid(pid);
         dto.setStationId(adzone.getStationId());
         dto.setTaobaoUserId(adzone.getTaobaoUserId());
+        
+        PartnerStationRel r = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(adzone.getTaobaoUserId());
+        if (r != null) {
+            dto.setType(r.getType());
+        }
+        if (r != null && InstanceTypeEnum.LX.getCode().equals(r.getType())) {
+        	if (PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
+        		 dto.setLxState(true);
+        	}else {
+        		 dto.setLxState(false);
+        	}
+        }else {
+        	dto.setLxState(true);
+        }
         return dto;
     }
 

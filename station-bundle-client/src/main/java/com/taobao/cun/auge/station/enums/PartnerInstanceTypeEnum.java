@@ -9,9 +9,10 @@ import javax.validation.constraints.NotNull;
 /**
  * 合伙人实例表 类型枚举
  * 
- * @author quanzhu.wangqz
+ *  这个类里 引用了枚举  会导致老版本用户反序列化失败 以后用PartnerInstanceTypeEnums
  *
  */
+@Deprecated
 public class PartnerInstanceTypeEnum implements Serializable {
 
 	private static final long serialVersionUID = 7138576667532117709L;
@@ -22,6 +23,7 @@ public class PartnerInstanceTypeEnum implements Serializable {
 	public static final PartnerInstanceTypeEnum TPT = new PartnerInstanceTypeEnum("TPT", "镇小二", PartnerInstanceType.TPT);
 	public static final PartnerInstanceTypeEnum TPS = new PartnerInstanceTypeEnum("TPS", "店小二", PartnerInstanceType.TPS);
 	public static final PartnerInstanceTypeEnum UM = new PartnerInstanceTypeEnum("UM", "优盟", PartnerInstanceType.UM);
+	public static final PartnerInstanceTypeEnum LX = new PartnerInstanceTypeEnum("LX", "拉新伙伴", PartnerInstanceType.LX);
 
 
 	private static final Map<String, PartnerInstanceTypeEnum> mappings = new HashMap<String, PartnerInstanceTypeEnum>();
@@ -32,6 +34,7 @@ public class PartnerInstanceTypeEnum implements Serializable {
 		mappings.put("TPT", TPT);
 		mappings.put("TPS", TPS);
 		mappings.put("UM", UM);
+		mappings.put("LX", LX);
 	}
 	@NotNull
 	private String code;
@@ -107,7 +110,7 @@ public class PartnerInstanceTypeEnum implements Serializable {
 	}
 	
 	public enum PartnerInstanceType {
-		TP, TPA, TPV,TPT,TPS,UM;
+		TP, TPA, TPV,TPT,TPS,UM,LX;
 	}
 }
 

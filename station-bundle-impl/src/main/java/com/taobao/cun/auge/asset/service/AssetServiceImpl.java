@@ -309,4 +309,9 @@ public class AssetServiceImpl implements AssetService{
 		return assetSynBO.initStationFeatureToCainiao(key, value);
 	}
 
+	@Override
+	public Boolean batchDisRouter() {
+		return assetSynBO.batchDisRouter();
+	}
+
 }

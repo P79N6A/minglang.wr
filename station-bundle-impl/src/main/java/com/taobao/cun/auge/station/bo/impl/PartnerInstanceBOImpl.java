@@ -8,7 +8,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,19 +38,23 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CriusTaskExecute;
 import com.taobao.cun.auge.dal.domain.CriusTaskExecuteExample;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
+import com.taobao.cun.auge.lx.dto.LxPartnerDto;
 import com.taobao.cun.auge.monitor.BusinessMonitorBO;
 import com.taobao.cun.auge.qualification.service.CuntaoQualificationService;
 import com.taobao.cun.auge.qualification.service.Qualification;
@@ -60,6 +66,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
@@ -74,6 +81,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.cun.auge.station.service.PartnerAdzoneService;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -103,6 +111,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Autowired
     PartnerMapper partnerMapper;
+    @Autowired
+    StationMapper stationMapper;
+
 
     @Autowired
     PartnerStationRelMapper partnerStationRelMapper;
@@ -143,6 +154,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private BizActionLogBo bizActionLogBo;
     @Autowired
     private CountyTransferStateMgrBo countyTransferStateMgrBo;
+    
+    @Autowired
+	private PartnerAdzoneService partnerAdzoneService;
     
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
@@ -1104,4 +1118,72 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		
 	}
+
+	@Override
+	public Integer getActiveLxPartnerByParentStationId(Long taobaoUserId) {
+		PartnerStationRel  r = this.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		if (r == null) {
+			return 0;
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
+            .andTypeEqualTo(PartnerInstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
+        return partnerStationRelMapper.countByExample(example);
+	}
+
+	@Override
+	public List<LxPartnerDto> getActiveLxListrByParentStationId(Long taobaoUserId) {
+		PartnerStationRel  r = this.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		if (r == null) {
+			return new ArrayList<LxPartnerDto>();
+		}
+		//查关系
+		PartnerStationRelExample example = new PartnerStationRelExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
+            .andTypeEqualTo(InstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
+        
+        List<PartnerStationRel> rList = partnerStationRelMapper.selectByExample(example);
+        
+        if (rList == null || rList.size()<=0) {
+        	return new ArrayList<LxPartnerDto>();
+        }
+        
+        List<Long> partnerIds =rList.stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
+        List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
+        
+        //查station
+        StationExample example2 = new StationExample();
+      	example2.createCriteria().andIsDeletedEqualTo("n").andIdIn(stationIds);
+        List<Station> sList =  stationMapper.selectByExample(example2);
+        
+        //查partner
+        PartnerExample example1 = new PartnerExample();
+        example1.createCriteria().andIsDeletedEqualTo("n").andIdIn(partnerIds);
+        List<Partner> pList =  partnerMapper.selectByExample(example1);
+        
+        Map<Long, Partner> pmap = pList.stream().collect(Collectors.toMap(Partner::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
+        Map<Long, Station> smap = sList.stream().collect(Collectors.toMap(Station::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
+		return rList.stream().map(p -> bulidLx(p,pmap,smap)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * 构建返回对象
+	 * @param p
+	 * @param map
+	 * @return
+	 */
+	private LxPartnerDto bulidLx(PartnerStationRel p, Map<Long, Partner> pmap,Map<Long, Station> smap){
+		LxPartnerDto pDto = new LxPartnerDto();
+		pDto.setTaobaoNick(pmap.get(p.getPartnerId()).getTaobaoNick());
+		pDto.setMobile(pmap.get(p.getPartnerId()).getMobile());
+		pDto.setName(pmap.get(p.getPartnerId()).getName());
+		pDto.setTaobaoUserId(p.getTaobaoUserId());
+		pDto.setState(p.getState());
+		pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), p.getStationId()));
+		pDto.setStationName(smap.get(p.getStationId()).getName());
+		
+		return pDto;
+	}
+	
+	
 }
