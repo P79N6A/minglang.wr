@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -12,6 +13,7 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovContactDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContactExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyGovContactMapper;
 import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 
@@ -33,6 +35,25 @@ public class CuntaoCountyGovContactBo {
 		if(!isExists(cuntaoCountyGovContactAddDto)) {
 			cuntaoCountyGovContactMapper.insert(BeanConvertUtils.convert(cuntaoCountyGovContactAddDto));
 		}
+	}
+	
+	@Transactional(rollbackFor=Throwable.class)
+	public void batchSave(List<CuntaoCountyGovContactAddDto> cuntaoCountyGovContactAddDtos) {
+		CuntaoCountyGovContactAddDto first = cuntaoCountyGovContactAddDtos.get(0);
+		deleteCountyContacts(first.getCountyId(),first.getOperator());
+		for(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto : cuntaoCountyGovContactAddDtos) {
+			save(cuntaoCountyGovContactAddDto);
+		}
+	}
+
+	private void deleteCountyContacts(Long countyId, String operator) {
+		CuntaoCountyGovContactExample example = new CuntaoCountyGovContactExample();
+		example.createCriteria().andCountyIdEqualTo(countyId);
+		CuntaoCountyGovContact record = new CuntaoCountyGovContact();
+		record.setGmtModified(new Date());
+		record.setModifier(operator);
+		record.setIsDeleted("y");
+		cuntaoCountyGovContactMapper.updateByExampleSelective(record, example);
 	}
 
 	private boolean isExists(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto) {

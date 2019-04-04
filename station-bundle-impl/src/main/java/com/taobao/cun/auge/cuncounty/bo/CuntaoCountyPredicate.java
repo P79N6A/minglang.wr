@@ -1,14 +1,10 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyGovContactDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
@@ -25,8 +21,6 @@ public class CuntaoCountyPredicate {
 	private CainiaoCountyBo cainiaoCountyBo;
 	@Resource
 	private CuntaoOrgAdminAddressBo cuntaoOrgAdminAddressBo;
-	@Resource
-	private CuntaoCountyGovContactBo cuntaoCountyGovContactBo;
 	
 	void checkCreateCounty(String countyCode) {
 		CuntaoCountyWhitenameDto cuntaoCountyWhitenameDto = cuntaoCountyWhitenameBo.getCuntaoCountyWhitenameByCountyCode(countyCode);
@@ -51,9 +45,7 @@ public class CuntaoCountyPredicate {
 		BeanValidator.validateWithThrowable(cuntaoCountyUpdateDto.getCuntaoCountyGovContractEditDto());
 		
 		//校验政府联系人
-		List<CuntaoCountyGovContactDto> cuntaoCountyGovContactDtos = cuntaoCountyGovContactBo.getCuntaoCountyGovContacts(cuntaoCountyUpdateDto.getCountyId());
-		int contactNum = cuntaoCountyGovContactDtos == null ? 0 : cuntaoCountyGovContactDtos.size();
-		if(contactNum + cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos().size() < 2){
+		if(cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos().size() < 2){
 			throw new IllegalArgumentException("至少要有两位政府联系人");
 		}
 		
