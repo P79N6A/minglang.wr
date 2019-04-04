@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
+import java.util.List;
+
+import com.taobao.cun.auge.common.AttachmentVO;
 
 /**
  * 办公场地信息
@@ -39,6 +42,19 @@ public class CuntaoCountyOfficeDto {
      * 租赁协议
      */
     private String attachments;
+    
+    /**
+     * AttachmentVO
+     */
+    private List<AttachmentVO> attachmentVOList;
+    
+    public List<AttachmentVO> getAttachmentVOList() {
+		return attachmentVOList;
+	}
+
+	public void setAttachmentVOList(List<AttachmentVO> attachmentVOList) {
+		this.attachmentVOList = attachmentVOList;
+	}
     
 	public Long getId() {
 		return id;

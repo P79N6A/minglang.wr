@@ -56,7 +56,9 @@ public class CuntaoCountyOfficeBo {
 	}
 	
 	CuntaoCountyOfficeDto getCuntaoCountyOffice(Long countyId) {
-		return BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId));
+		CuntaoCountyOfficeDto cuntaoCountyOfficeDto = BeanConvertUtils.convert(CuntaoCountyOfficeDto.class,cuntaoCountyExtMapper.getCuntaoCountyOffice(countyId));
+		cuntaoCountyOfficeDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cuntaoCountyOfficeDto.getAttachments()));
+		return cuntaoCountyOfficeDto;
 	}
 	
 	List<CuntaoCountyOfficeDto> getCuntaoCountyOffices(List<Long> countyIds) {

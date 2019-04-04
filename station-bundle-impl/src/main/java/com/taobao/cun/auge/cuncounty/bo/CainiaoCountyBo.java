@@ -70,7 +70,9 @@ public class CainiaoCountyBo {
 	}
 	
 	CainiaoCountyDto getCainiaoCountyDto(Long countyId) {
-		return BeanConvertUtils.convert(CainiaoCountyDto.class, cuntaoCountyExtMapper.getCainiaoCounty(countyId));
+		CainiaoCountyDto cainiaoCountyDto = BeanConvertUtils.convert(CainiaoCountyDto.class, cuntaoCountyExtMapper.getCainiaoCounty(countyId));
+		cainiaoCountyDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cainiaoCountyDto.getAttachments()));
+		return cainiaoCountyDto;
 	}
 	
 	private boolean isSyncCainiaoCountyState(CuntaoCountyDto cuntaoCountyDto) {
