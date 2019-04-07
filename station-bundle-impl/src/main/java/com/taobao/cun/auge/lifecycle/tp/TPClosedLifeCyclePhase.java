@@ -19,7 +19,7 @@ import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;

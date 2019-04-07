@@ -12,7 +12,7 @@ import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;

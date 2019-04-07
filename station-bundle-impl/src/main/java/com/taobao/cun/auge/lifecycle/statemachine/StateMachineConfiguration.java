@@ -1,10 +1,11 @@
-package com.taobao.cun.auge.statemachine;
+package com.taobao.cun.auge.lifecycle.statemachine;
 
 import java.util.Map;
 
 import com.alibaba.shared.xfsm.core.context.StateMachineCreateContext;
 
 import com.google.common.collect.Maps;
+import com.taobao.cun.auge.statemachine.StateMachineComponent;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +15,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.StandardAnnotationMetadata;
 
 
-//@Configuration
+@Configuration
 public class StateMachineConfiguration implements ApplicationListener<ApplicationReadyEvent> {
     @SuppressWarnings("rawtypes")
     private Map<String, Map<String, Class>> actionMappings = Maps.newConcurrentMap();

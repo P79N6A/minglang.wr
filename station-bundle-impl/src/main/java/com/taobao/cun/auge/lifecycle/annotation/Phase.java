@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
