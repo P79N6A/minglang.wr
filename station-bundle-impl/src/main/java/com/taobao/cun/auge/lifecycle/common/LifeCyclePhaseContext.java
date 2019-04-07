@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.common;
 
 import java.util.Map;
 import java.util.Optional;

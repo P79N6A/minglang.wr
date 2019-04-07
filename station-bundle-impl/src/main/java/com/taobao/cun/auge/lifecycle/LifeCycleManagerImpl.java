@@ -4,6 +4,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContextHolder;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,7 @@ import net.sf.cglib.proxy.NoOp;
 @Component
 public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 
-	Map<String,LifeCyclePhase> lifeCycleComponents = Maps.newConcurrentMap();
+	Map<String, LifeCyclePhase> lifeCycleComponents = Maps.newConcurrentMap();
 	
 	@Autowired
 	private List<LifeCyclePhase> lifeCyclePhases;

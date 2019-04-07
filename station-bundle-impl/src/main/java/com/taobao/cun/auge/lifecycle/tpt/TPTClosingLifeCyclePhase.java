@@ -8,10 +8,10 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -45,7 +45,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPT",event=StateMachineEvent.CLOSING_EVENT,desc="镇小二停业中服务节点")
-public class TPTClosingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPTClosingLifeCyclePhase extends CommonLifeCyclePhase {
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;

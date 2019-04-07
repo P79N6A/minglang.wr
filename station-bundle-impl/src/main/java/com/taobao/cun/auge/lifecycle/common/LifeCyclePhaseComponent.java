@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.common;
 
 
 public interface LifeCyclePhaseComponent {

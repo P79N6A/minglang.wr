@@ -4,7 +4,7 @@ import com.alibaba.shared.xfsm.core.annotation.Inject;
 import com.alibaba.shared.xfsm.core.context.RequestContext;
 
 import com.taobao.cun.auge.lifecycle.LifeCycleManager;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.statemachine.StateMachineComponent;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;

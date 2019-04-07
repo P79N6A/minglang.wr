@@ -15,11 +15,10 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
-import com.taobao.cun.auge.lifecycle.tp.TPClosedLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -42,7 +41,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  */
 @Component
 @Phase(type="TPS",event=StateMachineEvent.CLOSED_EVENT,desc="村小二已停业服务节点")
-public class TPSClosedLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPSClosedLifeCyclePhase extends CommonLifeCyclePhase {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TPSClosedLifeCyclePhase.class);
 

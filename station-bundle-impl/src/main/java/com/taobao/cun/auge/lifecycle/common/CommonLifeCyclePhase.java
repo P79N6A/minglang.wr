@@ -1,10 +1,12 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.common;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.lifecycle.*;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.um.UnionMemberQueryService;
@@ -26,8 +28,6 @@ import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.log.BizActionEnum;
 import com.taobao.cun.auge.log.BizActionLogDto;
 import com.taobao.cun.auge.log.bo.BizActionLogBo;
-import com.taobao.cun.auge.org.dto.OrgDeptType;
-import com.taobao.cun.auge.org.service.ExtDeptOrgClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
@@ -42,95 +42,106 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
 
 
-public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
-	@Autowired
-	private StationBO stationBO;
+public abstract class CommonLifeCyclePhase implements LifeCyclePhase {
 
-	@Autowired
-	private AttachmentService criusAttachmentService;
+    private LifeCyclePhaseDSL dsl;
 
-	 @Autowired
-	private PartnerProtocolRelBO partnerProtocolRelBO;
-	
-	@Autowired
-	private PartnerBO partnerBO;
-	
-	@Autowired
+    @Autowired
+    private StationBO stationBO;
+    @Autowired
+    private PartnerProtocolRelBO partnerProtocolRelBO;
+    @Autowired
+    private PartnerBO partnerBO;
+    @Autowired
     private PartnerInstanceBO partnerInstanceBO;
-	
-	@Autowired
-	private CountyTransferStateMgrBo countyTransferStateMgrBo;
     @Autowired
     private BizActionLogBo bizActionLogBo;
-	@Autowired
-	private LifeCycleValidator lifeCycleValidator;
+    @Autowired
+    private CountyTransferStateMgrBo countyTransferStateMgrBo;
+
+    @Autowired
+    private LifeCycleValidator lifeCycleValidator;
 
     @Autowired
     UnionMemberQueryService unionMemberQueryService;
+    @Autowired
+    private AttachmentService criusAttachmentService;
 
-	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
-		StationDto stationDto = partnerInstanceDto.getStationDto();
-		stationDto.setState(StationStateEnum.INVALID);
-		stationDto.setStatus(StationStatusEnum.NEW);
-		stationDto.copyOperatorDto(partnerInstanceDto);
-		stationDto.setStationType(stationType);
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		if (partnerDto != null) {
-			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
-			stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
-			stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
-		}
-     
-		// 判断服务站编号是否使用中
-		Long stationId = partnerInstanceDto.getStationId();
-		checkStationNumDuplicate(stationId, stationDto.getStationNum());
-		// 判断同一省不能重复村站名
-		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
-		lifeCycleValidator.checkStationNameDuplicate(stationId,stationDto.getName()+nameSuffix,stationDto.getAddress().getProvince());
-		stationDto.setOwnDept("opdept");
-		stationDto.setTransferState(TransferState.FINISHED.name());
-		stationId = stationBO.addStation(stationDto);
-		partnerInstanceDto.setStationId(stationId);
-		if (partnerInstanceDto.getParentStationId() == null) {
-			partnerInstanceDto.setParentStationId(stationId);
-		}
-		criusAttachmentService.addAttachmentBatch(stationDto.getAttachments(), stationId,
-				AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(partnerInstanceDto));
-		saveStationFixProtocol(stationDto, stationId);
-		return stationId;
-	}
 
-	protected void addCreateLog(PartnerInstanceDto partnerInstanceDto) {
-		BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
-		bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
-		bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
-		bizActionLogAddDto.setObjectType("station");
-		bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
-		bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getOperatorOrgId());
-		bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getOperator());
-		bizActionLogAddDto.setValue1(String.valueOf(partnerInstanceDto.getTaobaoUserId()));
-		bizActionLogAddDto.setValue2(String.valueOf(partnerInstanceDto.getId()));
-		bizActionLogBo.addLog(bizActionLogAddDto);
-	}
+    @Override
+    public PhaseKey getPhaseKey() {
+        Phase phase = AnnotationUtils.getAnnotation(this.getClass(), Phase.class);
+        Assert.notNull(phase, "phase is null");
+        Assert.notNull(phase.event(), "phase event is null");
+        Assert.notNull(phase.type(), "phase type is null");
+        return new PhaseKey(phase.type(), phase.event().getEvent());
+    }
 
-	public void checkStationNumDuplicate(Long stationId, String newStationNum) {
-		// 判断服务站编号是否使用中
-		String oldStationNum = null;
-		if (stationId != null) {
-			Station oldStation = stationBO.getStationById(stationId);
-			oldStationNum = oldStation.getStationNum();
-		}
-		if (!StringUtils.equals(oldStationNum, newStationNum)) {
-			int count = stationBO.getStationCountByStationNum(newStationNum);
-			if (count > 0) {
-				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "服务站编号重复");
-			}
-		}
-	}
-	
-	/**
+    public Long addStation(PartnerInstanceDto partnerInstanceDto, int stationType) {
+        StationDto stationDto = partnerInstanceDto.getStationDto();
+        stationDto.setState(StationStateEnum.INVALID);
+        stationDto.setStatus(StationStatusEnum.NEW);
+        stationDto.copyOperatorDto(partnerInstanceDto);
+        stationDto.setStationType(stationType);
+        PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+        if (partnerDto != null) {
+            stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+            stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+            stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+        }
+
+        // 判断服务站编号是否使用中
+        Long stationId = partnerInstanceDto.getStationId();
+        checkStationNumDuplicate(stationId, stationDto.getStationNum());
+        // 判断同一省不能重复村站名
+        String nameSuffix = stationDto.getNameSuffix() == null ? "" : stationDto.getNameSuffix();
+        lifeCycleValidator.checkStationNameDuplicate(stationId, stationDto.getName() + nameSuffix, stationDto.getAddress().getProvince());
+        stationDto.setOwnDept("opdept");
+        stationDto.setTransferState(TransferState.FINISHED.name());
+        stationId = stationBO.addStation(stationDto);
+        partnerInstanceDto.setStationId(stationId);
+        if (partnerInstanceDto.getParentStationId() == null) {
+            partnerInstanceDto.setParentStationId(stationId);
+        }
+        criusAttachmentService.addAttachmentBatch(stationDto.getAttachments(), stationId,
+                AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(partnerInstanceDto));
+        saveStationFixProtocol(stationDto, stationId);
+        return stationId;
+    }
+
+    protected void addCreateLog(PartnerInstanceDto partnerInstanceDto) {
+        BizActionLogDto bizActionLogAddDto = new BizActionLogDto();
+        bizActionLogAddDto.setBizActionEnum(BizActionEnum.station_create);
+        bizActionLogAddDto.setObjectId(partnerInstanceDto.getStationId());
+        bizActionLogAddDto.setObjectType("station");
+        bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
+        bizActionLogAddDto.setOpOrgId(partnerInstanceDto.getOperatorOrgId());
+        bizActionLogAddDto.setOpWorkId(partnerInstanceDto.getOperator());
+        bizActionLogAddDto.setValue1(String.valueOf(partnerInstanceDto.getTaobaoUserId()));
+        bizActionLogAddDto.setValue2(String.valueOf(partnerInstanceDto.getId()));
+        bizActionLogBo.addLog(bizActionLogAddDto);
+    }
+
+    public void checkStationNumDuplicate(Long stationId, String newStationNum) {
+        // 判断服务站编号是否使用中
+        String oldStationNum = null;
+        if (stationId != null) {
+            Station oldStation = stationBO.getStationById(stationId);
+            oldStationNum = oldStation.getStationNum();
+        }
+        if (!StringUtils.equals(oldStationNum, newStationNum)) {
+            int count = stationBO.getStationCountByStationNum(newStationNum);
+            if (count > 0) {
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "服务站编号重复");
+            }
+        }
+    }
+
+    /**
      * 更新固点协议
      *
      * @param stationDto
@@ -159,7 +170,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
             }
         }
     }
-    
+
     public Long addPartner(PartnerInstanceDto partnerInstanceDto) {
         //确保taobaouserId在partner表唯一
         Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(partnerInstanceDto.getTaobaoUserId());
@@ -172,7 +183,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
             partnerInstanceDto.setPartnerId(partnerId);
             return partnerId;
         } else {
-        	partnerInstanceDto.setPartnerId(partner.getId());
+            partnerInstanceDto.setPartnerId(partner.getId());
             partnerDto.setId(partner.getId());
             partnerDto.setAliLangUserId(partner.getAlilangUserId());
             partnerDto.setState(PartnerStateEnum.NORMAL);
@@ -182,8 +193,8 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         }
 
     }
-    
-    
+
+
     public void updateStation(Long stationId, PartnerInstanceDto partnerInstanceDto) {
         StationDto stationDto = partnerInstanceDto.getStationDto();
         stationDto.copyOperatorDto(partnerInstanceDto);
@@ -199,7 +210,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         saveStationFixProtocol(stationDto, stationId);
         criusAttachmentService.modifyAttachementBatch(stationDto.getAttachments(), stationId, AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(stationDto));
     }
-    
+
     public Long addPartnerInstanceRel(PartnerInstanceDto partnerInstanceDto) {
         partnerInstanceDto.setState(PartnerInstanceStateEnum.SETTLING);
         partnerInstanceDto.setApplyTime(new Date());
@@ -216,15 +227,16 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 
     /**
      * 发送状态变更事件
+     *
      * @param instanceId
      * @param stateChangeEnum
      * @param operator
      */
     public void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
-            OperatorDto operator) {
-		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-		PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
+                                                    OperatorDto operator) {
+        PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+                PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
     }
 
     protected PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
@@ -238,4 +250,15 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         PageDto<UnionMemberDto> umList = unionMemberQueryService.queryByPage(con);
         return umList;
     }
+
+
+
+    public LifeCyclePhaseDSL getDsl() {
+        return dsl;
+    }
+
+    public void setDsl(LifeCyclePhaseDSL dsl) {
+        this.dsl = dsl;
+    }
+
 }

@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.lifecycle;
 
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+
 public interface LifeCycleManager {
 
 	/**

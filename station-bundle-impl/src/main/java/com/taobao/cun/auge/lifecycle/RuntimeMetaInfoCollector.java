@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PhaseInfo;
 import com.taobao.cun.auge.station.dto.StepInfo;

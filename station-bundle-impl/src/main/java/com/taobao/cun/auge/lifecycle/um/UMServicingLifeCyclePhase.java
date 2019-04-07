@@ -2,12 +2,11 @@ package com.taobao.cun.auge.lifecycle.um;
 
 import java.util.Date;
 
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SERVICING_EVENT, desc = "优盟服务节点")
-public class UMServicingLifeCyclePhase extends AbstractLifeCyclePhase {
+public class UMServicingLifeCyclePhase extends CommonLifeCyclePhase {
 
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;

@@ -6,9 +6,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.enums.*;
-import com.taobao.cun.auge.station.um.UnionMemberQueryService;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +19,10 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
@@ -46,7 +44,7 @@ import com.taobao.cun.auge.station.service.StationService;
  */
 @Component
 @Phase(type="TPS",event=StateMachineEvent.QUIT_EVENT,desc="村小二退出中服务节点")
-public class TPSQuitLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPSQuitLifeCyclePhase extends CommonLifeCyclePhase {
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;

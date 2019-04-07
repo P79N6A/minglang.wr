@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContextHolder;
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.promise.Promises;
 

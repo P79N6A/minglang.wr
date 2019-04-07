@@ -4,11 +4,10 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -32,7 +31,6 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +40,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPT",event=StateMachineEvent.SETTLING_EVENT,desc="镇小二入驻节点服务")
-public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPTSettlingLifeCyclePhase extends CommonLifeCyclePhase {
 
 	
 	@Autowired

@@ -6,26 +6,23 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.enums.*;
-import com.taobao.cun.auge.station.um.UnionMemberQueryService;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
@@ -40,8 +37,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
-import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 
 /**
@@ -50,7 +45,7 @@ import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.QUIT_EVENT,desc="村小二退出中服务节点")
-public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPQuitLifeCyclePhase extends CommonLifeCyclePhase {
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;

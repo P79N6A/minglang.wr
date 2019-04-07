@@ -3,13 +3,12 @@ package com.taobao.cun.auge.lifecycle.um;
 import java.util.Date;
 
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
@@ -30,7 +29,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中服务节点")
-public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
+public class UMSettlingLifeCyclePhase extends CommonLifeCyclePhase {
 
     private static final Logger logger = LoggerFactory.getLogger(UMSettlingLifeCyclePhase.class);
 

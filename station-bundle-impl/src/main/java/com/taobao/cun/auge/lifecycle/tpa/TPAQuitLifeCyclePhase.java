@@ -10,10 +10,10 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPA",event=StateMachineEvent.QUIT_EVENT,desc="淘帮手退出中服务节点")
-public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPAQuitLifeCyclePhase extends CommonLifeCyclePhase {
 
 	private Logger logger = LoggerFactory.getLogger(TPAQuitLifeCyclePhase.class);
 	

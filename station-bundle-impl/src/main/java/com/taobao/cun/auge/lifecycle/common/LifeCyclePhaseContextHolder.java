@@ -1,5 +1,7 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.common;
 
+
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 
 public class LifeCyclePhaseContextHolder {
 

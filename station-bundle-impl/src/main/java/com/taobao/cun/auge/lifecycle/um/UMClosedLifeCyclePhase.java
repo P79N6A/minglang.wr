@@ -3,10 +3,10 @@ package com.taobao.cun.auge.lifecycle.um;
 import java.util.Date;
 
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.CLOSED_EVENT, desc = "优盟关闭节点")
-public class UMClosedLifeCyclePhase extends AbstractLifeCyclePhase {
+public class UMClosedLifeCyclePhase extends CommonLifeCyclePhase {
 
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;
@@ -64,11 +64,7 @@ public class UMClosedLifeCyclePhase extends AbstractLifeCyclePhase {
         }
     }
 
-    @Override
-    @PhaseStepMeta(descr = "创建已停业lifeCycleItems")
-    public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
-        //do nothing
-    }
+
 
     @Override
     @PhaseStepMeta(descr = "扩展业务")

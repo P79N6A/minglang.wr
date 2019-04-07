@@ -14,10 +14,13 @@ import java.util.Map;
 @RequestMapping("/runtime")
 public class RuntimeMetaInfoController {
 
-	@RequestMapping("/meta")
-    public @ResponseBody Map<String,List<PhaseInfo>> meta() {
-		//元数据收集
-		Map<String,List<PhaseInfo>> runtimeInfos = RuntimeMetaInfoCollector.runtimeInfo();
-		return runtimeInfos;
+    @RequestMapping("/meta")
+    public @ResponseBody
+    Map<String, List<PhaseInfo>> meta() {
+        /**
+         * 元数据收集
+         */
+        Map<String, List<PhaseInfo>> runtimeInfos = RuntimeMetaInfoCollector.runtimeInfo();
+        return runtimeInfos;
     }
 }

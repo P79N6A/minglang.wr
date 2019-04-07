@@ -24,10 +24,9 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
@@ -54,8 +53,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -67,13 +64,7 @@ import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.store.service.StoreWriteService;
-import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
-import com.taobao.cun.settle.bail.dto.CuntaoBailBizQueryDto;
-import com.taobao.cun.settle.bail.dto.CuntaoBailSignAccountDto;
-import com.taobao.cun.settle.bail.enums.BailBizSceneEnum;
-import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
-import com.taobao.cun.settle.common.model.ResultModel;
 
 /**
  * 村小二装修中阶段组件
@@ -81,7 +72,7 @@ import com.taobao.cun.settle.common.model.ResultModel;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
-public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class CommonLifeCyclePhase extends CommonLifeCyclePhase {
 
 	@Autowired
 	private StationBO stationBO;
@@ -115,7 +106,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     @Autowired
     private CuntaoNewBailService cuntaoNewBailService;
     
-    private static Logger logger = LoggerFactory.getLogger(TPDecoratingLifeCyclePhase.class);
+    private static Logger logger = LoggerFactory.getLogger(CommonLifeCyclePhase.class);
     
     @Autowired
     private StationTransInfoBO stationTransInfoBO;

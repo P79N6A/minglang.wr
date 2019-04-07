@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.lifecycle;
 
-import com.taobao.cun.auge.lifecycle.tp.TPDecoratingLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.tp.CommonLifeCyclePhase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,7 +19,7 @@ public class TestLifeCycleSerivice {
 	}
 
 	private void registerPhase(LifeCycleManager lifeCycleManager) {
-		LifeCyclePhase phase = new TPDecoratingLifeCyclePhase();
+		LifeCyclePhase phase = new CommonLifeCyclePhase();
 		lifeCycleManager.registerLifeCyclePhase(phase);
 	}
 

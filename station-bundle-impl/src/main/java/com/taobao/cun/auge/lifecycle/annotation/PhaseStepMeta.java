@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
