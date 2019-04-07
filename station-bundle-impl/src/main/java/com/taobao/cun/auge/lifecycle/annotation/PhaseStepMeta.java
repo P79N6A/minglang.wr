@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PhaseStepMeta {
 
-	  String descr() default "";
+    String descr() default "";
 }
