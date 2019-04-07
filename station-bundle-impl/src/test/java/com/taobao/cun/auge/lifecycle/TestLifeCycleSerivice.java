@@ -2,6 +2,7 @@ package com.taobao.cun.auge.lifecycle;
 
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseManager;
 import com.taobao.cun.auge.lifecycle.tp.TPDecoratingLifeCyclePhase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,13 +13,13 @@ public class TestLifeCycleSerivice {
 
 	@Test
 	public void testTpDecorating(){
-		LifeCycleManager lifeCycleManager = new LifeCycleManagerImpl();
+		LifeCyclePhaseManager lifeCycleManager = new LifeCyclePhaseManager();
 		registerPhase(lifeCycleManager);
 		LifeCyclePhaseContext context = createContext();
 		lifeCycleManager.execute(context);
 	}
 
-	private void registerPhase(LifeCycleManager lifeCycleManager) {
+	private void registerPhase(LifeCyclePhaseManager lifeCycleManager) {
 		LifeCyclePhase phase = new TPDecoratingLifeCyclePhase();
 		lifeCycleManager.registerLifeCyclePhase(phase);
 	}
