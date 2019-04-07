@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.lifecycle.um;
 
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.QUIT_EVENT, desc = "优盟退出节点")
-public class UMQuitLifeCyclePhase extends CommonLifeCyclePhase {
+public class UMQuitLifeCyclePhase extends BaseLifeCyclePhase {
 
     @Autowired
     private StationBO stationBO;

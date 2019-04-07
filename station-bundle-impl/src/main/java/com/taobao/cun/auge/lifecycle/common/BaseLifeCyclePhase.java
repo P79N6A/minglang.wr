@@ -45,7 +45,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 
-public abstract class CommonLifeCyclePhase implements LifeCyclePhase {
+public abstract class BaseLifeCyclePhase implements LifeCyclePhase {
 
     private LifeCyclePhaseDSL dsl;
 

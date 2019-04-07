@@ -16,7 +16,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -55,7 +55,7 @@ import com.taobao.cun.auge.store.service.StoreWriteService;
  */
 @Component
 @Phase(type="TPS",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
-public class TPSDecoratingLifeCyclePhase extends CommonLifeCyclePhase {
+public class TPSDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	@Autowired
 	private StationBO stationBO;
 	

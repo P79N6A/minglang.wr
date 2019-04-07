@@ -6,7 +6,7 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中节点")
-public class UMSettlingLifeCyclePhase extends CommonLifeCyclePhase {
+public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
     private static final Logger logger = LoggerFactory.getLogger(UMSettlingLifeCyclePhase.class);
 

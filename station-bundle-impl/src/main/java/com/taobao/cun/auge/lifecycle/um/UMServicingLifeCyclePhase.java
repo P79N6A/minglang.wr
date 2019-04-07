@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.SERVICING_EVENT, desc = "优盟服务节点")
-public class UMServicingLifeCyclePhase extends CommonLifeCyclePhase {
+public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
 
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;

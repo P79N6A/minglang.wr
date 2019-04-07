@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.lifecycle.tpa;
 
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPA",event=StateMachineEvent.SETTLING_EVENT,desc="淘帮手入驻中节点服务")
-public class TPASettlingLifeCyclePhase extends CommonLifeCyclePhase {
+public class TPASettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
 	
 	@Autowired

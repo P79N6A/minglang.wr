@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
@@ -45,7 +45,7 @@ import com.taobao.cun.auge.station.validate.StationValidator;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中服务节点")
-public class TPSettlingLifeCyclePhase extends CommonLifeCyclePhase {
+public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
     private static final Logger logger = LoggerFactory.getLogger(TPSettlingLifeCyclePhase.class);
 

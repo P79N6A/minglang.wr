@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
-public class TPDecoratingLifeCyclePhase extends CommonLifeCyclePhase {
+public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 
 	@Autowired
 	private StationBO stationBO;
