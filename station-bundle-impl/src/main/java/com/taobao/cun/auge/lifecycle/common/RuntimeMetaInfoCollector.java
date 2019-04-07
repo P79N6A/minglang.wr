@@ -2,7 +2,7 @@ package com.taobao.cun.auge.lifecycle.common;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PhaseInfo;
 import com.taobao.cun.auge.station.dto.StepInfo;
@@ -63,7 +63,7 @@ public class RuntimeMetaInfoCollector {
     private static StepInfo createStepInfo(Method method) {
         StepInfo stepInfo = new StepInfo();
         stepInfo.setMethodName(method.getName());
-        PhaseStepMeta stepMeta = AnnotationUtils.getAnnotation(method, PhaseStepMeta.class);
+        PhaseMeta stepMeta = AnnotationUtils.getAnnotation(method, PhaseMeta.class);
         if (stepMeta != null) {
             stepInfo.setDesc(stepMeta.descr());
         }

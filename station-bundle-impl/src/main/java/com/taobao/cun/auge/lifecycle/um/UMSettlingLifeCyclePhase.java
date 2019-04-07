@@ -9,7 +9,7 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
@@ -69,7 +69,7 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
     private ManualReleaseDistributeLock distributeLock;
 
     @Override
-    @PhaseStepMeta(descr = "创建或更新优盟站点")
+    @PhaseMeta(descr = "创建或更新优盟站点")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         //前置校验
@@ -153,14 +153,14 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "创建优盟")
+    @PhaseMeta(descr = "创建优盟")
     public void createOrUpdatePartner(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         addPartner(partnerInstanceDto);
     }
 
     @Override
-    @PhaseStepMeta(descr = "创建人村关系")
+    @PhaseMeta(descr = "创建人村关系")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         addUmPartnerInstanceRel(partnerInstanceDto);
@@ -184,7 +184,7 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
 
     @Override
-    @PhaseStepMeta(descr = "创建培训装修记录")
+    @PhaseMeta(descr = "创建培训装修记录")
     public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
@@ -193,7 +193,7 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "触发入驻中事件")
+    @PhaseMeta(descr = "触发入驻中事件")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long partnerInstanceDtoId = partnerInstanceDto.getId();

@@ -7,7 +7,7 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -37,7 +37,7 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
     private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟站点信息到服务中")
+    @PhaseMeta(descr = "更新优盟站点信息到服务中")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long stationId = partnerInstanceDto.getStationId();
@@ -48,7 +48,7 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
 
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟实例信息")
+    @PhaseMeta(descr = "更新优盟实例信息")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         //已停业恢复到服务中
@@ -80,7 +80,7 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
 
-    @PhaseStepMeta(descr = "优盟扩展业务：打UIC标")
+    @PhaseMeta(descr = "优盟扩展业务：打UIC标")
     public void addUserTag(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
@@ -88,7 +88,7 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
         generalTaskSubmitService.submitCreateUnionAdzoneTask(partnerInstanceDto, operatorId);
     }
 
-    @PhaseStepMeta(descr = "优盟扩展业务：创建拉新推广位")
+    @PhaseMeta(descr = "优盟扩展业务：创建拉新推广位")
     public void createUnionAdzone(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
@@ -96,7 +96,7 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "触发服务中状态变更事件")
+    @PhaseMeta(descr = "触发服务中状态变更事件")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long instanceId = partnerInstanceDto.getId();

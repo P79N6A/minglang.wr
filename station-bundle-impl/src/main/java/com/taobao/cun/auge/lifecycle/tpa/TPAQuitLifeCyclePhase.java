@@ -13,7 +13,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
@@ -80,7 +80,7 @@ public class TPAQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	private PartnerQualifyApplyService partnerQualifyApplyService;
 	
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
+	@PhaseMeta(descr="更新淘帮手站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 	
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
@@ -104,13 +104,13 @@ public class TPAQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手信息（无操作）")
+	@PhaseMeta(descr="更新淘帮手信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手实例状态到退出中")
+	@PhaseMeta(descr="更新淘帮手实例状态到退出中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Boolean fromThawTask = (Boolean)context.getExtensionWithDefault("fromThawTask",false);
@@ -121,7 +121,7 @@ public class TPAQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新退出中lifeCycleItems")
+	@PhaseMeta(descr="更新退出中lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(), PartnerLifecycleBusinessTypeEnum.QUITING,PartnerLifecycleCurrentStepEnum.PROCESSING);
@@ -149,7 +149,7 @@ public class TPAQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="解冻保证金")
+	@PhaseMeta(descr="解冻保证金")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		
@@ -190,7 +190,7 @@ public class TPAQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发已退出事件变更")
+	@PhaseMeta(descr="触发已退出事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		Boolean fromThawTask = (Boolean)context.getExtensionWithDefault("fromThawTask",false);
 		if(fromThawTask){

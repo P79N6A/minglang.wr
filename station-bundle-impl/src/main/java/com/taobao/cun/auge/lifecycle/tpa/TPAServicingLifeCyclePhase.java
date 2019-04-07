@@ -13,7 +13,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -60,7 +60,7 @@ public class TPAServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	private AssetBO assetBO;
 	
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手站点到服务中")
+	@PhaseMeta(descr="更新淘帮手站点到服务中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long stationId = partnerInstanceDto.getStationId();
@@ -73,12 +73,12 @@ public class TPAServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手信息(doNothing)")
+	@PhaseMeta(descr="更新淘帮手信息(doNothing)")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 	}
 
 	@Override
-	@PhaseStepMeta
+	@PhaseMeta
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
@@ -89,7 +89,7 @@ public class TPAServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手LifeCycleItems")
+	@PhaseMeta(descr="更新淘帮手LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId = partnerInstanceDto.getId();
@@ -106,7 +106,7 @@ public class TPAServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手服务中扩展信息")
+	@PhaseMeta(descr="更新淘帮手服务中扩展信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
@@ -118,7 +118,7 @@ public class TPAServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="同步老模型")
+	@PhaseMeta(descr="同步老模型")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){

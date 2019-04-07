@@ -8,7 +8,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -49,7 +49,7 @@ public class TPAClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	private CloseStationApplyBO closeStationApplyBO;
 	
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手站点状态到停业中")
+	@PhaseMeta(descr="更新淘帮手站点状态到停业中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
@@ -57,13 +57,13 @@ public class TPAClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手信息（无操作）")
+	@PhaseMeta(descr="更新淘帮手信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手实例状态到停业中")
+	@PhaseMeta(descr="更新淘帮手实例状态到停业中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//外部调用需要设置addCloseType
@@ -71,14 +71,14 @@ public class TPAClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建停业中lifeCycleItems")
+	@PhaseMeta(descr="创建停业中lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addClosingLifecycle(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建停业协议，创建停业申请")
+	@PhaseMeta(descr="创建停业协议，创建停业申请")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		ForcedCloseDto forcedCloseDto = (ForcedCloseDto) context.getExtension("forcedCloseDto");
@@ -90,7 +90,7 @@ public class TPAClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发停业中事件变更")
+	@PhaseMeta(descr="触发停业中事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(

@@ -7,7 +7,7 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -38,7 +38,7 @@ public class UMClosedLifeCyclePhase extends BaseLifeCyclePhase {
     private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟站点状态到已关闭")
+    @PhaseMeta(descr = "更新优盟站点状态到已关闭")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState())) {
@@ -50,7 +50,7 @@ public class UMClosedLifeCyclePhase extends BaseLifeCyclePhase {
 
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟实例状态到已停业")
+    @PhaseMeta(descr = "更新优盟实例状态到已停业")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState())) {
@@ -61,7 +61,7 @@ public class UMClosedLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
 
-    @PhaseStepMeta(descr = "扩展业务：删除用户UIC标")
+    @PhaseMeta(descr = "扩展业务：删除用户UIC标")
     public void removeUserTag(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 
@@ -75,7 +75,7 @@ public class UMClosedLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "触发已停业事件变更")
+    @PhaseMeta(descr = "触发已停业事件变更")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         // 发出合伙人实例状态变更事件

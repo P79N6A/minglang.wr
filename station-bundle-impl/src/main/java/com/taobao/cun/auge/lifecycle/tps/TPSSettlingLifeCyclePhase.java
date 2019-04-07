@@ -13,7 +13,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -70,7 +70,7 @@ public class TPSSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	private StationDecorateBO stationDecorateBO;
 	
 	@Override
-	@PhaseStepMeta(descr="创建村小二站点")
+	@PhaseMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
@@ -106,21 +106,21 @@ public class TPSSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
     
 	@Override
-	@PhaseStepMeta(descr="创建村小二")
+	@PhaseMeta(descr="创建村小二")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		 PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 addPartner(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建人村关系")
+	@PhaseMeta(descr="创建人村关系")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建lifeCycleItems")
+	@PhaseMeta(descr="创建lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addLifecycle(partnerInstanceDto);
@@ -141,7 +141,7 @@ public class TPSSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建培训装修记录")
+	@PhaseMeta(descr="创建培训装修记录")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		
@@ -177,7 +177,7 @@ public class TPSSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发入驻中事件")
+	@PhaseMeta(descr="触发入驻中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);

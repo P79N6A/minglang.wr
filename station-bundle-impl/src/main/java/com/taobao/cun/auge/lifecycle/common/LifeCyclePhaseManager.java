@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.lifecycle.common;
 
 import com.google.common.collect.Maps;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import net.sf.cglib.proxy.*;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -94,7 +94,7 @@ public class LifeCyclePhaseManager implements InitializingBean {
 
         @Override
         public int accept(Method method) {
-            PhaseStepMeta meta = AnnotationUtils.getAnnotation(method, PhaseStepMeta.class);
+            PhaseMeta meta = AnnotationUtils.getAnnotation(method, PhaseMeta.class);
             if (meta == null) {
                 return 0;
             } else {

@@ -4,7 +4,7 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -30,7 +30,7 @@ public class UMQuitLifeCyclePhase extends BaseLifeCyclePhase {
     private PartnerInstanceBO partnerInstanceBO;
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟站点状态到已退出")
+    @PhaseMeta(descr = "更新优盟站点状态到已退出")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 
@@ -42,7 +42,7 @@ public class UMQuitLifeCyclePhase extends BaseLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟实例状态到已退出")
+    @PhaseMeta(descr = "更新优盟实例状态到已退出")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         if (PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())) {

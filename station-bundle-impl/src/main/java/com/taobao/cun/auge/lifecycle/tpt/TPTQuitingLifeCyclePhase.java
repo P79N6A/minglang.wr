@@ -10,7 +10,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -61,7 +61,7 @@ public class TPTQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	    
 	    
 	@Override
-	@PhaseStepMeta(descr="更新镇小二站点状态到已停业")
+	@PhaseMeta(descr="更新镇小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		QuitStationApplyDto quitStationApplyDto = (QuitStationApplyDto) context.getExtension("quitApply");
@@ -71,20 +71,20 @@ public class TPTQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二信息（无操作）")
+	@PhaseMeta(descr="更新镇小二信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二实例状态到退出中")
+	@PhaseMeta(descr="更新镇小二实例状态到退出中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		partnerInstanceBO.changeState(partnerInstanceDto.getId(), PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING, partnerInstanceDto.getOperator());
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建退出中lifeCycleItems")
+	@PhaseMeta(descr="创建退出中lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
@@ -99,7 +99,7 @@ public class TPTQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="保存退出申请单")
+	@PhaseMeta(descr="保存退出申请单")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		 // 保存退出申请单
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
@@ -111,7 +111,7 @@ public class TPTQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发已停业事件变更")
+	@PhaseMeta(descr="触发已停业事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 // 发出合伙人实例状态变更事件

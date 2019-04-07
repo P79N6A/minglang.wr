@@ -12,7 +12,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -48,20 +48,20 @@ public class TPAClosedLifeCyclePhase extends BaseLifeCyclePhase {
 	private AssetBO assetBO;
 	
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
+	@PhaseMeta(descr="更新淘帮手站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手信息（无操作）")
+	@PhaseMeta(descr="更新淘帮手信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新淘帮手实例状态到已停业")
+	@PhaseMeta(descr="更新淘帮手实例状态到已停业")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
@@ -70,7 +70,7 @@ public class TPAClosedLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新lifecycleItems")
+	@PhaseMeta(descr="更新lifecycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
@@ -83,7 +83,7 @@ public class TPAClosedLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="")
+	@PhaseMeta(descr="")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		assetBO.setAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
@@ -91,7 +91,7 @@ public class TPAClosedLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发已停业事件变更")
+	@PhaseMeta(descr="触发已停业事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 // 发出合伙人实例状态变更事件

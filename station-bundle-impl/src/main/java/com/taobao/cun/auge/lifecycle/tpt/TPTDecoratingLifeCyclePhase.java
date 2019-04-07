@@ -19,7 +19,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
-import com.taobao.cun.auge.lifecycle.annotation.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -70,7 +70,7 @@ public class TPTDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
     @Autowired
     private AppResourceService appResourceService;
 	@Override
-	@PhaseStepMeta(descr="更新村点信息")
+	@PhaseMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long stationId = partnerInstanceDto.getStationId();
@@ -83,20 +83,20 @@ public class TPTDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二信息")
+	@PhaseMeta(descr="更新镇小二信息")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nonthing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二实例状态到装修中")
+	@PhaseMeta(descr="更新镇小二实例状态到装修中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新LifeCycleItems")
+	@PhaseMeta(descr="更新LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId =partnerInstanceDto.getId();
@@ -114,13 +114,13 @@ public class TPTDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新装修中扩展业务信息")
+	@PhaseMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		//donothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发装修中事件")
+	@PhaseMeta(descr="触发装修中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId =partnerInstanceDto.getId();
