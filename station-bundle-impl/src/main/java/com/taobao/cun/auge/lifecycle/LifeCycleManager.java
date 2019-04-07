@@ -6,7 +6,7 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 public interface LifeCycleManager {
 
 	/**
-	 * 入驻业务入口
+	 * 业务执行入口
 	 * @param context
 	 */
 	 void execute(LifeCyclePhaseContext context);

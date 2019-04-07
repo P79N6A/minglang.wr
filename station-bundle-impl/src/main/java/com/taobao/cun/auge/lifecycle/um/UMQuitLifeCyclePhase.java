@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.lifecycle.um;
 
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 /**
  * 优盟退出组件
  *
- * @author haihu.fhh
+ * @author haihu.fhh jianke.ljk
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.QUIT_EVENT, desc = "优盟退出节点")
@@ -48,5 +49,12 @@ public class UMQuitLifeCyclePhase extends CommonLifeCyclePhase {
             partnerInstanceDto.setState(PartnerInstanceStateEnum.QUIT);
             partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
         }
+    }
+
+    public LifeCyclePhaseDSL createPhaseDSL() {
+        LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+        dsl.then(this::createOrUpdateStation);
+        dsl.then(this::createOrUpdatePartnerInstance);
+        return dsl;
     }
 }

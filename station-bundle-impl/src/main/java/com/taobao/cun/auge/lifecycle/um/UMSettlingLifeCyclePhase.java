@@ -5,6 +5,7 @@ import java.util.Date;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.common.CommonLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
@@ -38,7 +39,7 @@ import org.springframework.stereotype.Component;
  * 优盟入驻中阶段组件
  */
 @Component
-@Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中服务节点")
+@Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中节点")
 public class UMSettlingLifeCyclePhase extends CommonLifeCyclePhase {
 
     private static final Logger logger = LoggerFactory.getLogger(UMSettlingLifeCyclePhase.class);
@@ -181,10 +182,6 @@ public class UMSettlingLifeCyclePhase extends CommonLifeCyclePhase {
         return partnerInstanceId;
     }
 
-    @Override
-    @PhaseStepMeta(descr = "创建lifeCycleItems")
-    public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
-    }
 
     @Override
     @PhaseStepMeta(descr = "创建培训装修记录")
@@ -202,5 +199,15 @@ public class UMSettlingLifeCyclePhase extends CommonLifeCyclePhase {
         Long partnerInstanceDtoId = partnerInstanceDto.getId();
         sendPartnerInstanceStateChangeEvent(partnerInstanceDtoId,
             PartnerInstanceStateChangeEnum.START_SERVICING, partnerInstanceDto);
+    }
+
+    public LifeCyclePhaseDSL createPhaseDSL() {
+        LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+        dsl.then(this::createOrUpdateStation);
+        dsl.then(this::createOrUpdatePartner);
+        dsl.then(this::createOrUpdatePartnerInstance);
+        dsl.then(this::createOrUpdateExtensionBusiness);
+        dsl.then(this::triggerStateChangeEvent);
+        return dsl;
     }
 }
