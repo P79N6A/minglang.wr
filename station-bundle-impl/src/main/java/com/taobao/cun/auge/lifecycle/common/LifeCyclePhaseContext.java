@@ -68,8 +68,8 @@ public class LifeCyclePhaseContext {
 	
 	
 	
-	public PhaseKey getPhaseKey() {
-		return new PhaseKey(userType,event);
+	public LifeCyclePhaseKey getPhaseKey() {
+		return new LifeCyclePhaseKey(userType,event);
 	}
 	
 	public String getEvent() {

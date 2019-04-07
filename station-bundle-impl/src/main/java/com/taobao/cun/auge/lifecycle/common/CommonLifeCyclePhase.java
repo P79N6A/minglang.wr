@@ -73,12 +73,12 @@ public abstract class CommonLifeCyclePhase implements LifeCyclePhase {
 
 
     @Override
-    public PhaseKey getPhaseKey() {
+    public LifeCyclePhaseKey getPhaseKey() {
         Phase phase = AnnotationUtils.getAnnotation(this.getClass(), Phase.class);
         Assert.notNull(phase, "phase is null");
         Assert.notNull(phase.event(), "phase event is null");
         Assert.notNull(phase.type(), "phase type is null");
-        return new PhaseKey(phase.type(), phase.event().getEvent());
+        return new LifeCyclePhaseKey(phase.type(), phase.event().getEvent());
     }
 
     public Long addStation(PartnerInstanceDto partnerInstanceDto, int stationType) {

@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.lifecycle.common;
 
 
-public class PhaseKey {
+public class LifeCyclePhaseKey {
 
     private static final String SPLIT = "_";
 
@@ -9,7 +9,7 @@ public class PhaseKey {
 
     private String event;
 
-    public PhaseKey(String userType, String event) {
+    public LifeCyclePhaseKey(String userType, String event) {
         this.userType = userType;
         this.event = event;
     }
