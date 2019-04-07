@@ -1,8 +1,6 @@
 package com.taobao.cun.auge.lifecycle.common;
 
 
-import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
-
 public class LifeCyclePhaseContextHolder {
 
 	private static final ThreadLocal<LifeCyclePhaseContext> CONTEXT_THREAD_LOCAL = new ThreadLocal<LifeCyclePhaseContext>();
