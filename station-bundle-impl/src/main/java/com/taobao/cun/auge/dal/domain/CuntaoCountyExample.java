@@ -1204,6 +1204,66 @@ public class CuntaoCountyExample {
             addCriterion("county_code not between", value1, value2, "countyCode");
             return (Criteria) this;
         }
+
+        public Criteria andOperateDateIsNull() {
+            addCriterion("operate_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateIsNotNull() {
+            addCriterion("operate_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateEqualTo(Date value) {
+            addCriterion("operate_date =", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateNotEqualTo(Date value) {
+            addCriterion("operate_date <>", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateGreaterThan(Date value) {
+            addCriterion("operate_date >", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("operate_date >=", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateLessThan(Date value) {
+            addCriterion("operate_date <", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateLessThanOrEqualTo(Date value) {
+            addCriterion("operate_date <=", value, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateIn(List<Date> values) {
+            addCriterion("operate_date in", values, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateNotIn(List<Date> values) {
+            addCriterion("operate_date not in", values, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateBetween(Date value1, Date value2) {
+            addCriterion("operate_date between", value1, value2, "operateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperateDateNotBetween(Date value1, Date value2) {
+            addCriterion("operate_date not between", value1, value2, "operateDate");
+            return (Criteria) this;
+        }
     }
 
     /**

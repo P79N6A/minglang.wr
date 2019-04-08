@@ -43,9 +43,21 @@ public class CuntaoCountyDto {
      * 县行政CODE
      */
     private String countyCode;
+    
+    /**
+     * 运营时间
+     */
+    private String operateDate;
 
+    public String getOperateDate() {
+		return operateDate;
+	}
 
-    public Long getId() {
+	public void setOperateDate(String operateDate) {
+		this.operateDate = operateDate;
+	}
+
+	public Long getId() {
         return id;
     }
 

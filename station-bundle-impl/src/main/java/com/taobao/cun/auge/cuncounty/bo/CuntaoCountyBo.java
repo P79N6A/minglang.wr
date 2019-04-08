@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 县服务中心
@@ -50,6 +52,15 @@ public class CuntaoCountyBo {
 			cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
 			countyActionLogBo.addStateLog(countyId, state, cuntaoCounty.getModifier());
 		}
+	}
+	
+	public void startOperate(Long countyId) {
+		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(countyId);
+		cuntaoCounty.setGmtModified(new Date());
+		cuntaoCounty.setState(CuntaoCountyStateEnum.WAIT_OPEN.getCode());
+		cuntaoCounty.setOperateDate(DateUtils.truncate(new Date(), Calendar.DATE));
+		cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
+		countyActionLogBo.addStateLog(countyId, CuntaoCountyStateEnum.WAIT_OPEN.getCode(), cuntaoCounty.getModifier());
 	}
 	
 	public void applyOpen(Long countyId, String operator) {
