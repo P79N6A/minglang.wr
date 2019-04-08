@@ -946,7 +946,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if(instance != null ){
             NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
-            if(newRevenueCommunicationDto!=null){
+            if(newRevenueCommunicationDto!=null&&StringUtils.isBlank(instance.getIncomeMode())){
                 return PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS;
             }
         }

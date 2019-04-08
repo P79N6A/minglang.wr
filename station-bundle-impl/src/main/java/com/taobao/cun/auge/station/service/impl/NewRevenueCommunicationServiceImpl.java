@@ -133,4 +133,13 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点切换转型邀约成功记录不唯一");
         }
     }
+
+    @Override
+    public void auditNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto) {
+
+        Assert.notNull(newRevenueCommunicationDto, "newRevenueCommunicationDto not exist");
+        Assert.notNull(newRevenueCommunicationDto.getId(), "newRevenueCommunicationId not exist");
+        Assert.notNull(newRevenueCommunicationDto.getAuditStatus(), "newRevenueCommunication audit not exist");
+        newRevenueCommunicationBO.auditNewRevenueCommunication(newRevenueCommunicationDto);
+    }
 }

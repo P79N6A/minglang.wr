@@ -42,5 +42,11 @@ public interface NewRevenueCommunicationService {
     public NewRevenueCommunicationDto getApprovePassNewRevenueCommunication(String businessCode,String objectId);
 
 
+    /**
+     * 审批邀约记录
+     * @param newRevenueCommunicationDto
+     */
+   public void auditNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto);
+
 
 }

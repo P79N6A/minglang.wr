@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.condition.NewRevenueCommunicationCondition;
 import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
 import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +105,26 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         }
         NewRevenueCommunication record =new NewRevenueCommunication();
         record.setId(oldRecord.getId());
-        record.setAuditStatus(newRevenueCommunicationDto.getAuditStatus());
         record.setStatus("FINISH");
+        DomainUtils.beforeUpdate(record,"sys");
+        newRevenueCommunicationMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public void auditNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto) {
+        ValidateUtils.notNull(newRevenueCommunicationDto);
+        ValidateUtils.notNull(newRevenueCommunicationDto.getId());
+        ValidateUtils.notNull(newRevenueCommunicationDto.getAuditStatus());
+        NewRevenueCommunication oldRecord = getNewRevenueCommunicationById(newRevenueCommunicationDto.getId());
+        if (oldRecord == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "NewRevenueCommunication is null");
+        }
+        NewRevenueCommunication record =new NewRevenueCommunication();
+        record.setId(oldRecord.getId());
+        record.setAuditStatus(newRevenueCommunicationDto.getAuditStatus());
+        if(NodeActionEnum.DISAGREE.getCode().equals(newRevenueCommunicationDto.getAuditStatus())){
+            record.setStatus("FINISH");
+        }
         DomainUtils.beforeUpdate(record,"sys");
         newRevenueCommunicationMapper.updateByPrimaryKeySelective(record);
     }

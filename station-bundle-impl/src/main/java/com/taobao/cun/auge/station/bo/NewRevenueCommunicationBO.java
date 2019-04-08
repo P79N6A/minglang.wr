@@ -57,4 +57,13 @@ public interface NewRevenueCommunicationBO {
     public void completeNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto);
 
 
+
+    /**
+     * 审批邀约记录
+     * @param newRevenueCommunicationDto
+     * @return
+     * @
+     */
+    public void auditNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto);
+
 }
