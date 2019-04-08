@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
@@ -13,8 +15,8 @@ import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 县服务中心
@@ -30,6 +32,10 @@ public class CuntaoCountyBo {
 	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
 	@Resource
 	private CountyActionLogBo countyActionLogBo;
+	@Resource
+	private StationBO stationBO;
+	@Value("${county.apply.open.servicingstation.num}")
+	private Integer servicingStateNum;
 	
 	public CuntaoCountyDto getCuntaoCounty(Long id) {
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(id);
@@ -69,6 +75,10 @@ public class CuntaoCountyBo {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "县服务中心不存在"); 
 		}
 		if(cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.WAIT_OPEN.getCode())) {
+			int servicingStationNum = stationBO.getServicingNumByOrgId(cuntaoCountyDto.getOrgId());
+			if(servicingStationNum < servicingStateNum) {
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务中站点数:" + servicingStationNum + ",不满足:" + servicingStateNum + "个的条件");
+			}
 			if(!cainiaoCountyRemoteBo.isOperating(countyId)) {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "菜鸟侧的县仓尚未开业，不具备县点开业条件");
 			}
