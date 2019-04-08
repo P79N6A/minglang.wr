@@ -85,7 +85,6 @@ public class UMServicingLifeCyclePhase extends BaseLifeCyclePhase {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
         generalTaskSubmitService.submitAddUserTagTasks(partnerInstanceDto.getId(), operatorId);
-        generalTaskSubmitService.submitCreateUnionAdzoneTask(partnerInstanceDto, operatorId);
     }
 
     @PhaseMeta(descr = "优盟扩展业务：创建拉新推广位")
