@@ -82,7 +82,6 @@ public class TPQuitLifeCyclePhase extends BaseLifeCyclePhase {
 		dsl.then(this::createOrUpdateStation);
 		dsl.then(this::createOrUpdatePartnerInstance);
 		dsl.then(this::createOrUpdateLifeCycleItems);
-		dsl.then(this::createOrUpdateExtensionBusiness);
 		dsl.then(this::thawAccountMoney);
 		dsl.then(this::executeQuitAyncTask);
 		dsl.then(this::triggerStateChangeEvent);
