@@ -42,7 +42,17 @@ public class CuntaoCountyListItemVO {
     private Date gmtProtocolStartDate;
     
     private Date gmtProtocolEndDate;
+    /**
+     * 运营时间
+     */
+    private Date operateDate;
     
+	public Date getOperateDate() {
+		return operateDate;
+	}
+	public void setOperateDate(Date operateDate) {
+		this.operateDate = operateDate;
+	}
 	public Date getGmtProtocolStartDate() {
 		return gmtProtocolStartDate;
 	}

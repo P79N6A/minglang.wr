@@ -49,6 +49,7 @@
 		a.county_name as countyName,
 		b.gmt_protocol_start as gmtProtocolStartDate,
 		b.gmt_protocol_end as gmtProtocolEndDate,
+		operate_date as operateDate,
 		org_id as orgId,
 		full_name_path as fullNamePath,
 		full_id_path as fullIdPath

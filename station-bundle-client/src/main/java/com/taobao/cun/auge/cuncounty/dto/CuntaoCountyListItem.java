@@ -55,6 +55,11 @@ public class CuntaoCountyListItem {
     private String officeAddress;
     
     /**
+     * 运营时间
+     */
+    private String operateDate;
+    
+    /**
      * 县小二
      */
     private List<CuntaoUserOrgVO> countyLeaders = Lists.newArrayList();
@@ -79,6 +84,14 @@ public class CuntaoCountyListItem {
      */
     private String protocolEndDate;
     
+	public String getOperateDate() {
+		return operateDate;
+	}
+
+	public void setOperateDate(String operateDate) {
+		this.operateDate = operateDate;
+	}
+
 	public String getFullIdPath() {
 		return fullIdPath;
 	}
