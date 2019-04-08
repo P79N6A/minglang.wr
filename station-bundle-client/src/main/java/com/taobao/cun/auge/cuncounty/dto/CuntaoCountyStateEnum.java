@@ -2,7 +2,10 @@ package com.taobao.cun.auge.cuncounty.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 /**
  * 县服务中心状态
@@ -15,6 +18,7 @@ public class CuntaoCountyStateEnum implements Serializable {
 
 	private static final Map<String, CuntaoCountyStateEnum> mappings = new HashMap<String, CuntaoCountyStateEnum>();
 
+	private static final List<CuntaoCountyStateEnum> STATES = Lists.newArrayList();
     private String code;
     private String desc;
 
@@ -31,6 +35,11 @@ public class CuntaoCountyStateEnum implements Serializable {
 		mappings.put("WAIT_OPEN", WAIT_OPEN);
 		mappings.put("OPENING", OPENING);
 
+		STATES.add(PLANNING);
+		STATES.add(WAIT_OPEN);
+		STATES.add(OPENING);
+		STATES.add(WAIT_OPEN_AUDIT);
+		STATES.add(WAIT_OPEN_AUDIT_FAIL);
     }
 
     public CuntaoCountyStateEnum(String code, String desc) {
@@ -42,6 +51,10 @@ public class CuntaoCountyStateEnum implements Serializable {
 
     }
 
+    public static List<CuntaoCountyStateEnum> getStates(){
+    	return STATES;
+    }
+    
     public String getCode() {
         return code;
     }
