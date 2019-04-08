@@ -11,6 +11,7 @@ import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -58,8 +59,18 @@ public class TPQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	
 	@Autowired
 	private UicReadAdapter uicReadAdapter;
-	    
-	    
+
+
+	public LifeCyclePhaseDSL createPhaseDSL() {
+		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::createOrUpdateStation);
+		dsl.then(this::createOrUpdatePartnerInstance);
+		dsl.then(this::createOrUpdateLifeCycleItems);
+		dsl.then(this::saveQuitStationApply);
+		dsl.then(this::triggerStateChangeEvent);
+		return dsl;
+	}
+
 	@Override
 	@PhaseMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -70,11 +81,6 @@ public class TPQuitingLifeCyclePhase extends BaseLifeCyclePhase {
          }
 	}
 
-	@Override
-	@PhaseMeta(descr="更新村小二信息（无操作）")
-	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
-		//do nothing
-	}
 
 	@Override
 	@PhaseMeta(descr="更新村小二实例状态到退出中")
@@ -84,7 +90,7 @@ public class TPQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseMeta(descr="创建退出中lifeCycleItems")
+	@PhaseMeta(descr="创建退出中lifeCycleItems：退出审批流")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
@@ -98,9 +104,8 @@ public class TPQuitingLifeCyclePhase extends BaseLifeCyclePhase {
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
-	@Override
 	@PhaseMeta(descr="保存退出申请单")
-	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
+	public void saveQuitStationApply(LifeCyclePhaseContext context) {
 		 // 保存退出申请单
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceDto.getId());

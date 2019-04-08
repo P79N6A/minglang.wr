@@ -172,7 +172,7 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 
-		@Override
+	@Override
 	@PhaseMeta(descr="触发入驻中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
@@ -193,6 +193,7 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
 	public LifeCyclePhaseDSL createPhaseDSL() {
 		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::validateSettling);
 		dsl.then(this::createOrUpdateStation);
 		dsl.then(this::createOrUpdatePartner);
 		dsl.then(this::createOrUpdatePartnerInstance);

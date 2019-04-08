@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,16 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
     @Autowired
     private StationTransInfoBO stationTransInfoBO;
 
+	public LifeCyclePhaseDSL createPhaseDSL() {
+		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::createOrUpdateStation);
+		dsl.then(this::createOrUpdatePartnerInstance);
+		dsl.then(this::buildLifeCycleItems);
+		dsl.then(this::createOrUpdateExtensionBusiness);
+		dsl.then(this::triggerStateChangeEvent);
+		return dsl;
+	}
+
 	@Override
 	@PhaseMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -132,11 +143,6 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 		stationBO.updateStation(stationDto);
 	}
 
-	@Override
-	@PhaseMeta(descr="更新村小二信息")
-	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
-		//do nonthing
-	}
 
 	@Override
 	@PhaseMeta(descr="更新村小二实例状态到装修中")
@@ -152,9 +158,8 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 		}
 	}
 
-	@Override
 	@PhaseMeta(descr="更新LifeCycleItems")
-	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
+	public void buildLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
 			PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
@@ -188,7 +193,7 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseMeta(descr="更新装修中扩展业务信息")
+	@PhaseMeta(descr="扩展业务：创建共享门店")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
@@ -235,7 +240,7 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 
-	 * @param PartnerStationRel
+	 * @param rel
 	 * @param state
 	 */
 	private void dispacthEvent(PartnerInstanceDto rel, String state) {
@@ -293,15 +298,6 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 				partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 			}
 		}
-//		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化 已下线
-//		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-//		    if(!hasRepublishBonds(rel.getTaobaoUserId(),rel,partnerLifecycleDto)){
-//		        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
-//	            partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
-//	            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-//	            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,null,null);
-//		    }
-//		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 		
 	}
@@ -396,36 +392,5 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 		}
 		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
-	
-//	private boolean hasRepublishBonds(Long taobaoUserId,PartnerInstanceDto rel,PartnerLifecycleDto lifecycle){
-//	    /** 查询铺货保证金是否缴纳 */
-//        CuntaoBailBizQueryDto queryDto = new CuntaoBailBizQueryDto();
-//        queryDto.setTaobaoUserId(taobaoUserId);
-//        queryDto.setUserTypeEnum(UserTypeEnum.STORE);
-//        queryDto.setBailBizSceneEnum(BailBizSceneEnum.PARTNER_KAIYEBAO);
-//        
-//        CuntaoBailBaseQueryDto baseQuery = new CuntaoBailBizQueryDto();
-//        baseQuery.setTaobaoUserId(taobaoUserId);
-//        baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
-//        ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
-//        if (acc != null && !acc.isSuccess()) {
-//            logger.info("querySignAccount", queryDto.getTaobaoUserId(), "", acc.getMessage());
-//        }
-//        String alipayId = acc.getResult().getAlipayId();
-//        String alipayAccount = acc.getResult().getAlipayAccount();
-//        queryDto.setAlipayId(alipayId);
-//        ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
-//        if (rm != null && !rm.isSuccess()) {
-//            logger.info("queryUserAvailableAmount", queryDto.getTaobaoUserId(), "", acc.getMessage());
-//            return false;
-//        }
-//        if(rm.getResult() > 0){
-//            lifecycle.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
-//            lifecycle.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
-//            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-//            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,alipayAccount,alipayId);
-//            return true;
-//        }
-//        return false;
-//	}
+
 }

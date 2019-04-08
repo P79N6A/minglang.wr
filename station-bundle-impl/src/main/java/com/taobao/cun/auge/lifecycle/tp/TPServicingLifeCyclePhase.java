@@ -3,6 +3,7 @@ package com.taobao.cun.auge.lifecycle.tp;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -88,6 +89,18 @@ public class TPServicingLifeCyclePhase extends BaseLifeCyclePhase {
     private StationTransInfoBO stationTransInfoBO;
     
 	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
+
+	public LifeCyclePhaseDSL createPhaseDSL() {
+		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::createOrUpdateStation);
+		dsl.then(this::createOrUpdatePartnerInstance);
+		dsl.then(this::createOrUpdateLifeCycleItems);
+		dsl.then(this::createOrUpdateExtensionBusiness);
+		dsl.then(this::triggerStateChangeEvent);
+		return dsl;
+	}
+
+
 	@Override
 	@PhaseMeta(descr="更新村小二站点信息到服务中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -106,15 +119,8 @@ public class TPServicingLifeCyclePhase extends BaseLifeCyclePhase {
 	        stationDto.setAlipayAccount(p.getAlipayAccount());
 	        stationBO.updateStation(stationDto);
 		}
-		
-	
 	}
 
-	@Override
-	@PhaseMeta(descr="更新村小二信息(无操作)")
-	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
-		//do nothing
-	}
 
 	@Override
 	@PhaseMeta(descr="更新村小二实例信息")

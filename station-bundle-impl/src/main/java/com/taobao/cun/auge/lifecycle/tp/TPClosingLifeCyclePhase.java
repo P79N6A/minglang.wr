@@ -12,6 +12,7 @@ import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -61,6 +62,16 @@ public class TPClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	
 	@Autowired
 	private CloseStationApplyBO closeStationApplyBO;
+
+	public LifeCyclePhaseDSL createPhaseDSL() {
+		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::createOrUpdateStation);
+		dsl.then(this::createOrUpdatePartnerInstance);
+		dsl.then(this::createOrUpdateLifeCycleItems);
+		dsl.then(this::createOrUpdateExtensionBusiness);
+		dsl.then(this::triggerStateChangeEvent);
+		return dsl;
+	}
 	
 	@Override
 	@PhaseMeta(descr="更新村小二站点状态到停业中")
@@ -70,11 +81,6 @@ public class TPClosingLifeCyclePhase extends BaseLifeCyclePhase {
 		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSING, partnerInstanceDto.getOperator());
 	}
 
-	@Override
-	@PhaseMeta(descr="更新村小二信息（无操作）")
-	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
-		//do nothing
-	}
 
 	@Override
 	@PhaseMeta(descr="更新村小二实例状态到停业中")
@@ -85,7 +91,7 @@ public class TPClosingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 
 	@Override
-	@PhaseMeta(descr="创建停业中lifeCycleItems")
+	@PhaseMeta(descr="构建停业中lifeCycle元素：停业协议、停业审批")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addClosingLifecycle(partnerInstanceDto);
