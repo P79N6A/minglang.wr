@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,16 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 	
 	@Autowired
 	private StationDecorateService stationDecorateService;
+
+	@PhaseMeta(descr="入驻条件校验：参数、支付宝实名认证、手机号重复")
+	public void validateSettling(LifeCyclePhaseContext context){
+		lifeCycleValidator.validateSettling(context.getPartnerInstance());
+	}
+
 	@Override
 	@PhaseMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
               //村名基础校验
@@ -117,9 +123,8 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
-	@Override
-	@PhaseMeta(descr="创建lifeCycleItems")
-	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
+	@PhaseMeta(descr="扩展生命周期元素：入驻协议、保证金、小二审核、装修确认")
+	public void buildLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addLifecycle(partnerInstanceDto);
 	}
@@ -138,9 +143,8 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
 
-	@Override
 	@PhaseMeta(descr="创建培训装修记录")
-	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
+	public void executeExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		
 		validateDecorateAndPaymentType(partnerInstanceDto);
@@ -154,16 +158,21 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
 		
+	}
+
+	@PhaseMeta(descr="开通1688授权")
+	public void openAccessCbuMarket(LifeCyclePhaseContext context) {
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		try {
 			//开通1688授权
 			stationDecorateService.openAccessCbuMarket(partnerInstanceDto.getTaobaoUserId());
 		} catch (Exception e) {
 			logger.error("openAccessCbuMarket error,taobaoUserId"+partnerInstanceDto.getTaobaoUserId(),e);
 		}
-		
 	}
 
-	@Override
+
+		@Override
 	@PhaseMeta(descr="触发入驻中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
@@ -181,8 +190,18 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 		ValidateUtils.notNull(decorate);
 		ValidateUtils.notNull(pay);
 	}
-	
 
+	public LifeCyclePhaseDSL createPhaseDSL() {
+		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+		dsl.then(this::createOrUpdateStation);
+		dsl.then(this::createOrUpdatePartner);
+		dsl.then(this::createOrUpdatePartnerInstance);
+		dsl.then(this::buildLifeCycleItems);
+		dsl.then(this::executeExtensionBusiness);
+		dsl.then(this::openAccessCbuMarket);
+		dsl.then(this::triggerStateChangeEvent);
+		return dsl;
+	}
 	
 
 	
