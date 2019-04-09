@@ -1,12 +1,12 @@
 package com.taobao.cun.auge.lifecycle.tpa;
 
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPA",event=StateMachineEvent.SETTLING_EVENT,desc="淘帮手入驻中节点服务")
-public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPASettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
 	
 	@Autowired
@@ -43,7 +43,7 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	private LifeCycleValidator lifeCycleValidator;
 	
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手站点")
+	@PhaseMeta(descr="创建淘帮手站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
@@ -65,21 +65,21 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手")
+	@PhaseMeta(descr="创建淘帮手")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		 PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 addPartner(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手和站点关系")
+	@PhaseMeta(descr="创建淘帮手和站点关系")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建LifeCycleItems")
+	@PhaseMeta(descr="创建LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerLifeCycle(partnerInstanceDto);
@@ -108,13 +108,13 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="无扩展业务")
+	@PhaseMeta(descr="无扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		//donothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发入驻中事件")
+	@PhaseMeta(descr="触发入驻中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);

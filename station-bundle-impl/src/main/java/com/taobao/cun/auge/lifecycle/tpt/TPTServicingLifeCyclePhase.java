@@ -11,11 +11,11 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -50,7 +50,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Phase(type="TPT",event=StateMachineEvent.SERVICING_EVENT,desc="镇小二停业中服务节点")
-public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPTServicingLifeCyclePhase extends BaseLifeCyclePhase {
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -78,7 +78,7 @@ public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
 	@Override
-	@PhaseStepMeta(descr="更新镇小二站点信息到服务中")
+	@PhaseMeta(descr="更新镇小二站点信息到服务中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
@@ -100,13 +100,13 @@ public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二信息(无操作)")
+	@PhaseMeta(descr="更新镇小二信息(无操作)")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二实例信息")
+	@PhaseMeta(descr="更新镇小二实例信息")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//已停业恢复到服务中
@@ -127,7 +127,7 @@ public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二LifeCycleItems")
+	@PhaseMeta(descr="更新镇小二LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
@@ -148,7 +148,7 @@ public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新镇小二扩展业务")
+	@PhaseMeta(descr="更新镇小二扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(context.getSourceState())){
@@ -171,7 +171,7 @@ public class TPTServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发服务中状态变更事件")
+	@PhaseMeta(descr="触发服务中状态变更事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId = partnerInstanceDto.getId();

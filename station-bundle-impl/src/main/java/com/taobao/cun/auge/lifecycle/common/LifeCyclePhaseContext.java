@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle;
+package com.taobao.cun.auge.lifecycle.common;
 
 import java.util.Map;
 import java.util.Optional;
@@ -68,8 +68,8 @@ public class LifeCyclePhaseContext {
 	
 	
 	
-	public PhaseKey getPhaseKey() {
-		return new PhaseKey(userType,event);
+	public LifeCyclePhaseKey getPhaseKey() {
+		return new LifeCyclePhaseKey(userType,event);
 	}
 	
 	public String getEvent() {

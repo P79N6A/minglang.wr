@@ -6,6 +6,7 @@ import java.util.Date;
 import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.Application;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -85,7 +86,7 @@ public class TestStateMachineService {
 	@Test
 	public void testTPClosingByPartnerWithStateMachine() throws IOException{
 		System.err.println("start testTPClosingWithStateMachine");
-		partnerInstanceService.applyCloseByPartner(3709109723l);
+		partnerInstanceService.applyCloseByPartner(3709109723L);
 		System.err.println("end testTPClosingWithStateMachine");
 	}
 	

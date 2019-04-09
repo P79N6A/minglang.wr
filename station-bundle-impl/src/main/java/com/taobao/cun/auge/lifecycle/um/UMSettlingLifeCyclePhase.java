@@ -3,16 +3,16 @@ package com.taobao.cun.auge.lifecycle.um;
 import java.util.Date;
 
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
@@ -30,7 +30,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,8 @@ import org.springframework.stereotype.Component;
  * 优盟入驻中阶段组件
  */
 @Component
-@Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中服务节点")
-public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
+@Phase(type = "UM", event = StateMachineEvent.SETTLING_EVENT, desc = "优盟入驻中节点")
+public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
     private static final Logger logger = LoggerFactory.getLogger(UMSettlingLifeCyclePhase.class);
 
@@ -70,7 +69,7 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     private ManualReleaseDistributeLock distributeLock;
 
     @Override
-    @PhaseStepMeta(descr = "创建或更新优盟站点")
+    @PhaseMeta(descr = "创建或更新优盟站点")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         //前置校验
@@ -154,14 +153,14 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "创建优盟")
+    @PhaseMeta(descr = "创建优盟")
     public void createOrUpdatePartner(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         addPartner(partnerInstanceDto);
     }
 
     @Override
-    @PhaseStepMeta(descr = "创建人村关系")
+    @PhaseMeta(descr = "创建人村关系")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         addUmPartnerInstanceRel(partnerInstanceDto);
@@ -183,13 +182,9 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
         return partnerInstanceId;
     }
 
-    @Override
-    @PhaseStepMeta(descr = "创建lifeCycleItems")
-    public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
-    }
 
     @Override
-    @PhaseStepMeta(descr = "创建培训装修记录")
+    @PhaseMeta(descr = "创建培训装修记录")
     public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         String operatorId = partnerInstanceDto.getOperator();
@@ -198,11 +193,21 @@ public class UMSettlingLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "触发入驻中事件")
+    @PhaseMeta(descr = "触发入驻中事件")
     public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         Long partnerInstanceDtoId = partnerInstanceDto.getId();
         sendPartnerInstanceStateChangeEvent(partnerInstanceDtoId,
             PartnerInstanceStateChangeEnum.START_SERVICING, partnerInstanceDto);
+    }
+
+    public LifeCyclePhaseDSL createPhaseDSL() {
+        LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+        dsl.then(this::createOrUpdateStation);
+        dsl.then(this::createOrUpdatePartner);
+        dsl.then(this::createOrUpdatePartnerInstance);
+        dsl.then(this::createOrUpdateExtensionBusiness);
+        dsl.then(this::triggerStateChangeEvent);
+        return dsl;
     }
 }
