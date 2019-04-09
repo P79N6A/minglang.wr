@@ -100,4 +100,11 @@ public interface CuntaoCountyExtMapper {
 	 * @return
 	 */
 	CuntaoCounty getCuntaoCountyByOrgId(@Param("orgId") Long orgId);
+	
+	/**
+	 * 更新菜鸟ID
+	 * @param countyId
+	 * @param caiNiaostationId
+	 */
+	void updateCainiaoCountyId(@Param("countyId") Long countyId, @Param("caiNiaostationId") Long caiNiaostationId);
 }

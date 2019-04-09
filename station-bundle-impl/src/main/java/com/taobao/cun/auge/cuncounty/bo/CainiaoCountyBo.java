@@ -51,7 +51,7 @@ public class CainiaoCountyBo {
 		newCainiaoCounty.setGmtCreate(cainiaoCounty.getGmtCreate());
 		newCainiaoCounty.setId(cainiaoCounty.getId());
 		cainiaoCountyMapper.updateByPrimaryKeySelective(newCainiaoCounty);
-		//待开业后才需要更新
+		//待开业后,如果地址发生变化，需要更新菜鸟县仓（目前只是发送邮件通知）
 		if(isSyncCainiaoCountyState(cuntaoCountyDto) && isCainiaoAddressChanged(cainiaoCounty, cainiaoCountyEditDto)) {
 			cainiaoCountyRemoteBo.updateCainiaoCounty(
 					cuntaoCountyDto,
@@ -65,6 +65,8 @@ public class CainiaoCountyBo {
 		//在待开业之前，需要审批过了之后才能同步到菜鸟
 		if(isSyncCainiaoCountyState(cuntaoCountyDto)) {
 			cainiaoCounty.setCainiaoCountyId(cainiaoCountyRemoteBo.createCainiaoCounty(cuntaoCountyDto.getId()));
+		}else {
+			cainiaoCounty.setCainiaoCountyId(0L);
 		}
 		cainiaoCountyMapper.insert(cainiaoCounty);
 	}

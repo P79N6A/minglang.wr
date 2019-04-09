@@ -39,6 +39,10 @@
   update cuntao_county_office set is_deleted='y',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and is_deleted='n'
   </update>
   
+  <update id="updateCainiaoCountyId" parameterType="map">
+  update cainiao_county set cainiao_county_id= #{caiNiaostationId} where county_id=#{countyId}
+  </update>
+  
   <select id="query" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO">
 	SELECT
 		a.id,

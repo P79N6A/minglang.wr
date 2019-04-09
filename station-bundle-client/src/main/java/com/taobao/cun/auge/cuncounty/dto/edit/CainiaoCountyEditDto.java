@@ -31,9 +31,7 @@ public class CainiaoCountyEditDto {
     private String provinceName;
     @NotBlank(message="菜鸟县仓:省行政CODE不能为空")
     private String provinceCode;
-    @NotBlank(message="菜鸟县仓:县不能为空")
     private String countyName;
-    @NotBlank(message="菜鸟县仓:县行政CODE不能为空")
     private String countyCode;
     @NotBlank(message="菜鸟县仓:镇不能为空")
     private String townName;

@@ -60,6 +60,7 @@ public class CainiaoCountyRemoteBo {
             relDO.setType(CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
             relDO.setOperator(cainiaoCounty.getCreator());
             cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDO);
+            cuntaoCountyExtMapper.updateCainiaoCountyId(countyId, caiNiaostationId);
             return caiNiaostationId;
         }
 	}
