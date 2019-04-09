@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.taobao.cun.auge.station.enums.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -83,25 +84,6 @@ import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.ReplenishDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.enums.ReplenishStatusEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
-import com.taobao.cun.auge.station.enums.StationModeEnum;
-import com.taobao.cun.auge.station.enums.StationTransInfoTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -229,8 +211,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             .toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
         PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
         insDto.setPartnerLifecycleDto(lifecycleDto);
-        insDto.setStationApplyState(
-            PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+        if (!InstanceTypeEnum.LX.getCode().equals(psRel.getType()) && !InstanceTypeEnum.UM.getCode().equals(psRel.getType())) {
+            insDto.setStationApplyState(
+                    PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+
+        }
 
         if (null != condition.getNeedPartnerInfo() && condition.getNeedPartnerInfo()) {
             Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
