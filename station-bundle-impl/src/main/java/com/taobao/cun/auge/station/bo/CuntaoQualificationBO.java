@@ -27,4 +27,10 @@ public interface CuntaoQualificationBO {
 	
 	public List<CuntaoQualification> queryHistoriesByTaobaoUserId(Long taobaoUserId);
 
+	/**
+	 * 判断营业执照是否认证通过
+	 * @param taobaoUserId
+	 */
+	public Boolean checkValidQualification(Long taobaoUserId);
+
 }
