@@ -71,7 +71,9 @@ public class CainiaoCountyBo {
 	
 	CainiaoCountyDto getCainiaoCountyDto(Long countyId) {
 		CainiaoCountyDto cainiaoCountyDto = BeanConvertUtils.convert(CainiaoCountyDto.class, cuntaoCountyExtMapper.getCainiaoCounty(countyId));
-		cainiaoCountyDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cainiaoCountyDto.getAttachments()));
+		if(cainiaoCountyDto != null) {
+			cainiaoCountyDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cainiaoCountyDto.getAttachments()));
+		}
 		return cainiaoCountyDto;
 	}
 	
