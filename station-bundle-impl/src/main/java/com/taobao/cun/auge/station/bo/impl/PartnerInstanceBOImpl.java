@@ -8,7 +8,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -82,7 +81,6 @@ import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerAdzoneService;
-import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.cun.auge.station.util.DateTimeUtil;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -152,9 +150,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	private GroupSequence groupSequence;
     @Autowired
     private BizActionLogBo bizActionLogBo;
-    @Autowired
-    private CountyTransferStateMgrBo countyTransferStateMgrBo;
-    
     @Autowired
 	private PartnerAdzoneService partnerAdzoneService;
     
@@ -360,7 +355,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         bizActionLogAddDto.setOpOrgId(station.getApplyOrg());
         bizActionLogAddDto.setOpWorkId(operator);
         bizActionLogAddDto.setValue1(String.valueOf(partnerStationRel.getTaobaoUserId()));
-        bizActionLogAddDto.setDept(countyTransferStateMgrBo.getCountyDeptByOrgId(station.getApplyOrg()));
+        bizActionLogAddDto.setDept("opdept");
         bizActionLogBo.addLog(bizActionLogAddDto);
     }
 

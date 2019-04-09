@@ -216,4 +216,11 @@
 	and not exists(select 0 from fence_entity c where c.station_id=a.id and c.template_id=#{templateId} and (c.is_deleted='n' or (c.is_deleted='y' and delete_source<>'system')))
 	]]>
     </select>
+    
+    <select id="getServicingNumByOrg" parameterType="long" resultType="int">
+    select count(0) from station a,partner_station_rel b
+	where a.is_deleted='n' and b.is_deleted='n'
+	and a.id=b.station_id and a.apply_org=#{orgId}
+	and b.type in('TP','TPS') and b.state in('SERVICING','DECORATING')
+    </select>
 </mapper>

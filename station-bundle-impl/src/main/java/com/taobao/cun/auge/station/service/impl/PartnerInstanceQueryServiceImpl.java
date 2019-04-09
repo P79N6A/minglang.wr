@@ -28,7 +28,6 @@ import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
-import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
@@ -41,9 +40,10 @@ import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
@@ -149,7 +149,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     PartnerInstanceLevelDataQueryService partnerInstanceLevelDataQueryService;
 
     @Autowired
-    CountyStationBO countyStationBO;
+    CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
     @Autowired
     TairCache tairCache;
@@ -234,9 +234,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             stationDto.setAttachments(
                 criusAttachmentService.getAttachmentList(stationDto.getId(), AttachmentBizTypeEnum.CRIUS_STATION));
             insDto.setStationDto(stationDto);
-
-            CountyStation countyStation = countyStationBO.getCountyStationByOrgId(stationDto.getApplyOrg());
-            stationDto.setCountyStationName(countyStation.getName());
+            
+            CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(stationDto.getApplyOrg()); 
+            stationDto.setCountyStationName(cuntaoOrgDto.getName());
         }
 
         if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {

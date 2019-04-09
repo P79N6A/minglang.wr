@@ -136,4 +136,11 @@ public interface StationBO {
 	void updateStationDeptByOrgId(Long orgId, OrgDeptType orgDeptType);
 
     void updateStationNum(Long id, String newStationNum);
+    
+    /**
+     * 获取县域下服务中的站点数(装修、服务中)
+     * @param orgId
+     * @return
+     */
+    int getServicingNumByOrgId(Long orgId);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -29,13 +29,13 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.6.8</auge.station.client.version>
+		<auge.station.client.version>4.6.0-SNAPSHOT</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
 				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
@@ -506,7 +506,7 @@
 			<dependency>
 				<groupId>com.taobao.common.division</groupId>
 				<artifactId>common-division</artifactId>
-				<version>2.3.0</version>
+				<version>3.0.28</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.commons</groupId>
@@ -736,7 +736,7 @@
 				<artifactId>common-division</artifactId>
 				<version>3.0.26</version>
 			</dependency>
-			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId>
+			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
 				<version>3.0.3</version> </dependency> -->
 			<dependency>
 				<groupId>dms-sorting</groupId>
@@ -829,14 +829,14 @@
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
 					</exclusion>
-					    <exclusion>
-			          <groupId>org.slf4j</groupId>
-			          <artifactId>slf4j-simple</artifactId>
-			        </exclusion>
-			        <exclusion>
-			          <groupId>com.tmall.nova</groupId>
-			          <artifactId>nova-client</artifactId>
-			        </exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.tmall.nova</groupId>
+						<artifactId>nova-client</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
