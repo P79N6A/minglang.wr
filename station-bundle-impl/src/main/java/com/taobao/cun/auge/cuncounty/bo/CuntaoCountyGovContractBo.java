@@ -57,7 +57,9 @@ public class CuntaoCountyGovContractBo {
 	
 	CuntaoCountyGovContractDto getCuntaoCountyGovContract(Long countyId){
 		CuntaoCountyGovContractDto cuntaoCountyGovContractDto = BeanConvertUtils.convert(CuntaoCountyGovContractDto.class,cuntaoCountyExtMapper.getCuntaoCountyGovContract(countyId));
-		cuntaoCountyGovContractDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cuntaoCountyGovContractDto.getAttachments()));
+		if(cuntaoCountyGovContractDto != null) {
+			cuntaoCountyGovContractDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cuntaoCountyGovContractDto.getAttachments()));
+		}
 		return cuntaoCountyGovContractDto;
 	}
 }
