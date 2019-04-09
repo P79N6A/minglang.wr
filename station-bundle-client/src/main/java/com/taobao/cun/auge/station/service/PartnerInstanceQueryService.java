@@ -342,6 +342,14 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	StationTransHandOverDto getStationTransHandOverInfoByTaobaoUserId(Long taobaoUserId);
+
+
+	/**
+	 * 给icuntao使用,获得服务站的转型切换类型及步骤信息,若已确认则返回null
+	 * @param taobaoUserId
+	 * @return
+	 */
+	StationTransHandOverTypeInfoDto getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId);
 }
 
 

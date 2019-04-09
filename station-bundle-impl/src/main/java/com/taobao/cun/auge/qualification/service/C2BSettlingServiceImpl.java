@@ -244,20 +244,16 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 
             partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
                     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-
 			NewRevenueCommunicationDto finalInvite=newRevenueCommunicationService.getApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.TRANS_INVITE.getCode(),instanceId.toString());
-
 			if(finalInvite==null){
 				finalInvite= newRevenueCommunicationService.getApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instanceId.toString());
 			}
-
 
 			if(finalInvite!=null){
 				if (PartnerInstanceTypeEnum.TP.getCode().equals(parnterInstance.getType())&& StringUtil.isBlank(incomeMode)) {
 					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
 				}
-
-				//newRevenueCommunicationService.
+				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
 			}
             response.setSuccessful(true);
         } catch (Exception e) {

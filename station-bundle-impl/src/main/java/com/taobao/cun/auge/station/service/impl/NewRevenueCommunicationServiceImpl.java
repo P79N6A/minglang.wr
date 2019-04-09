@@ -111,7 +111,31 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
     }
 
     @Override
-    public NewRevenueCommunicationDto getApprovePassNewRevenueCommunication(String businessCode, String objectId) {
+    public NewRevenueCommunicationDto getProcessApprovePassNewRevenueCommunication(String businessCode, String objectId) {
+
+        Assert.notNull(businessCode, "businessCode not exist");
+        Assert.notNull(objectId, "objectId not exist");
+        NewRevenueCommunicationCondition newRevenueCommunicationCondition=new NewRevenueCommunicationCondition();
+        newRevenueCommunicationCondition.setBusinessCode(businessCode);
+        newRevenueCommunicationCondition.setObjectId(objectId);
+        newRevenueCommunicationCondition.setStatus("PROCESS");
+        newRevenueCommunicationCondition.setAuditStatus(ProcessApproveResultEnum.APPROVE_PASS.getCode());
+        List<NewRevenueCommunication>newRevenueCommunicationList= newRevenueCommunicationBO.getNewRevenueCommunicationDtoByCondition(newRevenueCommunicationCondition);
+
+        if(CollectionUtil.isEmpty(newRevenueCommunicationList)){
+            return null;
+        }
+
+        if(newRevenueCommunicationList.size()==1) {
+            return NewRevenueCommunicationConverter.toNewRevenueCommunicationDto(newRevenueCommunicationList.get(0));
+        }
+        else {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点切换转型邀约成功记录不唯一");
+        }
+    }
+
+    @Override
+    public NewRevenueCommunicationDto getFinishApprovePassNewRevenueCommunication(String businessCode, String objectId) {
 
         Assert.notNull(businessCode, "businessCode not exist");
         Assert.notNull(objectId, "objectId not exist");

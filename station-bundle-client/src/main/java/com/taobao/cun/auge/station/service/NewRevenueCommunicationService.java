@@ -35,11 +35,19 @@ public interface NewRevenueCommunicationService {
 
 
     /**
-     * 获取邀约审批成功的记录(业务保证一种类型只能存在一条审批成功记录)
+     * 获取邀约审批成功的记录(业务保证一种类型只能存在一条审批成功记录，转型切换流程还未完成)
      * @param businessCode
      * @param objectId
      */
-    public NewRevenueCommunicationDto getApprovePassNewRevenueCommunication(String businessCode,String objectId);
+    public NewRevenueCommunicationDto getProcessApprovePassNewRevenueCommunication(String businessCode,String objectId);
+
+
+    /**
+     * 获取邀约审批成功的记录(业务保证一种类型只能存在一条审批成功记录并且转型切换已经完成)
+     * @param businessCode
+     * @param objectId
+     */
+    public NewRevenueCommunicationDto getFinishApprovePassNewRevenueCommunication(String businessCode,String objectId);
 
 
     /**

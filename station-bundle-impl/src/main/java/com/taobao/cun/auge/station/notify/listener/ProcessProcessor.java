@@ -269,7 +269,7 @@ public class ProcessProcessor {
                 NewRevenueCommunicationDto newRevenueCommunicationDto=newRevenueCommunicationService.getProcessNewRevenueCommunication(inviteType,businessId.toString());
                 if(newRevenueCommunicationDto!=null){
                     newRevenueCommunicationDto.setAuditStatus(resultCode);
-                    newRevenueCommunicationService.completeNewRevenueCommunication(newRevenueCommunicationDto);
+                    newRevenueCommunicationService.auditNewRevenueCommunication(newRevenueCommunicationDto);
                 }
             }
             // 节点被激活
