@@ -2,7 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.taobao.cun.auge.lifecycle.RuntimeMetaInfoCollector;
+import com.taobao.cun.auge.lifecycle.common.RuntimeMetaInfoCollector;
 import com.taobao.cun.auge.station.dto.PhaseInfo;
 import com.taobao.cun.auge.station.service.RuntimeMetaInfoService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;

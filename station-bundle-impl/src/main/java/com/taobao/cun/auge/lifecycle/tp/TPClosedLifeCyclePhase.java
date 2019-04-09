@@ -15,11 +15,11 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -41,7 +41,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.CLOSED_EVENT,desc="村小二已停业服务节点")
-public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPClosedLifeCyclePhase extends BaseLifeCyclePhase {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TPClosedLifeCyclePhase.class);
 
@@ -60,7 +60,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private AssetBO assetBO;
 	@Override
-	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
+	@PhaseMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
@@ -76,13 +76,13 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二信息（无操作）")
+	@PhaseMeta(descr="更新村小二信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二实例状态到已停业")
+	@PhaseMeta(descr="更新村小二实例状态到已停业")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
@@ -96,7 +96,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建已停业lifeCycleItems")
+	@PhaseMeta(descr="创建已停业lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
@@ -127,7 +127,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="扩展业务")
+	@PhaseMeta(descr="扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//设置资产状态为待回收
@@ -144,7 +144,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="触发已停业事件变更")
+	@PhaseMeta(descr="触发已停业事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 // 发出合伙人实例状态变更事件

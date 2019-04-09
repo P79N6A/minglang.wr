@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.lifecycle.controller;
 
 
-import com.taobao.cun.auge.lifecycle.RuntimeMetaInfoCollector;
+import com.taobao.cun.auge.lifecycle.common.RuntimeMetaInfoCollector;
 import com.taobao.cun.auge.station.dto.PhaseInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,10 +14,13 @@ import java.util.Map;
 @RequestMapping("/runtime")
 public class RuntimeMetaInfoController {
 
-	@RequestMapping("/meta")
-    public @ResponseBody Map<String,List<PhaseInfo>> meta() {
-		//元数据收集
-		Map<String,List<PhaseInfo>> runtimeInfos = RuntimeMetaInfoCollector.runtimeInfo();
-		return runtimeInfos;
+    @RequestMapping("/meta")
+    public @ResponseBody
+    Map<String, List<PhaseInfo>> meta() {
+        /**
+         * 元数据收集
+         */
+        Map<String, List<PhaseInfo>> runtimeInfos = RuntimeMetaInfoCollector.runtimeInfo();
+        return runtimeInfos;
     }
 }

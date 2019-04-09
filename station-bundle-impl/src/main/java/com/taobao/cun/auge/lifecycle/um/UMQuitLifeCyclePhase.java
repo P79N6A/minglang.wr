@@ -1,10 +1,11 @@
 package com.taobao.cun.auge.lifecycle.um;
 
-import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.Phase;
-import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.annotation.Phase;
+import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -16,11 +17,11 @@ import org.springframework.stereotype.Component;
 /**
  * 优盟退出组件
  *
- * @author haihu.fhh
+ * @author haihu.fhh jianke.ljk
  */
 @Component
 @Phase(type = "UM", event = StateMachineEvent.QUIT_EVENT, desc = "优盟退出节点")
-public class UMQuitLifeCyclePhase extends AbstractLifeCyclePhase {
+public class UMQuitLifeCyclePhase extends BaseLifeCyclePhase {
 
     @Autowired
     private StationBO stationBO;
@@ -29,7 +30,7 @@ public class UMQuitLifeCyclePhase extends AbstractLifeCyclePhase {
     private PartnerInstanceBO partnerInstanceBO;
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟站点状态到已退出")
+    @PhaseMeta(descr = "更新优盟站点状态到已退出")
     public void createOrUpdateStation(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 
@@ -41,12 +42,19 @@ public class UMQuitLifeCyclePhase extends AbstractLifeCyclePhase {
     }
 
     @Override
-    @PhaseStepMeta(descr = "更新优盟实例状态到已退出")
+    @PhaseMeta(descr = "更新优盟实例状态到已退出")
     public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
         PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
         if (PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())) {
             partnerInstanceDto.setState(PartnerInstanceStateEnum.QUIT);
             partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
         }
+    }
+
+    public LifeCyclePhaseDSL createPhaseDSL() {
+        LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+        dsl.then(this::createOrUpdateStation);
+        dsl.then(this::createOrUpdatePartnerInstance);
+        return dsl;
     }
 }

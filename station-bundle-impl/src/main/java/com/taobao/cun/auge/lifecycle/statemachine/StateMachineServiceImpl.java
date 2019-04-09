@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.statemachine;
+package com.taobao.cun.auge.lifecycle.statemachine;
 
 import com.alibaba.metrics.MetricLevel;
 import com.alibaba.metrics.MetricManager;
@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.exception.AugeSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-//@Service("stateMachineService")
+@Service("stateMachineService")
 public class StateMachineServiceImpl implements StateMachineService {
 
     Timer timer = MetricManager.getTimer("stateMachine", MetricName.build("stateMachine.create").level(MetricLevel.CRITICAL));
