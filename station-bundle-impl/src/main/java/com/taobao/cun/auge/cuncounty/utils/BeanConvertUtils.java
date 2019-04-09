@@ -115,6 +115,7 @@ public class BeanConvertUtils {
 	public static CainiaoCounty convert(CainiaoCountyEditDto cainiaoCountyEditDto) {
 		CainiaoCounty cainiaoCounty = createBean(CainiaoCounty.class, cainiaoCountyEditDto);
 		cainiaoCounty.setState("new");
+		cainiaoCounty.setCainiaoCountyId(0L);
 		return cainiaoCounty;
 	}
 	
