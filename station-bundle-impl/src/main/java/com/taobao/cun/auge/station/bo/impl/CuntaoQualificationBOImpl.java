@@ -1,15 +1,5 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
@@ -18,7 +8,6 @@ import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistory;
-import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistoryExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationHistoryMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
 import com.taobao.cun.auge.qualification.service.QualificationBuilder;
@@ -26,6 +15,14 @@ import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 @Component("cuntaoQualificationBO")
 public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
@@ -149,4 +146,15 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 		return qualifications;
 	}
 
+	@Override
+	public Boolean checkValidQualification(Long taobaoUserId) {
+		CuntaoQualification q = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if (q== null) {
+			return Boolean.FALSE;
+		}
+		if ( q.getStatus() != null && new Integer(1).equals(q.getStatus())) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
 }

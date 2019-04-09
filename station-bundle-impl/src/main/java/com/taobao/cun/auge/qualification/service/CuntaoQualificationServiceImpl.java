@@ -393,4 +393,9 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		cuntaoQualificationBO.updateQualification(cuntaoQualification);
 		
 	}
+
+	@Override
+	public Boolean checkValidQualification(Long taobaoUserId) {
+		return cuntaoQualificationBO.checkValidQualification(taobaoUserId);
+	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.taobao.cun.auge.station.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -65,23 +66,6 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
-import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.bo.StationNumConfigBO;
-import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.check.impl.trans.StationTransCheckerUtil;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
@@ -308,6 +292,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Autowired
     private StationTransInfoBO stationTransInfoBO;
+
+    @Autowired
+    private CuntaoQualificationBO cuntaoQualificationBO;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -827,6 +814,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         ValidateUtils.notNull(instanceId);
         //容错，调用结算，更新铺货金冻结状态
         bailService.freezeUserReplenishBail(instanceId);
+
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+
+        if (cuntaoQualificationBO.checkValidQualification(rel.getTaobaoUserId())) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "该村点的签约营业执照尚未认证通过，请联系村小二重新提交执照做认证。");
+        }
+
         PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
             PartnerLifecycleBusinessTypeEnum.DECORATING,
             PartnerLifecycleCurrentStepEnum.PROCESSING);
@@ -834,7 +828,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 没有数据 认为是标准化项目之前的数据，直接可以开业
             return;
         }
-        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
         //4.0 检查补货金和 开业包收货状态
         if (StationModeEnum.V4.getCode().equals(rel.getMode())) {
