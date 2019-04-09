@@ -86,7 +86,7 @@ public class TestStateMachineService {
 	@Test
 	public void testTPClosingByPartnerWithStateMachine() throws IOException{
 		System.err.println("start testTPClosingWithStateMachine");
-		partnerInstanceService.applyCloseByPartner(3709109723l);
+		partnerInstanceService.applyCloseByPartner(3709109723L);
 		System.err.println("end testTPClosingWithStateMachine");
 	}
 	
