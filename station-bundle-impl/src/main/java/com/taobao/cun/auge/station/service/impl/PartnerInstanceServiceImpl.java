@@ -817,7 +817,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-        if (cuntaoQualificationBO.checkValidQualification(rel.getTaobaoUserId())) {
+        if (!cuntaoQualificationBO.checkValidQualification(rel.getTaobaoUserId())) {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "该村点的签约营业执照尚未认证通过，请联系村小二重新提交执照做认证。");
         }
 
