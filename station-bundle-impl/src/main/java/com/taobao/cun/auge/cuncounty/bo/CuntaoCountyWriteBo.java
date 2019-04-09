@@ -68,9 +68,7 @@ public class CuntaoCountyWriteBo {
 		cuntaoCountyPredicate.checkUpdateCounty(cuntaoCountyUpdateDto);
 		
 		//添加联系人
-		for(CuntaoCountyGovContactAddDto cuntaoCountyGovContactAddDto : cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos()) {
-			cuntaoCountyGovContactBo.save(cuntaoCountyGovContactAddDto);
-		}
+		cuntaoCountyGovContactBo.batchSave(cuntaoCountyUpdateDto.getCuntaoCountyGovContactAddDtos());
 		
 		//添加政府签约信息
 		cuntaoCountyGovContractBo.save(cuntaoCountyUpdateDto.getCuntaoCountyGovContractEditDto());
