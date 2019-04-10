@@ -89,7 +89,20 @@ public class CainiaoCountyDto {
      */
     private List<AttachmentVO> attachmentVOList;
     
-    public List<AttachmentVO> getAttachmentVOList() {
+    /**
+     * 是否为政府仓，{@code y}-是，{@code n}-否
+     */
+    private String govStore;
+    
+    public String getGovStore() {
+		return govStore;
+	}
+
+	public void setGovStore(String govStore) {
+		this.govStore = govStore;
+	}
+
+	public List<AttachmentVO> getAttachmentVOList() {
 		return attachmentVOList;
 	}
 

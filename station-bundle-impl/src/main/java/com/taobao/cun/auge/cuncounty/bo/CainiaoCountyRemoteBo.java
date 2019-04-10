@@ -47,9 +47,6 @@ public class CainiaoCountyRemoteBo {
 	
 	Long createCainiaoCounty(Long countyId){
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);
-		if(cainiaoCounty == null) {
-			return 0L;
-		}
 		Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(toCainiaoStationDto(cainiaoCounty));
         if (caiNiaostationId == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "同步菜鸟驿站失败");

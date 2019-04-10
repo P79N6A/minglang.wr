@@ -47,6 +47,18 @@ public class CainiaoCountyEditDto {
     private String cityCode;
     @NotBlank(message="菜鸟县仓:操作人不能为空")
     private String operator;
+    /**
+     * 是否为政府仓，{@code y}-是，{@code n}-否
+     */
+    private String govStore;
+
+	public String getGovStore() {
+		return govStore;
+	}
+
+	public void setGovStore(String govStore) {
+		this.govStore = govStore;
+	}
 
 	public String getOperator() {
 		return operator;

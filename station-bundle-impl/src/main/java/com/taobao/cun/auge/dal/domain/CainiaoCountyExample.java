@@ -1664,6 +1664,76 @@ public class CainiaoCountyExample {
             addCriterion("cainiao_county_id not between", value1, value2, "cainiaoCountyId");
             return (Criteria) this;
         }
+
+        public Criteria andGovStoreIsNull() {
+            addCriterion("gov_store is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreIsNotNull() {
+            addCriterion("gov_store is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreEqualTo(String value) {
+            addCriterion("gov_store =", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreNotEqualTo(String value) {
+            addCriterion("gov_store <>", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreGreaterThan(String value) {
+            addCriterion("gov_store >", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreGreaterThanOrEqualTo(String value) {
+            addCriterion("gov_store >=", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreLessThan(String value) {
+            addCriterion("gov_store <", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreLessThanOrEqualTo(String value) {
+            addCriterion("gov_store <=", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreLike(String value) {
+            addCriterion("gov_store like", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreNotLike(String value) {
+            addCriterion("gov_store not like", value, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreIn(List<String> values) {
+            addCriterion("gov_store in", values, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreNotIn(List<String> values) {
+            addCriterion("gov_store not in", values, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreBetween(String value1, String value2) {
+            addCriterion("gov_store between", value1, value2, "govStore");
+            return (Criteria) this;
+        }
+
+        public Criteria andGovStoreNotBetween(String value1, String value2) {
+            addCriterion("gov_store not between", value1, value2, "govStore");
+            return (Criteria) this;
+        }
     }
 
     /**

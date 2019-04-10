@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
@@ -50,6 +51,8 @@ public class CuntaoCountyWriteBo {
 		Long orgId = createCuntaoOrg(cuntaoCountyAddDto);
 		//创建县服务中心
 		CuntaoCounty cuntaoCounty = doCreateCuntaoCounty(cuntaoCountyAddDto, orgId);
+		//创建菜鸟仓
+		createCainiaoCounty(cuntaoCounty, cuntaoCountyAddDto.getOperator());
 		//更新白名单
 		cuntaoCountyWhitenameBo.updateCountyId(cuntaoCounty.getCountyCode(), cuntaoCounty.getId());
 		//报名分发地址
@@ -95,5 +98,17 @@ public class CuntaoCountyWriteBo {
 		CuntaoCounty cuntaoCounty = BeanConvertUtils.convert(cuntaoCountyAddDto, orgId, cuntaoCountyWhitenameDto);
 		cuntaoCountyMapper.insert(cuntaoCounty);
 		return cuntaoCounty;
+	}
+	
+	/**
+	 * 创建一个菜鸟县仓记录，非政府仓，也不会做同步到菜鸟的操作
+	 */
+	private void createCainiaoCounty(CuntaoCounty cuntaoCounty, String operator) {
+		CainiaoCountyEditDto cainiaoCountyEditDto = BeanConvertUtils.convert(CainiaoCountyEditDto.class, cuntaoCounty);
+		cainiaoCountyEditDto.setAddress(cuntaoCounty.getName());
+		cainiaoCountyEditDto.setGovStore("n");
+		cainiaoCountyEditDto.setOperator(operator);
+		cainiaoCountyEditDto.setCountyId(cuntaoCounty.getId());
+		cainiaoCountyBo.save(cainiaoCountyEditDto);
 	}
 }
