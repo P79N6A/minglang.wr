@@ -50,6 +50,7 @@ public class CainiaoCountyBo {
 		newCainiaoCounty.setCreator(cainiaoCounty.getCreator());
 		newCainiaoCounty.setGmtCreate(cainiaoCounty.getGmtCreate());
 		newCainiaoCounty.setId(cainiaoCounty.getId());
+		newCainiaoCounty.setCainiaoCountyId(cainiaoCounty.getCainiaoCountyId());
 		cainiaoCountyMapper.updateByPrimaryKeySelective(newCainiaoCounty);
 		//待开业后,如果地址发生变化，需要更新菜鸟县仓（目前只是发送邮件通知）
 		if(isSyncCainiaoCountyState(cuntaoCountyDto) && isCainiaoAddressChanged(cainiaoCounty, cainiaoCountyEditDto)) {
