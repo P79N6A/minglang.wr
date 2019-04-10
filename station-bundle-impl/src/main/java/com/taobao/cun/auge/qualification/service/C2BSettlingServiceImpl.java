@@ -250,7 +250,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			}
 
 			if(finalInvite!=null){
-				if (PartnerInstanceTypeEnum.TP.getCode().equals(parnterInstance.getType())&& StringUtil.isBlank(incomeMode)) {
+				if (StringUtil.isBlank(incomeMode)) {
 					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
 				}
 				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
