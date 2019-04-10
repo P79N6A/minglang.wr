@@ -94,6 +94,10 @@ public class CainiaoCountyDto {
      */
     private String govStore;
     
+    public boolean isGovStore() {
+    	return "y".equals(govStore);
+    }
+    
     public String getGovStore() {
 		return govStore;
 	}

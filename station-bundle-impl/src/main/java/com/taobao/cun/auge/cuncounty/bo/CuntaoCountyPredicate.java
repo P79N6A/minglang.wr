@@ -67,7 +67,7 @@ public class CuntaoCountyPredicate {
 		
 		//校验菜鸟县仓，如果之前已经有菜鸟县仓了，那么更新的时候也必须有菜鸟县仓，不允许为空
 		CainiaoCountyDto cainiaoCountyDto = cainiaoCountyBo.getCainiaoCountyDto(cuntaoCountyUpdateDto.getCountyId());
-		if(cainiaoCountyDto != null) {
+		if(cainiaoCountyDto != null && cainiaoCountyDto.isGovStore()) {
 			if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() == null) {
 				throw new IllegalArgumentException("菜鸟县仓信息不能为空");
 			}
