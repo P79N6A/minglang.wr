@@ -219,6 +219,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.alibaba.security</groupId>
+			<artifactId>security-spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaoar.shared.scene</artifactId>
 		</dependency>
@@ -480,8 +485,6 @@
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId>
-			</dependency> -->
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-client</artifactId>
