@@ -349,7 +349,7 @@ public interface PartnerInstanceQueryService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	StationTransHandOverTypeInfoDto getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId);
+	String getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId);
 }
 
 

@@ -2,9 +2,13 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.*;
@@ -979,7 +983,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     }
 
     @Override
-    public StationTransHandOverTypeInfoDto getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId) {
+    public String getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId) {
 
         StationTransHandOverTypeInfoDto stationTransHandOverTypeInfoDto=new StationTransHandOverTypeInfoDto();
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -1033,7 +1037,17 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
         }
 
-        return stationTransHandOverTypeInfoDto;
+        Map<String,String> result=new HashMap<String,String>();
+        if(stationTransHandOverTypeInfoDto.getStationTransHandOverTypeEnum()!=null){
+            result.put("stationTransHandOverType",stationTransHandOverTypeInfoDto.getStationTransHandOverTypeEnum().getCode());
+        }
+        if(stationTransHandOverTypeInfoDto.getStationTransHandOverNodeEnum()!=null){
+            result.put("stationTransHandOverNode",stationTransHandOverTypeInfoDto.getStationTransHandOverNodeEnum().getCode());
+        }
+
+        String stringJson=JSON.toJSONString(result);
+
+        return stringJson;
     }
 
     @Override
