@@ -41,4 +41,14 @@ public interface StoreWriteBO {
 	public void syncStore(Long stationId);
 	
 	public void syncStore();
+
+	/**
+	 * 根据主键更新淘宝userId  重新入住已有站点使用
+	 */
+	public void  updateTaobaoUserIdById(Long id,Long taobaoUserId);
+
+	/**
+	 * 根据stationId更新门店表状态   服务站退出的时候   设置 store表为close
+	 */
+	public void  udpateStatusBystationId(Long stationId,String status);
 }

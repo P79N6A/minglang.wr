@@ -10,6 +10,8 @@ import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
+import com.taobao.cun.auge.store.bo.StoreWriteBO;
+import com.taobao.cun.auge.store.dto.StoreStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +41,8 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+
+import javax.annotation.Resource;
 
 /**
  * 村小二已退出阶段组件
@@ -77,6 +81,9 @@ public class TPQuitLifeCyclePhase extends BaseLifeCyclePhase {
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
 
+	@Resource
+	private StoreWriteBO storeWriteBO;
+
 	public LifeCyclePhaseDSL createPhaseDSL() {
 		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
 		dsl.then(this::createOrUpdateStation);
@@ -101,6 +108,7 @@ public class TPQuitLifeCyclePhase extends BaseLifeCyclePhase {
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
+				storeWriteBO.udpateStatusBystationId(partnerInstanceDto.getStationId(), StoreStatus.CLOSE.getStatus());
 			}else {
 				List<Long> sIds = new ArrayList<Long>();
 				sIds.add(partnerInstanceDto.getStationId());
