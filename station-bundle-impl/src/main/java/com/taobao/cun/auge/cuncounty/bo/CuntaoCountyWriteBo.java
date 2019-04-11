@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
@@ -106,7 +107,7 @@ public class CuntaoCountyWriteBo {
 	private void createCainiaoCounty(CuntaoCounty cuntaoCounty, String operator) {
 		CainiaoCountyEditDto cainiaoCountyEditDto = BeanConvertUtils.convert(CainiaoCountyEditDto.class, cuntaoCounty);
 		cainiaoCountyEditDto.setAddress(cuntaoCounty.getName());
-		cainiaoCountyEditDto.setGovStore("n");
+		cainiaoCountyEditDto.setStoreType(CainiaoCountyDto.STORE_TYPE_CAINIAO);;
 		cainiaoCountyEditDto.setOperator(operator);
 		cainiaoCountyEditDto.setCountyId(cuntaoCounty.getId());
 		cainiaoCountyBo.save(cainiaoCountyEditDto);
