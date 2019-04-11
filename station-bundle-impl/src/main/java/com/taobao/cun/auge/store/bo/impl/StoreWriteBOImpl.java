@@ -155,6 +155,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
 		if (store != null) {
+			this.updateTaobaoUserIdById(store.getId(),station.getTaobaoUserId());
 			return store.getId();
 		}
 		StoreDTO storeDTO = new StoreDTO();
@@ -509,10 +510,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public Boolean createSupplyStore(Long stationId) {
 		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+		Station station = stationBO.getStationById(stationId);
 		if (store != null) {
+			this.updateTaobaoUserIdById(store.getId(),station.getTaobaoUserId());
+
 			return true;
 		}
-		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance = partnerInstanceQueryService
 				.getCurrentPartnerInstanceByStationId(stationId);
 		if (station == null || partnerInstance == null) {
@@ -968,5 +971,29 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			
 		  }
 	}
-	
+
+	@Override
+	public void updateTaobaoUserIdById(Long id, Long taobaoUserId) {
+		CuntaoStore cs = new CuntaoStore();
+		cs.setId(id);
+		cs.setTaobaoUserId(taobaoUserId);
+		cs.setGmtModified(new Date());
+		cs.setModifier("system");
+		cuntaoStoreMapper.updateByPrimaryKeySelective(cs);
+
+	}
+
+	@Override
+	public void udpateStatusBystationId(Long stationId,String status) {
+		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+	    if (store == null) {
+	    	return;
+		}
+		CuntaoStore cs = new CuntaoStore();
+		cs.setId(store.getId());
+		cs.setStatus(status);
+		cs.setGmtModified(new Date());
+		cs.setModifier("system");
+		cuntaoStoreMapper.updateByPrimaryKeySelective(cs);
+	}
 }
