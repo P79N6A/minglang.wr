@@ -254,13 +254,14 @@ public class StoreReadServiceImpl implements StoreReadService {
 		List<String> slist = new ArrayList<String>();
 		slist.add(PartnerInstanceStateEnum.DECORATING.getCode());
 		slist.add(PartnerInstanceStateEnum.SERVICING.getCode());
-		example.createCriteria().
-				andIsDeletedEqualTo("n")
-				.andStateIn(slist).andTypeEqualTo("TP").
-				andIncomeModeEqualTo(IncomeModeEnum.MODE_2019_NEW_STATION.getCode())
-				.andIncomeModeBeginTimeLessThanOrEqualTo(new Date())
-				.andIncomeModeBeginTimeGreaterThanOrEqualTo(beginDate);
-
+        PartnerStationRelExample.Criteria  csCriteria = example.createCriteria();
+        csCriteria.andIsDeletedEqualTo("n");
+        csCriteria.andStateIn(slist).andTypeEqualTo("TP");
+        csCriteria.andIncomeModeEqualTo(IncomeModeEnum.MODE_2019_NEW_STATION.getCode());
+        csCriteria.andIncomeModeBeginTimeLessThanOrEqualTo(new Date());
+        if ( beginDate != null) {
+            csCriteria.andIncomeModeBeginTimeGreaterThanOrEqualTo(beginDate);
+        }
 		Page<PartnerStationRel> rList = (Page<PartnerStationRel>)partnerStationRelMapper.selectByExample(example);
 		List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
 
