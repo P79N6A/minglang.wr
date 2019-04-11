@@ -34,18 +34,13 @@ public interface StoreReadService {
 	
 	/**
 	 * 获取门店信息
-	 * @param scmCode
+	 * @param sharedStoreId
 	 * @return
 	 */
 	StoreDto getStoreBySharedStoreId(Long sharedStoreId);
 	
 	/**
 	 * 获取站点距离
-	 * @param stationId
-	 * @param x
-	 * @param y
-	 * @param distance
-	 * @return
 	 */
 	 String[] getStationDistance(Long stationId,Double lng,Double lat);
 	 
@@ -107,4 +102,10 @@ public interface StoreReadService {
 	  * @return
 	  */
 	 public List<Long> queryListForShrhPermission(Date beginDate);
+
+	/**
+	 * 批量查询 要开送货入户权限的门店信息
+	 * @return
+	 */
+	public PageDto<Long> queryByPageForShrhPermission(Date beginDate, int pageNum,int pageSize);
 }
