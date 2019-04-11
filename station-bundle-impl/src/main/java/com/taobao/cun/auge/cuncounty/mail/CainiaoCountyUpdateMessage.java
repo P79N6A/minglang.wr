@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
@@ -34,12 +35,13 @@ public class CainiaoCountyUpdateMessage {
 	private AppResourceService appResourceService;
 	@Resource
 	private EnhancedUserQueryService enhancedUserQueryService;
+	@Value("${station.address.change.receivers}")
+	private String countyAddressChangeReceivers;
 	
 	private List<String> getEmailAddress(){
-		String value = appResourceService.queryAppResourceValue("station_address_change_receivers", "station_address_change_receivers");
 		Map<String, EnhancedUser> emps = null;
 		try {
-			emps = enhancedUserQueryService.findUsers(Splitter.on(",").splitToList(value));
+			emps = enhancedUserQueryService.findUsers(Splitter.on(",").splitToList(countyAddressChangeReceivers));
 		} catch (BucException e) {
 			throw new RuntimeException(e);
 		}
