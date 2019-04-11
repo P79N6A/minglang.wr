@@ -28,7 +28,7 @@
     <result column="town_code" jdbcType="VARCHAR" property="townCode" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="cainiao_county_id" jdbcType="BIGINT" property="cainiaoCountyId" />
-    <result column="gov_store" jdbcType="CHAR" property="govStore" />
+    <result column="store_type" jdbcType="VARCHAR" property="storeType" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -104,7 +104,7 @@
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, county_id, address, 
     storage_area, gmt_rent_start, gmt_rent_end, attachments, province_name, province_code, 
     city_name, city_code, county_name, county_code, town_name, town_code, state, cainiao_county_id, 
-    gov_store
+    store_type
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CainiaoCountyExample" resultMap="BaseResultMap">
     <!--
@@ -168,7 +168,7 @@
       province_code, city_name, city_code, 
       county_name, county_code, town_name, 
       town_code, state, cainiao_county_id, 
-      gov_store)
+      store_type)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{countyId,jdbcType=BIGINT}, 
       #{address,jdbcType=VARCHAR}, #{storageArea,jdbcType=VARCHAR}, #{gmtRentStart,jdbcType=TIMESTAMP}, 
@@ -176,7 +176,7 @@
       #{provinceCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
       #{countyName,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, #{townName,jdbcType=VARCHAR}, 
       #{townCode,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{cainiaoCountyId,jdbcType=BIGINT}, 
-      #{govStore,jdbcType=CHAR})
+      #{storeType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CainiaoCounty">
     <!--
@@ -251,8 +251,8 @@
       <if test="cainiaoCountyId != null">
         cainiao_county_id,
       </if>
-      <if test="govStore != null">
-        gov_store,
+      <if test="storeType != null">
+        store_type,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -319,8 +319,8 @@
       <if test="cainiaoCountyId != null">
         #{cainiaoCountyId,jdbcType=BIGINT},
       </if>
-      <if test="govStore != null">
-        #{govStore,jdbcType=CHAR},
+      <if test="storeType != null">
+        #{storeType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -407,8 +407,8 @@
       <if test="record.cainiaoCountyId != null">
         cainiao_county_id = #{record.cainiaoCountyId,jdbcType=BIGINT},
       </if>
-      <if test="record.govStore != null">
-        gov_store = #{record.govStore,jdbcType=CHAR},
+      <if test="record.storeType != null">
+        store_type = #{record.storeType,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -443,7 +443,7 @@
       town_code = #{record.townCode,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=VARCHAR},
       cainiao_county_id = #{record.cainiaoCountyId,jdbcType=BIGINT},
-      gov_store = #{record.govStore,jdbcType=CHAR}
+      store_type = #{record.storeType,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -518,8 +518,8 @@
       <if test="cainiaoCountyId != null">
         cainiao_county_id = #{cainiaoCountyId,jdbcType=BIGINT},
       </if>
-      <if test="govStore != null">
-        gov_store = #{govStore,jdbcType=CHAR},
+      <if test="storeType != null">
+        store_type = #{storeType,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -551,7 +551,7 @@
       town_code = #{townCode,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       cainiao_county_id = #{cainiaoCountyId,jdbcType=BIGINT},
-      gov_store = #{govStore,jdbcType=CHAR}
+      store_type = #{storeType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

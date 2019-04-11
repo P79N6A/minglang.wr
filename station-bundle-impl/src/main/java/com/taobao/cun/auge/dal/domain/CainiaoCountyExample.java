@@ -1665,73 +1665,73 @@ public class CainiaoCountyExample {
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreIsNull() {
-            addCriterion("gov_store is null");
+        public Criteria andStoreTypeIsNull() {
+            addCriterion("store_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreIsNotNull() {
-            addCriterion("gov_store is not null");
+        public Criteria andStoreTypeIsNotNull() {
+            addCriterion("store_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreEqualTo(String value) {
-            addCriterion("gov_store =", value, "govStore");
+        public Criteria andStoreTypeEqualTo(String value) {
+            addCriterion("store_type =", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreNotEqualTo(String value) {
-            addCriterion("gov_store <>", value, "govStore");
+        public Criteria andStoreTypeNotEqualTo(String value) {
+            addCriterion("store_type <>", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreGreaterThan(String value) {
-            addCriterion("gov_store >", value, "govStore");
+        public Criteria andStoreTypeGreaterThan(String value) {
+            addCriterion("store_type >", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreGreaterThanOrEqualTo(String value) {
-            addCriterion("gov_store >=", value, "govStore");
+        public Criteria andStoreTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("store_type >=", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreLessThan(String value) {
-            addCriterion("gov_store <", value, "govStore");
+        public Criteria andStoreTypeLessThan(String value) {
+            addCriterion("store_type <", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreLessThanOrEqualTo(String value) {
-            addCriterion("gov_store <=", value, "govStore");
+        public Criteria andStoreTypeLessThanOrEqualTo(String value) {
+            addCriterion("store_type <=", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreLike(String value) {
-            addCriterion("gov_store like", value, "govStore");
+        public Criteria andStoreTypeLike(String value) {
+            addCriterion("store_type like", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreNotLike(String value) {
-            addCriterion("gov_store not like", value, "govStore");
+        public Criteria andStoreTypeNotLike(String value) {
+            addCriterion("store_type not like", value, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreIn(List<String> values) {
-            addCriterion("gov_store in", values, "govStore");
+        public Criteria andStoreTypeIn(List<String> values) {
+            addCriterion("store_type in", values, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreNotIn(List<String> values) {
-            addCriterion("gov_store not in", values, "govStore");
+        public Criteria andStoreTypeNotIn(List<String> values) {
+            addCriterion("store_type not in", values, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreBetween(String value1, String value2) {
-            addCriterion("gov_store between", value1, value2, "govStore");
+        public Criteria andStoreTypeBetween(String value1, String value2) {
+            addCriterion("store_type between", value1, value2, "storeType");
             return (Criteria) this;
         }
 
-        public Criteria andGovStoreNotBetween(String value1, String value2) {
-            addCriterion("gov_store not between", value1, value2, "govStore");
+        public Criteria andStoreTypeNotBetween(String value1, String value2) {
+            addCriterion("store_type not between", value1, value2, "storeType");
             return (Criteria) this;
         }
     }

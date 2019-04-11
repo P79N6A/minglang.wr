@@ -13,6 +13,8 @@ import com.taobao.cun.auge.common.AttachmentVO;
  *
  */
 public class CainiaoCountyDto {
+	public static String STORE_TYPE_GOV = "gov";
+	public static String STORE_TYPE_CAINIAO = "cainiao";
     private Long id;
     /**
      * 县服务中心CODE
@@ -90,20 +92,21 @@ public class CainiaoCountyDto {
     private List<AttachmentVO> attachmentVOList;
     
     /**
-     * 是否为政府仓，{@code y}-是，{@code n}-否
+     * 仓类型，{@code gov}-政府仓，{@code cainiao}-菜鸟仓
      */
-    private String govStore;
+    private String storeType;
     
     public boolean isGovSupplyStore() {
-    	return "y".equals(govStore);
+    	return STORE_TYPE_GOV.equals(storeType);
     }
     
-    public String getGovStore() {
-		return govStore;
+	public String getStoreType() {
+		return storeType;
 	}
 
-	public void setGovStore(String govStore) {
-		this.govStore = govStore;
+
+	public void setStoreType(String storeType) {
+		this.storeType = storeType;
 	}
 
 	public List<AttachmentVO> getAttachmentVOList() {
