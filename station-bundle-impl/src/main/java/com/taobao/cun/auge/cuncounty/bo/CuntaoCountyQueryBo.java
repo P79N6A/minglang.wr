@@ -22,6 +22,7 @@ import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
+import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -64,7 +65,10 @@ public class CuntaoCountyQueryBo {
 	 * @return
 	 */
 	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {
-		return BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyExtMapper.getCuntaoCountyByOrgId(orgId));
+		CuntaoCounty cuntaoCounty = cuntaoCountyExtMapper.getCuntaoCountyByOrgId(orgId);
+		CuntaoCountyDto cuntaoCountyDto = BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCounty);
+		cuntaoCountyDto.setState(cuntaoCounty.getState());
+		return cuntaoCountyDto;
 	}
 	/**
 	 * 查询详情
