@@ -37,6 +37,8 @@ public class CuntaoCountyWaitOpenProcessBo {
 		if(isNeedAuditState(cuntaoCountyDto)) {
 			Map<String, String> initData = Maps.newHashMap();
 			initData.put("orgId", String.valueOf(cuntaoCountyDto.getOrgId()));
+			initData.put("title", "[" + cuntaoCountyDto.getName() + "]申请待开业");
+			initData.put("content", "[" + cuntaoCountyDto.getName() + "]申请待开业");
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 			startDto.setBusinessCode(TASK_CODE);
 			startDto.setBusinessId(String.valueOf(cuntaoCountyDto.getId()));
