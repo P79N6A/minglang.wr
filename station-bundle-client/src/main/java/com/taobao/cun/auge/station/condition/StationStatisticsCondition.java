@@ -19,7 +19,17 @@ public class StationStatisticsCondition implements Serializable{
 	private String type;
 	private String level;
 	private String ownDept;
-	
+
+	private String category;
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	public String getOwnDept() {
 		return ownDept;
 	}

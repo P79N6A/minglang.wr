@@ -249,9 +249,13 @@
 		<if test="providerId != null" >
 			and s.provider_id = #{providerId,jdbcType=BIGINT}
 		</if>
-		<if test="category != null" >
-			and s.category = #{category,jdbcType=VARCHAR}
-		</if>
+	   <if test="category!=null and category!=''">
+		   and s.category = #{category,jdbcType=VARCHAR}
+	   </if>
+
+	   <if test="category ==null or category ==''">
+		   and (s.category ='' or s.categroy is null)
+	   </if>
 		<if test="parentStationId != null" >
 			and instance.parent_station_id = #{parentStationId,jdbcType=BIGINT}
 		</if>
@@ -518,6 +522,15 @@
 	<if test="ownDept!=null and ownDept!=''">
 		and s.own_dept = #{ownDept,jdbcType=VARCHAR}
 	</if>
+		<if test="category!=null and category!=''">
+			and s.category = #{category,jdbcType=VARCHAR}
+		</if>
+
+		<if test="category ==null or category ==''">
+			and (s.category ='' or s.categroy is null)
+		</if>
+
+
 	</sql>
 
     <select id="selectPartnerInstancesByIds" resultMap="PartnerInstanceMap" parameterType="java.util.List" >
