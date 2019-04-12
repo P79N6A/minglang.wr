@@ -59,6 +59,17 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!--Alibaba Security Spring Extension -->
+			<dependency>
+				<groupId>com.alibaba.security</groupId>
+				<artifactId>security-spring-dependencies</artifactId>
+				<!-- springboot1.x的应用请使用1.x版本的security-spring-dependencies -->
+				<!-- 这里请尽可能使用最新版，当前最新版为1.0.11 -->
+				<!-- 文档更新可能不及时，请自行在maven仓库中查询最新版本号 -->
+				<version>1.0.11-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.alibaba.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-uic</artifactId>
@@ -736,8 +747,6 @@
 				<artifactId>common-division</artifactId>
 				<version>3.0.26</version>
 			</dependency>
-			<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
-				<version>3.0.3</version> </dependency> -->
 			<dependency>
 				<groupId>dms-sorting</groupId>
 				<artifactId>dms-sorting.api</artifactId>
@@ -830,13 +839,13 @@
 						<artifactId>servlet-api</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-simple</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.tmall.nova</groupId>
-						<artifactId>nova-client</artifactId>
-					</exclusion>
+			          <groupId>org.slf4j</groupId>
+			          <artifactId>slf4j-simple</artifactId>
+			        </exclusion>
+			        <exclusion>
+			          <groupId>com.tmall.nova</groupId>
+			          <artifactId>nova-client</artifactId>
+			        </exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -909,7 +918,12 @@
 						<artifactId>slf4j-log4j12</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency> 
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.security</groupId>
+				<artifactId>security-all</artifactId>
+				<version>1.2-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

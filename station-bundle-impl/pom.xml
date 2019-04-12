@@ -97,12 +97,6 @@
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
-			<!--<exclusions> -->
-			<!--<exclusion> -->
-			<!--<groupId>redis.clients</groupId> -->
-			<!--<artifactId>jedis</artifactId> -->
-			<!--</exclusion> -->
-			<!--</exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>com.cuntao.boot</groupId>
@@ -216,6 +210,11 @@
 		<dependency>
 			<groupId>com.taobao.security</groupId>
 			<artifactId>security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba.security</groupId>
+			<artifactId>security-spring-boot-starter</artifactId>
 		</dependency>
 
 		<dependency>
@@ -480,8 +479,6 @@
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>com.taobao.kfc</groupId> <artifactId>core</artifactId> 
-			</dependency> -->
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-client</artifactId>
