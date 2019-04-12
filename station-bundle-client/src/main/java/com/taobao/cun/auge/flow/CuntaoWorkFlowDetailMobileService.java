@@ -9,5 +9,5 @@ public interface CuntaoWorkFlowDetailMobileService {
 	 * @param objectId
 	 * @return
 	 */
-	ResultModel<FlowContent> getFlowContent(String taskCode, Long objectId);
+	ResultModel<Object> getFlowContent(String taskCode, Long objectId);
 }

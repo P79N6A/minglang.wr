@@ -11,10 +11,9 @@ public class CuntaoWorkFlowDetailMobileServiceImpl implements CuntaoWorkFlowDeta
 	private GenericServiceInvoker genericServiceInvoker;
 	
 	@Override
-	public ResultModel<FlowContent> getFlowContent(String taskCode, Long objectId) {
-		FlowContent flowContent = genericServiceInvoker.invoke(taskCode, objectId);
-		ResultModel<FlowContent> result = new ResultModel<FlowContent>();
-		result.setResult(flowContent);
+	public ResultModel<Object> getFlowContent(String taskCode, Long objectId) {
+		ResultModel<Object> result = new ResultModel<Object>();
+		result.setResult(genericServiceInvoker.invoke(taskCode, objectId));
 		result.setSuccess(true);
 		return result;
 	}
