@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
-import com.taobao.cun.crius.bpm.mobile.FlowContent;
+import com.taobao.cun.auge.flow.FlowContent;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = CuntaoCountyProcessService.class)
