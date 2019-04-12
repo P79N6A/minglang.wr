@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.exception.IllegalCountyStateException;
-import com.taobao.cun.auge.platform.service.BusiWorkInstanceService;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -32,8 +31,6 @@ public class CuntaoCountyWaitOpenProcessBo {
 	private CuntaoCountyBo cuntaoCountyBo;
 	@Resource
 	private CainiaoCountyRemoteBo cainiaoCountySyncBo;
-	@Resource
-	private BusiWorkInstanceService busiWorkInstanceService;
 	
 	public void start(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyBo.getCuntaoCounty(countyId);
