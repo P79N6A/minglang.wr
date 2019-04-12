@@ -3,7 +3,6 @@ package com.taobao.cun.auge.cuncounty.mobile;
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.flow.FlowContent;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -14,8 +13,7 @@ public class CuntaoCountyProcessServiceImpl implements CuntaoCountyProcessServic
 	
 	@Override
 	public FlowContent getCuntaoCountyDetail(String taskCode, Long id) {
-		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyQueryBo.getCuntaoCounty(id);
-		return FlowContent.create(cuntaoCountyDto);
+		return FlowContent.create(cuntaoCountyQueryBo.getCuntaoCountyDetail(id));
 	}
 
 }
