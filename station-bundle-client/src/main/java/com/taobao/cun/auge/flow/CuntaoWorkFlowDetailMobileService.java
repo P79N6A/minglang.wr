@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.flow;
 
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.auge.client.result.ResultModel;
 
 public interface CuntaoWorkFlowDetailMobileService {
 	/**
