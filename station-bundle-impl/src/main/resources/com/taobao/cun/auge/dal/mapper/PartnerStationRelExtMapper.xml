@@ -256,6 +256,14 @@
 	   <if test="category ==null or category ==''">
 		   and (s.category ='' or s.categroy is null)
 	   </if>
+
+       <if test="mode !=null or mode !=''">
+           and instance.mode = #{mode,jdbcType=VARCHAR}
+       </if>
+       <if test="mode ==null or mode ==''">
+           and instance.mode is null
+       </if>
+
 		<if test="parentStationId != null" >
 			and instance.parent_station_id = #{parentStationId,jdbcType=BIGINT}
 		</if>
@@ -525,10 +533,18 @@
 		<if test="category!=null and category!=''">
 			and s.category = #{category,jdbcType=VARCHAR}
 		</if>
+        <if test="category ==null or category ==''">
+            and (s.category ='' or s.categroy is null)
+        </if>
 
-		<if test="category ==null or category ==''">
-			and (s.category ='' or s.categroy is null)
-		</if>
+        <if test="mode !=null or mode !=''">
+            and instance.mode = #{mode,jdbcType=VARCHAR}
+        </if>
+        <if test="mode ==null or mode ==''">
+            and instance.mode is null
+        </if>
+
+
 
 
 	</sql>

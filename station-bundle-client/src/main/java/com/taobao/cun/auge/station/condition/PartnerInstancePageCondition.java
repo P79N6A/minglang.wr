@@ -63,7 +63,20 @@ public class PartnerInstancePageCondition extends PageQuery{
 	private TPCategoryEnum tpCategoryEnum;
 	
 	private String ownDept;
-	
+
+	/**
+	 * instance mode
+	 */
+	private  String mode;
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+
 	public String getOwnDept() {
 		return ownDept;
 	}

@@ -521,6 +521,10 @@ public final class PartnerInstanceConverter {
 		if(!Strings.isNullOrEmpty(condition.getOwnDept())) {
 			example.setOwnDept(condition.getOwnDept());
 		}
+
+		if(!Strings.isNullOrEmpty(condition.getMode())){
+			example.setMode(condition.getMode());
+		}
 		return example;
 	}
 	
