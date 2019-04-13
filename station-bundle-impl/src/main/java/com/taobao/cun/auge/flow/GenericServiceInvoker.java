@@ -15,7 +15,7 @@ public class GenericServiceInvoker {
 	Object invoke(String taskCode, Long objectId) {
 		ServiceMeta serviceMeta = serviceFactory.getServiceMeta(taskCode);
 		if(serviceMeta == null) {
-			throw new RuntimeException("不支持该流程类型：" + taskCode);
+			throw new UnsupportedOperationException("不支持该流程类型：" + taskCode);
 		}
 		Map<String, Object> result = (Map<String, Object>) serviceFactory.getService(taskCode).$invoke(serviceMeta.getServiceMethod(), 
 				new String[] {"java.lang.String", "java.lang.Long"}, 
