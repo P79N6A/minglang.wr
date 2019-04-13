@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.flow;
 
+import java.util.Objects;
+
 /**
  * 服务元数据
  * 
@@ -55,6 +57,26 @@ public class ServiceMeta {
 
 	public void setServiceVersion(String serviceVersion) {
 		this.serviceVersion = serviceVersion;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(serviceInterface, serviceMethod, serviceVersion, taskCode, timeout);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServiceMeta other = (ServiceMeta) obj;
+		return Objects.equals(serviceInterface, other.serviceInterface)
+				&& Objects.equals(serviceMethod, other.serviceMethod)
+				&& Objects.equals(serviceVersion, other.serviceVersion) && Objects.equals(taskCode, other.taskCode)
+				&& Objects.equals(timeout, other.timeout);
 	}
 
 	@Override
