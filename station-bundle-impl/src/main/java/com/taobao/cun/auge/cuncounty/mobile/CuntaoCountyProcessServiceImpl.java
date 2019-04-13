@@ -6,6 +6,12 @@ import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.flow.FlowContent;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+/**
+ * 县点流程
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
 @HSFProvider(serviceInterface = CuntaoCountyProcessService.class)
 public class CuntaoCountyProcessServiceImpl implements CuntaoCountyProcessService {
 	@Resource
