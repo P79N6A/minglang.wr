@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -95,6 +96,22 @@ public class CainiaoCountyDto {
      * 仓类型，{@code gov}-政府仓，{@code cainiao}-菜鸟仓
      */
     private String storeType;
+    
+    public String getRentStart() {
+    	return formatDate(getGmtRentStart());
+    }
+    
+    public String getRentEnd() {
+    	return formatDate(getGmtRentEnd());
+    }
+    
+    private String formatDate(Date date) {
+    	if(date == null) {
+    		return "";
+    	}else {
+    		return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    	}
+    }
     
     public boolean isGovSupplyStore() {
     	return STORE_TYPE_GOV.equals(storeType);

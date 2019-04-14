@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,22 @@ public class CuntaoCountyGovContractDto {
      * AttachmentVO
      */
     private List<AttachmentVO> attachmentVOList;
+    
+    public String getProtocolStart() {
+    	return formatDate(getGmtProtocolStart());
+    }
+    
+    public String getProtocolEnd() {
+    	return formatDate(getGmtProtocolEnd());
+    }
+    
+    private String formatDate(Date date) {
+    	if(date == null) {
+    		return "";
+    	}else {
+    		return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    	}
+    }
     
     public List<AttachmentVO> getAttachmentVOList() {
 		return attachmentVOList;
