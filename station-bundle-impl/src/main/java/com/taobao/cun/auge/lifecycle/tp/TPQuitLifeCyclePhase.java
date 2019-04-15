@@ -110,9 +110,9 @@ public class TPQuitLifeCyclePhase extends BaseLifeCyclePhase {
 				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
 				storeWriteBO.udpateStatusBystationId(partnerInstanceDto.getStationId(), StoreStatus.CLOSE.getStatus());
 			}else {
-				List<Long> sIds = new ArrayList<Long>();
+			/*	List<Long> sIds = new ArrayList<Long>();
 				sIds.add(partnerInstanceDto.getStationId());
-				stationService.updateStationCategory(sIds, "INVALID");
+				stationService.updateStationCategory(sIds, "INVALID");*/
 			}
 		}
 	}
