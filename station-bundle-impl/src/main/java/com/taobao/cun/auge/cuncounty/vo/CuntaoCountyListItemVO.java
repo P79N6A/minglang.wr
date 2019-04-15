@@ -38,6 +38,10 @@ public class CuntaoCountyListItemVO {
      * 县名
      */
     private String countyName;
+    /**
+     * 镇名
+     */
+    private String townName;
     
     private Date gmtProtocolStartDate;
     
@@ -47,6 +51,12 @@ public class CuntaoCountyListItemVO {
      */
     private Date operateDate;
     
+	public String getTownName() {
+		return townName;
+	}
+	public void setTownName(String townName) {
+		this.townName = townName;
+	}
 	public Date getOperateDate() {
 		return operateDate;
 	}

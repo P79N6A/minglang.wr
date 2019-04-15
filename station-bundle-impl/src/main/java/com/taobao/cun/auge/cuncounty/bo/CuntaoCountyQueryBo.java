@@ -207,6 +207,10 @@ public class CuntaoCountyQueryBo {
 			CuntaoCountyOfficeDto office = officeMap.get(item.getId());
 			if(office != null) {
 				item.setOfficeAddress(office.getAddress());
+				item.setProvinceName(office.getProvinceName());
+				item.setCityName(office.getCityName());
+				item.setCountyName(office.getCountyName());
+				item.setTownName(office.getTownName());
 			}
 		}
 	}

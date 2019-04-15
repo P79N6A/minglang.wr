@@ -48,6 +48,10 @@ public class CuntaoCountyListItem {
      * 县名
      */
     private String countyName;
+    /**
+     * 镇名
+     */
+    private String townName;
     
     /**
      * office详细地址
@@ -84,6 +88,14 @@ public class CuntaoCountyListItem {
      */
     private String protocolEndDate;
     
+	public String getTownName() {
+		return townName;
+	}
+
+	public void setTownName(String townName) {
+		this.townName = townName;
+	}
+
 	public String getOperateDate() {
 		return operateDate;
 	}
