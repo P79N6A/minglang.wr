@@ -3,6 +3,8 @@ package com.taobao.cun.auge.cuncounty.dto.edit;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -20,6 +22,8 @@ public class CainiaoCountyEditDto {
 	@NotBlank(message="菜鸟县仓:详细地址不能为空")
     private String address;
 	@NotBlank(message="菜鸟县仓:仓储面积不能为空")
+	@Digits(integer=Integer.MAX_VALUE,fraction=0,message="菜鸟县仓:仓储面积必须为整数")
+	@Min(value=0,message="菜鸟县仓:仓储面积必须为整数")
     private String storageArea;
 	@NotNull(message="菜鸟县仓:租赁开始时间不能为空")
     private Date gmtRentStart;
