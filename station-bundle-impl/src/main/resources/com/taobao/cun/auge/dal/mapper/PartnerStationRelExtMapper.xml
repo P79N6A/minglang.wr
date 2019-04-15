@@ -253,14 +253,14 @@
 		   and s.category = #{category,jdbcType=VARCHAR}
 	   </if>
 
-	   <if test="categoryIsNull!=null and categoryIsNull =='y'">
+	   <if test="categoryIsNull!=null and categoryIsNull !=''">
 		   and (s.category ='' or s.category is null)
 	   </if>
 
        <if test="mode != null and  mode != ''">
            and instance.mode = #{mode,jdbcType=VARCHAR}
        </if>
-       <if test="modeIsNull != null and  modeIsNull == 'y'">
+       <if test="modeIsNull != null and  modeIsNull !=''">
            and instance.mode is null
        </if>
 
@@ -534,14 +534,14 @@
 			and s.category = #{category,jdbcType=VARCHAR}
 		</if>
 
-		<if test="categoryIsNull!=null and categoryIsNull =='y'">
+		<if test="categoryIsNull!=null and categoryIsNull !=''">
 			and (s.category ='' or s.category is null)
 		</if>
 
 		<if test="mode != null and  mode != ''">
 			and instance.mode = #{mode,jdbcType=VARCHAR}
 		</if>
-		<if test="modeIsNull != null and  modeIsNull == 'y'">
+		<if test="modeIsNull != null and  modeIsNull !=''">
 			and instance.mode is null
 		</if>
 
