@@ -19,7 +19,7 @@
   
   <select id="getCuntaoCountyOffices" parameterType="list" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyOfficeMapper.BaseResultMap">
   select * from cuntao_county_office where county_id in 
-  <foreach collection="countyIds" index="countyId" separator="," open="(" close=")">#{countyId}</foreach>
+  <foreach collection="countyIds" item="countyId" separator="," open="(" close=")">#{countyId}</foreach>
   and is_deleted='n'
   </select>
   
