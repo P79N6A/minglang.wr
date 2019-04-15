@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.taobao.cun.auge.station.enums.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,30 +29,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
-import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
@@ -524,6 +501,22 @@ public final class PartnerInstanceConverter {
 
 		if(!Strings.isNullOrEmpty(condition.getMode())){
 			example.setMode(condition.getMode());
+		}
+
+		if (condition.getBizTypeEnum() != null) {
+			if (condition.getBizTypeEnum().equals(StationBizTypeEnum.STATION)) {
+				example.setModeIsNull("y");
+				example.setCategoryIsNull("y");
+			}
+			if (condition.getBizTypeEnum().equals(StationBizTypeEnum.YOUPIN)) {
+				example.setMode(StationModeEnum.V4.getCode());
+				example.setCategoryIsNull("y");
+			}
+			if (condition.getBizTypeEnum().equals(StationBizTypeEnum.YOUPIN_ELEC)) {
+				example.setMode(StationModeEnum.V4.getCode());
+				example.setCategory(TPCategoryEnum.ELEC.getCode());
+			}
+
 		}
 		return example;
 	}

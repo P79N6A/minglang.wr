@@ -95,8 +95,8 @@
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
-		select 
-		
+		select
+
 		instance.*,
 		
 		p.name as partner_name,
@@ -253,14 +253,14 @@
 		   and s.category = #{category,jdbcType=VARCHAR}
 	   </if>
 
-	   <if test="category ==null or category ==''">
+	   <if test="categoryIsNull!=null and categoryIsNull =='y'">
 		   and (s.category ='' or s.category is null)
 	   </if>
 
        <if test="mode != null and  mode != ''">
            and instance.mode = #{mode,jdbcType=VARCHAR}
        </if>
-       <if test="mode == null or mode ==''">
+       <if test="modeIsNull != null and  modeIsNull == 'y'">
            and instance.mode is null
        </if>
 
@@ -533,16 +533,17 @@
 		<if test="category!=null and category!=''">
 			and s.category = #{category,jdbcType=VARCHAR}
 		</if>
-        <if test="category ==null or category ==''">
-            and (s.category ='' or s.category is null)
-        </if>
 
-        <if test="mode != null and mode != ''">
-            and instance.mode = #{mode,jdbcType=VARCHAR}
-        </if>
-        <if test="mode ==null or mode ==''">
-            and instance.mode is null
-        </if>
+		<if test="categoryIsNull!=null and categoryIsNull =='y'">
+			and (s.category ='' or s.category is null)
+		</if>
+
+		<if test="mode != null and  mode != ''">
+			and instance.mode = #{mode,jdbcType=VARCHAR}
+		</if>
+		<if test="modeIsNull != null and  modeIsNull == 'y'">
+			and instance.mode is null
+		</if>
 
 
 

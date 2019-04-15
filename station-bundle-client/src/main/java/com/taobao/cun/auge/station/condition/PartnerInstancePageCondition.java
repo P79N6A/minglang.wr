@@ -3,11 +3,7 @@ package com.taobao.cun.auge.station.condition;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.enums.TPCategoryEnum;
+import com.taobao.cun.auge.station.enums.*;
 
 public class PartnerInstancePageCondition extends PageQuery{
 
@@ -69,7 +65,17 @@ public class PartnerInstancePageCondition extends PageQuery{
 	 */
 	private  String mode;
 
-	public String getMode() {
+	private StationBizTypeEnum  bizTypeEnum;
+
+    public StationBizTypeEnum getBizTypeEnum() {
+        return bizTypeEnum;
+    }
+
+    public void setBizTypeEnum(StationBizTypeEnum bizTypeEnum) {
+        this.bizTypeEnum = bizTypeEnum;
+    }
+
+    public String getMode() {
 		return mode;
 	}
 

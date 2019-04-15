@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.condition;
 
+import com.taobao.cun.auge.station.enums.StationBizTypeEnum;
+
 import java.io.Serializable;
 
 public class StationStatisticsCondition implements Serializable{
@@ -27,6 +29,37 @@ public class StationStatisticsCondition implements Serializable{
 	 * instance mode
 	 */
 	private String mode;
+
+	private StationBizTypeEnum bizTypeEnum;
+
+	private String modeIsNull;
+
+	private String categoryIsNull;
+
+	public String getModeIsNull() {
+		return modeIsNull;
+	}
+
+	public void setModeIsNull(String modeIsNull) {
+		this.modeIsNull = modeIsNull;
+	}
+
+	public String getCategoryIsNull() {
+		return categoryIsNull;
+	}
+
+	public void setCategoryIsNull(String categoryIsNull) {
+		this.categoryIsNull = categoryIsNull;
+	}
+
+
+	public StationBizTypeEnum getBizTypeEnum() {
+		return bizTypeEnum;
+	}
+
+	public void setBizTypeEnum(StationBizTypeEnum bizTypeEnum) {
+		this.bizTypeEnum = bizTypeEnum;
+	}
 
 	public String getMode() {
 		return mode;

@@ -683,6 +683,22 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Override
     public StationStatisticDto getStationStatistics(StationStatisticsCondition condition) {
+        if (condition.getBizTypeEnum() != null) {
+            if (condition.getBizTypeEnum().equals(StationBizTypeEnum.STATION)) {
+                condition.setModeIsNull("y");
+                condition.setCategoryIsNull("y");
+            }
+            if (condition.getBizTypeEnum().equals(StationBizTypeEnum.YOUPIN)) {
+                condition.setMode(StationModeEnum.V4.getCode());
+                condition.setCategoryIsNull("y");
+            }
+            if (condition.getBizTypeEnum().equals(StationBizTypeEnum.YOUPIN_ELEC)) {
+                condition.setMode(StationModeEnum.V4.getCode());
+                condition.setCategory(TPCategoryEnum.ELEC.getCode());
+            }
+
+        }
+
         if (null == processedStationStatusExecutorList) {
             initProcessedStationStatusExecutorList();
         }
