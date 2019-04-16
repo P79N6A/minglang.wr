@@ -118,6 +118,39 @@ public class PartnerInstanceExample implements Serializable {
 	private String category;
 	
 	private String ownDept;
+
+	/**
+	 * instance mode
+	 */
+	private  String mode;
+
+	private String modeIsNull;
+
+	private String categoryIsNull;
+
+	public String getModeIsNull() {
+		return modeIsNull;
+	}
+
+	public void setModeIsNull(String modeIsNull) {
+		this.modeIsNull = modeIsNull;
+	}
+
+	public String getCategoryIsNull() {
+		return categoryIsNull;
+	}
+
+	public void setCategoryIsNull(String categoryIsNull) {
+		this.categoryIsNull = categoryIsNull;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
 	
 	public String getOwnDept() {
 		return ownDept;
