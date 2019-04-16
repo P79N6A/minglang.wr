@@ -702,4 +702,15 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 		return w.isUse();
 	}
+
+	@Override
+	public Boolean checkCainiaoStationIsOperating(Long stationId) {
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+			CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel==null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"cainiaostation is null");
+		}
+		return caiNiaoAdapter.checkCainiaoStationIsOperating(rel.getCainiaoStationId());
+	}
+
 }

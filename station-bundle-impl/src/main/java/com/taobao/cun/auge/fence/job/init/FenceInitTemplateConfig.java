@@ -57,12 +57,82 @@ public class FenceInitTemplateConfig {
 	@Value("${fence.templateid.sell.clothing}")
 	private Long templateIdSellClothing;
 
+	/**
+	 * 售卖围栏 - 大小家电全县售卖
+	 */
+	@Value("${fence.templateid.sell.appliances}")
+	private Long templateIdSellAppliances;
+
+	/**
+	 * 物流围栏 - 5公里默认不勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.default}")
+	private Long logisticsDefault;
+
+	/**
+	 * 物流围栏 - 村服务站默认勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.village}")
+	private Long logisticsVillage;
+
+	/**
+	 * 物流围栏 - 镇服务站默认勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.town}")
+	private Long logisticsTown;
+
+	/**
+	 * 物流围栏 - 同镇绑定用户推荐围栏
+	 */
+	@Value("${fence.templateid.logistics.town.default}")
+	private Long logisticsTownDefault;
+
+	public Long getLogisticsTownDefault() {
+		return logisticsTownDefault;
+	}
+
+	public void setLogisticsTownDefault(Long logisticsTownDefault) {
+		this.logisticsTownDefault = logisticsTownDefault;
+	}
+
+	public Long getLogisticsDefault() {
+		return logisticsDefault;
+	}
+
+	public void setLogisticsDefault(Long logisticsDefault) {
+		this.logisticsDefault = logisticsDefault;
+	}
+
+	public Long getLogisticsVillage() {
+		return logisticsVillage;
+	}
+
+	public void setLogisticsVillage(Long logisticsVillage) {
+		this.logisticsVillage = logisticsVillage;
+	}
+
+	public Long getLogisticsTown() {
+		return logisticsTown;
+	}
+
+	public void setLogisticsTown(Long logisticsTown) {
+		this.logisticsTown = logisticsTown;
+	}
+
 	public Long getTemplateIdSellClothing() {
 		return templateIdSellClothing;
 	}
 
 	public void setTemplateIdSellClothing(Long templateIdSellClothing) {
 		this.templateIdSellClothing = templateIdSellClothing;
+	}
+
+	public Long getTemplateIdSellAppliances() {
+		return templateIdSellAppliances;
+	}
+
+	public void setTemplateIdSellAppliances(Long templateIdSellAppliances) {
+		this.templateIdSellAppliances = templateIdSellAppliances;
 	}
 
 	public Long getTemplateIdFeeStoreTown() {
