@@ -44,11 +44,6 @@ public class CuntaoCountyGovContractDto {
      */
     private String allowance;
 
-    /**
-     * 宣传
-     */
-    private String publicity;
-
     private String attachments;
     
     /**
@@ -134,14 +129,6 @@ public class CuntaoCountyGovContractDto {
 
 	public void setAllowance(String allowance) {
 		this.allowance = allowance;
-	}
-
-	public String getPublicity() {
-		return publicity;
-	}
-
-	public void setPublicity(String publicity) {
-		this.publicity = publicity;
 	}
 
 	public String getAttachments() {

@@ -3,6 +3,8 @@ package com.taobao.cun.auge.cuncounty.dto.edit;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -30,12 +32,10 @@ public class CuntaoCountyGovContractEditDto {
     @NotNull(message="政府签约信息:协议结束时间不能为空")
     private Date gmtProtocolEnd;
 
-    @NotBlank(message="政府签约信息:资金补贴不能为空")
+    @Digits(integer=Integer.MAX_VALUE,fraction=2,message="政府签约信息:专项资金必须为数字，最多保留两位小数")
+	@Min(value=0,message="政府签约信息:专项资金大于等于0")
     private String allowance;
 
-    @NotBlank(message="政府签约信息:宣传支持不能为空")
-    private String publicity;
-    
     @NotBlank(message="政府签约信息:协议不能为空")
     private String attachments;
     
@@ -96,14 +96,6 @@ public class CuntaoCountyGovContractEditDto {
 
 	public void setAllowance(String allowance) {
 		this.allowance = allowance;
-	}
-
-	public String getPublicity() {
-		return publicity;
-	}
-
-	public void setPublicity(String publicity) {
-		this.publicity = publicity;
 	}
 
 	public String getAttachments() {
