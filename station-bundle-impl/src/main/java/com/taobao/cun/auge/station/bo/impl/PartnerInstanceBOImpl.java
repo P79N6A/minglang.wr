@@ -1088,6 +1088,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_MONTH,1);
         newMonth=calendar.getTime();
         if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(newMonth)) {
             ValidateUtils.notNull(instanceId);
