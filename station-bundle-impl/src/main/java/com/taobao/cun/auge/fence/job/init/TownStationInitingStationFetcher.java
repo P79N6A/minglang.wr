@@ -26,7 +26,7 @@ public class TownStationInitingStationFetcher extends AbstractInitingStationFetc
 			fenceInitTemplateConfig.getTemplateIdSellAppliances(),
 			fenceInitTemplateConfig.getTemplateIdLogisticsDefault(),
 			fenceInitTemplateConfig.getTemplateIdLogisticsTown(),
-			fenceInitTemplateConfig.getTemplateIdLogisticsTownDefault()
+			fenceInitTemplateConfig.getTemplateIdLogisticsTownBind()
 		);
 	}
 

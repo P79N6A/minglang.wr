@@ -84,15 +84,15 @@ public class FenceInitTemplateConfig {
 	/**
 	 * 物流围栏 - 同镇绑定用户推荐围栏
 	 */
-	@Value("${fence.templateid.logistics.town.default}")
-	private Long templateIdLogisticsTownDefault;
+	@Value("${fence.templateid.logistics.town.bind}")
+	private Long templateIdLogisticsTownBind;
 
-	public Long getTemplateIdLogisticsTownDefault() {
-		return templateIdLogisticsTownDefault;
+	public Long getTemplateIdLogisticsTownBind() {
+		return templateIdLogisticsTownBind;
 	}
 
-	public void setTemplateIdLogisticsTownDefault(Long templateIdLogisticsTownDefault) {
-		this.templateIdLogisticsTownDefault = templateIdLogisticsTownDefault;
+	public void setTemplateIdLogisticsTownBind(Long templateIdLogisticsTownBind) {
+		this.templateIdLogisticsTownBind = templateIdLogisticsTownBind;
 	}
 
 	public Long getTemplateIdLogisticsDefault() {
@@ -200,7 +200,7 @@ public class FenceInitTemplateConfig {
 				templateIdSellVillage,
 			templateIdLogisticsVillage,
 			templateIdLogisticsTown,
-			templateIdLogisticsTownDefault
+			templateIdLogisticsTownBind
 				);
 	}
 	
