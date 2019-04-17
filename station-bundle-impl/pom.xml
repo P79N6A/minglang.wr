@@ -563,6 +563,14 @@
 		  <groupId>com.alibaba.jaq</groupId>
 		  <artifactId>jaq-sdk</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.ruledata</groupId>
+			<artifactId>ruledata-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
