@@ -2,7 +2,6 @@ package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
 
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -25,7 +24,7 @@ public class StoreInitingStationFetcher extends AbstractInitingStationFetcher {
 			fenceInitTemplateConfig.getTemplateIdFeeStoreTown(),
 			fenceInitTemplateConfig.getTemplateIdSellClothing(),
 			fenceInitTemplateConfig.getTemplateIdSellAppliances(),
-			fenceInitTemplateConfig.getLogisticsDefault()
+			fenceInitTemplateConfig.getTemplateIdLogisticsDefault()
 		);
 	}
 
@@ -49,7 +48,7 @@ public class StoreInitingStationFetcher extends AbstractInitingStationFetcher {
 
 	@Override
 	protected boolean matchLogisticsCondition(Station station) {
-		return StationStatusEnum.SERVICING.getCode().equals(station.getStatus()) && caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
+		return caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
 	}
 
 }

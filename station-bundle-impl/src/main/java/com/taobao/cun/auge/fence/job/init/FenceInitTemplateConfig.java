@@ -67,56 +67,56 @@ public class FenceInitTemplateConfig {
 	 * 物流围栏 - 5公里默认不勾选围栏
 	 */
 	@Value("${fence.templateid.logistics.default}")
-	private Long logisticsDefault;
+	private Long templateIdLogisticsDefault;
 
 	/**
 	 * 物流围栏 - 村服务站默认勾选围栏
 	 */
 	@Value("${fence.templateid.logistics.village}")
-	private Long logisticsVillage;
+	private Long templateIdLogisticsVillage;
 
 	/**
 	 * 物流围栏 - 镇服务站默认勾选围栏
 	 */
 	@Value("${fence.templateid.logistics.town}")
-	private Long logisticsTown;
+	private Long templateIdLogisticsTown;
 
 	/**
 	 * 物流围栏 - 同镇绑定用户推荐围栏
 	 */
 	@Value("${fence.templateid.logistics.town.default}")
-	private Long logisticsTownDefault;
+	private Long templateIdLogisticsTownDefault;
 
-	public Long getLogisticsTownDefault() {
-		return logisticsTownDefault;
+	public Long getTemplateIdLogisticsTownDefault() {
+		return templateIdLogisticsTownDefault;
 	}
 
-	public void setLogisticsTownDefault(Long logisticsTownDefault) {
-		this.logisticsTownDefault = logisticsTownDefault;
+	public void setTemplateIdLogisticsTownDefault(Long templateIdLogisticsTownDefault) {
+		this.templateIdLogisticsTownDefault = templateIdLogisticsTownDefault;
 	}
 
-	public Long getLogisticsDefault() {
-		return logisticsDefault;
+	public Long getTemplateIdLogisticsDefault() {
+		return templateIdLogisticsDefault;
 	}
 
-	public void setLogisticsDefault(Long logisticsDefault) {
-		this.logisticsDefault = logisticsDefault;
+	public void setTemplateIdLogisticsDefault(Long templateIdLogisticsDefault) {
+		this.templateIdLogisticsDefault = templateIdLogisticsDefault;
 	}
 
-	public Long getLogisticsVillage() {
-		return logisticsVillage;
+	public Long getTemplateIdLogisticsVillage() {
+		return templateIdLogisticsVillage;
 	}
 
-	public void setLogisticsVillage(Long logisticsVillage) {
-		this.logisticsVillage = logisticsVillage;
+	public void setTemplateIdLogisticsVillage(Long templateIdLogisticsVillage) {
+		this.templateIdLogisticsVillage = templateIdLogisticsVillage;
 	}
 
-	public Long getLogisticsTown() {
-		return logisticsTown;
+	public Long getTemplateIdLogisticsTown() {
+		return templateIdLogisticsTown;
 	}
 
-	public void setLogisticsTown(Long logisticsTown) {
-		this.logisticsTown = logisticsTown;
+	public void setTemplateIdLogisticsTown(Long templateIdLogisticsTown) {
+		this.templateIdLogisticsTown = templateIdLogisticsTown;
 	}
 
 	public Long getTemplateIdSellClothing() {
@@ -170,19 +170,18 @@ public class FenceInitTemplateConfig {
 	public List<Long> getTownTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeTown, 
-				//templateIdLogisticsTownAtuoselected,
-				//templateIdLogisticsTown,
 				templateIdFeeStoreTown,
 				templateIdSellStoreTown,
-				templateIdSellTown
+				templateIdSellTown,
+				templateIdLogisticsTown
 				);
 	}
 	
 	public List<Long> getVillageTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeVillage,
-				//templateIdLogisticsVillageAtuoselected,
-				templateIdSellVillage
+				templateIdSellVillage,
+				templateIdLogisticsVillage
 				);
 	}
 	
@@ -198,7 +197,10 @@ public class FenceInitTemplateConfig {
 				templateIdFeeTown, 
 				templateIdSellTown,
 				templateIdFeeVillage,
-				templateIdSellVillage
+				templateIdSellVillage,
+			templateIdLogisticsVillage,
+			templateIdLogisticsTown,
+			templateIdLogisticsTownDefault
 				);
 	}
 	
