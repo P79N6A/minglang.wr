@@ -1021,6 +1021,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                }
 
            } else{
+               StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+               if (lastTransInfo != null) {
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.valueof(lastTransInfo.getType()));
+               }
                PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
                        PartnerLifecycleBusinessTypeEnum.DECORATING);
                if(PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&&lifecycleItems!=null&&"N".equals(lifecycleItems.getDecorateStatus())){
