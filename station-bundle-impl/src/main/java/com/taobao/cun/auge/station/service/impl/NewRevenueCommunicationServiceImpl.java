@@ -57,7 +57,6 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         params.put("inviteType",newRevenueCommunicationDto.getBusinessCode());
         processTask.setBusiness(ProcessBusinessEnum.stationTransHandOverInviteAudit);
         processTask.setBusinessId(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
-        processTask.setBusinessName(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode());
         processTask.setBusinessOrgId(newRevenueCommunicationDto.getOperatorOrgId());
         processTask.setOperator(newRevenueCommunicationDto.getOperator());
         processTask.setOperatorOrgId(newRevenueCommunicationDto.getOperatorOrgId());
@@ -81,6 +80,7 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         NewRevenueCommunicationCondition newRevenueCommunicationCondition=new NewRevenueCommunicationCondition();
         newRevenueCommunicationCondition.setBusinessCode(businessCode);
         newRevenueCommunicationCondition.setObjectId(objectId);
+        newRevenueCommunicationCondition.setAuditStatus("WAIT_APPROVE");
         newRevenueCommunicationCondition.setStatus("PROCESS");
         List<NewRevenueCommunication>newRevenueCommunicationList= newRevenueCommunicationBO.getNewRevenueCommunicationDtoByCondition(newRevenueCommunicationCondition);
 
