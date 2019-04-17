@@ -1001,12 +1001,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
               }
           }
            if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
-                  PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())){
-              StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
-              if(lastTransInfo!=null){
-                  stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.valueof(lastTransInfo.getType()));
-                  stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_TRANS);
-              }
+                  PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
+               StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+               if (lastTransInfo != null) {
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.valueof(lastTransInfo.getType()));
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_TRANS);
+               }
 
                AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
                        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
@@ -1016,10 +1016,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
                        ProtocolTypeEnum.C2B_SETTLE_PRO,
                        instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-               if (settleProtocol != null&&AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())&&bondMoney.getMoney().doubleValue()>0) {
+               if (settleProtocol != null && AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState()) && bondMoney.getMoney().doubleValue() > 0) {
                    stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_FREZON);
                }
 
+           } else{
                PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
                        PartnerLifecycleBusinessTypeEnum.DECORATING);
                if(PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&&lifecycleItems!=null&&"N".equals(lifecycleItems.getDecorateStatus())){
