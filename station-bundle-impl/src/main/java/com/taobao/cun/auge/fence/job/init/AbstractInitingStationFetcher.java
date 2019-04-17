@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.fence.job.init;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -36,9 +37,9 @@ public abstract class AbstractInitingStationFetcher implements InitingStationFet
         List<InitingStation> initingStations = Lists.newArrayList();
 
         for (Long templateId : getTemplateIds()) {
+
             List<Station> fenceInitingStations = getFenceInitingStations(templateId).stream().filter(
-                it -> matchCondition(templateId, it)).collect(
-                Collectors.toList());
+                getPredicateByTemplateId(templateId)).collect(Collectors.toList());
             initingStations.add(new InitingStation(fenceInitingStations, templateId));
         }
 
@@ -61,29 +62,22 @@ public abstract class AbstractInitingStationFetcher implements InitingStationFet
     protected abstract List<Station> getFenceInitingStations(Long templateId);
 
     /**
-     * 检查站点是否符合围栏开启附加条件
-     *
+     * 根据围栏类型得到相应匹配条件
      * @param templateId
-     * @param station
      * @return
      */
-    protected boolean matchCondition(Long templateId, Station station) {
+    private Predicate<Station> getPredicateByTemplateId(Long templateId) {
         FenceTemplateDto fenceTemplate = fenceTemplateBO.getFenceTemplateById(templateId);
         if (fenceTemplate != null) {
-            try {
-                if (FenceTypeEnum.SELL.equals(fenceTemplate.getTypeEnum())) {
-                    return matchSellCondition(station);
-                } else if (FenceTypeEnum.CHARGE.equals(fenceTemplate.getTypeEnum())) {
-                    return matchChargeCondition(station);
-                } else if (FenceTypeEnum.LOGISTICS.equals(fenceTemplate.getTypeEnum())) {
-                    return matchLogisticsCondition(station);
-                }
-            } catch (Exception e) {
-                logger.error("station {stationId} init fence {templateId} error", station.getId(), templateId, e);
-                return false;
+            if (FenceTypeEnum.SELL.equals(fenceTemplate.getTypeEnum())) {
+                return this::matchSellCondition;
+            } else if (FenceTypeEnum.CHARGE.equals(fenceTemplate.getTypeEnum())) {
+                return this::matchChargeCondition;
+            } else if (FenceTypeEnum.LOGISTICS.equals(fenceTemplate.getTypeEnum())) {
+                return this::matchLogisticsCondition;
             }
         }
-        return true;
+        return it -> false;
     }
 
     /**
@@ -91,20 +85,36 @@ public abstract class AbstractInitingStationFetcher implements InitingStationFet
      * @param station
      * @return
      */
-    protected abstract boolean matchSellCondition(Station station);
+    protected boolean matchSellCondition(Station station) {
+        return true;
+    }
 
     /**
      * 检查站点是否符合收费围栏开启附加条件
      * @param station
      * @return
      */
-    protected abstract boolean matchChargeCondition(Station station);
+    protected boolean matchChargeCondition(Station station) {
+        try {
+            return caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
+        } catch (Exception e) {
+            logger.error("station {stationId} matchChargeCondition error", station.getId(), e);
+            return false;
+        }
+    }
 
     /**
      * 检查站点是否符合物流围栏开启附加条件
      * @param station
      * @return
      */
-    protected abstract boolean matchLogisticsCondition(Station station);
+    protected boolean matchLogisticsCondition(Station station) {
+        try {
+            return caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
+        } catch (Exception e) {
+            logger.error("station {stationId} matchLogisticsCondition error", station.getId(), e);
+            return false;
+        }
+    }
 
 }

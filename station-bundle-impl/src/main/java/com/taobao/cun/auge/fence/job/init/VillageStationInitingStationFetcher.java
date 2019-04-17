@@ -39,19 +39,4 @@ public class VillageStationInitingStationFetcher extends AbstractInitingStationF
 		return stationBO.getFenceInitingStations(condition);
 	}
 
-	@Override
-	protected boolean matchSellCondition(Station station) {
-		return true;
-	}
-
-	@Override
-	protected boolean matchChargeCondition(Station station) {
-		return caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
-	}
-
-	@Override
-	protected boolean matchLogisticsCondition(Station station) {
-		return caiNiaoService.checkCainiaoStationIsOperating(station.getId()) && caiNiaoService.checkCainiaoCountyIsOperating(station.getId());
-	}
-
 }
