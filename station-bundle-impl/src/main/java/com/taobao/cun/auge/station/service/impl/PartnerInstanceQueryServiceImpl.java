@@ -2,10 +2,18 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.taobao.cun.auge.station.enums.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -41,18 +49,6 @@ import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
@@ -170,6 +166,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Autowired
     private StationTransInfoBO stationTransInfoBO;
+
+    @Autowired
+    private NewRevenueCommunicationService newRevenueCommunicationService;
 
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -978,16 +977,126 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     public StationTransInfoTypeEnum getWaitConfirmTransInfoTypeByTaobaoUserId(Long taobaoUserId) {
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if (instance != null && PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
-            PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
+                PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
             StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
             return StationTransInfoTypeEnum.getTransInfoTypeEnumByCode(lastTransInfo.getType());
         }
         return null;
     }
 
-	@Override
-	public InstanceDto getActiveInstance(Long taobaoUserId) {
-		ValidateUtils.notNull(taobaoUserId);
+    @Override
+    public PartnerInstanceRevenueStatusEnum getWaitConfirmRevenueTransInfoTypeByTaobaoUserId(Long taobaoUserId) {
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if(instance != null ){
+            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getProcessApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
+            if(newRevenueCommunicationDto!=null&&StringUtils.isBlank(instance.getIncomeMode())){
+                return PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public StationTransHandOverDto getStationTransHandOverInfoByTaobaoUserId(Long taobaoUserId) {
+
+        StationTransHandOverDto stationTransHandOverDto=new StationTransHandOverDto();
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        //获取转型类型及信息
+        if(instance!=null&& PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
+                PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
+            StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+            stationTransHandOverDto.setStationTransInfoTypeEnum(StationTransInfoTypeEnum.getTransInfoTypeEnumByCode(lastTransInfo.getType()));
+            if(lastTransInfo!=null){
+                stationTransHandOverDto.setStationTransInfoDto(toStationTransInfoDto(lastTransInfo));
+            }
+        }
+        //获取收入切换类型及信息
+        if(instance!=null){
+            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getProcessApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
+            if(newRevenueCommunicationDto!=null){
+                stationTransHandOverDto.setPartnerInstanceRevenueStatusEnum(PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS);
+                stationTransHandOverDto.setStationRevenueTransInfoDto(toStationRevenueTransInfoDto(instance,newRevenueCommunicationDto));
+            }
+        }
+        return stationTransHandOverDto;
+    }
+
+    @Override
+    public String getStationTransHandOverTypeInfoByTaobaoUserId(Long taobaoUserId) {
+
+        StationTransHandOverTypeInfoDto stationTransHandOverTypeInfoDto=new StationTransHandOverTypeInfoDto();
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if(instance!=null){
+            NewRevenueCommunicationDto newRevenueCommunicationDto = newRevenueCommunicationService.getProcessApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
+          if(newRevenueCommunicationDto!=null){
+              stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.REVENUE_HAND_OVER);
+              stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_TRANS);
+              }
+              else{
+                  NewRevenueCommunicationDto finishNewRevenueCommunicationDto= newRevenueCommunicationService.getFinishApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instance.getId().toString());
+                  if(finishNewRevenueCommunicationDto!=null){
+                      stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.REVENUE_HAND_OVER);
+                      stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.FINISH);
+              }
+          }
+           if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState()) &&
+                  PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
+               StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+               if (lastTransInfo != null) {
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.valueof(lastTransInfo.getType()));
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_TRANS);
+               }
+
+               AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                       AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+               if (null == instance || null == bondMoney) {
+                   throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "PARTNER_BOND not exist");
+               }
+               PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
+                       ProtocolTypeEnum.C2B_SETTLE_PRO,
+                       instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+               if (settleProtocol != null && AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState()) && bondMoney.getMoney().doubleValue() > 0) {
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_FREZON);
+               }
+
+           } else{
+               StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(instance.getStationId());
+               if (lastTransInfo != null) {
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverTypeEnum(StationTransHandOverTypeEnum.valueof(lastTransInfo.getType()));
+               }
+               PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+                       PartnerLifecycleBusinessTypeEnum.DECORATING);
+               if(PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&&lifecycleItems!=null&&"N".equals(lifecycleItems.getDecorateStatus())){
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_DECOTATION);
+               }
+
+               if(PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&&lifecycleItems!=null&&"Y".equals(lifecycleItems.getDecorateStatus())){
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_OPEN);
+               }
+
+               if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())){
+                   stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.FINISH);
+               }
+           }
+
+        }
+
+        Map<String,String> result=new HashMap<String,String>();
+        if(stationTransHandOverTypeInfoDto.getStationTransHandOverTypeEnum()!=null){
+            result.put("stationTransHandOverType",stationTransHandOverTypeInfoDto.getStationTransHandOverTypeEnum().getCode());
+        }
+        if(stationTransHandOverTypeInfoDto.getStationTransHandOverNodeEnum()!=null){
+            result.put("stationTransHandOverNode",stationTransHandOverTypeInfoDto.getStationTransHandOverNodeEnum().getCode());
+        }
+
+        String stringJson=JSON.toJSONString(result);
+
+        return stringJson;
+    }
+
+    @Override
+    public InstanceDto getActiveInstance(Long taobaoUserId) {
+        ValidateUtils.notNull(taobaoUserId);
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if (null == rel) {
             return null;
@@ -1014,5 +1123,41 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         instance.setStationDto(stationDto);
 
         return instance;
-	}
+    }
+
+    private StationTransInfoDto toStationTransInfoDto(StationTransInfo stationTransInfo){
+        StationTransInfoDto stationTransInfoDto=new StationTransInfoDto();
+        stationTransInfoDto.setId(stationTransInfo.getId());
+        stationTransInfoDto.setFromBizType(stationTransInfo.getFromBizType());
+        stationTransInfoDto.setToBizType(stationTransInfo.getToBizType());
+        stationTransInfoDto.setStationId(stationTransInfo.getStationId());
+        stationTransInfoDto.setStatus(stationTransInfo.getStatus());
+        stationTransInfoDto.setTaobaoUserId(stationTransInfo.getTaobaoUserId());
+        stationTransInfoDto.setTransDate(stationTransInfo.getTransDate());
+        stationTransInfoDto.setType(stationTransInfo.getType());
+        stationTransInfoDto.setIsLatest(stationTransInfo.getIsLatest());
+        stationTransInfoDto.setIsModifyLnglat(stationTransInfo.getIsModifyLnglat());
+        stationTransInfoDto.setNewOpenDate(stationTransInfo.getNewOpenDate());
+        stationTransInfoDto.setOldOpenDate(stationTransInfo.getOldOpenDate());
+        stationTransInfoDto.setOperateTime(stationTransInfo.getOperateTime());
+        stationTransInfoDto.setOperator(stationTransInfo.getOperator());
+        stationTransInfoDto.setOperateTime(stationTransInfo.getOperateTime());
+        stationTransInfoDto.setOperatorType(stationTransInfo.getOperatorType());
+        stationTransInfoDto.setRemark(stationTransInfo.getRemark());
+        return stationTransInfoDto;
+    }
+
+    private StationRevenueTransInfoDto toStationRevenueTransInfoDto(PartnerStationRel instance,NewRevenueCommunicationDto newRevenueCommunicationDto){
+        StationRevenueTransInfoDto stationRevenueTransInfoDto=new StationRevenueTransInfoDto();
+        stationRevenueTransInfoDto.setTaobaoUserId(instance.getTaobaoUserId().toString());
+        stationRevenueTransInfoDto.setIncomeMode(instance.getIncomeMode());
+        stationRevenueTransInfoDto.setIncomeModeBeginTime(instance.getIncomeModeBeginTime());
+        stationRevenueTransInfoDto.setStationId(instance.getStationId());
+        stationRevenueTransInfoDto.setStatus(PartnerInstanceRevenueStatusEnum.WAIT_REVENUE_TRANS.getCode());
+        stationRevenueTransInfoDto.setType(instance.getType());
+        stationRevenueTransInfoDto.setOperateTime(newRevenueCommunicationDto.getCommuTime());
+        stationRevenueTransInfoDto.setOperator(newRevenueCommunicationDto.getOperator());
+        stationRevenueTransInfoDto.setRemark(newRevenueCommunicationDto.getCommuContent());
+        return stationRevenueTransInfoDto;
+    }
 }

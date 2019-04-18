@@ -1,25 +1,21 @@
 package com.taobao.cun.auge.qualification.service;
 
-import java.util.Objects;
-import java.util.Optional;
-
+import com.alibaba.citrus.util.StringUtil;
+import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.statemachine.StateMachineService;
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.*;
+import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -29,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service("settlingService")
 @HSFProvider(serviceInterface= C2BSettlingService.class)
@@ -62,6 +61,15 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	
 	@Autowired
 	ProtocolBO protocolBO;
+
+	@Autowired
+	NewRevenueCommunicationService newRevenueCommunicationService;
+
+	@Autowired
+	StationTransInfoBO stationTransInfoBO;
+
+	@Autowired
+	StateMachineService stateMachineService;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -236,14 +244,34 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
         C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
         try {
             PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
-            Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
-            PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
-            if(settleNewProtocol != null){
-                response.setSuccessful(true);
-                return response;
-            }
+			Long instanceId = parnterInstance.getId();
+			String incomeMode=parnterInstance.getIncomeMode();
+
             partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
                     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			NewRevenueCommunicationDto finalInvite=newRevenueCommunicationService.getProcessApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.TRANS_INVITE.getCode(),instanceId.toString());
+			if(finalInvite==null){
+				finalInvite= newRevenueCommunicationService.getProcessApprovePassNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.REVENUE_INVITE.getCode(),instanceId.toString());
+			}
+
+			if(finalInvite!=null){
+				if (StringUtil.isBlank(incomeMode)) {
+					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+				}
+				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
+
+				StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(parnterInstance.getStationId());
+				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(parnterInstance.getState()) &&
+						PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(parnterInstance.getTransStatus())
+						&& null != lastTransInfo && PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(lastTransInfo.getStatus())&&StationTransHandOverTypeEnum.YOUPIN_TO_YOUPIN_ELEC.getCode().equals(lastTransInfo.getType())) {
+					PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(parnterInstance.getId());
+					partnerInstanceDto.setOperator(String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+					partnerInstanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
+					stateMachineService.executePhase(
+							LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT));
+				}
+
+			}
             response.setSuccessful(true);
         } catch (Exception e) {
             logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);

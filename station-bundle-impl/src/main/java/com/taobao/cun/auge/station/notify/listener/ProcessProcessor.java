@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Map;
 
 import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
 import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
@@ -38,13 +40,6 @@ import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -144,6 +139,9 @@ public class ProcessProcessor {
 
     @Autowired
     private ServiceAbilityApplyService serviceAbilityApplyService;
+
+    @Autowired
+    private NewRevenueCommunicationService newRevenueCommunicationService;
 
     @Autowired
     private StationDecorateBO stationDecorateBO;
@@ -257,6 +255,15 @@ public class ProcessProcessor {
                 }else{
                     //不通过
                     stationDecorateBO.auditStationDecorateCheck(stationDecrateDto.getStationId(),ProcessApproveResultEnum.APPROVE_REFUSE,stationDecrateDto.getAuditOpinion());
+                }
+            }
+            else if(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode().equals(businessCode)){
+
+                String inviteType = ob.getString("inviteType");
+                NewRevenueCommunicationDto newRevenueCommunicationDto=newRevenueCommunicationService.getProcessNewRevenueCommunication(inviteType,businessId.toString());
+                if(newRevenueCommunicationDto!=null){
+                    newRevenueCommunicationDto.setAuditStatus(resultCode);
+                    newRevenueCommunicationService.auditNewRevenueCommunication(newRevenueCommunicationDto);
                 }
             }
 
