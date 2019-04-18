@@ -1,23 +1,20 @@
 package com.taobao.cun.auge.qualification.service;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import com.alibaba.citrus.util.StringUtil;
 import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.StationTransInfo;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.bo.*;
-import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.*;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.testuser.TestUserService;
@@ -28,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service("settlingService")
 @HSFProvider(serviceInterface= C2BSettlingService.class)
