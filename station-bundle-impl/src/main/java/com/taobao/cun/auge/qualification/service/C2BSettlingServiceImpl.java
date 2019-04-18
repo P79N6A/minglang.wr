@@ -69,7 +69,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	StationTransInfoBO stationTransInfoBO;
 
 	@Autowired
-	private StateMachineService stateMachineService;
+	StateMachineService stateMachineService;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
