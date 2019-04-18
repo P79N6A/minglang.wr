@@ -21,10 +21,10 @@ import java.util.List;
 public class PartnerPunishServiceImpl implements PartnerPunishService {
 
 
-    @Value("{rightcentor.punish.right.id}")
+    @Value("${rightcentor.punish.right.id}")
     private String PUNISH_RIGHT_ID;
 
-    @Value("{rightcentor.punish.app.secret}")
+    @Value("${rightcentor.punish.app.secret}")
     private String APP_SECRET;
 
 
