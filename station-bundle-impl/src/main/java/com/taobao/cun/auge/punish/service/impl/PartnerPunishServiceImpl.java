@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.punish.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.punish.PartnerPunishService;
 import com.taobao.cun.auge.punish.dto.ViolationPunishInfoDto;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.ruledata.domain.AuthKey;
 import com.taobao.ruledata.domain.result.SimpleResult;
 import com.taobao.ruledata.domain.rightcenter.PunishValue;
@@ -14,7 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("partnerPunishService")
+@HSFProvider(serviceInterface = PartnerPunishService.class)
 public class PartnerPunishServiceImpl implements PartnerPunishService {
 
 
@@ -78,5 +81,15 @@ public class PartnerPunishServiceImpl implements PartnerPunishService {
 
         }
         return violationPunishInfoDto;
+    }
+
+
+    public static void main(String[] args) {
+
+        ViolationPunishInfoDto violationPunishInfoDto = new ViolationPunishInfoDto();
+        violationPunishInfoDto.setGeneralViolationPoints(15);
+        violationPunishInfoDto.setSeriousViolationPoints(19);
+        violationPunishInfoDto.setTotalIllegalCount(10);
+        System.out.println(JSON.toJSONString(violationPunishInfoDto));
     }
 }
