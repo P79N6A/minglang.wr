@@ -258,6 +258,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 				if (StringUtil.isBlank(incomeMode)) {
 					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
 				}
+				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
+
 				StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(parnterInstance.getStationId());
 				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(parnterInstance.getState()) &&
 						PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(parnterInstance.getTransStatus())
@@ -268,7 +270,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 					stateMachineService.executePhase(
 							LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT));
 				}
-				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
+
 			}
             response.setSuccessful(true);
         } catch (Exception e) {
