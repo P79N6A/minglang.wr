@@ -136,6 +136,13 @@ public interface CaiNiaoService {
 	 * @return
 	 */
 	public Boolean checkCainiaoCountyIsOperating(Long stationId);
+
+	/**
+	 * 根据服务站ID查询菜鸟站点是否运营中
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean checkCainiaoStationIsOperating(Long stationId);
 	
 	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId);
 }

@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
+import com.alibaba.cainiao.cuntaonetwork.constants.station.StationStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
+import com.alibaba.cainiao.cuntaonetwork.dto.station.StationDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
@@ -676,5 +678,11 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,id+"|"+res.getErrorCode()+"|"+res.getErrorMessage());
 		} 
 		return res.getData();
+	}
+
+	@Override
+	public boolean checkCainiaoStationIsOperating(Long cainiaoStationId) {
+		Result<StationDTO> result = stationReadService.queryStationById(cainiaoStationId);
+		return result!= null && result.isSuccess() && StationStatus.NORMAL.value() == result.getData().getStationStatus().value();
 	}
 }
