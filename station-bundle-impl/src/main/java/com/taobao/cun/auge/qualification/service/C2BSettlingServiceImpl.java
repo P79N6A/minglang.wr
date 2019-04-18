@@ -8,13 +8,12 @@ import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.StationTransInfo;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.statemachine.StateMachineService;
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -65,6 +64,12 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 
 	@Autowired
 	NewRevenueCommunicationService newRevenueCommunicationService;
+
+	@Autowired
+	StationTransInfoBO stationTransInfoBO;
+
+	@Autowired
+	private StateMachineService stateMachineService;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -252,6 +257,16 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			if(finalInvite!=null){
 				if (StringUtil.isBlank(incomeMode)) {
 					partnerInstanceBO.updateIncomeModeNextMonth(instanceId, IncomeModeEnum.MODE_2019_NEW_STATION.getCode(), String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+				}
+				StationTransInfo lastTransInfo = stationTransInfoBO.getLastTransInfoByStationId(parnterInstance.getStationId());
+				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(parnterInstance.getState()) &&
+						PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(parnterInstance.getTransStatus())
+						&& null != lastTransInfo && PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(lastTransInfo.getStatus())&&StationTransHandOverTypeEnum.YOUPIN_TO_YOUPIN_ELEC.getCode().equals(lastTransInfo.getType())) {
+					PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(parnterInstance.getId());
+					partnerInstanceDto.setOperator(String.valueOf(c2bSignSettleProtocolRequest.getTaobaoUserId()));
+					partnerInstanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
+					stateMachineService.executePhase(
+							LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT));
 				}
 				newRevenueCommunicationService.completeNewRevenueCommunication(finalInvite);
 			}
