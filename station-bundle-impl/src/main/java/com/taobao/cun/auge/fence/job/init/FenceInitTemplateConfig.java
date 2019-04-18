@@ -57,12 +57,82 @@ public class FenceInitTemplateConfig {
 	@Value("${fence.templateid.sell.clothing}")
 	private Long templateIdSellClothing;
 
+	/**
+	 * 售卖围栏 - 大小家电全县售卖
+	 */
+	@Value("${fence.templateid.sell.appliances}")
+	private Long templateIdSellAppliances;
+
+	/**
+	 * 物流围栏 - 5公里默认不勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.default}")
+	private Long templateIdLogisticsDefault;
+
+	/**
+	 * 物流围栏 - 村服务站默认勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.village}")
+	private Long templateIdLogisticsVillage;
+
+	/**
+	 * 物流围栏 - 镇服务站默认勾选围栏
+	 */
+	@Value("${fence.templateid.logistics.town}")
+	private Long templateIdLogisticsTown;
+
+	/**
+	 * 物流围栏 - 同镇绑定用户推荐围栏
+	 */
+	@Value("${fence.templateid.logistics.town.bind}")
+	private Long templateIdLogisticsTownBind;
+
+	public Long getTemplateIdLogisticsTownBind() {
+		return templateIdLogisticsTownBind;
+	}
+
+	public void setTemplateIdLogisticsTownBind(Long templateIdLogisticsTownBind) {
+		this.templateIdLogisticsTownBind = templateIdLogisticsTownBind;
+	}
+
+	public Long getTemplateIdLogisticsDefault() {
+		return templateIdLogisticsDefault;
+	}
+
+	public void setTemplateIdLogisticsDefault(Long templateIdLogisticsDefault) {
+		this.templateIdLogisticsDefault = templateIdLogisticsDefault;
+	}
+
+	public Long getTemplateIdLogisticsVillage() {
+		return templateIdLogisticsVillage;
+	}
+
+	public void setTemplateIdLogisticsVillage(Long templateIdLogisticsVillage) {
+		this.templateIdLogisticsVillage = templateIdLogisticsVillage;
+	}
+
+	public Long getTemplateIdLogisticsTown() {
+		return templateIdLogisticsTown;
+	}
+
+	public void setTemplateIdLogisticsTown(Long templateIdLogisticsTown) {
+		this.templateIdLogisticsTown = templateIdLogisticsTown;
+	}
+
 	public Long getTemplateIdSellClothing() {
 		return templateIdSellClothing;
 	}
 
 	public void setTemplateIdSellClothing(Long templateIdSellClothing) {
 		this.templateIdSellClothing = templateIdSellClothing;
+	}
+
+	public Long getTemplateIdSellAppliances() {
+		return templateIdSellAppliances;
+	}
+
+	public void setTemplateIdSellAppliances(Long templateIdSellAppliances) {
+		this.templateIdSellAppliances = templateIdSellAppliances;
 	}
 
 	public Long getTemplateIdFeeStoreTown() {
@@ -100,19 +170,18 @@ public class FenceInitTemplateConfig {
 	public List<Long> getTownTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeTown, 
-				//templateIdLogisticsTownAtuoselected,
-				//templateIdLogisticsTown,
 				templateIdFeeStoreTown,
 				templateIdSellStoreTown,
-				templateIdSellTown
+				templateIdSellTown,
+				templateIdLogisticsTown
 				);
 	}
 	
 	public List<Long> getVillageTemplates(){
 		return Lists.newArrayList(
 				templateIdFeeVillage,
-				//templateIdLogisticsVillageAtuoselected,
-				templateIdSellVillage
+				templateIdSellVillage,
+				templateIdLogisticsVillage
 				);
 	}
 	
@@ -128,7 +197,10 @@ public class FenceInitTemplateConfig {
 				templateIdFeeTown, 
 				templateIdSellTown,
 				templateIdFeeVillage,
-				templateIdSellVillage
+				templateIdSellVillage,
+			templateIdLogisticsVillage,
+			templateIdLogisticsTown,
+			templateIdLogisticsTownBind
 				);
 	}
 	

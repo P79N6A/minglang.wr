@@ -22,7 +22,11 @@ public class TownStationInitingStationFetcher extends AbstractInitingStationFetc
 		return Lists.newArrayList(
 			fenceInitTemplateConfig.getTemplateIdFeeTown(),
 			fenceInitTemplateConfig.getTemplateIdSellTown(),
-			fenceInitTemplateConfig.getTemplateIdSellClothing()
+			fenceInitTemplateConfig.getTemplateIdSellClothing(),
+			fenceInitTemplateConfig.getTemplateIdSellAppliances(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsDefault(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsTown(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsTownBind()
 		);
 	}
 
