@@ -1,15 +1,5 @@
 package com.taobao.cun.auge.store.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.cuntao.ctsm.client.dto.enums.ChannelEnum;
 import com.alibaba.cuntao.ctsm.client.dto.enums.ServiceCodeEnum;
 import com.alibaba.cuntao.ctsm.client.dto.enums.WhiteListTypeEnum;
@@ -24,12 +14,21 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
+import com.taobao.cun.auge.store.bo.StoreWriteV2BO;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 @HSFProvider(serviceInterface = StoreWriteService.class)
 @Service("storeWriteService")
@@ -47,6 +46,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	private PartnerInstanceBO partnerInstanceBO;
 	@Autowired
 	private CaiNiaoService caiNiaoService;
+
+	@Resource
+	private StoreWriteV2BO storeWriteV2BO;
 
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteServiceImpl.class);
 
@@ -218,5 +220,40 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 			}
 		}
 		return Boolean.FALSE;
+	}
+
+	@Override
+	public Long createSupplyStoreByStationId(Long stationId) {
+		return  storeWriteV2BO.createSupplyStoreByStationId(stationId);
+	}
+
+	@Override
+	public Long createByStationId(Long stationId) {
+		return storeWriteV2BO.createByStationId(stationId);
+	}
+
+	@Override
+	public void closeStore(Long stationId)  {
+		storeWriteV2BO.closeStore(stationId);
+	}
+
+	@Override
+	public void modifyStationInfoForStore(Long instanceId){
+		storeWriteV2BO.modifyStationInfoForStore(instanceId);
+	}
+
+	@Override
+	public void uploadStoreImage(Long shareStoreId) {
+		storeWriteV2BO.uploadStoreImage(shareStoreId);
+	}
+
+	@Override
+	public void uploadStoreMainImage(Long shareStoreId) {
+		storeWriteV2BO.uploadStoreMainImage(shareStoreId);
+	}
+
+	@Override
+	public void uploadStoreSubImage(Long shareStoreId) {
+		storeWriteV2BO.uploadStoreSubImage(shareStoreId);
 	}
 }
