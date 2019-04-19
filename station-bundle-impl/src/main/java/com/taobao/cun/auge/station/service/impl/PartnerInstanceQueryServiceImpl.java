@@ -1007,15 +1007,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                         stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_TRANS);
                     }
 
-                    AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-                            AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-                    if (null == instance || null == bondMoney) {
+                    BondFreezingInfoDto freezingInfo = this.getBondFreezingInfoForTrans(taobaoUserId);
+                    if (null == instance || null == freezingInfo) {
                         throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "PARTNER_BOND not exist");
                     }
                     PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
                             ProtocolTypeEnum.C2B_SETTLE_PRO,
                             instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-                    if (settleProtocol != null && AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState()) && bondMoney.getMoney().doubleValue() > 0) {
+                    if (settleProtocol != null && freezingInfo.getAcountMoney().getMoney().doubleValue()  > 0) {
                         stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_FREZON);
                     }
 
