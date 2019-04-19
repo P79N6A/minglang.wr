@@ -41,8 +41,8 @@ public class BSettingRuleParse implements SettingRuleParse {
 		}else {
 			PartnerApplyConfirmIntentionEnum intention = PartnerApplyConfirmIntentionEnum.TP_ELEC;
 			return Lists.newArrayList(
-					new RuleResult(intention.getCode(), intention.getDesc()),
-					new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc()));
+				new RuleResult(intention.getCode(), intention.getDesc())
+			);
 		}
 	}
 }
