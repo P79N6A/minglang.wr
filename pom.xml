@@ -634,7 +634,13 @@
 			<dependency>
 				<groupId>com.taobao.place</groupId>
 				<artifactId>place-client</artifactId>
-				<version>1.4.23</version>
+				<version>1.5.0-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.alibaba.newretail</groupId>
+						<artifactId>apos-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.tmall.sic</groupId>
