@@ -2,6 +2,7 @@ package com.taobao.cun.auge.store.service;
 
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreGroupInfoDto;
 
 import java.util.List;
 
@@ -177,5 +178,29 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean syncAddStoreInfo(List<Long> stationIds);
+
+	/**
+	 *  创建门店库
+	 * @param title
+	 * @param comment
+	 * @return
+	 */
+
+	public StoreGroupInfoDto createStoreGroup(String title, String comment);
+
+	/**
+	 *  绑定门店库
+	 * @param groupId
+	 * @param shareStoreIds
+	 */
+
+	public Boolean  bindStoreGroup(Long groupId,List<Long> shareStoreIds);
+
+	/**
+	 * 解绑门店库
+	 * @param groupId
+	 * @param shareStoreIds
+	 */
+	public Boolean  unBindStoreGroup(Long groupId,List<Long> shareStoreIds);
 
 	}

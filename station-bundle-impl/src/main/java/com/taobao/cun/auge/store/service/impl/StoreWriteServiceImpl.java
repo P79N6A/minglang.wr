@@ -18,6 +18,7 @@ import com.taobao.cun.auge.store.bo.StoreWriteV2BO;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreGroupInfoDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -261,4 +262,19 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Boolean syncAddStoreInfo(List<Long> stationIds) {
 		return storeWriteV2BO.syncAddStoreInfo(stationIds);
 	}
+
+    @Override
+    public StoreGroupInfoDto createStoreGroup(String title, String comment) {
+        return storeWriteV2BO.createStoreGroup(title,comment);
+    }
+
+    @Override
+    public Boolean bindStoreGroup(Long groupId, List<Long> shareStoreIds) {
+        return storeWriteV2BO.bindStoreGroup(groupId,shareStoreIds);
+    }
+
+    @Override
+    public Boolean unBindStoreGroup(Long groupId, List<Long> shareStoreIds) {
+        return storeWriteV2BO.unBindStoreGroup(groupId,shareStoreIds);
+    }
 }
