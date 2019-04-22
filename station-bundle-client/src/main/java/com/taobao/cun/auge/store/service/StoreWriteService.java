@@ -171,4 +171,11 @@ public interface StoreWriteService {
 	 */
 	public void uploadStoreSubImage(Long shareStoreId);
 
-}
+	/**
+	 * 门店数据同步
+	 * @param stationIds
+	 * @return
+	 */
+	public Boolean syncAddStoreInfo(List<Long> stationIds);
+
+	}
