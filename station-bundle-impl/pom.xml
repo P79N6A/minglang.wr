@@ -554,8 +554,12 @@
 			<artifactId>cun-partner-api</artifactId>
 		</dependency>
 		<dependency>
-		  <groupId>com.alibaba.jaq</groupId>
-		  <artifactId>jaq-sdk</artifactId>
+			<groupId>com.alibaba.jaq</groupId>
+			<artifactId>jaq-sdk</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

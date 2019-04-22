@@ -413,9 +413,9 @@
 				<version>4.5.2</version>
 			</dependency>
 			<dependency>
-			    <groupId>com.alibaba.cuntao.cts</groupId>
-			    <artifactId>ctsm-client</artifactId>
-			    <version>1.1.3</version>
+				<groupId>com.alibaba.cuntao.cts</groupId>
+				<artifactId>ctsm-client</artifactId>
+				<version>1.1.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
@@ -839,13 +839,13 @@
 						<artifactId>servlet-api</artifactId>
 					</exclusion>
 					<exclusion>
-			          <groupId>org.slf4j</groupId>
-			          <artifactId>slf4j-simple</artifactId>
-			        </exclusion>
-			        <exclusion>
-			          <groupId>com.tmall.nova</groupId>
-			          <artifactId>nova-client</artifactId>
-			        </exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.tmall.nova</groupId>
+						<artifactId>nova-client</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -909,9 +909,9 @@
 				<version>1.3.4</version>
 			</dependency>
 			<dependency>
-			    <groupId>com.alibaba.jaq</groupId>
-			    <artifactId>jaq-sdk</artifactId>
-			    <version>1.1.6</version>
+				<groupId>com.alibaba.jaq</groupId>
+				<artifactId>jaq-sdk</artifactId>
+				<version>1.1.6</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -923,6 +923,16 @@
 				<groupId>com.alibaba.security</groupId>
 				<artifactId>security-all</artifactId>
 				<version>1.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>27.1-jre</version>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-Java</artifactId>
+				<version>5.1.40</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
