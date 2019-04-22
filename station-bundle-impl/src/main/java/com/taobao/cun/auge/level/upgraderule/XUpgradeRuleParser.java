@@ -18,8 +18,7 @@ public class XUpgradeRuleParser implements UpgradeRuleParser {
 	
 	@Override
 	public List<RuleResult> doParse(TownLevelDto townLevelDto, Long stationId) {
-		
-		return Lists.newArrayList(new RuleResult("CLOSE", "该镇为超标镇，暂不开支持升级到天猫优品电器体验店的流程"));
+		return Lists.newArrayList(new RuleResult("CLOSE", "该镇为超标镇，暂不支持升级到天猫优品电器体验店的流程"));
 	}
 
 }
