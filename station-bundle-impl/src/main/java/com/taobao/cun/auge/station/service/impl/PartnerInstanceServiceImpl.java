@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.taobao.cun.auge.station.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +37,8 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.configuration.MailConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -57,15 +57,32 @@ import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.lifecycle.event.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.event.LifeCyclePhaseEventBuilder;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineService;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
-import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
-import com.taobao.cun.auge.lifecycle.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
+import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
+import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
+import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
+import com.taobao.cun.auge.station.bo.StationTransInfoBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.check.impl.trans.StationTransCheckerUtil;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
@@ -238,7 +255,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     StationDecorateBO stationDecorateBO;
 
     @Autowired
-    CountyStationBO countyStationBO;
+    CuntaoCountyQueryBo cuntaoCountyQueryBo;
     @Autowired
     CuntaoUserService cuntaoUserService;
     @Autowired
@@ -1465,8 +1482,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
         Long countyOrgId = instance.getStationDto().getApplyOrg();
         levelProcessDto.setCountyOrgId(countyOrgId);
-        CountyStation countyStation = countyStationBO.getCountyStationByOrgId(countyOrgId);
-        levelProcessDto.setCountyStationName(countyStation.getName());
+        CuntaoCountyDto cuntaoCountyDto = cuntaoCountyQueryBo.getCuntaoCountyByOrgId(countyOrgId);
+        levelProcessDto.setCountyStationName(cuntaoCountyDto.getName());
         levelProcessDto.setCurrentLevel(partnerInstanceLevelDto.getCurrentLevel());
         levelProcessDto.setExpectedLevel(partnerInstanceLevelDto.getExpectedLevel());
 

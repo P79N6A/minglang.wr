@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -97,12 +97,6 @@
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>redis.clients</groupId>-->
-					<!--<artifactId>jedis</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
 		</dependency>
 		<dependency>
 			<groupId>com.cuntao.boot</groupId>
@@ -310,8 +304,8 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>com.alibaba.cuntao.cts</groupId>
-		    <artifactId>ctsm-client</artifactId>
+			<groupId>com.alibaba.cuntao.cts</groupId>
+			<artifactId>ctsm-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.crm.shared</groupId>
@@ -556,8 +550,8 @@
 			<artifactId>insopenprod-common-service-facade</artifactId>
 		</dependency>
 		<dependency>
-		  <groupId>com.taobao.cun</groupId>
-		  <artifactId>cun-partner-api</artifactId>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cun-partner-api</artifactId>
 		</dependency>
 		<dependency>
 		  <groupId>com.alibaba.jaq</groupId>

@@ -2,21 +2,25 @@ package com.taobao.cun.auge.lifecycle.um;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
-import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
-import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.annotation.Phase;
 import com.taobao.cun.auge.lifecycle.annotation.PhaseMeta;
+import com.taobao.cun.auge.lifecycle.common.BaseLifeCyclePhase;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.common.LifeCyclePhaseDSL;
+import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.lifecycle.validator.UmLifeCycleValidator;
 import com.taobao.cun.auge.lock.ManualReleaseDistributeLock;
-import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
-import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -28,12 +32,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
-import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 优盟入驻中阶段组件
@@ -52,9 +50,6 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
 
     @Autowired
     private UmLifeCycleValidator umLifeCycleValidator;
-
-    @Autowired
-    private CountyTransferStateMgrBo countyTransferStateMgrBo;
 
     @Autowired
     private StationBO stationBO;
@@ -129,13 +124,8 @@ public class UMSettlingLifeCyclePhase extends BaseLifeCyclePhase {
             stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
         }
 
-        stationDto.setOwnDept(
-            countyTransferStateMgrBo.getCountyDeptByOrgId(partnerInstanceDto.getStationDto().getApplyOrg()));
-        if (stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
-            stationDto.setTransferState(TransferState.WAITING.name());
-        } else {
-            stationDto.setTransferState(TransferState.FINISHED.name());
-        }
+        stationDto.setOwnDept("opdept");
+        stationDto.setTransferState("FINISHED");
         checkUmStationNumDuplicate(stationDto.getStationNum());
         Long stationId = stationBO.addStation(stationDto);
         partnerInstanceDto.setStationId(stationId);

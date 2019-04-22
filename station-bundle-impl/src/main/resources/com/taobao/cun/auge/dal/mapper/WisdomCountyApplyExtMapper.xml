@@ -35,7 +35,7 @@
     w.remark,
     w.leader_phone,
     w.state
-    from wisdom_county_apply w, county_station s, cuntao_org org
+    from wisdom_county_apply w, cuntao_county s, cuntao_org org
     where w.county_id = s.id and s.org_id = org.id and s.is_deleted='n' and org.is_deleted='n' and w.is_deleted='n'
     <if test="orgIdPath != null and orgIdPath != ''" >
       and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
