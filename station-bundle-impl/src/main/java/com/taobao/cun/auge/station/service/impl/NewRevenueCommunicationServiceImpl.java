@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,8 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         //提交审批任务
         ApproveProcessTask processTask=new ApproveProcessTask();
         Map<String, String> params = new HashMap<String, String>();
-        params.put("commuTime",newRevenueCommunicationDto.getCommuTime().toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        params.put("commuTime",sdf.format(newRevenueCommunicationDto.getCommuTime()));
         params.put("commuAddress",newRevenueCommunicationDto.getCommuAddress());
         params.put("commuContent",newRevenueCommunicationDto.getCommuContent());
         params.put("inviteType",newRevenueCommunicationDto.getBusinessCode());
