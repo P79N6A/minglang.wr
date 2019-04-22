@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.bo.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.github.pagehelper.PageHelper;
 import com.google.common.base.Strings;
 import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -24,6 +25,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
@@ -65,7 +67,7 @@ import java.util.stream.Collectors;
 @Component
 public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
-    private static final Logger logger = LoggerFactory.getLogger(StoreWriteV2BOImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoreWriteV2BO.class);
 
     @Resource
     private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -703,4 +705,110 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cs.setModifier("system");
         cuntaoStoreMapper.updateByPrimaryKeySelective(cs);
     }
+
+    @Override
+    public Boolean syncAddStoreInfo(List<Long> stationIds) {
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(stationIds)) {// 指定参数
+            batchSyn(stationIds);
+        } else {
+            CuntaoStoreExample example = new CuntaoStoreExample();
+            example.createCriteria().andIsDeletedEqualTo("n");
+            example.setOrderByClause("id asc");
+
+            int count  = cuntaoStoreMapper.countByExample(example);
+            logger.info("sync store begin,count={}", count);
+            int pageSize = 200;
+            int pageNum = 1;
+            int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+            while (pageNum <= total) {
+                logger.info("sync-store-doing {},{}", pageNum, pageSize);
+                PageHelper.startPage(pageNum, pageSize);
+                List<CuntaoStore> storeList = cuntaoStoreMapper.selectByExample(example);
+                List<Long> stationIdList = storeList.stream().map(CuntaoStore::getStationId).collect(Collectors.toList());
+                batchSyn(stationIdList);
+                pageNum++;
+            }
+        }
+        logger.info("sync-store-finish");
+        return Boolean.TRUE;
+    }
+
+    private void batchSyn(List<Long> stationIds) {
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(stationIds)) {
+            for (Long  stationId : stationIds) {
+                logger.info("sync store,stationId={}", stationId);
+                try {
+                    syn(stationId);
+                } catch (Exception e) {
+                    logger.error("sync store error,stationId=" + stationId, e);
+                }
+            }
+        }
+    }
+
+    private void syn(Long  stationId) {
+        Station station =  stationBO.getStationById(stationId);
+        if (station == null || StationStatusEnum.QUIT.getCode().equals(station.getStatus())) {//服务站已经退出
+            logger.info("sync-store-close,stationId={}", stationId);
+            closeStore(stationId);
+            return;
+        }
+
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+        if (rel == null) {//不是当前服务站
+            logger.info("sync-store-notcurrentstation,stationId={}", stationId);
+            return;
+        }
+
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreByStationId(rel.getStationId());
+        if (cuntaoStore == null) {//不是当前服务站
+            logger.info("sync-store-no-cuntao-store-data,stationId={}", stationId);
+            return;
+        }
+
+
+        Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
+
+        StoreDTO storeDTO = new StoreDTO();
+        storeDTO.setName(station.getName());
+        storeDTO.setAddress(station.getAddress());
+        storeDTO.setBusinessTime("10:00-19:00");
+        storeDTO.setOuterId(String.valueOf(station.getId()));
+        storeDTO.addTag(StoreTags.NEED_OPERATE_PHYSICAL_STORE);
+
+
+        if (!Strings.isNullOrEmpty(station.getLat())) {
+            storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+        }
+        if (!Strings.isNullOrEmpty(station.getLng())) {
+            storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
+        }
+        storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+        storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+        storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+
+        storeDTO.addContact(partner.getMobile());
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_ID.getKey(), String.valueOf(partner.getTaobaoUserId()));
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_NAME.getKey(), partner.getName());
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_TITLE.getKey(), "店长");
+        storeDTO.setPic(diamondConfiguredProperties.getStoreMainImage());
+
+
+
+        storeDTO.setStoreId(cuntaoStore.getShareStoreId());
+        // 更新共享门店
+        ResultDO<Boolean> result = storeUpdateServiceV2.update(storeDTO,
+                diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+        if (result.isFailured()) {
+            logger.error("sync-store-to-share error[" + station.getId() + "]:" + result.getFullErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, station.getId() + result.getFullErrorMsg());
+        }
+        cuntaoStore.setName(station.getName());
+        cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+        cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        //更新 门店子照片
+        uploadStoreSubImage(cuntaoStore.getShareStoreId());
+    }
+
+
 }

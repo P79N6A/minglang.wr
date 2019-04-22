@@ -80,5 +80,16 @@ public interface StoreWriteV2BO {
      */
     public Boolean  unBindStoreGroup(Long groupId,List<Long> shareStoreIds);
 
-
+    /**
+     * 门店信息补全
+     * 更新的信息如下：门店信息创建时的变更点：
+     *门店主图全部使用默认的图片，图片链接由运营提供
+     *门店营业时间调整为：早上10点到晚上19点。
+     *门店的联系电话：取村小二的电话
+     *门店的导购员旺旺默认为村小二的账号，且职称为店长
+     * 增加NEED_OPERATE_PHYSICAL_STORE(210000) 标
+     * @param stationId
+     * @return
+     */
+    public Boolean syncAddStoreInfo(List<Long> stationId);
 }
