@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.inspection;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.punish.bo.PartnerPunishBo;
+import com.taobao.cun.auge.punish.dto.ViolationPunishInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,10 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 	
 	@Autowired
 	private CuntaoUserOrgService cuntaoUserOrgService;
+
+	@Autowired
+	private PartnerPunishBo partnerPunishBo;
+
 	private static final BeanCopier partnerInstanceInspectionCopier = BeanCopier.create(InspectionStation.class, InspectionStationDto.class, false);
 
 	@Override
@@ -61,9 +68,21 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 	
 	private List<InspectionStationDto> convert(List<InspectionStation> inspections){
 		List<InspectionStationDto> results = Lists.newArrayList();
+
+		//查询合伙人严重违规处罚扣分接口
+		List<Long> taobaoUserIds = inspections.stream().map(InspectionStation::getTaobaoUserId).collect(Collectors.toList());
+		Map<Long, ViolationPunishInfoDto> punishInfoDtoMap = partnerPunishBo.getVoilationPunishInfoDtoByuserIds(taobaoUserIds);
+
 		for(InspectionStation inspection : inspections){
 			InspectionStationDto dto = new InspectionStationDto();
 			partnerInstanceInspectionCopier.copy(inspection, dto, null);
+
+			//设置严重规则处罚扣分设置
+			if(punishInfoDtoMap != null){
+				ViolationPunishInfoDto violationPunishInfoDto = punishInfoDtoMap.get(inspection.getTaobaoUserId());
+				dto.setSeriousViolationPoints(violationPunishInfoDto==null?null:violationPunishInfoDto.getSeriousViolationPoints());
+			}
+
 			dto.setStateDesc(PartnerInstanceStateEnum.valueof(dto.getState()).getDesc());
 			/*List<CuntaoUserOrgVO> userOrg = cuntaoUserOrgService.getCuntaoOrgUsers( Lists.newArrayList(dto.getApplyOrg()),  Lists.newArrayList(UserRoleEnum.COUNTY_LEADER.getCode()));
 			if(userOrg != null){

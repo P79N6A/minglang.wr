@@ -154,6 +154,12 @@ public class InspectionStation {
 	private String countyStationName;
 	
 	private String mode;
+
+	/**
+	 * 淘宝userID
+	 */
+	@Column(name = "taobao_user_id")
+	private Long taobaoUserId;
 	
 
 	/**
@@ -652,6 +658,14 @@ public class InspectionStation {
 	 */
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
 	}
 
 	public String getCountyStationName() {
