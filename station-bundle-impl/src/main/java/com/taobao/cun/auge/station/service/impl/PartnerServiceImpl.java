@@ -4,13 +4,17 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -23,9 +27,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Service("partnerService")
 @HSFProvider(serviceInterface = PartnerService.class)
@@ -40,7 +41,7 @@ public class PartnerServiceImpl implements PartnerService {
 	StationBO stationBO;
 	
 	@Autowired
-	CountyStationBO countyStationBO;
+	CuntaoCountyQueryBo cuntaoCountyQueryBo;
 	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -109,11 +110,11 @@ public class PartnerServiceImpl implements PartnerService {
 		result.setIsOnTown(station.getIsOnTown());
 		result.setVillageCode(station.getVillage());
 		//县信息
-		CountyStation county=countyStationBO.getCountyStationByOrgId(station.getApplyOrg());
-		if(county==null){
+		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyQueryBo.getCuntaoCountyByOrgId(station.getApplyOrg());
+		if(cuntaoCountyDto==null){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"无法找到县点信息");
 		}
-		result.setCountyName(county.getName());
+		result.setCountyName(cuntaoCountyDto.getName());
 		return result;
 	}
 

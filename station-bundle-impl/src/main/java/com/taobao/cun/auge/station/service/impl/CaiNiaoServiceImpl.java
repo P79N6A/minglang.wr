@@ -19,7 +19,8 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.LogisticsStationApply;
 import com.taobao.cun.auge.dal.domain.LogisticsStationApplyExample;
@@ -29,7 +30,6 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -69,7 +69,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Autowired
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	@Autowired
-	CountyStationBO countyStationBO;
+	CuntaoCountyQueryBo cuntaoCountyQueryBo;
 	@Autowired
 	PartnerBO partnerBO;
     @Autowired
@@ -194,13 +194,13 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	private Long getCountyCainiaoStationId(Long orgId){
-		CountyStation countyStation = countyStationBO.getCountyStationByOrgId(orgId);
-		if (countyStation == null) {
+		CuntaoCountyDto cuntaoCountyDto = cuntaoCountyQueryBo.getCuntaoCountyByOrgId(orgId);
+		if (cuntaoCountyDto == null) {
 			String error = getErrorMessage("getCountyCainiaoStationId", String.valueOf(orgId), "getCountyStationByOrgId is null");
 			logger.error(error);
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}
-		Long countyStationId = countyStation.getId();
+		Long countyStationId = cuntaoCountyDto.getId();
 		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStationId,
 				CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
 		if (rel == null) {
@@ -695,12 +695,20 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	@Override
+	public boolean checkCainiaoCountyIsOperatingByCountyId(Long countyId) {
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyId,
+				CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+		if (rel==null) {
+			return false;
+		}
+		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(rel.getCainiaoStationId());
+		return w != null && w.isUse();
+	}
+	
+	@Override
 	public Boolean queryWarehouseStatusByCainiaoCountyId(Long cnCountyId) {
 		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
-		if (w == null) {
-			return null;
-		}
-		return w.isUse();
+		return w != null && w.isUse();
 	}
 
 	@Override

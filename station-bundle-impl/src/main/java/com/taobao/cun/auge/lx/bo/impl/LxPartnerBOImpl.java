@@ -21,7 +21,6 @@ import com.taobao.cun.auge.lx.bo.LxPartnerBO;
 import com.taobao.cun.auge.lx.dto.LxPartnerAddDto;
 import com.taobao.cun.auge.lx.dto.LxPartnerListDto;
 import com.taobao.cun.auge.lx.service.LxPartnerMobileService;
-import com.taobao.cun.auge.org.dto.OrgDeptType;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -38,8 +37,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerAdzoneService;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
-import com.taobao.cun.auge.station.transfer.state.CountyTransferStateMgrBo;
 import com.taobao.diamond.client.Diamond;
 import com.taobao.mtee.rmb.RmbResult;
 import com.taobao.mtee.rmb.RmbService;
@@ -69,10 +66,6 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
-
-	@Autowired
-	private CountyTransferStateMgrBo countyTransferStateMgrBo;
-
 	@Autowired
 	private ManualReleaseDistributeLock distributeLock;
 	
@@ -235,13 +228,8 @@ public class LxPartnerBOImpl implements LxPartnerBO {
 		stationDto.setTaobaoUserId(taobaoUserId);
 		stationDto.setApplyOrg(station.getApplyOrg());
 		stationDto.setName(lxPartnerAddDto.getName()+"-"+lxPartnerAddDto.getMobile().substring(7, lxPartnerAddDto.getMobile().length()));
-
-		stationDto.setOwnDept(countyTransferStateMgrBo.getCountyDeptByOrgId(station.getApplyOrg()));
-		if (stationDto.getOwnDept().equals(OrgDeptType.extdept.name())) {
-			stationDto.setTransferState(TransferState.WAITING.name());
-		} else {
-			stationDto.setTransferState(TransferState.FINISHED.name());
-		}
+		stationDto.setOwnDept("opdept");
+		stationDto.setTransferState("FINISHED");
 		Long stationId = stationBO.addStation(stationDto);
 		return stationId;
 	}
