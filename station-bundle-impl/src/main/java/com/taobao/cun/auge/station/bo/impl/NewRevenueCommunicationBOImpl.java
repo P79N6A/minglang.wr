@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.bo.NewRevenueCommunicationBO;
 import com.taobao.cun.auge.station.condition.NewRevenueCommunicationCondition;
 import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
 import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         NewRevenueCommunication record =new NewRevenueCommunication();
         record.setId(oldRecord.getId());
         record.setAuditStatus(newRevenueCommunicationDto.getAuditStatus());
-        if(NodeActionEnum.DISAGREE.getCode().equals(newRevenueCommunicationDto.getAuditStatus())){
+        if(ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(newRevenueCommunicationDto.getAuditStatus())){
             record.setStatus("FINISH");
         }
         DomainUtils.beforeUpdate(record,"sys");
