@@ -256,4 +256,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public void uploadStoreSubImage(Long shareStoreId) {
 		storeWriteV2BO.uploadStoreSubImage(shareStoreId);
 	}
+
+	@Override
+	public Boolean syncAddStoreInfo(List<Long> stationIds) {
+		return storeWriteV2BO.syncAddStoreInfo(stationIds);
+	}
 }
