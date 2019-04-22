@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
-import com.taobao.cun.auge.level.enterrule.setting.rule.RuleResult;
+import com.taobao.cun.auge.level.settingrule.rule.RuleResult;
 
 public interface UpgradeRuleParser {
 	List<RuleResult> doParse(TownLevelDto townLevelDto, Long stationId);

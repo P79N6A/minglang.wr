@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.mapper.ext.StationLevelExtMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-import com.taobao.cun.auge.level.enterrule.setting.rule.RuleResult;
+import com.taobao.cun.auge.level.settingrule.rule.RuleResult;
 import com.taobao.cun.auge.level.utils.MessageHelper;
 import com.taobao.cun.recruit.partner.enums.PartnerApplyConfirmIntentionEnum;
 

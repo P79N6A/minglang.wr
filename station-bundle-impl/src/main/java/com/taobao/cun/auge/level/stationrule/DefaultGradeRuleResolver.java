@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.grade;
+package com.taobao.cun.auge.level.stationrule;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,7 @@ import com.taobao.cun.auge.dal.domain.TownLevelStationRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelStationRuleMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
-import com.taobao.cun.auge.level.enterrule.setting.StationExclusiveRuleResolver;
+import com.taobao.cun.auge.level.settingrule.StationExclusiveRuleResolver;
 
 public class DefaultGradeRuleResolver implements GradeRuleResolver, InitializingBean {
 	private LoadingCache<String, Map<String, TownLevelStationRuleDto>> loadingCache;

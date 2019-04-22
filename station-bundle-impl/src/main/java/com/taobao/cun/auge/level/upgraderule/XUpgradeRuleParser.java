@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-import com.taobao.cun.auge.level.enterrule.setting.rule.RuleResult;
+import com.taobao.cun.auge.level.settingrule.rule.RuleResult;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 
 @Component("xupgradeRuleParser")
