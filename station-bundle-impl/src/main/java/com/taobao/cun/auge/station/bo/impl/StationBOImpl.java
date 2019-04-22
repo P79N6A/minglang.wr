@@ -284,4 +284,8 @@ public class StationBOImpl implements StationBO {
 		DomainUtils.beforeUpdate(record, "system");
 		stationMapper.updateByPrimaryKeySelective(record);
 	}
+	@Override
+	public int getServicingNumByOrgId(Long orgId) {
+		return stationExtMapper.getServicingNumByOrg(orgId);
+	}
 }

@@ -16,10 +16,10 @@ public class FenceTypeEnum implements Serializable{
 
     private static final long serialVersionUID = 5525199073000726953L;
 
-    static final FenceTypeEnum SERVICE = new FenceTypeEnum("SERVICE", "服务围栏");
-    static final FenceTypeEnum LOGISTICS = new FenceTypeEnum("LOGISTICS", "物流围栏");
-    static final FenceTypeEnum SELL = new FenceTypeEnum("SELL", "售卖围栏");
-    static final FenceTypeEnum CHARGE = new FenceTypeEnum("CHARGE", "收费围栏");
+    public static final FenceTypeEnum SERVICE = new FenceTypeEnum("SERVICE", "服务围栏");
+    public static final FenceTypeEnum LOGISTICS = new FenceTypeEnum("LOGISTICS", "物流围栏");
+    public static final FenceTypeEnum SELL = new FenceTypeEnum("SELL", "售卖围栏");
+    public static final FenceTypeEnum CHARGE = new FenceTypeEnum("CHARGE", "收费围栏");
     private static final Map<String, FenceTypeEnum> mappings = new HashMap<String, FenceTypeEnum>();
 
     static {

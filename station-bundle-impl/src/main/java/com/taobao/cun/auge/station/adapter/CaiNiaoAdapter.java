@@ -195,4 +195,11 @@ public interface CaiNiaoAdapter {
 	 * @return
 	 */
 	public WarehouseDTO queryWarehouseByCainiaoCountyId(Long id);
+
+	/**
+	 * 检查菜鸟站点是否运营中
+	 * @param cainiaoStationId
+	 * @return
+	 */
+	boolean checkCainiaoStationIsOperating(Long cainiaoStationId);
 }

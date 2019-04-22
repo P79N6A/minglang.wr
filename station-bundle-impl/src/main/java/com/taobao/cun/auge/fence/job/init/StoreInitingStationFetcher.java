@@ -22,7 +22,9 @@ public class StoreInitingStationFetcher extends AbstractInitingStationFetcher {
 		return Lists.newArrayList(
 			fenceInitTemplateConfig.getTemplateIdSellStoreTown(),
 			fenceInitTemplateConfig.getTemplateIdFeeStoreTown(),
-			fenceInitTemplateConfig.getTemplateIdSellClothing()
+			fenceInitTemplateConfig.getTemplateIdSellClothing(),
+			fenceInitTemplateConfig.getTemplateIdSellAppliances(),
+			fenceInitTemplateConfig.getTemplateIdLogisticsDefault()
 		);
 	}
 

@@ -27,4 +27,6 @@ public interface StationExtMapper {
     List<Station> getFenceStations(FenceStationQueryCondition fenceStationQueryCondition);
     
     List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition);
+    
+    int getServicingNumByOrg(@Param("orgId") Long orgId);
 }
