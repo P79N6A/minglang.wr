@@ -15,9 +15,11 @@
     <!-- pepole -->
     <result column="partner_name" jdbcType="VARCHAR" property="partnerName" />
     <result column="mobile" jdbcType="VARCHAR" property="mobile" />
-    
-    
-    <!-- station -->
+	  <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+
+
+
+	  <!-- station -->
     <result column="station_name" jdbcType="VARCHAR" property="stationName" />
     <result column="province" jdbcType="VARCHAR" property="province" />
     <result column="city" jdbcType="VARCHAR" property="city" />
