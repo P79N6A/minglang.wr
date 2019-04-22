@@ -78,7 +78,6 @@ import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
 import com.taobao.cun.auge.user.dto.Operator;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
@@ -832,7 +831,7 @@ public class CountyBOImpl implements CountyBO {
         countyStation.setGmtCreate(new Date());
         countyStation.setGmtModified(new Date());
         countyStation.setOwnDept(OrgDeptType.opdept.name());
-        countyStation.setTransferState(TransferState.FINISHED.name());
+        countyStation.setTransferState("FINISHED");
         countyStation.setIsDeleted("n");
         countyStation.setManageModel(countyDto.getManageModel().getCode());
         countyStation.setManageStatus(countyDto.getManageStatus().getCode());
@@ -1138,7 +1137,7 @@ public class CountyBOImpl implements CountyBO {
     public CountyDto startOperate(CountyDto countyDto, Operator operator){
         validateStartOperateParam(countyDto);
         countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
-        addCountyStationActionLog(countyDto.getId(), BizActionEnum.countystation_operate, operator);
+        addCountyStationActionLog(countyDto.getId(), BizActionEnum.countystation_opening, operator);
         return saveCountyStation(countyDto, operator);
 	}
 
@@ -1207,7 +1206,7 @@ public class CountyBOImpl implements CountyBO {
 		record.setGmtModified(new Date());
 		record.setModifier(operator.getOpWorkId());
 		record.setGmtStartOpen(new Date());
-		addCountyStationActionLog(countyStationId, BizActionEnum.countystation_open, operator);
+		addCountyStationActionLog(countyStationId, BizActionEnum.countystation_opening, operator);
 		countyStationMapper.updateByPrimaryKeySelective(record);
 		return true;
 	}

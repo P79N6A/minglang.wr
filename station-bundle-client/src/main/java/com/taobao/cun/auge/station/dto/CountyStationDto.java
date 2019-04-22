@@ -7,7 +7,6 @@ import java.util.Map;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
-import com.taobao.cun.auge.station.transfer.dto.TransferState;
 
 /**
  * 县服务中心dto
