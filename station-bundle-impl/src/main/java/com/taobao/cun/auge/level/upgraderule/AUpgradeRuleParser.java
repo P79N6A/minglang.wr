@@ -41,10 +41,9 @@ public class AUpgradeRuleParser extends AbstractUpgradeRuleParser {
 		int tpElecNum = stationLevelExtMapper.countTownHZD(townLevelDto.getTownCode());
 		int transingHzdNum = stationLevelExtMapper.countTransHZD(townLevelDto.getTownCode());
 		if(storeNum + tpElecNum + transingHzdNum == 0) {
-			PartnerApplyConfirmIntentionEnum tpsElec = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
+			//目前只能升级到合作店，暂不支持升级到体验店
 			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
 			return Lists.newArrayList(
-					new RuleResult(tpsElec.getCode(), tpsElec.getDesc()),
 					new RuleResult(tpElec.getCode(), tpElec.getDesc()));
 		}else {
 			Map<String, Object> param = Maps.newHashMap();

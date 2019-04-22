@@ -35,10 +35,11 @@ public class ASettingRuleParse implements SettingRuleParse {
 		
 		//如果没有体验店、合作店、转型中的合作店，那么可以开一家合作店或者体验店
 		if(storeNum + tpElecNum + transingHzdNum == 0) {
-			PartnerApplyConfirmIntentionEnum intention = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
+			PartnerApplyConfirmIntentionEnum tpsElec = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
+			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
 			return Lists.newArrayList(
-					new RuleResult(intention.getCode(), intention.getDesc()),
-					new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc()));
+					new RuleResult(tpsElec.getCode(), tpsElec.getDesc()),
+					new RuleResult(tpElec.getCode(), tpElec.getDesc()));
 		}else {
 			Map<String, Object> param = Maps.newHashMap();
 			param.put("storeNum", storeNum);
