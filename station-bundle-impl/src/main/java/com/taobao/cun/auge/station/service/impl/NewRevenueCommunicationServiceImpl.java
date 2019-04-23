@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.condition.NewRevenueCommunicationCondition;
 import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.NewRevenueCommunicationDto;
+import com.taobao.cun.auge.station.enums.NewRevenueCommunicationBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -70,7 +71,7 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         if(partnerStationRel!=null){
             Station station= stationBO.getStationById(partnerStationRel.getStationId());
             if(station!=null){
-                processTask.setBusinessName(station.getName());
+                processTask.setBusinessName(NewRevenueCommunicationBusinessTypeEnum.valueof(newRevenueCommunicationDto.getBusinessCode()).getDesc()+"_"+station.getName());
             }
         }
         processTask.setBusinessId(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
