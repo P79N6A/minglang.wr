@@ -439,6 +439,13 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (cuntaoStore == null) {
             return;
         }
+        //解绑门店库
+        String groupStr =  cuntaoStore.getStoreGroupIds();
+        if (StringUtils.isNotEmpty(groupStr)) {
+            List<Long> l = JSON.parseObject(groupStr, new TypeReference<List<Long>>() {});
+            unBindStoreGroupForClose(l,cuntaoStore.getShareStoreId());
+        }
+        //停业门店
         StoreDTO storeDTO = new StoreDTO();
         storeDTO.setStoreId(cuntaoStore.getShareStoreId());
         storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.CLOSE.getValue());
@@ -656,6 +663,15 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 logger.error("bindStoreGroup error:" + booleanResultDO.getFullErrorMsg());
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,booleanResultDO.getFullErrorMsg());
             }
+        }
+        return Boolean.TRUE;
+    }
+
+    private Boolean unBindStoreGroupForClose(List<Long> groupIds,Long shareStoreId){
+        if (CollectionUtils.isNotEmpty(groupIds)) {
+            List<Long> storeIdList = new ArrayList<>();
+            storeIdList.add(shareStoreId);
+            groupIds.forEach(t -> groupBindService.batchUnBindStore(t, storeIdList));
         }
         return Boolean.TRUE;
     }
