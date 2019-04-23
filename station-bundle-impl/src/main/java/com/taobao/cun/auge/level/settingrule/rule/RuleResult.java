@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.setting.rule;
+package com.taobao.cun.auge.level.settingrule.rule;
 
 public class RuleResult {
 	private String code;

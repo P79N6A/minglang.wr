@@ -1,23 +1,17 @@
-package com.taobao.cun.auge.level.enterrule.setting.rule;
+package com.taobao.cun.auge.level.upgraderule;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
-import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
+import com.taobao.cun.auge.level.settingrule.rule.RuleResult;
 
-/**
- * 入驻规则解析
- * 
- * @author chengyu.zhoucy
- *
- */
-public interface SettingRuleParse {
-	List<RuleResult> doParse(TownLevelDto townLevelDto, TownLevelStationRuleDto townLevelStationRuleDto);
+public interface UpgradeRuleParser {
+	List<RuleResult> doParse(TownLevelDto townLevelDto, Long stationId);
 	
-	default List<TownLevelStationSetting> parse(TownLevelDto townLevelDto) {
-		List<RuleResult> ruleResults = doParse(townLevelDto, townLevelDto.getTownLevelStationRuleDto());
+	default List<TownLevelStationSetting> parse(TownLevelDto townLevelDto, Long stationId) {
+		List<RuleResult> ruleResults = doParse(townLevelDto, stationId);
 		List<TownLevelStationSetting> townLevelStationSettings = Lists.newArrayList();
 		for(RuleResult ruleResult : ruleResults) {
 			TownLevelStationSetting townLevelStationSetting = new TownLevelStationSetting();
