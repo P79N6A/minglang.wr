@@ -1,7 +1,11 @@
 package com.taobao.cun.auge.station.service.impl;
 import com.taobao.cun.auge.dal.domain.NewRevenueCommunication;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.NewRevenueCommunicationBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.NewRevenueCommunicationCondition;
 import com.taobao.cun.auge.station.convert.NewRevenueCommunicationConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
@@ -37,6 +41,10 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
     NewRevenueCommunicationBO newRevenueCommunicationBO;
     @Autowired
     GeneralTaskSubmitService generalTaskSubmitService;
+    @Autowired
+    PartnerInstanceBO partnerInstanceBO;
+    @Autowired
+    StationBO stationBO;
 
     @Override
     public void commitNewRevenueCommunication(NewRevenueCommunicationDto newRevenueCommunicationDto) {
@@ -49,6 +57,7 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         Assert.notNull(newRevenueCommunicationDto.getCommuContent(), "commuContent is null");
         newRevenueCommunicationBO.addNewRevenueCommunication(newRevenueCommunicationDto);
 
+        PartnerStationRel partnerStationRel=partnerInstanceBO.findPartnerInstanceById(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
         //提交审批任务
         ApproveProcessTask processTask=new ApproveProcessTask();
         Map<String, String> params = new HashMap<String, String>();
@@ -58,6 +67,12 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         params.put("commuContent",newRevenueCommunicationDto.getCommuContent());
         params.put("inviteType",newRevenueCommunicationDto.getBusinessCode());
         processTask.setBusiness(ProcessBusinessEnum.stationTransHandOverInviteAudit);
+        if(partnerStationRel!=null){
+            Station station= stationBO.getStationById(partnerStationRel.getStationId());
+            if(station!=null){
+                processTask.setBusinessName(station.getName());
+            }
+        }
         processTask.setBusinessId(Long.parseLong(newRevenueCommunicationDto.getObjectId()));
         processTask.setBusinessOrgId(newRevenueCommunicationDto.getOperatorOrgId());
         processTask.setOperator(newRevenueCommunicationDto.getOperator());
