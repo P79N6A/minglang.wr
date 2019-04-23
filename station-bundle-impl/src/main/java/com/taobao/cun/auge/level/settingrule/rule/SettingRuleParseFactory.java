@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.setting.rule;
+package com.taobao.cun.auge.level.settingrule.rule;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

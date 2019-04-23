@@ -16,8 +16,18 @@ public class TownLevelStationRuleDto implements Serializable{
 	
 	private String rule;
 	
+	private String upgradeRule;
+	
 	private String ruleData;
 	
+	public String getUpgradeRule() {
+		return upgradeRule;
+	}
+
+	public void setUpgradeRule(String upgradeRule) {
+		this.upgradeRule = upgradeRule;
+	}
+
 	public String getRuleData() {
 		return ruleData;
 	}

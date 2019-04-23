@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.setting.rule;
+package com.taobao.cun.auge.level.utils;
 
 import java.util.Map;
 
@@ -12,10 +12,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @author chengyu.zhoucy
  *
  */
-class MessageHelper {
+public class MessageHelper {
 	private static final ExpressionParser expressionParser = new SpelExpressionParser();
 	
-	static String rend(String el, Map<String, Object> param) {
+	public static String rend(String el, Map<String, Object> param) {
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		context.setVariables(param);
 		return expressionParser.parseExpression(el).getValue(context, String.class);
