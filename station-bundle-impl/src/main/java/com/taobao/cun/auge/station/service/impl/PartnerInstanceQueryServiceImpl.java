@@ -1014,7 +1014,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                     PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
                             ProtocolTypeEnum.C2B_SETTLE_PRO,
                             instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-                    if (settleProtocol != null && freezingInfo.getAcountMoney().getMoney().doubleValue()  > 0) {
+                    NewRevenueCommunicationDto processNewRevenueCommunicationDto = newRevenueCommunicationService.getProcessNewRevenueCommunication(NewRevenueCommunicationBusinessTypeEnum.TRANS_INVITE.getCode(),instance.getId().toString());
+                    if (null==processNewRevenueCommunicationDto&&settleProtocol != null && freezingInfo.getAcountMoney().getMoney().doubleValue()  > 0) {
                         stationTransHandOverTypeInfoDto.setStationTransHandOverNodeEnum(StationTransHandOverNodeEnum.WAIT_FREZON);
                     }
 
