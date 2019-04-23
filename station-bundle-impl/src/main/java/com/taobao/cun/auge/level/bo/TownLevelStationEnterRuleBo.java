@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
-import com.taobao.cun.auge.level.enterrule.setting.StationExclusiveRuleResolver;
+import com.taobao.cun.auge.level.settingrule.StationExclusiveRuleResolver;
 
 @Component
 public class TownLevelStationEnterRuleBo {

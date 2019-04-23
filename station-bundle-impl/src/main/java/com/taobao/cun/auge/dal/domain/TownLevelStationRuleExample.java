@@ -864,6 +864,76 @@ public class TownLevelStationRuleExample {
             addCriterion("rule_data not between", value1, value2, "ruleData");
             return (Criteria) this;
         }
+
+        public Criteria andUpgradeRuleIsNull() {
+            addCriterion("upgrade_rule is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleIsNotNull() {
+            addCriterion("upgrade_rule is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleEqualTo(String value) {
+            addCriterion("upgrade_rule =", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleNotEqualTo(String value) {
+            addCriterion("upgrade_rule <>", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleGreaterThan(String value) {
+            addCriterion("upgrade_rule >", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleGreaterThanOrEqualTo(String value) {
+            addCriterion("upgrade_rule >=", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleLessThan(String value) {
+            addCriterion("upgrade_rule <", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleLessThanOrEqualTo(String value) {
+            addCriterion("upgrade_rule <=", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleLike(String value) {
+            addCriterion("upgrade_rule like", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleNotLike(String value) {
+            addCriterion("upgrade_rule not like", value, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleIn(List<String> values) {
+            addCriterion("upgrade_rule in", values, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleNotIn(List<String> values) {
+            addCriterion("upgrade_rule not in", values, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleBetween(String value1, String value2) {
+            addCriterion("upgrade_rule between", value1, value2, "upgradeRule");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpgradeRuleNotBetween(String value1, String value2) {
+            addCriterion("upgrade_rule not between", value1, value2, "upgradeRule");
+            return (Criteria) this;
+        }
     }
 
     /**

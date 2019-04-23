@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.setting;
+package com.taobao.cun.auge.level.settingrule;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationSetting;
-import com.taobao.cun.auge.level.enterrule.setting.rule.SettingRuleParseFactory;
+import com.taobao.cun.auge.level.settingrule.rule.SettingRuleParseFactory;
 
 
 /**

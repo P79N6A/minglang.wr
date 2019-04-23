@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.level.enterrule.grade;
+package com.taobao.cun.auge.level.stationrule;
 
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
