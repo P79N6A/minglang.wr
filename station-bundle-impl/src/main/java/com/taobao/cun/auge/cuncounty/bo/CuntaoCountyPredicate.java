@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyUpdateDto;
@@ -53,14 +52,7 @@ public class CuntaoCountyPredicate {
 			BeanValidator.validateWithThrowable(dto);
 		}
 		
-		//办公场地校验，如果之前已经有办公场地了，那么更新的时候也必须有办公场地，不允许为空
-		CuntaoCountyOfficeDto cuntaoCountyOfficeDto = cuntaoCountyOfficeBo.getCuntaoCountyOffice(cuntaoCountyUpdateDto.getCountyId());
-		if(cuntaoCountyOfficeDto != null) {
-			if(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto() == null) {
-				throw new IllegalArgumentException("办公场地信息不能为空");
-			}
-		}
-		
+		//办公场地校验
 		if(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto() != null) {
 			BeanValidator.validateWithThrowable(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
 		}
