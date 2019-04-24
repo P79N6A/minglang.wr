@@ -99,4 +99,10 @@ public class CainiaoCountyBo {
 				.append(cainiaoCounty.getAddress(), cainiaoCountyEditDto.getAddress())
 				.isEquals();
 	}
+	
+	void updateCainiaoCountyStoreType(Long id, String storeType, String operator) {
+		cuntaoCountyExtMapper.updateCainiaoCountyStoreType(id, storeType, operator);
+	}
+	
+	
 }

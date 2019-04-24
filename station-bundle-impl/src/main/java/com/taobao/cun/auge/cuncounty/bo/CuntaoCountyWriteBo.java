@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyAddDto;
@@ -79,16 +78,21 @@ public class CuntaoCountyWriteBo {
 		
 		//办公场地信息,如果传入为空，但之前存在办公场地
 		if(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto() == null) {
-			CuntaoCountyOfficeDto cuntaoCountyOfficeDto = cuntaoCountyOfficeBo.getCuntaoCountyOffice(cuntaoCountyUpdateDto.getCountyId());
-			if(cuntaoCountyOfficeDto != null) {
-				cuntaoCountyOfficeBo.delete(cuntaoCountyUpdateDto.getCountyId(), cuntaoCountyUpdateDto.getOperator());
-			}
+			cuntaoCountyOfficeBo.delete(cuntaoCountyUpdateDto.getCountyId(), cuntaoCountyUpdateDto.getOperator());
 		}else {
 			cuntaoCountyOfficeBo.save(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
 		}
 		
 		//添加菜鸟县仓信息
-		cainiaoCountyBo.save(cuntaoCountyUpdateDto.getCainiaoCountyEditDto());
+		if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() != null) {
+			CainiaoCountyDto cainiaoCountyDto = cainiaoCountyBo.getCainiaoCountyDto(cuntaoCountyUpdateDto.getCountyId());
+			if(cainiaoCountyDto.isGovSupplyStore()) {
+				cainiaoCountyDto.setStoreType(CainiaoCountyDto.STORE_TYPE_CAINIAO);
+				cainiaoCountyBo.updateCainiaoCountyStoreType(cainiaoCountyDto.getId(), CainiaoCountyDto.STORE_TYPE_CAINIAO, cuntaoCountyUpdateDto.getOperator());
+			}
+		}else {
+			cainiaoCountyBo.save(cuntaoCountyUpdateDto.getCainiaoCountyEditDto());
+		}
 	}
 	
 	private Long createCuntaoOrg(CuntaoCountyAddDto cuntaoCountyAddDto) {

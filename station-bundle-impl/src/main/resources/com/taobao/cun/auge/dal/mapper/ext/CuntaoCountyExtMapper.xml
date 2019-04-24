@@ -39,6 +39,10 @@
   update cuntao_county_office set is_deleted='y',gmt_modified=now(),modifier=#{operator} where county_id=#{countyId} and is_deleted='n'
   </update>
   
+  <update id="updateCainiaoCountyStoreType" parameterType="map">
+  update cainiao_county set gmt_modified=now(),modifier=#{operator},store_type=#{storeType}, where id=#{id}
+  </update>
+  
   <update id="updateCainiaoCountyId" parameterType="map">
   update cainiao_county set cainiao_county_id= #{caiNiaostationId} where county_id=#{countyId}
   </update>
