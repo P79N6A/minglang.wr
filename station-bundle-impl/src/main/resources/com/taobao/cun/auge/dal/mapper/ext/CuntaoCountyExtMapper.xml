@@ -40,7 +40,7 @@
   </update>
   
   <update id="updateCainiaoCountyStoreType" parameterType="map">
-  update cainiao_county set gmt_modified=now(),modifier=#{operator},store_type=#{storeType}, where id=#{id}
+  update cainiao_county set gmt_modified=now(),modifier=#{operator},store_type=#{storeType} where id=#{id}
   </update>
   
   <update id="updateCainiaoCountyId" parameterType="map">
