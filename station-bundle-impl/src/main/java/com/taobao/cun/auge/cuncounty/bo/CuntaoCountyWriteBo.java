@@ -83,8 +83,8 @@ public class CuntaoCountyWriteBo {
 			cuntaoCountyOfficeBo.save(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
 		}
 		
-		//添加菜鸟县仓信息
-		if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() != null) {
+		//菜鸟县仓信息
+		if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() == null) {
 			CainiaoCountyDto cainiaoCountyDto = cainiaoCountyBo.getCainiaoCountyDto(cuntaoCountyUpdateDto.getCountyId());
 			if(cainiaoCountyDto.isGovSupplyStore()) {
 				cainiaoCountyDto.setStoreType(CainiaoCountyDto.STORE_TYPE_CAINIAO);
