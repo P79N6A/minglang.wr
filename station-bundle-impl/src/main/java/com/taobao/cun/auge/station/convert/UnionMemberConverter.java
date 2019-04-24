@@ -34,7 +34,7 @@ public final class UnionMemberConverter {
         UnionMemberDto unionMemberDto = new UnionMemberDto();
 
         unionMemberDto.setStationDto(instanceDto.getStationDto());
-        unionMemberDto.setPartnerDto(desensitizePartner(instanceDto.getPartnerDto()));
+        unionMemberDto.setPartnerDto(hidePartnerSensitiveInfo(instanceDto.getPartnerDto()));
 
         unionMemberDto.setParentStationId(instanceDto.getParentStationId());
         unionMemberDto.setInstanceId(instanceDto.getId());
@@ -43,7 +43,7 @@ public final class UnionMemberConverter {
         return unionMemberDto;
     }
 
-    public static PartnerDto desensitizePartner(PartnerDto partnerDto) {
+    public static PartnerDto hidePartnerSensitiveInfo(PartnerDto partnerDto) {
         if (partnerDto == null) {
             return null;
         }
