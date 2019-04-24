@@ -76,11 +76,23 @@ public class CuntaoCountyWriteBo {
 		//添加政府签约信息
 		cuntaoCountyGovContractBo.save(cuntaoCountyUpdateDto.getCuntaoCountyGovContractEditDto());
 		
-		//添加办公场地信息
-		cuntaoCountyOfficeBo.save(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
+		//办公场地信息,如果传入为空，但之前存在办公场地
+		if(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto() == null) {
+			cuntaoCountyOfficeBo.delete(cuntaoCountyUpdateDto.getCountyId(), cuntaoCountyUpdateDto.getOperator());
+		}else {
+			cuntaoCountyOfficeBo.save(cuntaoCountyUpdateDto.getCuntaoCountyOfficeEditDto());
+		}
 		
-		//添加菜鸟县仓信息
-		cainiaoCountyBo.save(cuntaoCountyUpdateDto.getCainiaoCountyEditDto());
+		//菜鸟县仓信息
+		if(cuntaoCountyUpdateDto.getCainiaoCountyEditDto() == null) {
+			CainiaoCountyDto cainiaoCountyDto = cainiaoCountyBo.getCainiaoCountyDto(cuntaoCountyUpdateDto.getCountyId());
+			if(cainiaoCountyDto.isGovSupplyStore()) {
+				cainiaoCountyDto.setStoreType(CainiaoCountyDto.STORE_TYPE_CAINIAO);
+				cainiaoCountyBo.updateCainiaoCountyStoreType(cainiaoCountyDto.getId(), CainiaoCountyDto.STORE_TYPE_CAINIAO, cuntaoCountyUpdateDto.getOperator());
+			}
+		}else {
+			cainiaoCountyBo.save(cuntaoCountyUpdateDto.getCainiaoCountyEditDto());
+		}
 	}
 	
 	private Long createCuntaoOrg(CuntaoCountyAddDto cuntaoCountyAddDto) {

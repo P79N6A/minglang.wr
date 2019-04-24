@@ -107,4 +107,12 @@ public interface CuntaoCountyExtMapper {
 	 * @param caiNiaostationId
 	 */
 	void updateCainiaoCountyId(@Param("countyId") Long countyId, @Param("caiNiaostationId") Long caiNiaostationId);
+
+	/**
+	 * 更新菜鸟县仓类型
+	 * @param id
+	 * @param storeType
+	 * @param operator
+	 */
+	void updateCainiaoCountyStoreType(@Param("id") Long id, @Param("storeType") String storeType, @Param("operator") String operator);
 }
