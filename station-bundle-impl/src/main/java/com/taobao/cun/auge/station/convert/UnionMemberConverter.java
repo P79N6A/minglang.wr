@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -34,7 +35,7 @@ public final class UnionMemberConverter {
         UnionMemberDto unionMemberDto = new UnionMemberDto();
 
         unionMemberDto.setStationDto(instanceDto.getStationDto());
-        unionMemberDto.setPartnerDto(hidePartnerSensitiveInfo(instanceDto.getPartnerDto()));
+        unionMemberDto.setPartnerDto(instanceDto.getPartnerDto());
 
         unionMemberDto.setParentStationId(instanceDto.getParentStationId());
         unionMemberDto.setInstanceId(instanceDto.getId());
@@ -49,8 +50,8 @@ public final class UnionMemberConverter {
         }
         partnerDto.setTaobaoUserId(null);
         partnerDto.setAliLangUserId(null);
-        partnerDto.setIdenNum(null);
-        partnerDto.setAlipayAccount(null);
+        partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
+        partnerDto.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
         partnerDto.setEmail(null);
         partnerDto.setName(SensitiveDataUtil
                 .customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
@@ -65,7 +66,11 @@ public final class UnionMemberConverter {
         }
         if (CollectionUtils.isNotEmpty(instanceDtoPageDto.getItems())) {
             List<UnionMemberDto> unionMemberDtos = instanceDtoPageDto.getItems().stream().map(
-                    instanceDto -> convert(instanceDto)).collect(
+                    instanceDto -> {
+                        UnionMemberDto memberDto = convert(instanceDto);
+                        hidePartnerSensitiveInfo(memberDto.getPartnerDto());
+                        return memberDto;
+                    }).collect(
                     Collectors.toList());
             pageDto.setItems(unionMemberDtos);
         }
