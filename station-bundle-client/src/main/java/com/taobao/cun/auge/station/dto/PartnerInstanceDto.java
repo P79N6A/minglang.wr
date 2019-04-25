@@ -148,6 +148,10 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private String distributorCode;
 	
 	private PartnerInstanceTransStatusEnum transStatusEnum;
+
+	private String incomeMode;
+
+	private Date incomeModeBeginTime;
 	
 	/**
 	 * 是否有巡检记录
@@ -399,5 +403,21 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setDistributorCode(String distributorCode) {
 		this.distributorCode = distributorCode;
+	}
+
+	public String getIncomeMode() {
+		return incomeMode;
+	}
+
+	public void setIncomeMode(String incomeMode) {
+		this.incomeMode = incomeMode;
+	}
+
+	public Date getIncomeModeBeginTime() {
+		return incomeModeBeginTime;
+	}
+
+	public void setIncomeModeBeginTime(Date incomeModeBeginTime) {
+		this.incomeModeBeginTime = incomeModeBeginTime;
 	}
 }
