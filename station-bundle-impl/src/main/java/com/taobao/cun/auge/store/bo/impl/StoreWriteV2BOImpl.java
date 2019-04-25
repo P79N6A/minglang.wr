@@ -148,7 +148,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             return  store.getShareStoreId();
         }
         StoreDTO storeDTO = initStoreDTO(station, partner);
-        storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
         // 仓库的区域CODE，取叶子节点
         String areaId = bulidStoreAddress(station, storeDTO);
         // 如果areaId为空，则无法创建仓库，这里直接终止以下流程
@@ -218,6 +217,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         storeDTO.setOuterId(String.valueOf(station.getId()));
         storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
         storeDTO.addTag(StoreTags.NEED_OPERATE_PHYSICAL_STORE);
+        storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
 
 
         if (!Strings.isNullOrEmpty(station.getLat())) {
@@ -240,7 +240,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
     @Override
     public Long createSupplyStoreByStationId(Long stationId) {
-
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
         if (rel == null) {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人不存在");
@@ -253,39 +252,15 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             this.modifyStationInfoForStore(rel.getId());
             return store.getShareStoreId();
         }
-        StoreDTO storeDTO = new StoreDTO();
-        storeDTO.setName(station.getName());
-        storeDTO.setAddress(station.getAddress());
-        storeDTO.setOuterId(String.valueOf(stationId));
-        storeDTO.setBusinessTime("10:00-19:00");
-        storeDTO.addContact(partner.getMobile());
-        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_ID.getKey(), String.valueOf(partner.getTaobaoUserId()));
-        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_NAME.getKey(), partner.getName());
-        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_TITLE.getKey(), "店长");
-        storeDTO.setPic(diamondConfiguredProperties.getStoreMainImage());
+        StoreDTO storeDTO = initStoreDTO(station, partner);
 
-        storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
         String areaId = bulidStoreAddress(station, storeDTO);
-
-
         // 如果areaId为空，则无法创建仓库，这里直接终止以下流程
         if (Strings.isNullOrEmpty(areaId)) {
             logger.error("createSupplyStore error[" + stationId + "]: areaId is null");
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "areaId is null:" + stationId);
         }
-        if (!Strings.isNullOrEmpty(station.getLat())) {
-            storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
-        }
-        if (!Strings.isNullOrEmpty(station.getLng())) {
-            storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
-        }
-
-        storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
         storeDTO.addTag(StoreTags.SUPPLY_STATION_TAG);// 村点补货
-        storeDTO.addTag(StoreTags.NEED_OPERATE_PHYSICAL_STORE);
-        storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
-        storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
-        storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
         ResultDO<Long> result = storeCreateServiceV2.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(),
                 StoreBizType.STORE_ITEM_BIZ.getValue());
         if (result.isFailured()) {
