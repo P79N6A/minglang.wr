@@ -77,6 +77,7 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
     public List<NewRevenueCommunication> getNewRevenueCommunicationDtoByCondition(NewRevenueCommunicationCondition newRevenueCommunicationCondition) {
         ValidateUtils.notNull(newRevenueCommunicationCondition);
         NewRevenueCommunicationExample newRevenueCommunicationExample = new NewRevenueCommunicationExample();
+        newRevenueCommunicationExample.setOrderByClause("id desc");
         NewRevenueCommunicationExample.Criteria criteria=newRevenueCommunicationExample.createCriteria();
         if(StringUtil.isNotBlank(newRevenueCommunicationCondition.getBusinessCode())){
             criteria.andBusinessCodeEqualTo(newRevenueCommunicationCondition.getBusinessCode());
@@ -92,6 +93,7 @@ public class NewRevenueCommunicationBOImpl implements NewRevenueCommunicationBO 
         if(StringUtil.isNotBlank(newRevenueCommunicationCondition.getAuditStatus())){
             criteria.andAuditStatusEqualTo(newRevenueCommunicationCondition.getAuditStatus());
         }
+
         return newRevenueCommunicationMapper.selectByExample(newRevenueCommunicationExample);
     }
 

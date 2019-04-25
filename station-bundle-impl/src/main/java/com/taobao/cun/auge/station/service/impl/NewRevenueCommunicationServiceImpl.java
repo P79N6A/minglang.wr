@@ -167,13 +167,10 @@ public class NewRevenueCommunicationServiceImpl implements NewRevenueCommunicati
         if(CollectionUtil.isEmpty(newRevenueCommunicationList)){
             return null;
         }
-
-        if(newRevenueCommunicationList.size()==1) {
+        else{
             return NewRevenueCommunicationConverter.toNewRevenueCommunicationDto(newRevenueCommunicationList.get(0));
         }
-        else {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点切换转型邀约成功记录不唯一");
-        }
+
     }
 
     @Override
