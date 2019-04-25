@@ -163,6 +163,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             logger.error("createSupplyStore error[" + stationId + "]:" + result.getFullErrorMsg());
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, stationId + result.getFullErrorMsg() + result.getResult());
         }
+        //上传其他图片
+        uploadStoreSubImage(result.getResult());
 
         String scmCode = "";
         try {
