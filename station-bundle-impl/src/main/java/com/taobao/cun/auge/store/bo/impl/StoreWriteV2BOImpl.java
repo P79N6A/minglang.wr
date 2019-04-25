@@ -381,12 +381,12 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (cuntaoStore == null) {
             return;
         }
-        //解绑门店库
-        String groupStr =  cuntaoStore.getStoreGroupIds();
-        if (StringUtils.isNotEmpty(groupStr)) {
-            List<Long> l = JSON.parseObject(groupStr, new TypeReference<List<Long>>() {});
-            unBindStoreGroupForClose(l,cuntaoStore.getShareStoreId());
-        }
+//        //解绑门店库
+//        String groupStr =  cuntaoStore.getStoreGroupIds();
+//        if (StringUtils.isNotEmpty(groupStr)) {
+//            List<Long> l = JSON.parseObject(groupStr, new TypeReference<List<Long>>() {});
+//            unBindStoreGroupForClose(l,cuntaoStore.getShareStoreId());
+//        }
         //停业门店
         StoreDTO storeDTO = new StoreDTO();
         storeDTO.setStoreId(cuntaoStore.getShareStoreId());
