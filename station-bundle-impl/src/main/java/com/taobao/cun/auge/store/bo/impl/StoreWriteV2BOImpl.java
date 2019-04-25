@@ -180,8 +180,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         }
         // 本地存储
         insertLocalStore(station, scmCode, result.getResult(), station.getName(), stationId, feature.get("storeCategory"));
-        initStoreWarehouse(station.getId());
-        initStoreEmployees(station.getId());
+        initStoreWarehouse(result.getResult(), partner.getTaobaoUserId());
+        initStoreEmployees(station.getId(),partner.getTaobaoUserId(),partner.getTaobaoNick(), partner.getName());
         return result.getResult();
     }
 
@@ -270,72 +270,37 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         uploadStoreSubImage(result.getResult());
         insertLocalStore(station, "", result.getResult(), station.getName(), station.getId(), StoreCategoryConstants.FMCG);
         initGoodSupplyFeature(station.getId());
-        initStoreWarehouse(station.getId());
-        initStoreEmployees(station.getId());
+        initStoreWarehouse(result.getResult(), partner.getTaobaoUserId());
+        initStoreEmployees(station.getId(),partner.getTaobaoUserId(),partner.getTaobaoNick(), partner.getName());
         return result.getResult();
 
     }
 
-    public void initStoreEmployees(Long stationId) {
-        OperatorDto operator = new OperatorDto();
-        operator.setOperator("system");
-        operator.setOperatorType(OperatorTypeEnum.HAVANA);
-        PartnerInstanceDto partnerInstance = queryInfo(stationId, operator);
-        if (partnerInstance != null && partnerInstance.getPartnerDto() != null) {
-            CuntaoEmployee employee = new CuntaoEmployee();
-            employee.setName(partnerInstance.getPartnerDto().getName());
-            employee.setTaobaoNick(partnerInstance.getPartnerDto().getTaobaoNick());
-            employee.setTaobaoUserId(partnerInstance.getPartnerDto().getTaobaoUserId());
-            employee.setCreator("system");
-            employeeWriteBO.createStoreEndorUser(stationId, employee);
-        } else {
-            logger.error("add storeEmployee error! can not find PartnerInstance By stationId[" + stationId + "]");
-        }
+    private void initStoreEmployees(Long stationId,Long taobaoUserId,String taobaoNick,String name) {
+        CuntaoEmployee employee = new CuntaoEmployee();
+        employee.setName(name);
+        employee.setTaobaoNick(taobaoNick);
+        employee.setTaobaoUserId(taobaoUserId);
+        employee.setCreator("system");
+        employeeWriteBO.createStoreEndorUser(stationId, employee);
+
     }
-
-    public PartnerInstanceDto queryInfo(Long stationId, OperatorDto operator) {
-        ValidateUtils.notNull(stationId);
-
-        Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
-
-        PartnerInstanceCondition condition = new PartnerInstanceCondition();
-        condition.setInstanceId(instanceId);
-        condition.setNeedPartnerInfo(Boolean.TRUE);
-        condition.setNeedStationInfo(Boolean.TRUE);
-        condition.setNeedDesensitization(Boolean.FALSE);
-        condition.setNeedPartnerLevelInfo(Boolean.FALSE);
-        condition.copyOperatorDto(operator);
-
-        return partnerInstanceQueryService.queryInfo(condition);
-    }
-
     /**
      * 初始化门店库存
      */
-    public boolean initCtMdJxcWarehouse(BooleanStatusEnum buyerIden, String storeId, Long userId) {
-        CtMdJxcWarehouseDTO ctMdJxcWarehouseDTO = new CtMdJxcWarehouseDTO();
-        ctMdJxcWarehouseDTO.setBuyerIden(buyerIden);
-        ctMdJxcWarehouseDTO.setStoreId(storeId);
-        ctMdJxcWarehouseDTO.setUserId(userId);
-        DataResult<Boolean> result = ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
-        if (!result.isSuccess()) {
-            logger.error("initCtMdJxcWarehouse error[" + storeId + "]:" + result.getMessage());
-        }
-        return result.isSuccess();
-    }
-
-
-    public Boolean initStoreWarehouse(Long stationId) {
+    private Boolean initStoreWarehouse(Long shareStoreId,Long taobaoUserId) {
         try {
-            StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
-            if (storeDto == null || storeDto.getShareStoreId() == null) {
-                logger.error("initStoreWarehouse error storeDto or sharedStoreId is Null");
-                return false;
+            CtMdJxcWarehouseDTO ctMdJxcWarehouseDTO = new CtMdJxcWarehouseDTO();
+            ctMdJxcWarehouseDTO.setBuyerIden(BooleanStatusEnum.YES);
+            ctMdJxcWarehouseDTO.setStoreId(String.valueOf(shareStoreId));
+            ctMdJxcWarehouseDTO.setUserId(taobaoUserId);
+            DataResult<Boolean> result = ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
+            if (!result.isSuccess()) {
+                logger.error("initCtMdJxcWarehouse error[" + shareStoreId + "]:" + result.getMessage());
             }
-            return initCtMdJxcWarehouse(BooleanStatusEnum.YES, storeDto.getShareStoreId() + "",
-                    storeDto.getTaobaoUserId());
+            return result.isSuccess();
         } catch (Exception e) {
-            logger.error("initStoreWarehouse error[" + stationId + "]", e);
+            logger.error("initStoreWarehouse error[" + shareStoreId + "]", e);
             return false;
         }
     }
@@ -403,7 +368,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
     }
 
-    public static String fixLng(String lng) {
+    private static String fixLng(String lng) {
         if (lng != null && lng.length() == 8 && lng.endsWith("0") && lng.startsWith("9")) {
             return lng.substring(0, lng.length() - 1);
         }
