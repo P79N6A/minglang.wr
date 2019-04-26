@@ -41,6 +41,7 @@ import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.domain.*;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
@@ -65,6 +66,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.enums.InstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -95,12 +97,21 @@ import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
 import com.taobao.sellerservice.domain.ResultDO;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import com.tmall.usc.channel.client.UscChannelRelationService;
-import com.tmall.usc.channel.client.dto.distributor.BaseUserDTO;
-import com.tmall.usc.channel.client.dto.distributor.BillingInfoDTO;
-import com.tmall.usc.channel.client.dto.distributor.BizOrgRelationDTO;
-import com.tmall.usc.channel.client.dto.distributor.ChannelUserDTO;
-import com.tmall.usc.channel.client.dto.distributor.CompanyQualificationDTO;
+import com.tmall.usc.channel.client.dto.distributor.*;
 import com.tmall.usc.support.common.dto.ResultDTO;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.text.DateFormat;
+import java.util.*;
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -152,7 +163,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private BizActionLogBo bizActionLogBo;
     @Autowired
 	private PartnerAdzoneService partnerAdzoneService;
-    
+
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
     {
@@ -1136,31 +1147,31 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(r.getStationId())
             .andTypeEqualTo(InstanceTypeEnum.LX.getCode()).andStateIn(PartnerInstanceStateEnum.getValidLxStatusArray()).andIsCurrentEqualTo("y");
-        
+
         List<PartnerStationRel> rList = partnerStationRelMapper.selectByExample(example);
-        
+
         if (rList == null || rList.size()<=0) {
         	return new ArrayList<LxPartnerDto>();
         }
-        
+
         List<Long> partnerIds =rList.stream().map(PartnerStationRel::getPartnerId).collect(Collectors.toList());
         List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
-        
+
         //查station
         StationExample example2 = new StationExample();
       	example2.createCriteria().andIsDeletedEqualTo("n").andIdIn(stationIds);
         List<Station> sList =  stationMapper.selectByExample(example2);
-        
+
         //查partner
         PartnerExample example1 = new PartnerExample();
         example1.createCriteria().andIsDeletedEqualTo("n").andIdIn(partnerIds);
         List<Partner> pList =  partnerMapper.selectByExample(example1);
-        
+
         Map<Long, Partner> pmap = pList.stream().collect(Collectors.toMap(Partner::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
         Map<Long, Station> smap = sList.stream().collect(Collectors.toMap(Station::getId,java.util.function.Function.identity(),(key1, key2) -> key1));
 		return rList.stream().map(p -> bulidLx(p,pmap,smap)).collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * 构建返回对象
 	 * @param p
@@ -1176,9 +1187,36 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		pDto.setState(p.getState());
 		pDto.setPid(partnerAdzoneService.getUnionPid(p.getTaobaoUserId(), p.getStationId()));
 		pDto.setStationName(smap.get(p.getStationId()).getName());
-		
+
 		return pDto;
 	}
-	
-	
+
+
+
+    @Override
+    public void updateIncomeModeNextMonth(Long instanceId, String incomeMode, String operator) {
+
+        Date newMonth = new Date();
+        DateFormat format=DateFormat.getDateInstance();
+       // format.p
+        Calendar calendar = Calendar.getInstance();//日历对象
+        calendar.setTime(newMonth);
+        calendar.add(Calendar.MONTH,1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        newMonth=calendar.getTime();
+        if(DateUtil.parseDateTime("2019-01-01 00:00:00").before(newMonth)) {
+            ValidateUtils.notNull(instanceId);
+            ValidateUtils.notNull(incomeMode);
+            ValidateUtils.notNull(operator);
+            PartnerStationRel updateInstance = new PartnerStationRel();
+            updateInstance.setId(instanceId);
+            updateInstance.setIncomeMode(incomeMode);
+            updateInstance.setIncomeModeBeginTime(newMonth);
+            DomainUtils.beforeUpdate(updateInstance, operator);
+            partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+        }
+    }
 }
