@@ -172,7 +172,7 @@ public class InspectionStationDto implements Serializable{
 	/**
 	 * 村淘严重违规扣分数
 	 */
-	private Integer seriousViolationPoints;
+	private Double seriousViolationPoints;
 
 	/**
 	 * 获取村服务站id
@@ -681,11 +681,11 @@ public class InspectionStationDto implements Serializable{
 		this.taobaoUserId = taobaoUserId;
 	}
 
-	public Integer getSeriousViolationPoints() {
+	public Double getSeriousViolationPoints() {
 		return seriousViolationPoints;
 	}
 
-	public void setSeriousViolationPoints(Integer seriousViolationPoints) {
+	public void setSeriousViolationPoints(Double seriousViolationPoints) {
 		this.seriousViolationPoints = seriousViolationPoints;
 	}
 
