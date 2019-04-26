@@ -170,6 +170,9 @@ public final class PartnerInstanceConverter {
 		instanceDto.setShopId(psRel.getShopId());
 		instanceDto.setDistributionChannelId(psRel.getDistributionChannelId());
 		instanceDto.setDistributorCode(psRel.getDistributorCode());
+		instanceDto.setIncomeMode(psRel.getIncomeMode());
+		instanceDto.setIncomeModeBeginTime(psRel.getIncomeModeBeginTime());
+
 		return instanceDto;
 	}
 	

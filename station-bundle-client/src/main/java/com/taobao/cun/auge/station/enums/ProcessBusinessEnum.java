@@ -40,6 +40,8 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum assetCheckCountyTask = new ProcessBusinessEnum("assetCheckCountyTask", "县盘点任务");
 	public static final ProcessBusinessEnum serviceTrainAudit = new ProcessBusinessEnum("serviceTrainAudit", "服务资质培训报名审批");
 
+	public static final ProcessBusinessEnum stationTransHandOverInviteAudit=new ProcessBusinessEnum("stationTransHandOverInviteAudit","村点转型切换邀请审批");
+
 
 
 	static {
@@ -64,6 +66,7 @@ public class ProcessBusinessEnum implements Serializable {
 		mappings.put("decorationCheckAudit", decorationCheckAudit);
 		mappings.put("serviceAbilitySHRHDecision", serviceAbilitySHRHDecision);
 		mappings.put("serviceTrainAudit", serviceTrainAudit);
+		mappings.put("stationTransHandOverInviteAudit", stationTransHandOverInviteAudit);
 
 	}
 

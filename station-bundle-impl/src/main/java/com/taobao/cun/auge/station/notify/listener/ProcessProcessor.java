@@ -1,22 +1,7 @@
 package com.taobao.cun.auge.station.notify.listener;
 
-import java.util.Date;
-import java.util.Map;
-
-import com.taobao.cun.auge.station.bo.*;
-import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
-import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
-import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
 import com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.asset.service.AssetService;
@@ -33,34 +18,25 @@ import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.lifecycle.event.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.event.LifeCyclePhaseEventBuilder;
-import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.lifecycle.statemachine.StateMachineService;
+import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
+import com.taobao.cun.auge.station.bo.*;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
-import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.NewRevenueCommunicationService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.crius.bpm.dto.CuntaoTask;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.recruit.ability.dto.ServiceAbilityApplyAuditDto;
+import com.taobao.cun.recruit.ability.enums.ServiceAbilityApplyStateEnum;
+import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
@@ -69,6 +45,15 @@ import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.notify.message.StringMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Map;
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -144,6 +129,9 @@ public class ProcessProcessor {
 
     @Autowired
     private ServiceAbilityApplyService serviceAbilityApplyService;
+
+    @Autowired
+    private NewRevenueCommunicationService newRevenueCommunicationService;
 
     @Autowired
     private StationDecorateBO stationDecorateBO;
@@ -257,6 +245,15 @@ public class ProcessProcessor {
                 }else{
                     //不通过
                     stationDecorateBO.auditStationDecorateCheck(stationDecrateDto.getStationId(),ProcessApproveResultEnum.APPROVE_REFUSE,stationDecrateDto.getAuditOpinion());
+                }
+            }
+            else if(ProcessBusinessEnum.stationTransHandOverInviteAudit.getCode().equals(businessCode)){
+
+                String inviteType = ob.getString("inviteType");
+                NewRevenueCommunicationDto newRevenueCommunicationDto=newRevenueCommunicationService.getProcessNewRevenueCommunication(inviteType,businessId.toString());
+                if(newRevenueCommunicationDto!=null){
+                    newRevenueCommunicationDto.setAuditStatus(resultCode);
+                    newRevenueCommunicationService.auditNewRevenueCommunication(newRevenueCommunicationDto);
                 }
             }
 
