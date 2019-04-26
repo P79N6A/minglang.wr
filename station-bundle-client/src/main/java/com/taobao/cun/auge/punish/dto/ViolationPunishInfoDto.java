@@ -11,27 +11,27 @@ public class ViolationPunishInfoDto implements Serializable {
     private static final long serialVersionUID = 9054019754592940763L;
 
     //村淘一般违规扣分数
-    private Double generalViolationPoints;
+    private Integer generalViolationPoints;
 
     //村淘严重违规扣分数
-    private Double seriousViolationPoints;
+    private Integer seriousViolationPoints;
 
     //违规总数
     private Integer totalIllegalCount;
 
-    public Double getGeneralViolationPoints() {
+    public Integer getGeneralViolationPoints() {
         return generalViolationPoints;
     }
 
-    public void setGeneralViolationPoints(Double generalViolationPoints) {
+    public void setGeneralViolationPoints(Integer generalViolationPoints) {
         this.generalViolationPoints = generalViolationPoints;
     }
 
-    public Double getSeriousViolationPoints() {
+    public Integer getSeriousViolationPoints() {
         return seriousViolationPoints;
     }
 
-    public void setSeriousViolationPoints(Double seriousViolationPoints) {
+    public void setSeriousViolationPoints(Integer seriousViolationPoints) {
         this.seriousViolationPoints = seriousViolationPoints;
     }
 
