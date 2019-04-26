@@ -80,20 +80,20 @@ public class PartnerPunishBoImpl implements PartnerPunishBo {
         authKey.setSecret(APP_SECRET);
         //objectType:1代表卖家，2代表身份证
         SimpleResult<RcRetMessage> simpleResult = rightQueryService.rcObjectHasRight(1, taobaoUserId.toString(), PUNISH_RIGHT_ID, authKey);
-        ViolationPunishInfoDto violationPunishInfoDto = new ViolationPunishInfoDto();
+        ViolationPunishInfoDto vpInfoDto = new ViolationPunishInfoDto();
         if(simpleResult.isSuccess()){
             List<PunishValue> punishValueList = simpleResult.getData().getPunishValueList();
             for (PunishValue punishValue : punishValueList) {
                 if(punishValue.getIndicateName().equals("严重违规总分数")){
-                    violationPunishInfoDto.setSeriousViolationPoints(Integer.valueOf(punishValue.getValue().toString()));
+                    vpInfoDto.setSeriousViolationPoints(Double.valueOf(punishValue.getValue().toString()).intValue());
                 }else if(punishValue.getIndicateName().equals("严重违规总分数")){
-                    violationPunishInfoDto.setGeneralViolationPoints(Integer.valueOf(punishValue.getValue().toString()));
+                    vpInfoDto.setSeriousViolationPoints(Double.valueOf(punishValue.getValue().toString()).intValue());
                 }else if(punishValue.getIndicateName().equals("自然年违规次数")){
-                    violationPunishInfoDto.setTotalIllegalCount(Integer.valueOf(punishValue.getValue().toString()));
+                    vpInfoDto.setSeriousViolationPoints(Double.valueOf(punishValue.getValue().toString()).intValue());
                 }
             }
 
         }
-        return violationPunishInfoDto;
+        return vpInfoDto;
     }
 }
