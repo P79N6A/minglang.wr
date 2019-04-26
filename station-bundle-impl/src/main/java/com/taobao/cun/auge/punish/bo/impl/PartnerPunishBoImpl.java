@@ -85,11 +85,11 @@ public class PartnerPunishBoImpl implements PartnerPunishBo {
             List<PunishValue> punishValueList = simpleResult.getData().getPunishValueList();
             for (PunishValue punishValue : punishValueList) {
                 if(punishValue.getIndicateName().equals("自然年总违规次数")){
-                    vpInfoDto.setTotalIllegalCount(Double.valueOf(punishValue.getValue().toString()).intValue());
+                    vpInfoDto.setTotalIllegalCount(Integer.valueOf(punishValue.getValue().toString()));
                 }else if(punishValue.getIndicateName().equals("严重违规总分数")){
-                    vpInfoDto.setSeriousViolationPoints(Double.valueOf(punishValue.getValue().toString()).intValue());
+                    vpInfoDto.setSeriousViolationPoints(Double.valueOf(punishValue.getValue().toString()));
                 }else if(punishValue.getIndicateName().equals("当前一般违规总分数")){
-                    vpInfoDto.setGeneralViolationPoints(Double.valueOf(punishValue.getValue().toString()).intValue());
+                    vpInfoDto.setGeneralViolationPoints(Double.valueOf(punishValue.getValue().toString()));
                 }
             }
 
