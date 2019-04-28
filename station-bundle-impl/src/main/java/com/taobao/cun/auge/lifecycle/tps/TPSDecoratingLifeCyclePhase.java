@@ -152,7 +152,7 @@ public class TPSDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}else{
-		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
+//		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
 //		 try {
 //         	StoreCreateDto store = new StoreCreateDto();
 //         	store.setStationId(partnerInstanceDto.getStationId());
