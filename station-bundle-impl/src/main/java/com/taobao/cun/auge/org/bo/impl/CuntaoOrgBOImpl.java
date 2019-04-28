@@ -38,7 +38,7 @@ public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 		sod.setIsDeleted("n");
 		sod.setFullNamePath(parentOrg.getFullNamePath() + "/" + org.getName());
 		sod.setFullOrderPath(parentOrg.getFullOrderPath() + "/0");
-		sod.setOrderLevel(parentOrg.getOrderLevel() + 1);
+		sod.setOrderLevel(0);
 		sod.setOrgRangeType(org.getOrgRangeType());
 		sod.setTempParentId(org.getTempParentId());
 		sod.setIsLeaf("y");
