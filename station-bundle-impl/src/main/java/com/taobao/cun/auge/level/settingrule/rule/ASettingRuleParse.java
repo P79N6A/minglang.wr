@@ -42,7 +42,7 @@ public class ASettingRuleParse implements SettingRuleParse {
 			if(storeNum == 0) {
 				return buildResult(PartnerApplyConfirmIntentionEnum.TPS_ELEC, PartnerApplyConfirmIntentionEnum.TP_ELEC);
 			}else {
-				return buildResult(PartnerApplyConfirmIntentionEnum.TPS_ELEC);
+				return buildResult(PartnerApplyConfirmIntentionEnum.TP_ELEC);
 			}
 		}else {
 			Map<String, Object> param = Maps.newHashMap();
