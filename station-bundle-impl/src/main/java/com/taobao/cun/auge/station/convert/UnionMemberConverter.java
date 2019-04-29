@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.UnionMemberPageCondition;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.um.dto.UnionMemberDto;
 import com.taobao.cun.auge.station.um.enums.UnionMemberStateEnum;
+import com.taobao.security.util.SensitiveDataUtil;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -41,6 +44,20 @@ public final class UnionMemberConverter {
         return unionMemberDto;
     }
 
+    public static PartnerDto hidePartnerSensitiveInfo(PartnerDto partnerDto) {
+        if (partnerDto == null) {
+            return null;
+        }
+        partnerDto.setTaobaoUserId(null);
+        partnerDto.setAliLangUserId(null);
+        partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
+        partnerDto.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
+        partnerDto.setEmail(null);
+        partnerDto.setName(SensitiveDataUtil
+                .customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
+        return partnerDto;
+    }
+
     public static PageDto<UnionMemberDto> convert(PageDto<PartnerInstanceDto> instanceDtoPageDto) {
 
         PageDto<UnionMemberDto> pageDto = new PageDto<UnionMemberDto>();
@@ -49,8 +66,12 @@ public final class UnionMemberConverter {
         }
         if (CollectionUtils.isNotEmpty(instanceDtoPageDto.getItems())) {
             List<UnionMemberDto> unionMemberDtos = instanceDtoPageDto.getItems().stream().map(
-                instanceDto -> convert(instanceDto)).collect(
-                Collectors.toList());
+                    instanceDto -> {
+                        UnionMemberDto memberDto = convert(instanceDto);
+                        hidePartnerSensitiveInfo(memberDto.getPartnerDto());
+                        return memberDto;
+                    }).collect(
+                    Collectors.toList());
             pageDto.setItems(unionMemberDtos);
         }
         pageDto.setPageNum(instanceDtoPageDto.getPageNum());
@@ -75,7 +96,7 @@ public final class UnionMemberConverter {
 
         if (null != pageCondition.getState()) {
             instancePageCondition.setInstanceState(
-                PartnerInstanceStateEnum.valueof(pageCondition.getState().getCode()));
+                    PartnerInstanceStateEnum.valueof(pageCondition.getState().getCode()));
         }
 
         instancePageCondition.setParentStationId(pageCondition.getParentStationId());

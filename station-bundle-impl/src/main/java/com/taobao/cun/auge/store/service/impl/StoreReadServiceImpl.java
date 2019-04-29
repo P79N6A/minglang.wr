@@ -272,15 +272,15 @@ public class StoreReadServiceImpl implements StoreReadService {
 	public PageDto<Long> queryByPageForShrhPermissionToTPS(Date beginDate, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum,pageSize);
 		PartnerStationRelExample example = new PartnerStationRelExample();
-		List<String> slist = new ArrayList<String>();
+		List<String> slist = new ArrayList<>();
 		slist.add(PartnerInstanceStateEnum.DECORATING.getCode());
 		slist.add(PartnerInstanceStateEnum.SERVICING.getCode());
 		PartnerStationRelExample.Criteria  csCriteria = example.createCriteria();
 		csCriteria.andIsDeletedEqualTo("n");
 		csCriteria.andStateIn(slist).andTypeEqualTo("TPS");
-		csCriteria.andIncomeModeBeginTimeLessThanOrEqualTo(new Date());
+		csCriteria.andServiceBeginTimeLessThanOrEqualTo(new Date());
 		if ( beginDate != null) {
-			csCriteria.andIncomeModeBeginTimeGreaterThanOrEqualTo(beginDate);
+			csCriteria.andServiceBeginTimeGreaterThanOrEqualTo(beginDate);
 		}
 		Page<PartnerStationRel> rList = (Page<PartnerStationRel>)partnerStationRelMapper.selectByExample(example);
 		List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());

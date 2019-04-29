@@ -29,13 +29,13 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.7.5</auge.station.client.version>
+		<auge.station.client.version>4.7.7</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency
 				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
@@ -749,11 +749,6 @@
 				<version>1.0.9</version>
 			</dependency>
 			<dependency>
-				<groupId>com.taobao.common.division</groupId>
-				<artifactId>common-division</artifactId>
-				<version>3.0.26</version>
-			</dependency>
-			<dependency>
 				<groupId>dms-sorting</groupId>
 				<artifactId>dms-sorting.api</artifactId>
 				<version>1.3.0</version>
@@ -915,9 +910,9 @@
 				<version>1.3.4</version>
 			</dependency>
 			<dependency>
-				<groupId>com.alibaba.jaq</groupId>
-				<artifactId>jaq-sdk</artifactId>
-				<version>1.1.6</version>
+			    <groupId>com.alibaba.jaq</groupId>
+			    <artifactId>jaq-sdk</artifactId>
+			    <version>1.1.6</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>

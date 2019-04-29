@@ -15,6 +15,7 @@
 	and a.id=b.station_id and b.type='TP'
 	and b.state in('SERVICING','SETTLING','DECORATING','CLOSING')
 	and a.category='ELEC'
+	and b.mode='v4'
 	and a.town=#{townCode}
    </select>
    

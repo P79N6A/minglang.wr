@@ -129,6 +129,8 @@ public class UnionMemberServiceImpl implements UnionMemberService {
             //    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, "村小二站点不存在");
             //}
             PaymentAccountDtoUtil.hidepaymentAccount(paymentAccountDto);
+            paymentAccountDto.setAccountNo(null);
+            paymentAccountDto.setTaobaoUserId(null);
             return paymentAccountDto;
         } catch (AugeBusinessException e) {
             logger.warn(JSON.toJSONString(checkDto), e);

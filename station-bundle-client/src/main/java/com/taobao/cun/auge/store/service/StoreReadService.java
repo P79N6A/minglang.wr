@@ -114,5 +114,4 @@ public interface StoreReadService {
 	 * @return
 	 */
 	public PageDto<Long> queryByPageForShrhPermissionToTPS(Date beginDate, int pageNum,int pageSize);
-
 }
