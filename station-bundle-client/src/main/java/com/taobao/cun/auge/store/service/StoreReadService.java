@@ -108,4 +108,10 @@ public interface StoreReadService {
 	 * @return
 	 */
 	public PageDto<Long> queryByPageForShrhPermission(Date beginDate, int pageNum,int pageSize);
+
+	/**
+	 * 批量查询 要开送货入户权限的体验店信息
+	 * @return
+	 */
+	public PageDto<Long> queryByPageForShrhPermissionToTPS(Date beginDate, int pageNum,int pageSize);
 }
