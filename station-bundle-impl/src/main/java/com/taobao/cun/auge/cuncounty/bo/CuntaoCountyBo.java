@@ -72,7 +72,7 @@ public class CuntaoCountyBo {
 	public void applyOpen(Long countyId, String operator) {
 		CuntaoCountyDto cuntaoCountyDto = getCuntaoCounty(countyId);
 		if(cuntaoCountyDto == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "县服务中心不存在"); 
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "县服务中心不存在");
 		}
 		if(cuntaoCountyDto.getState().getCode().equals(CuntaoCountyStateEnum.WAIT_OPEN.getCode())) {
 			int servicingStationNum = stationBO.getServicingNumByOrgId(cuntaoCountyDto.getOrgId());

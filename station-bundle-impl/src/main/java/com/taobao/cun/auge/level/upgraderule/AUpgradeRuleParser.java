@@ -40,8 +40,13 @@ public class AUpgradeRuleParser extends AbstractUpgradeRuleParser {
 		int storeNum = stationLevelExtMapper.countTownTPS(townLevelDto.getTownCode());
 		int tpElecNum = stationLevelExtMapper.countTownHZD(townLevelDto.getTownCode());
 		int transingHzdNum = stationLevelExtMapper.countTransHZD(townLevelDto.getTownCode());
+		long population = townLevelDto.getTownPopulation();
+		
 		if(storeNum + tpElecNum + transingHzdNum == 0) {
 			//目前只能升级到合作店，暂不支持升级到体验店
+			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
+			return Lists.newArrayList(new RuleResult(tpElec.getCode(), tpElec.getDesc()));
+		}else if(storeNum + tpElecNum + transingHzdNum == 1 && population >= 60000){ //已经开了一家，但是人口数超过6w，可以升级到家电器合作店
 			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
 			return Lists.newArrayList(new RuleResult(tpElec.getCode(), tpElec.getDesc()));
 		}else {
