@@ -37,14 +37,13 @@ public class ASettingRuleParse implements SettingRuleParse {
 		
 		//如果没有体验店、合作店、转型中的合作店，那么可以开一家合作店或者体验店
 		if(storeNum + tpElecNum + transingHzdNum == 0) {
-			PartnerApplyConfirmIntentionEnum tpsElec = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
-			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
-			return Lists.newArrayList(
-					new RuleResult(tpsElec.getCode(), tpsElec.getDesc()),
-					new RuleResult(tpElec.getCode(), tpElec.getDesc()));
+			return buildResult(PartnerApplyConfirmIntentionEnum.TPS_ELEC, PartnerApplyConfirmIntentionEnum.TP_ELEC);
 		}else if(storeNum + tpElecNum + transingHzdNum == 1 && population >= 60000){ //已经开了一家，但是人口数超过6w，可以再开一家电器合作店
-			PartnerApplyConfirmIntentionEnum tpElec = PartnerApplyConfirmIntentionEnum.TP_ELEC;
-			return Lists.newArrayList(new RuleResult(tpElec.getCode(), tpElec.getDesc()));
+			if(storeNum == 0) {
+				return buildResult(PartnerApplyConfirmIntentionEnum.TPS_ELEC, PartnerApplyConfirmIntentionEnum.TP_ELEC);
+			}else {
+				return buildResult(PartnerApplyConfirmIntentionEnum.TPS_ELEC);
+			}
 		}else {
 			Map<String, Object> param = Maps.newHashMap();
 			param.put("storeNum", storeNum);
@@ -52,5 +51,13 @@ public class ASettingRuleParse implements SettingRuleParse {
 			param.put("transingHzdNum", transingHzdNum);
 			return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE, param)));
 		}
+	}
+	
+	private List<RuleResult> buildResult(PartnerApplyConfirmIntentionEnum ... applyConfirmIntentionEnums){
+		List<RuleResult> ruleResults = Lists.newArrayList();
+		for(PartnerApplyConfirmIntentionEnum applyConfirmIntentionEnum : applyConfirmIntentionEnums) {
+			ruleResults.add(new RuleResult(applyConfirmIntentionEnum.getCode(), applyConfirmIntentionEnum.getDesc()));
+		}
+		return ruleResults;
 	}
 }
