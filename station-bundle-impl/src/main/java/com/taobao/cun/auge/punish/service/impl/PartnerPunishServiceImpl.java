@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.punish.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.punish.PartnerPunishService;
 import com.taobao.cun.auge.punish.bo.PartnerPunishBo;
@@ -8,6 +9,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +35,11 @@ public class PartnerPunishServiceImpl implements PartnerPunishService {
         return partnerPunishBo.getVoilationPunishInfoDto4Mobile(taobaoUserId);
     }
 
+
     @Override
-    public Map<Long, ViolationPunishInfoDto> getVoilationPunishInfoDtoByuserIds(List<Long> taobaoUserIds) {
-        return partnerPunishBo.getVoilationPunishInfoDtoByuserIds(taobaoUserIds);
+    public List<ViolationPunishInfoDto> getVoilationPunishInfoDtoListByUserIds(List<Long> taobaoUserIds) {
+        return partnerPunishBo.getVoilationPunishInfoDtoListByUserIds(taobaoUserIds);
     }
+
+
 }

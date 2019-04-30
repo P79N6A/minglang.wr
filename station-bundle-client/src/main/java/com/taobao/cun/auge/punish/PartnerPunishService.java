@@ -33,6 +33,7 @@ public interface PartnerPunishService {
      * @param taobaoUserIds
      * @return
      */
-    Map<Long,ViolationPunishInfoDto> getVoilationPunishInfoDtoByuserIds(List<Long> taobaoUserIds);
+    List<ViolationPunishInfoDto>  getVoilationPunishInfoDtoListByUserIds(List<Long> taobaoUserIds);
+
 
 }

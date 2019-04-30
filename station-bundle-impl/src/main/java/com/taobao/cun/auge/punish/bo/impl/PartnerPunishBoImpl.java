@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.punish.bo.impl;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.auge.punish.bo.PartnerPunishBo;
 import com.taobao.cun.auge.punish.dto.ViolationPunishInfoDto;
@@ -53,6 +54,20 @@ public class PartnerPunishBoImpl implements PartnerPunishBo {
             resultMap.put(taobaoUserId,getVoilationPunishInfoDto(taobaoUserId));
         });
         return resultMap;
+
+    }
+
+    @Override
+    public List<ViolationPunishInfoDto> getVoilationPunishInfoDtoListByUserIds(List<Long> taobaoUserIds) {
+
+        List<ViolationPunishInfoDto> resultList = Lists.newArrayList();
+        if(!CollectionUtils.isEmpty(taobaoUserIds)){
+            taobaoUserIds.forEach(taobaoUserId->{
+                resultList.add(getVoilationPunishInfoDto(taobaoUserId));
+            });
+        }
+        return resultList;
+
 
     }
 
