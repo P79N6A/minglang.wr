@@ -63,6 +63,7 @@ import com.taobao.place.client.PlaceServiceContext;
 import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
+import com.taobao.ruledata.service.rightcenter.RightQueryService;
 import com.taobao.sellerservice.core.client.shopmirror.ShopMirrorService;
 import com.taobao.taglib.client.TagWriteServiceClient;
 import com.taobao.taglib.service.UserDataWrapperService;
@@ -187,6 +188,9 @@ public class HsfConsumer2ndPartyConfiguration  {
 
 	@HSFConsumer(serviceVersion="${serviceAbilityApplyService.version}",serviceGroup="HSF")
 	private ServiceAbilityApplyService serviceAbilityApplyService;
+
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.rightQueryService}",serviceGroup="HSF")
+	private RightQueryService rightQueryService;
 
 	@Bean
 	public SQLIDQueryAPI sqlIDQueryAPI(HsfConsumerContext hsfConsumerContext) {

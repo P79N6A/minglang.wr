@@ -919,10 +919,15 @@
 				<artifactId>security-all</artifactId>
 				<version>1.2-SNAPSHOT</version>
 			</dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-Java</artifactId>
+                <version>5.1.40</version>
+            </dependency>
 			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-Java</artifactId>
-				<version>5.1.40</version>
+				<groupId>com.taobao.ruledata</groupId>
+				<artifactId>ruledata-client</artifactId>
+				<version>1.1.39</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
