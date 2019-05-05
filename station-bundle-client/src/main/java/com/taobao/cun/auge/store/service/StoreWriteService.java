@@ -127,6 +127,11 @@ public interface StoreWriteService {
      */
 	 public Boolean addWhiteListForSHRH(Long taobaoUserId);
 
+	/**
+	 * 增加服务白名单 送货入户。
+	 */
+	public Boolean addWhiteListForSHRHByStationIds(List<Long> stationIds);
+
 
 	/**
 	 * 停用门店

@@ -192,8 +192,10 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
 	@Override
 	public Boolean addWhiteListForSHRH(Long taobaoUserId) {
-		
 		PartnerStationRel r = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		return addWhiteListForSHRHByPartnerInstance(r);
+	}
+	private Boolean addWhiteListForSHRHByPartnerInstance(PartnerStationRel r ){
 		if (!PartnerInstanceStateEnum.DECORATING.getCode().equals(r.getState()) && !PartnerInstanceStateEnum.SERVICING.getCode().equals(r.getState())) {
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,
 					"state not match");
@@ -208,7 +210,7 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 					"IncomeModeBeginTime not begin");
 		}
 		if (caiNiaoService.checkCainiaoCountyIsOperating(r.getStationId())){
-			StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
+			StoreDto dto = storeReadBO.getStoreDtoByTaobaoUserId(r.getTaobaoUserId());
 			if (dto != null && dto.getShareStoreId() != null) {
 				com.taobao.cun.shared.base.result.SimpleResult res = whiteListWriteService.addWhiteList(
 						ServiceCodeEnum.CTS_SHSM_DSBG, WhiteListTypeEnum.ABILITY_APPLY, dto.getShareStoreId());
@@ -221,6 +223,17 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 			}
 		}
 		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean addWhiteListForSHRHByStationIds(List<Long> stationIds) {
+		stationIds.forEach((Long t) -> addWhiteListForSHRHByStationId(t));
+		return Boolean.TRUE;
+	}
+
+	private void addWhiteListForSHRHByStationId(Long stationId){
+		PartnerStationRel r = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+		addWhiteListForSHRHByPartnerInstance(r);
 	}
 
 	@Override
