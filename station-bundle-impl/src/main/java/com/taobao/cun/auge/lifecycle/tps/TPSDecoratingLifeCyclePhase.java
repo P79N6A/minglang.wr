@@ -152,19 +152,19 @@ public class TPSDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}else{
-		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
-		 try {
-         	StoreCreateDto store = new StoreCreateDto();
-         	store.setStationId(partnerInstanceDto.getStationId());
-         	store.setCreator(partnerInstanceDto.getOperator());
-         	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
-         	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
-         	store.setName(station.getName());
-			storeWriteService.create(store);
-			} catch (StoreException e) {
-				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
-				throw new AugeSystemException(e);
-			}
+//		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
+//		 try {
+//         	StoreCreateDto store = new StoreCreateDto();
+//         	store.setStationId(partnerInstanceDto.getStationId());
+//         	store.setCreator(partnerInstanceDto.getOperator());
+//         	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
+//         	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+//         	store.setName(station.getName());
+			storeWriteService.createByStationId(partnerInstanceDto.getStationId());
+//			} catch (StoreException e) {
+//				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
+//				throw new AugeSystemException(e);
+//			}
 		}
 	}
 
@@ -182,9 +182,8 @@ public class TPSDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	}
 	/**
 	 * 发送装修中事件 给手机端使用
-	 * 
-	 * @param PartnerStationRel
-	 * @param state
+	 *
+	 *
 	 */
 	private void dispacthEvent(PartnerInstanceDto rel, String state) {
 			if (rel != null) {

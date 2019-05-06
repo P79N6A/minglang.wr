@@ -1,15 +1,14 @@
 package com.taobao.cun.auge.configuration;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xiao on 16/11/30.
@@ -112,6 +111,14 @@ public class DiamondConfiguredProperties {
     @Value("${storeImagePerfix}")
     private String storeImagePerfix;
 
+
+    @Value("${com.taobao.cun.auge.store.mainImage}")
+    private String storeMainImage;
+
+    @Value("${com.taobao.cun.auge.store.subImage}")
+    private String storeSubImage;
+
+
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
 
@@ -151,6 +158,22 @@ public class DiamondConfiguredProperties {
 
     @Value("${batch.close.or.quit.um.max.num}")
     private Integer batchCloseOrQuitUmNum;
+
+    public String getStoreMainImage() {
+        return storeMainImage;
+    }
+
+    public void setStoreMainImage(String storeMainImage) {
+        this.storeMainImage = storeMainImage;
+    }
+
+    public String getStoreSubImage() {
+        return storeSubImage;
+    }
+
+    public void setStoreSubImage(String storeSubImage) {
+        this.storeSubImage = storeSubImage;
+    }
 
     public String getCainiaoSwitch() {
 		return cainiaoSwitch;

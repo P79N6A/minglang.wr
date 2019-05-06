@@ -97,6 +97,16 @@ public class TPSettlingLifeCyclePhase extends BaseLifeCyclePhase {
               
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();
+			  if(stationDto.getFeature() != null){
+				  String stationCategory= stationDto.getFeature().get("stationCategory");
+				  if(StringUtils.isNotEmpty(stationCategory)){
+					  stationDto.setCategory(stationCategory);
+				  }else {
+					  stationDto.setCategory("");
+				  }
+			  }else {
+				  stationDto.setCategory("");
+			  }
               stationDto.setState(StationStateEnum.INVALID);
               stationDto.setStatus(StationStatusEnum.NEW);
               PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();

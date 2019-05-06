@@ -1,15 +1,5 @@
 package com.taobao.cun.auge.store.bo.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,12 +7,8 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CuntaoStore;
-import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
+import com.taobao.cun.auge.dal.domain.*;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample.Criteria;
-import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -38,6 +24,14 @@ import com.taobao.place.client.domain.dataobject.StoreDO;
 import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.client.StoreServiceClient;
 import com.taobao.place.util.DistanceUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
@@ -67,7 +61,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		if(station == null){
 			return null;
 		}
-		
+
 		CuntaoStoreExample example = new CuntaoStoreExample();
 		example.createCriteria().andStationIdEqualTo(stationId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
@@ -307,4 +301,27 @@ public class StoreReadBOImpl implements StoreReadBO {
 		return stores;
 	}
 
+	@Override
+	public CuntaoStore getCuntaoStoreByStationId(Long stationId) {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andStationIdEqualTo(stationId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(cuntaoStores)){
+			return null;
+		}
+
+		return cuntaoStores.iterator().next();
+	}
+
+	@Override
+	public CuntaoStore getCuntaoStoreBySharedStoreId(Long sharedStoreId) {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andShareStoreIdEqualTo(sharedStoreId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(cuntaoStores)){
+			return null;
+		}
+
+		return cuntaoStores.iterator().next();
+	}
 }

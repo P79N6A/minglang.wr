@@ -1164,6 +1164,76 @@ public class CuntaoStoreExample {
             addCriterion("endor_org_id not between", value1, value2, "endorOrgId");
             return (Criteria) this;
         }
+
+        public Criteria andStoreGroupIdsIsNull() {
+            addCriterion("store_group_ids is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsIsNotNull() {
+            addCriterion("store_group_ids is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsEqualTo(String value) {
+            addCriterion("store_group_ids =", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsNotEqualTo(String value) {
+            addCriterion("store_group_ids <>", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsGreaterThan(String value) {
+            addCriterion("store_group_ids >", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsGreaterThanOrEqualTo(String value) {
+            addCriterion("store_group_ids >=", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsLessThan(String value) {
+            addCriterion("store_group_ids <", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsLessThanOrEqualTo(String value) {
+            addCriterion("store_group_ids <=", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsLike(String value) {
+            addCriterion("store_group_ids like", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsNotLike(String value) {
+            addCriterion("store_group_ids not like", value, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsIn(List<String> values) {
+            addCriterion("store_group_ids in", values, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsNotIn(List<String> values) {
+            addCriterion("store_group_ids not in", values, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsBetween(String value1, String value2) {
+            addCriterion("store_group_ids between", value1, value2, "storeGroupIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andStoreGroupIdsNotBetween(String value1, String value2) {
+            addCriterion("store_group_ids not between", value1, value2, "storeGroupIds");
+            return (Criteria) this;
+        }
     }
 
     /**

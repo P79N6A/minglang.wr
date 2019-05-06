@@ -207,11 +207,10 @@ public class TPDecoratingLifeCyclePhase extends BaseLifeCyclePhase {
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}else{
-			boolean result = storeWriteService.createSupplyStore(partnerInstanceDto.getStationId());
-			if(!result){
-				logger.error("createStationSupplyStore error["+partnerInstanceDto.getStationId()+"]");
-			}
-			
+			storeWriteService.createSupplyStoreByStationId(partnerInstanceDto.getStationId());
+//			if(!result){
+//				logger.error("createStationSupplyStore error["+partnerInstanceDto.getStationId()+"]");
+//			}
 			//转型过来的 不控制
 			try {
 				storeWriteService.addWhiteListForSHRH(partnerInstanceDto.getTaobaoUserId());

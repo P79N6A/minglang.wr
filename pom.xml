@@ -29,7 +29,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.7.7</auge.station.client.version>
+		<auge.station.client.version>4.7.8</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
@@ -634,7 +634,13 @@
 			<dependency>
 				<groupId>com.taobao.place</groupId>
 				<artifactId>place-client</artifactId>
-				<version>1.4.23</version>
+				<version>1.5.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.alibaba.newretail</groupId>
+						<artifactId>apos-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.tmall.sic</groupId>
