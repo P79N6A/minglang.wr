@@ -71,5 +71,21 @@
     <!--中间件com.taobao.config.common.protocol.UserDataGroupElement出错,先禁用,待新版本出现后升级-->
     <logger name="com.taobao.config.common.protocol" level="ERROR" additivity="false">
     </logger>
+
+    <appender name="STORESYNC" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/storeSync.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/storeSync.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>50</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    <logger name="com.taobao.cun.auge.store.bo.StoreWriteV2BO" level="INFO" additivity="false">
+        <appender-ref ref="STORESYNC"/>
+    </logger>
     
 </configuration>

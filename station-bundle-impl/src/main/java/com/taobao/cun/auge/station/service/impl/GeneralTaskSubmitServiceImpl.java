@@ -1,20 +1,5 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import com.taobao.cun.auge.station.um.dto.BatchCloseUnionMemberDto;
-import com.taobao.cun.auge.station.um.dto.BatchQuitUnionMemberDto;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
@@ -27,53 +12,35 @@ import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerTpgBO;
-import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
-import com.taobao.cun.auge.station.dto.AlipayTagDto;
-import com.taobao.cun.auge.station.dto.ApproveProcessTask;
-import com.taobao.cun.auge.station.dto.BatchMailDto;
-import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
-import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
-import com.taobao.cun.auge.station.dto.PaymentAccountDto;
-import com.taobao.cun.auge.station.dto.StartProcessDto;
-import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
-import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
-import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
-import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
-import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
-import com.taobao.cun.auge.station.dto.UserTagDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
+import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
-import com.taobao.cun.auge.store.bo.StoreReadBO;
-import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.station.um.dto.BatchCloseUnionMemberDto;
+import com.taobao.cun.auge.station.um.dto.BatchQuitUnionMemberDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
 import com.taobao.cun.chronus.enums.TaskPriority;
 import com.taobao.cun.chronus.service.TaskSubmitService;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service("generalTaskSubmitService")
 public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
     private static final Logger logger = LoggerFactory.getLogger(GeneralTaskSubmitService.class);
-    private static final String TASK_SUBMIT_ERROR_MSG = "TASK_SUBMIT_ERROR";
     public static final String OUT_ORDER_NO_PRE = "CT";
 
     @Autowired
@@ -305,23 +272,39 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
     @Override
     public void submitUpdateCainiaoStation(Long instanceId, String operatorId) {
+        List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+        //修改门店
+        GeneralTaskDto storeTaskVo = new GeneralTaskDto();
+        storeTaskVo.setBusinessNo(String.valueOf(instanceId));
+        storeTaskVo.setBeanName("storeWriteService");
+        storeTaskVo.setBusinessStepNo(1L);
+        storeTaskVo.setBusinessType(TaskBusinessTypeEnum.UPDATE_SERVICING_CAINIAO.getCode());
+        storeTaskVo.setBusinessStepDesc("修改门店信息");
+        storeTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+        storeTaskVo.setMethodName("modifyStationInfoForStore");
+        storeTaskVo.setParameterType(Long.class.getName());
+        storeTaskVo.setParameter(String.valueOf(instanceId));
+        taskLists.add(storeTaskVo);
+
+
+        //修改物流站点
         GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
         cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
         cainiaoTaskVo.setBeanName("caiNiaoService");
         cainiaoTaskVo.setMethodName("updateCainiaoStation");
-        cainiaoTaskVo.setBusinessStepNo(1L);
+        cainiaoTaskVo.setBusinessStepNo(2L);
         cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.UPDATE_SERVICING_CAINIAO.getCode());
         cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
         cainiaoTaskVo.setOperator(operatorId);
         cainiaoTaskVo.setPriority(TaskPriority.HIGH);
 
         SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
-        syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+        syncModifyCainiaoStationDto.setPartnerInstanceId(instanceId);
         cainiaoTaskVo.setParameterType(SyncModifyCainiaoStationDto.class.getName());
         cainiaoTaskVo.setParameter(JSON.toJSONString(syncModifyCainiaoStationDto));
-
+        taskLists.add(cainiaoTaskVo);
         // 提交任务
-        taskSubmitService.submitTask(cainiaoTaskVo);
+        taskSubmitService.submitTasks(taskLists);
         logger.info("submitUpdateCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
     }
 
@@ -789,13 +772,34 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         taskLists.add(dealStationTagTaskVo);
 
 
+        // 取消物流站点
+        cainiaoTaskVo.setPriority(TaskPriority.HIGH);
+
+        // you
+        if ("y".equals(isQuitStation)) {
+            GeneralTaskDto storeTaskVo = new GeneralTaskDto();
+            storeTaskVo.setBusinessNo(String.valueOf(instanceId));
+            storeTaskVo.setBeanName("storeWriteService");
+            storeTaskVo.setBusinessStepNo(3L);
+            storeTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
+            storeTaskVo.setBusinessStepDesc("关闭门店");
+            storeTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+            storeTaskVo.setMethodName("closeStore");
+            storeTaskVo.setParameterType(Long.class.getName());
+            storeTaskVo.setParameter(String.valueOf(stationId));
+            taskLists.add(storeTaskVo);
+        }
+
         // 提交任务
         taskSubmitService.submitTasks(taskLists);
         logger.info("submitQuitApprovedTask : {}", JSON.toJSONString(taskLists));
     }
 
+
     @Override
     public void submitShutdownApprovedTask(Long stationId) {
+        List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+
         // 关闭物流站点
         GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
         cainiaoTaskVo.setBusinessNo(String.valueOf(stationId));
@@ -808,8 +812,22 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         cainiaoTaskVo.setMethodName("deleteNotUsedCainiaoStation");
         cainiaoTaskVo.setParameterType(Long.class.getName());
         cainiaoTaskVo.setParameter(String.valueOf(stationId));
+        taskLists.add(cainiaoTaskVo);
 
-        taskSubmitService.submitTask(cainiaoTaskVo);
+        //关闭门店
+        GeneralTaskDto storeTaskVo = new GeneralTaskDto();
+        storeTaskVo.setBusinessNo(String.valueOf(stationId));
+        storeTaskVo.setBeanName("storeWriteService");
+        storeTaskVo.setBusinessStepNo(2L);
+        storeTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_SHUTDOWN_APPROVED.getCode());
+        storeTaskVo.setBusinessStepDesc("关闭门店");
+        storeTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+        storeTaskVo.setMethodName("closeStore");
+        storeTaskVo.setParameterType(Long.class.getName());
+        storeTaskVo.setParameter(String.valueOf(stationId));
+        taskLists.add(storeTaskVo);
+
+        taskSubmitService.submitTasks(taskLists);
         logger.info("submitShutdownApprovedTask : {}", JSON.toJSONString(cainiaoTaskVo));
     }
 
