@@ -1,9 +1,10 @@
 package com.taobao.cun.auge.store.service;
 
-import java.util.List;
-
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreGroupInfoDto;
+
+import java.util.List;
 
 /**
  * 
@@ -12,12 +13,13 @@ import com.taobao.cun.auge.store.dto.StoreCreateDto;
  */
 public interface StoreWriteService {
 	/**
-	 * 创建店铺
+	 * 创建店铺   历史接口  新接口是createByDto
 	 * @param dto
 	 * @return 返回店铺ID
 	 */
+	@Deprecated
 	Long create(StoreCreateDto dto) throws StoreException;
-	
+
 	/**
 	 * 测试接口不要调用
 	 * @param shareStoreId
@@ -32,12 +34,14 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	Boolean createSampleStore(Long stationId);
-	
+
 	/**
-	 * 创建补货村点门店
+	 * 创建补货村点门店   历史接口  不要再使用 请使用
+	 * Boolean createSupplyStoreByStationId(Long stationId);
 	 * @param stationId
 	 * @return
 	 */
+	@Deprecated
 	public Boolean createSupplyStore(Long stationId);
 	
 	/**
@@ -114,8 +118,6 @@ public interface StoreWriteService {
 	public void syncStore();
 	/**
 	 * 去除配送接单能力
-	 * @param operator
-	 * @param storeId
 	 * @return
 	 */
 	public Boolean disableByTabaoUserId(Long taobaoUserId);
@@ -125,4 +127,85 @@ public interface StoreWriteService {
      */
 	 public Boolean addWhiteListForSHRH(Long taobaoUserId);
 
-}
+	/**
+	 * 增加服务白名单 送货入户。
+	 */
+	public Boolean addWhiteListForSHRHByStationIds(List<Long> stationIds);
+
+
+	/**
+	 * 停用门店
+	 */
+	public void closeStore(Long stationId);
+
+	/**
+	 * 创建店铺 新接口  目前体验店使用
+	 * @param stationId
+	 * @return 返回店铺ID
+	 */
+	public Long createByStationId(Long stationId);
+
+	/**
+	 * 创建补货村点门店  新接口   目前 天猫优品 和电器店使用
+	 * @param stationId
+	 * @return
+	 */
+	public Long createSupplyStoreByStationId(Long stationId);
+
+	/**
+	 * 修改门店信息
+	 * @param instanceId
+	 * @throws StoreException
+	 */
+	public void modifyStationInfoForStore(Long instanceId);
+
+	/**
+	 * 上传门店 效果图片
+	 * @param shareStoreId
+	 */
+	public void uploadStoreImage(Long shareStoreId);
+
+	/**
+	 * 上传门店主图
+	 * @param shareStoreId
+	 */
+	public void uploadStoreMainImage(Long shareStoreId);
+
+	/**
+	 * 上传门店其他图片
+	 * @param shareStoreId
+	 */
+	public void uploadStoreSubImage(Long shareStoreId);
+
+	/**
+	 * 门店数据同步
+	 * @param stationIds
+	 * @return
+	 */
+	public Boolean syncAddStoreInfo(List<Long> stationIds);
+
+	/**
+	 *  创建门店库
+	 * @param title
+	 * @param comment
+	 * @return
+	 */
+
+	public StoreGroupInfoDto createStoreGroup(String title, String comment);
+
+	/**
+	 *  绑定门店库
+	 * @param groupId
+	 * @param shareStoreIds
+	 */
+
+	public Boolean  bindStoreGroup(Long groupId,List<Long> shareStoreIds);
+
+	/**
+	 * 解绑门店库
+	 * @param groupId
+	 * @param shareStoreIds
+	 */
+	public Boolean  unBindStoreGroup(Long groupId,List<Long> shareStoreIds);
+
+	}

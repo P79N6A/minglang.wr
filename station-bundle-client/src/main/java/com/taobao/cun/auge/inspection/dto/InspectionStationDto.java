@@ -161,7 +161,19 @@ public class InspectionStationDto implements Serializable{
 	 * 状态描述
 	 */
 	private String stateDesc;
-	
+
+	/**
+	 * 淘宝userID
+	 */
+	private Long taobaoUserId;
+
+
+
+	/**
+	 * 村淘严重违规扣分数
+	 */
+	private Integer seriousViolationPoints;
+
 	/**
 	 * 获取村服务站id
 	 *
@@ -658,6 +670,23 @@ public class InspectionStationDto implements Serializable{
 	 */
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
+	}
+
+	public Integer getSeriousViolationPoints() {
+		return seriousViolationPoints;
+	}
+
+	public void setSeriousViolationPoints(Integer seriousViolationPoints) {
+		this.seriousViolationPoints = seriousViolationPoints;
 	}
 
 	public String getCountyStationName() {
