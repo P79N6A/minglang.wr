@@ -18,14 +18,11 @@ import com.taobao.cun.auge.dal.domain.TownLevelStationRuleExample;
 import com.taobao.cun.auge.dal.mapper.TownLevelStationRuleMapper;
 import com.taobao.cun.auge.level.dto.TownLevelDto;
 import com.taobao.cun.auge.level.dto.TownLevelStationRuleDto;
-import com.taobao.cun.auge.level.settingrule.StationExclusiveRuleResolver;
 
 public class DefaultGradeRuleResolver implements GradeRuleResolver, InitializingBean {
 	private LoadingCache<String, Map<String, TownLevelStationRuleDto>> loadingCache;
 	@Resource
 	private TownLevelStationRuleMapper townLevelStationRuleMapper;
-	@Resource
-	private StationExclusiveRuleResolver stationExclusiveRuleResolver;
 	
 	protected String level;
 	

@@ -18,6 +18,8 @@ public class GradeRuleResolverFactory {
 	private GradeRuleResolver bgradeRuleResolver;
 	@Resource
 	private GradeRuleResolver xgradeRuleResolver;
+	@Resource
+	private GradeRuleResolver cgradeRuleResolver;
 	
 	public GradeRuleResolver getGradeRuleResolver(String level) {
 		switch(level) {
@@ -25,6 +27,8 @@ public class GradeRuleResolverFactory {
 			return agradeRuleResolver;
 		case "B":
 			return bgradeRuleResolver;
+		case "C":
+			return cgradeRuleResolver;
 		case "X":
 			return xgradeRuleResolver;
 		default:
