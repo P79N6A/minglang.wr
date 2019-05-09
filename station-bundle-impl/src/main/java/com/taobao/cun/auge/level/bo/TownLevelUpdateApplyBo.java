@@ -2,6 +2,7 @@ package com.taobao.cun.auge.level.bo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.dal.domain.TownLevelAlterApply;
 import com.taobao.cun.auge.dal.domain.TownLevelAlterApplyExample;
@@ -58,6 +60,10 @@ public class TownLevelUpdateApplyBo {
 		startDto.setApplierId(townLevelUpdateApplyDto.getCreator());
 		startDto.setApplierUserType(UserTypeEnum.BUC);
 		startDto.setBusinessName(getTaskName(townLevelUpdateApplyDto.getTownLevelId()));
+		
+		Map<String, String> initData = Maps.newHashMap();
+		initData.put("orgId", String.valueOf(townLevelUpdateApplyDto.getOrgId()));
+		startDto.setInitData(initData);
 		ResultModel<Boolean> result = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if(!result.isSuccess()) {
 			throw new RuntimeException("创建流程失败：" + result.getException().getMessage());

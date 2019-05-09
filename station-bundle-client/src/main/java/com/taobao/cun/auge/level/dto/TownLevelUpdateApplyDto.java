@@ -22,7 +22,15 @@ public class TownLevelUpdateApplyDto implements Serializable {
 	private String attachments;
 	@NotBlank(message="申请人不能为空")
 	private String creator;
+	@NotNull(message="申请人组织不能为空")
+	private Long orgId;
 	
+	public Long getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
 	public Long getTownLevelId() {
 		return townLevelId;
 	}
