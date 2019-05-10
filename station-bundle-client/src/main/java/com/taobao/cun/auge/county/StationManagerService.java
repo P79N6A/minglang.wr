@@ -6,10 +6,9 @@ import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.StationManagerDto;
 
 /**
- * 从center迁移至auge
- * @author yi.shaoy
- *
+ * 该接口已废弃，请使用{@link com.taobao.cun.auge.cuncounty.service.CuntaoCountyService}
  */
+@Deprecated
 public interface StationManagerService {
 
 	List<StationManagerDto> getManagersByStationId(Long stationId);

@@ -9,11 +9,13 @@ import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.user.dto.Operator;
 /**
- * 从center迁移至auge
- * 供org、motion、无线端调用
+ * 
+ * 该接口已废弃，请使用{@link com.taobao.cun.auge.cuncounty.service.CuntaoCountyService}
+ * 
  * @author yi.shaoy
  *
  */
+@Deprecated
 public interface CountyService {
 
 	/**
