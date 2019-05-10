@@ -5,18 +5,30 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.dto.CuntaoUser;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerSopRltDto;
 import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.service.PartnerSopService;
+import com.taobao.cun.auge.user.service.CuntaoUserService;
+import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("partnerSopService")
 @HSFProvider(serviceInterface = PartnerSopService.class)
@@ -30,6 +42,14 @@ public class PartnerSopServiceImpl implements PartnerSopService {
 
     @Autowired
     private PartnerLifecycleBO partnerLifecycleBO;
+    @Autowired
+    private StationBO stationBO;
+
+    @Autowired
+    private CuntaoUserService cuntaoUserService;
+
+    @Autowired
+    private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
     @Override
     public String getPartnerInfo(Long taobaoUserId) {
@@ -38,26 +58,70 @@ public class PartnerSopServiceImpl implements PartnerSopService {
         return JSONObject.toJSONString(Result.of(errorInfo));
         }
         PartnerSopRltDto rs = new PartnerSopRltDto();
-
+        //报名状态
         PartnerApplyDto pa  = partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
         if(pa != null) {
             rs.setPartnerApplyStateDesc(pa.getPartnerApplyStateEnum().getDesc());
         }else {
             rs.setPartnerApplyStateDesc("未报名");
         }
-
+        //村小二状态
         PartnerStationRel psr = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
         if (psr != null) {
-            rs.setPartnerIsntanceStateDesc(buildInstanceState(psr.getState(),psr.getId()));
+            bulidStationInfo(rs, psr.getState(),psr.getId(),psr.getStationId());
         }else {
             PartnerInstanceDto lastPsr = partnerInstanceBO.getLastPartnerInstance(taobaoUserId);
             if (lastPsr == null) {
                 rs.setPartnerIsntanceStateDesc("未入驻");
+            }else {
+                bulidStationInfo(rs, lastPsr.getState().getCode(),lastPsr.getId(),lastPsr.getStationId());
             }
-
-            rs.setPartnerIsntanceStateDesc(buildInstanceState(lastPsr.getState().getCode(),lastPsr.getId()));
         }
+
         return JSONObject.toJSONString(Result.of(rs));
+    }
+
+    private void bulidStationInfo(PartnerSopRltDto rs, String state ,Long instanceId, Long stationId) {
+        rs.setPartnerIsntanceStateDesc(buildInstanceState(state,instanceId));
+        Station s = stationBO.getStationById(stationId);
+        if (s != null) {
+            rs.setStationName(s.getName());
+            rs.setStationAddress(buildAddress(s));
+            //构建县信息
+            rs.setCountyLeaderName(bulidCountyLeader(s.getApplyOrg(), UserRole.COUNTY_LEADER));
+            rs.setTeamLeaderName(bulidCountyLeader(s.getApplyOrg(),UserRole.TEAM_LEADER));
+            CuntaoOrgDto cuntaoOrg = cuntaoOrgServiceClient.getCuntaoOrg(s.getApplyOrg());
+            rs.setCountyName(cuntaoOrg == null ?"":cuntaoOrg.getName());
+        }
+    }
+
+    private String bulidCountyLeader(Long orgId,UserRole userRole) {
+        List<CuntaoUser> users = cuntaoUserService.getCuntaoUsers(orgId,userRole);
+        if (CollectionUtils.isEmpty(users)){
+            return "";
+        }
+        List<String> us= users.stream().map(t -> t.getUserName()+"["+t.getLoginId()+"]").collect(Collectors.toList());
+        return StringUtils.join(us, ",");
+    }
+
+    private String buildAddress(Station s) {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotEmpty(s.getProvinceDetail())) {
+            sb.append(s.getProvinceDetail());
+        }
+        if (StringUtils.isNotEmpty(s.getCityDetail())) {
+            sb.append(s.getCityDetail());
+        }
+        if (StringUtils.isNotEmpty(s.getCountyDetail())) {
+            sb.append(s.getCountyDetail());
+        }
+        if (StringUtils.isNotEmpty(s.getTownDetail())) {
+            sb.append(s.getTownDetail());
+        }
+        if (StringUtils.isNotEmpty(s.getAddress())) {
+            sb.append(s.getAddress());
+        }
+        return sb.toString();
     }
 
     private String buildInstanceState(String state,Long id){

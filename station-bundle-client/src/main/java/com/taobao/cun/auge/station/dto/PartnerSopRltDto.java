@@ -26,6 +26,45 @@ public class PartnerSopRltDto implements Serializable {
      */
     private String teamLeaderName;
 
+    /**
+     * 服务站名称
+     */
+    private String stationName;
+
+    /**
+     *服务站地址
+     */
+    private String stationAddress;
+
+    /**
+     * 县服务中心名称
+     */
+    private String countyName;
+
+    public String getStationName() {
+        return stationName;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
+    }
+
+    public String getStationAddress() {
+        return stationAddress;
+    }
+
+    public void setStationAddress(String stationAddress) {
+        this.stationAddress = stationAddress;
+    }
+
+    public String getCountyName() {
+        return countyName;
+    }
+
+    public void setCountyName(String countyName) {
+        this.countyName = countyName;
+    }
+
     public String getPartnerApplyStateDesc() {
         return partnerApplyStateDesc;
     }
