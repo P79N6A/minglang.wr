@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.station.dto.PartnerSopRltDto;
+
 import java.util.Map;
 
 /**
@@ -13,5 +16,5 @@ public interface PartnerSopService {
      * @param taobaoUserId
      * @return
      */
-    public Map<String, String> getPartnerInfo(Long taobaoUserId);
+    public Result<PartnerSopRltDto> getPartnerInfo(Long taobaoUserId);
 }
