@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -10,6 +11,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -89,8 +91,9 @@ public class PartnerSopServiceImpl implements PartnerSopService {
             rs.setStationAddress(buildAddress(s));
             //构建县信息
             rs.setCountyLeaderName(bulidCountyLeader(s.getApplyOrg(), UserRole.COUNTY_LEADER));
-            rs.setTeamLeaderName(bulidCountyLeader(s.getApplyOrg(),UserRole.TEAM_LEADER));
             CuntaoOrgDto cuntaoOrg = cuntaoOrgServiceClient.getCuntaoOrg(s.getApplyOrg());
+            CuntaoOrgDto org = cuntaoOrgServiceClient.getAncestor(s.getApplyOrg(), OrgRangeType.SPECIALTEAM);
+            rs.setTeamLeaderName(bulidCountyLeader(org.getId(),UserRole.TEAM_LEADER));
             rs.setCountyName(cuntaoOrg == null ?"":cuntaoOrg.getName());
         }
     }
