@@ -19,7 +19,7 @@ public class PartnerSopRltDto implements Serializable {
     /**
      * 县小二名字
      */
-    private String CountyLeaderName;
+    private String countyLeaderName;
 
     /**
      * 区域经理名字
@@ -82,11 +82,11 @@ public class PartnerSopRltDto implements Serializable {
     }
 
     public String getCountyLeaderName() {
-        return CountyLeaderName;
+        return countyLeaderName;
     }
 
     public void setCountyLeaderName(String countyLeaderName) {
-        CountyLeaderName = countyLeaderName;
+        this.countyLeaderName = countyLeaderName;
     }
 
     public String getTeamLeaderName() {
