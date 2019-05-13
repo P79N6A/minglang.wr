@@ -57,10 +57,10 @@ public class PartnerSopServiceImpl implements PartnerSopService {
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
     @Override
-    public Map<String, String> getPartnerInfo(Long taobaoUserId) {
+    public  Result<PartnerSopRltDto> getPartnerInfo(Long taobaoUserId) {
         if (taobaoUserId == null) {
         ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "参数为空");
-            return JSON.parseObject(JSONObject.toJSONString(Result.of(errorInfo)), new TypeReference<Map<String, String>>() {});
+            return Result.of(errorInfo);
         }
         PartnerSopRltDto rs = new PartnerSopRltDto();
         //报名状态
@@ -83,7 +83,7 @@ public class PartnerSopServiceImpl implements PartnerSopService {
             }
         }
 
-        return JSON.parseObject(JSONObject.toJSONString(Result.of(rs)), new TypeReference<Map<String, String>>() {});
+        return Result.of(rs);
     }
 
     private void bulidStationInfo(PartnerSopRltDto rs, String state ,Long instanceId, Long stationId) {
