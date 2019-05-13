@@ -552,6 +552,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 					updateAsset.setOwnerName(ownerName);
 					updateAsset.setOwnerWorkno(ownerWorkNo);
 					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+						//||a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())
 						updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 					}
 					if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
@@ -990,4 +991,10 @@ public class AssetSynBOImpl implements AssetSynBO {
 			logger.error("addAssetRouter.error,stationId=" + m.get("stationId"), e);
 		}
 	}
+	  public static void main(String[] args) {
+          String aaa = "{\"errorCodes\":[],\"errorInfos\":[],\"errorMessage\":[],\"module\":{\"countyLeaderName\":\"于路远[132642]\",\"countyName\":\"当涂县服务中心\",\"partnerApplyStateDesc\":\"已合作\",\"partnerIsntanceStateDesc\":\"服务中\",\"stationAddress\":\"安徽马鞍山当涂当涂经济开发区围屏天秀苑门面51号天猫优品服务站\",\"stationName\":\"当涂经济开发区天猫优品服务站\",\"teamLeaderName\":\"程安民[104823]\"},\"outerErrorCodes\":[],\"success\":true,\"warningInfos\":[],\"warningMessage\":[]}";
+          Map<String, String> l = JSON.parseObject(aaa, new TypeReference<Map<String, String>>() {});
+          System.out.println(l);
+
+      }
 }
