@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("partnerSopService")
@@ -54,10 +57,10 @@ public class PartnerSopServiceImpl implements PartnerSopService {
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
     @Override
-    public String getPartnerInfo(Long taobaoUserId) {
+    public Map<String, String> getPartnerInfo(Long taobaoUserId) {
         if (taobaoUserId == null) {
         ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "参数为空");
-        return JSONObject.toJSONString(Result.of(errorInfo));
+            return JSON.parseObject(JSONObject.toJSONString(Result.of(errorInfo)), new TypeReference<Map<String, String>>() {});
         }
         PartnerSopRltDto rs = new PartnerSopRltDto();
         //报名状态
@@ -80,7 +83,7 @@ public class PartnerSopServiceImpl implements PartnerSopService {
             }
         }
 
-        return JSONObject.toJSONString(Result.of(rs));
+        return JSON.parseObject(JSONObject.toJSONString(Result.of(rs)), new TypeReference<Map<String, String>>() {});
     }
 
     private void bulidStationInfo(PartnerSopRltDto rs, String state ,Long instanceId, Long stationId) {
