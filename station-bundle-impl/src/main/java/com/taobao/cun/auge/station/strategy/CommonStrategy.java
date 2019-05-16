@@ -79,29 +79,29 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(), instanceId);
 		generalTaskSubmitService.submitClosedCainiaoStation(instanceId, operatorDto.getOperator());
 
-		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+//		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		//关闭优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
-		Long parentStationId = instance.getStationId();
-		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, 1);
-
-		Integer closeUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
-		if (null != umList && umList.getTotal() < closeUmMaxNum) {
-			generalTaskSubmitService.submitClosedUmTask(parentStationId, operatorDto);
-		}
+//		Long parentStationId = instance.getStationId();
+//		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.SERVICING, 1);
+//
+//		Integer closeUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
+//		if (null != umList && umList.getTotal() < closeUmMaxNum) {
+//			generalTaskSubmitService.submitClosedUmTask(parentStationId, operatorDto);
+//		}
 	}
 
 	@Override
 	public void quited(Long instanceId, OperatorDto operatorDto) {
-		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		Long parentStationId = instance.getStationId();
+//		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+//		Long parentStationId = instance.getStationId();
 
 		//退出优盟，通过事件关闭优盟，保证时效性，但是优盟数量限制在200以下，否则等待定时钟来关闭优盟
-		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
-		Integer quitUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
-		if (null != umList && umList.getTotal() < quitUmMaxNum) {
-			generalTaskSubmitService.submitQuitUmTask(parentStationId, operatorDto);
-		}
+//		PageDto<UnionMemberDto> umList = getUnionMembers(parentStationId, UnionMemberStateEnum.CLOSED, 1);
+//		Integer quitUmMaxNum = diamondConfiguredProperties.getBatchCloseOrQuitUmNum();
+//		if (null != umList && umList.getTotal() < quitUmMaxNum) {
+//			generalTaskSubmitService.submitQuitUmTask(parentStationId, operatorDto);
+//		}
 	}
 
 	private PageDto<UnionMemberDto> getUnionMembers(Long parentStationId, UnionMemberStateEnum state, Integer pageNum) {
