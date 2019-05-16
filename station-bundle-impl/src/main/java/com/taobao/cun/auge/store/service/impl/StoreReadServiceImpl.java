@@ -4,18 +4,13 @@ import com.alibaba.cuntao.ctsm.client.dto.read.ServiceJudgmentForStoreQuitDTO;
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
-import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.dal.domain.*;
-import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -23,8 +18,6 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
@@ -33,6 +26,8 @@ import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
+import com.taobao.cun.recruit.ability.dto.ServiceAbilityEmployeeInfoDto;
+import com.taobao.cun.recruit.ability.service.ServiceAbilityEmployeeInfoService;
 import com.taobao.cun.shared.base.result.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.slf4j.Logger;
@@ -56,13 +51,7 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private StoreReadBO storeReadBO;
-	
-	@Autowired
-	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
-	
-	@Autowired
-	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
-	
+
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
@@ -77,6 +66,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 	
 	@Autowired
 	private CaiNiaoService caiNiaoService;
+
+	@Autowired
+	private ServiceAbilityEmployeeInfoService serviceAbilityEmployeeInfoService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -136,21 +128,10 @@ public class StoreReadServiceImpl implements StoreReadService {
 		if(store != null){
 			return store;
 		}
-		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(employeeTaobaoUserId).andTypeEqualTo(CuntaoEmployeeType.store.name());
-		List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(example);
-		if(employees != null && !employees.isEmpty()){
-			CuntaoEmployee employee = employees.iterator().next();
-			CuntaoEmployeeRelExample relExample  = new CuntaoEmployeeRelExample();
-			relExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employee.getId()).andTypeEqualTo(CuntaoEmployeeType.store.name())
-			.andStateEqualTo(CuntaoVendorEmployeeState.SERVICING.name());
-			 List<CuntaoEmployeeRel>  cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(relExample);
-			 if(cuntaoEmployeeRels != null  && !cuntaoEmployeeRels.isEmpty()){
-				 CuntaoEmployeeRel rel = cuntaoEmployeeRels.iterator().next();
-				 Long stationId =  rel.getOwnerId();
-				 return this.getStoreByStationId(stationId);
-				 
-			 }
+		ServiceAbilityEmployeeInfoDto infoDto = serviceAbilityEmployeeInfoService
+			.getEmployeeInfoByTaobaoUserId(employeeTaobaoUserId);
+		if (infoDto != null && infoDto.getStationId() != null) {
+			return getStoreByStationId(infoDto.getStationId());
 		}
 		return null;
 	}
@@ -170,12 +151,6 @@ public class StoreReadServiceImpl implements StoreReadService {
 			return largearea.getId().equals(500004L);
 		}
 		return true;
-		
-		//return largearea.getId().equals(500004L);
-//		if(station.getApplyOrg() == 99999L){
-//				return true;
-//		}
-//		return false;
 	}
 
 	@Override

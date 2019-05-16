@@ -11,6 +11,7 @@ import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
  * @author zhenhuan.zhangzh
  *
  */
+@Deprecated
 public interface EmployeeWriteService{
 
 	/**

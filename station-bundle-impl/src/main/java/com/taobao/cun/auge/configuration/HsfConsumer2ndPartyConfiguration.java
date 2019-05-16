@@ -50,6 +50,7 @@ import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityApplyService;
+import com.taobao.cun.recruit.ability.service.ServiceAbilityEmployeeInfoService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -188,6 +189,9 @@ public class HsfConsumer2ndPartyConfiguration  {
 
 	@HSFConsumer(serviceVersion="${serviceAbilityApplyService.version}",serviceGroup="HSF")
 	private ServiceAbilityApplyService serviceAbilityApplyService;
+
+	@HSFConsumer(serviceVersion="${serviceAbilityApplyService.version}",serviceGroup="HSF")
+	private ServiceAbilityEmployeeInfoService serviceAbilityEmployeeInfoService;
 
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.rightQueryService}",serviceGroup="HSF")
 	private RightQueryService rightQueryService;

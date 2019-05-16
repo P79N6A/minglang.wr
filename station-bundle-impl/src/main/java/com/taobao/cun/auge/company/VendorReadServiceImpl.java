@@ -8,18 +8,11 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.VendorQueryPageCondition;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample.Criteria;
-import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -37,12 +30,6 @@ public class VendorReadServiceImpl implements VendorReadService{
 
 	@Autowired
 	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
-	
-	@Autowired
-	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
-	
-	@Autowired
-	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 
 	@Autowired
 	private StoreReadBO storeReadBO;
