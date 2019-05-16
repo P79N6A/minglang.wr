@@ -17,4 +17,11 @@ public interface PartnerSopService {
      * @return
      */
     public Result<PartnerSopRltDto> getPartnerInfo(Long taobaoUserId);
+
+    /**
+     * 通过淘宝账号 查询 入驻状态，村点状态，县负责人等信息。
+     * @param taobaoNick
+     * @return
+     */
+    public Result<PartnerSopRltDto> getPartnerInfoByTaobaoNick(String taobaoNick);
 }
