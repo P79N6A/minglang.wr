@@ -914,7 +914,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             return result;
         } catch (Exception e) {
             result.put("success", false);
-            result.put("errorMessage", "系统异常:"e.getMessage());
+            result.put("errorMessage", "系统异常:"+e.getMessage());
             logger.error("openMiniapp error, storeId:{}", storeId, e);
             return result;
         }
