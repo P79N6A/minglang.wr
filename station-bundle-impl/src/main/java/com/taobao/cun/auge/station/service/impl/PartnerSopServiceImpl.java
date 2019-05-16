@@ -14,6 +14,7 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("partnerSopService")
@@ -56,10 +56,13 @@ public class PartnerSopServiceImpl implements PartnerSopService {
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
+    @Autowired
+    private UicReadAdapter uicReadAdapter;
+
     @Override
     public  Result<PartnerSopRltDto> getPartnerInfo(Long taobaoUserId) {
         if (taobaoUserId == null) {
-        ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "参数为空");
+        ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "taobaoUserId参数为空");
             return Result.of(errorInfo);
         }
         PartnerSopRltDto rs = new PartnerSopRltDto();
@@ -171,5 +174,19 @@ public class PartnerSopServiceImpl implements PartnerSopService {
         }
         return "";
 
+    }
+
+    @Override
+    public Result<PartnerSopRltDto> getPartnerInfoByTaobaoNick(String taobaoNick) {
+        if (StringUtils.isEmpty(taobaoNick)) {
+            ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "必须传入淘宝账号");
+            return Result.of(errorInfo);
+        }
+        Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(taobaoNick);
+        if (taobaoUserId== null) {
+            ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "当前账号不存在");
+            return Result.of(errorInfo);
+        }
+        return getPartnerInfo(taobaoUserId);
     }
 }
