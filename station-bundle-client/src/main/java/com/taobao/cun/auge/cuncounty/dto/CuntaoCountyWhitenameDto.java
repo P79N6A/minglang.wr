@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.util.Objects;
+
 /**
  * 开县白名单
  * 
@@ -117,6 +119,23 @@ public class CuntaoCountyWhitenameDto {
 
 	public void setCountyCode(String countyCode) {
 		this.countyCode = countyCode;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CuntaoCountyWhitenameDto other = (CuntaoCountyWhitenameDto) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }
