@@ -142,7 +142,7 @@ public class CuntaoCountyWhitenameBo {
 	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes){
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andCountyCodeIn(countyCodes).andIsDeletedEqualTo("n");
+		criteria.andCountyCodeIn(countyCodes.stream().distinct().collect(Collectors.toList())).andIsDeletedEqualTo("n");
 		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenameMapper.selectByExample(example));
 	}
 }
