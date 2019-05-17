@@ -132,7 +132,7 @@ public class CuntaoCountyWhitenameBo {
 		}
 		criteria.andCountyIdEqualTo(0L);
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
-        PageHelper.orderBy("province_code,city_code,county_code desc");
+        PageHelper.orderBy("id desc");
         List<CuntaoCountyWhitename> cuntaoCountyWhitenames = cuntaoCountyWhitenameMapper.selectByExample(example);
         
         return PageDtoUtil.success((Page<CuntaoCountyWhitename>)cuntaoCountyWhitenames, 
