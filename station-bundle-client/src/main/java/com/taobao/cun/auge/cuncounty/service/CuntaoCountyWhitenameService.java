@@ -45,4 +45,11 @@ public interface CuntaoCountyWhitenameService {
 	 * @return
 	 */
 	PageDto<CuntaoCountyWhitenameDto> query(CuntaoCountyWhitenameCondition condition);
+	
+	/**
+	 * 按县CODE批量查询
+	 * @param countyCodes
+	 * @return
+	 */
+	List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes);
 }

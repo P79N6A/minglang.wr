@@ -47,4 +47,9 @@ public class CuntaoCountyWhitenameServiceImpl implements CuntaoCountyWhitenameSe
 		return cuntaoCountyWhitenameBo.query(condition);
 	}
 
+	@Override
+	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes) {
+		return cuntaoCountyWhitenameBo.getCuntaoCountyWhitenamesByCountyCode(countyCodes);
+	}
+
 }

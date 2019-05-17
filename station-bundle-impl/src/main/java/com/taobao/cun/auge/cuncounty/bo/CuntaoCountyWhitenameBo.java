@@ -138,4 +138,11 @@ public class CuntaoCountyWhitenameBo {
         return PageDtoUtil.success((Page<CuntaoCountyWhitename>)cuntaoCountyWhitenames, 
         		BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames));
 	}
+	
+	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes){
+		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andCountyCodeIn(countyCodes);
+		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenameMapper.selectByExample(example));
+	}
 }
