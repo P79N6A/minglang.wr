@@ -117,7 +117,7 @@ public class CuntaoCountyWhitenameBo {
 		Preconditions.checkArgument(condition.getPageSize() > 0 && condition.getPageSize() <= 50, "每页数不超过50");
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		Criteria criteria = example.createCriteria();
-		
+		criteria.andIsDeletedEqualTo("n");
 		if(!Strings.isNullOrEmpty(condition.getProvinceCode())) {
 			criteria.andProvinceCodeEqualTo(condition.getProvinceCode());
 		}
@@ -142,7 +142,7 @@ public class CuntaoCountyWhitenameBo {
 	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes){
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andCountyCodeIn(countyCodes);
+		criteria.andCountyCodeIn(countyCodes).andIsDeletedEqualTo("n");
 		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenameMapper.selectByExample(example));
 	}
 }
