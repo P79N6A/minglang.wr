@@ -19,12 +19,14 @@ import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContractEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyOfficeEditDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyWhitenameAddDto;
 import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitename;
 
 /**
  * 对象转换
@@ -117,6 +119,18 @@ public class BeanConvertUtils {
 		cainiaoCounty.setState("new");
 		cainiaoCounty.setCainiaoCountyId(0L);
 		return cainiaoCounty;
+	}
+	
+	/**
+	 * 白名单
+	 * @param cuntaoCountyWhitenameAddDto
+	 * @return
+	 */
+	public static CuntaoCountyWhitename convert(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto) {
+		CuntaoCountyWhitename cuntaoCountyWhitename = createBean(CuntaoCountyWhitename.class, cuntaoCountyWhitenameAddDto);
+		cuntaoCountyWhitename.setState(CuntaoCountyWhitenameDto.STATE_ENABLED);
+		cuntaoCountyWhitename.setCountyId(0L);
+		return cuntaoCountyWhitename;
 	}
 	
 	public static <T, S> List<T> listConvert(Class<T> targetClass, List<S> sources){

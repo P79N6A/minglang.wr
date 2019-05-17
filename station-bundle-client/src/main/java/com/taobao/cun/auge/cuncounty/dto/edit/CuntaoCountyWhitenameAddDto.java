@@ -1,16 +1,13 @@
-package com.taobao.cun.auge.cuncounty.dto;
+package com.taobao.cun.auge.cuncounty.dto.edit;
 
 /**
- * 开县白名单
+ * 添加白名单
  * 
  * @author chengyu.zhoucy
  *
  */
-public class CuntaoCountyWhitenameDto {
-	public static final String STATE_ENABLED = "enabled";
-	public static final String STATE_DISABLED = "disabled";
-    private Long id;
-    /**
+public class CuntaoCountyWhitenameAddDto {
+	/**
      * 省名
      */
     private String provinceName;
@@ -40,36 +37,7 @@ public class CuntaoCountyWhitenameDto {
      */
     private String countyCode;
     
-    /**
-     * 县服务中心ID
-     */
-    private Long countyId;
-    
-    private String state;
-    
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public Long getCountyId() {
-		return countyId;
-	}
-
-	public void setCountyId(Long countyId) {
-		this.countyId = countyId;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private String operator;
 
 	public String getProvinceName() {
 		return provinceName;
@@ -119,4 +87,11 @@ public class CuntaoCountyWhitenameDto {
 		this.countyCode = countyCode;
 	}
 
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 }
