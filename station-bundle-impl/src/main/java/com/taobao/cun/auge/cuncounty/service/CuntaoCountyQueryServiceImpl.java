@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
@@ -51,4 +52,10 @@ public class CuntaoCountyQueryServiceImpl implements CuntaoCountyQueryService {
 	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {
 		return cuntaoCountyQueryBo.getCuntaoCountyByOrgId(orgId);
 	}
+
+	@Override
+	public List<CainiaoWarehouseDto> getCainiaoWarehouseByCountyId(Long countyId) {
+		return cuntaoCountyQueryBo.getCainiaoWarehouseByCountyId(countyId);
+	}
+	
 }

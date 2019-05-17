@@ -5,12 +5,15 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.AttachmentVO;
 import com.taobao.cun.auge.common.utils.BeanCopy;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
@@ -96,6 +99,17 @@ public class BeanConvertUtils {
 	 */
 	public static CuntaoCountyGovContract convert(CuntaoCountyGovContractEditDto cuntaoCountyGovContractEditDto) {
 		return createBean(CuntaoCountyGovContract.class, cuntaoCountyGovContractEditDto);
+	}
+	
+	/**
+	 * 菜鸟县仓
+	 * @param warehouseDTO
+	 * @return
+	 */
+	public static CainiaoWarehouseDto convert(WarehouseDTO warehouseDTO) {
+		CainiaoWarehouseDto cainiaoWarehouseDto = createBean(CainiaoWarehouseDto.class, warehouseDTO);
+		cainiaoWarehouseDto.setState(CainiaoWarehouseStateEnum.valueof(warehouseDTO.getWarehouseStatus().name()));
+		return cainiaoWarehouseDto;
 	}
 	
 	/**
