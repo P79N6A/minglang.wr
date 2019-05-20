@@ -94,8 +94,9 @@ public class CuntaoCountyWhitenameBo {
 	}
 	
 	private boolean isNotExists(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto) {
+		String code = Strings.isNullOrEmpty(cuntaoCountyWhitenameAddDto.getCountyCode()) ? cuntaoCountyWhitenameAddDto.getCityCode() : cuntaoCountyWhitenameAddDto.getCountyCode();
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(cuntaoCountyWhitenameAddDto.getCountyCode());
+		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(code);
 		return Iterables.isEmpty(cuntaoCountyWhitenameMapper.selectByExample(example));
 	}
 
