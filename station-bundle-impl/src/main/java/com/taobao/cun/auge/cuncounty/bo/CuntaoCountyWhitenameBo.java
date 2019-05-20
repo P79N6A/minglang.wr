@@ -56,7 +56,7 @@ public class CuntaoCountyWhitenameBo {
 	 */
 	public CuntaoCountyWhitenameDto getCuntaoCountyWhitenameByCountyCode(String countyCode){
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(countyCode);
+		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(countyCode).andStateEqualTo(CuntaoCountyWhitenameDto.STATE_ENABLED);
 		List<CuntaoCountyWhitename> cuntaoCountyWhitenames = cuntaoCountyWhitenameMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoCountyWhitenames)) {
 			return null;
