@@ -96,7 +96,7 @@ public class CuntaoCountyWhitenameBo {
 	private boolean isNotExists(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto) {
 		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(cuntaoCountyWhitenameAddDto.getCountyCode());
-		return !Iterables.isEmpty(cuntaoCountyWhitenameMapper.selectByExample(example));
+		return Iterables.isEmpty(cuntaoCountyWhitenameMapper.selectByExample(example));
 	}
 
 	public void delete(Long id, String operator) {
