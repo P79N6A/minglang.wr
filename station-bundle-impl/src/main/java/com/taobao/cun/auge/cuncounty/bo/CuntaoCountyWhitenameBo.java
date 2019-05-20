@@ -14,6 +14,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameCondition;
@@ -93,7 +94,9 @@ public class CuntaoCountyWhitenameBo {
 	}
 	
 	private boolean isNotExists(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto) {
-		return getCuntaoCountyWhitenameByCountyCode(cuntaoCountyWhitenameAddDto.getCountyCode()) == null;
+		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andCountyCodeEqualTo(cuntaoCountyWhitenameAddDto.getCountyCode());
+		return !Iterables.isEmpty(cuntaoCountyWhitenameMapper.selectByExample(example));
 	}
 
 	public void delete(Long id, String operator) {
