@@ -52,7 +52,7 @@
   	<foreach collection="list" item="code" open="(" close=")" separator=",">#{code}</foreach>
   	or city_code in
   	<foreach collection="list" item="code" open="(" close=")" separator=",">#{code}</foreach>
-  	) and is_deleted='n'
+  	) and is_deleted='n' and state='enabled'
   </select>
   
   <select id="query" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO">
