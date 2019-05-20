@@ -22,6 +22,7 @@ public interface CuntaoCountyWhitenameService {
 	
 	/**
 	 * 添加白名单
+	 * @param cuntaoCountyWhitenameAddDto
 	 */
 	void addCuntaoCountyWhitename(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto);
 	
