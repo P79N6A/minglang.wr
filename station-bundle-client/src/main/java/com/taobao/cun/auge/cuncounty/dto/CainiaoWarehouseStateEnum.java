@@ -7,7 +7,7 @@ public class CainiaoWarehouseStateEnum {
 	private String code;
     private String desc;
     
-    private static final Map<String, CainiaoWarehouseStateEnum> mappings = new HashMap<String, CainiaoWarehouseStateEnum>();
+    private static final Map<String, CainiaoWarehouseStateEnum> MAPPINGS = new HashMap<String, CainiaoWarehouseStateEnum>();
 
     public static final CainiaoWarehouseStateEnum DELETE = new CainiaoWarehouseStateEnum("DELETE", "已删除");
     public static final CainiaoWarehouseStateEnum USE = new CainiaoWarehouseStateEnum("USE", "已开业");
@@ -15,10 +15,10 @@ public class CainiaoWarehouseStateEnum {
     public static final CainiaoWarehouseStateEnum INIT = new CainiaoWarehouseStateEnum("PLANNING", "待开业");
     
     static {
-    	mappings.put("DELETE", DELETE);
-    	mappings.put("USE", USE);
-    	mappings.put("CLOSE", CLOSE);
-    	mappings.put("INIT", INIT);
+    	MAPPINGS.put("DELETE", DELETE);
+    	MAPPINGS.put("USE", USE);
+    	MAPPINGS.put("CLOSE", CLOSE);
+    	MAPPINGS.put("INIT", INIT);
     }
     
     public CainiaoWarehouseStateEnum(String code, String desc) {
@@ -46,6 +46,6 @@ public class CainiaoWarehouseStateEnum {
         if (code == null) {
             return null;
         }
-        return mappings.get(code);
+        return MAPPINGS.get(code);
     }
 }
