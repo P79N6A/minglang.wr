@@ -144,6 +144,6 @@ public class CuntaoCountyWhitenameBo {
 	
 	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCodes(List<String> codes){
 		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, 
-				cuntaoCountyExtMapper.getCuntaoCountyWhitenamesByCodes(codes.stream().distinct().collect(Collectors.toList())));
+				cuntaoCountyExtMapper.getCuntaoCountyWhitenamesByCodes(codes));
 	}
 }
