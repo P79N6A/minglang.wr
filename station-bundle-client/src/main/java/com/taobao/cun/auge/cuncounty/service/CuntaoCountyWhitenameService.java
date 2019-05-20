@@ -47,9 +47,9 @@ public interface CuntaoCountyWhitenameService {
 	PageDto<CuntaoCountyWhitenameDto> query(CuntaoCountyWhitenameCondition condition);
 	
 	/**
-	 * 按县CODE批量查询
+	 * 按县或者市CODE批量查询
 	 * @param countyCodes
 	 * @return
 	 */
-	List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes);
+	List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCodes(List<String> countyCodes);
 }

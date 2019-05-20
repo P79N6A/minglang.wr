@@ -24,6 +24,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitename;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitenameExample;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitenameExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.CuntaoCountyWhitenameMapper;
+import com.taobao.cun.auge.dal.mapper.ext.CuntaoCountyExtMapper;
 
 /**
  * 开县白名单
@@ -35,6 +36,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCountyWhitenameMapper;
 public class CuntaoCountyWhitenameBo {
 	@Resource
 	private CuntaoCountyWhitenameMapper cuntaoCountyWhitenameMapper;
+	@Resource
+	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	/**
 	 * 获取可开县的白名单
 	 * 
@@ -139,10 +142,8 @@ public class CuntaoCountyWhitenameBo {
         		BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenames));
 	}
 	
-	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCountyCode(List<String> countyCodes){
-		CuntaoCountyWhitenameExample example = new CuntaoCountyWhitenameExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andCountyCodeIn(countyCodes.stream().distinct().collect(Collectors.toList())).andIsDeletedEqualTo("n");
-		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, cuntaoCountyWhitenameMapper.selectByExample(example));
+	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCodes(List<String> codes){
+		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, 
+				cuntaoCountyExtMapper.getCuntaoCountyWhitenamesByCodes(codes.stream().distinct().collect(Collectors.toList())));
 	}
 }
