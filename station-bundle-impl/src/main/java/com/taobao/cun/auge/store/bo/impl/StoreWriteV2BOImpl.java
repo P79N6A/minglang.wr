@@ -76,6 +76,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
     private static final Logger logger = LoggerFactory.getLogger(StoreWriteV2BO.class);
 
+
     @Resource
     private DiamondConfiguredProperties diamondConfiguredProperties;
 
@@ -786,6 +787,9 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
         //更新 门店子照片
         uploadStoreSubImage(cuntaoStore.getShareStoreId());
+//        //绑定门店组
+        //初始化小程序
+        initSingleMiniapp(cuntaoStore.getShareStoreId());
     }
 
     @Override
@@ -797,20 +801,20 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
              *  先判断站点是否存在，不存在的话首先初始化站点
              */
 
-            com.alibaba.alisite.model.Result<SiteDTO> siteDTOResult = siteReadService.getSiteByBizCodeAndBizId(storeId, "place_cuntao");
+            com.alibaba.alisite.model.Result<SiteDTO> siteDTOResult = siteReadService.getSiteByBizCodeAndBizId(storeId, diamondConfiguredProperties.getMinAppBizCode());
             if (siteDTOResult == null || !siteDTOResult.isSuccess()) {
                 result.put("success", false);
                 result.put("errorMessage", "查询站点失败");
                 return result;
             }
             if (siteDTOResult.getResult() == null) {
-                com.alibaba.alisite.model.Result applyResult = siteWriteService.applySite(storeId, "place_cuntao");
+                com.alibaba.alisite.model.Result applyResult = siteWriteService.applySite(storeId, diamondConfiguredProperties.getMinAppBizCode());
                 if (applyResult == null || !applyResult.isSuccess()) {
                     result.put("success", false);
                     result.put("errorMessage", "初始化站点失败");
                     return result;
                 }
-                com.alibaba.alisite.model.Result releaseResult = siteWriteService.releaseSite(storeId, "place_cuntao");
+                com.alibaba.alisite.model.Result releaseResult = siteWriteService.releaseSite(storeId, diamondConfiguredProperties.getMinAppBizCode());
                 if (releaseResult == null || !releaseResult.isSuccess()) {
                     result.put("success", false);
                     result.put("errorMessage", "发布站点失败");
@@ -836,7 +840,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 }
             }
             StoreOpenMiniAppDTO openMiniAppDTO = new StoreOpenMiniAppDTO();
-            openMiniAppDTO.setBizCode("place_cuntao");
+            openMiniAppDTO.setBizCode(diamondConfiguredProperties.getMinAppBizCode());
             openMiniAppDTO.setBizId(storeId);
             openMiniAppDTO.setTbUserId(storeDO.getUserId());
             openMiniAppDTO.setSubBizTypeCode(1);
@@ -863,7 +867,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             openMiniAppDTO.setStoreLongitude(storeDO.getPosx());
             openMiniAppDTO.setStoreLatitude(storeDO.getPosy());
             openMiniAppDTO.setSupportTaobao(true);
-            String storeIcon = "http://img.alicdn.com" + storeDO.getPic();
+            String storeIcon = diamondConfiguredProperties.getMinAppIconPreFix() + storeDO.getPic();
             openMiniAppDTO.setStoreIcon(storeIcon);
 
             openMiniAppDTO.setStoreCategoryCode(String.valueOf(storeDO.getCategoryId()));
@@ -876,7 +880,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             schemaData.put("storeName", storeDO.getName());
             schemaData.put("bizId", storeId);
             schemaData.put("pathInfo", "shop/index");
-            schemaData.put("bizCode", "place_cuntao");
+            schemaData.put("bizCode", diamondConfiguredProperties.getMinAppBizCode());
             openMiniAppDTO.setSchemaData(schemaData);
             // 营业执照号
             //String licenseCode = storeDO.getAttribute(StoreAttribute.LICENSE_CODE.getKey());

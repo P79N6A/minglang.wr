@@ -118,6 +118,12 @@ public class DiamondConfiguredProperties {
     @Value("${com.taobao.cun.auge.store.subImage}")
     private String storeSubImage;
 
+    @Value("${com.taobao.cun.auge.store.minApp.bizCode}")
+    private String minAppBizCode;
+
+    @Value("${com.taobao.cun.auge.store.minApp.icon.prefix}")
+    private String minAppIconPreFix;
+
 
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
@@ -133,6 +139,22 @@ public class DiamondConfiguredProperties {
 
     @Value("${decorate.feedback.route.url}")
     private String decorateFeedbackRouteUrl;
+
+    public String getMinAppBizCode() {
+        return minAppBizCode;
+    }
+
+    public void setMinAppBizCode(String minAppBizCode) {
+        this.minAppBizCode = minAppBizCode;
+    }
+
+    public String getMinAppIconPreFix() {
+        return minAppIconPreFix;
+    }
+
+    public void setMinAppIconPreFix(String minAppIconPreFix) {
+        this.minAppIconPreFix = minAppIconPreFix;
+    }
 
     public String getDecorateFeedbackRouteUrl() {
         return decorateFeedbackRouteUrl;
