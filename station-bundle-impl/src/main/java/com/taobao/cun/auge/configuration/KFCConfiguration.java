@@ -16,11 +16,6 @@ public class KFCConfiguration {
 	@Value("${kfc.globalConfig.packageVersion}")
 	private String packageVersion;
 	
-	@Value("${kfc.applyConfig.applyCode}")
-	private String applyCode;
-	@Value("${kfc.applyConfig.decryptKey}")
-	private String decryptKey;
-	
 	@Bean
 	public LiteMergeSearchService liteMergeSearchService() {
 		LiteMergeSearchService liteMergeSearchService = new LiteMergeSearchService();
