@@ -914,4 +914,19 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             return result;
         }
     }
+
+    @Override
+    public void batchInitSingleMiniapp(List<Long> storeIds) {
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(storeIds)) {
+            for (Long storeId : storeIds) {
+                logger.info("sync initMinApp,storeId={}", storeId);
+                try {
+                    Map<String, Object> stringObjectMap = initSingleMiniapp(storeId);
+                    logger.info("sync initMinApp,storeId="+storeId+"res="+JSON.toJSONString(stringObjectMap));
+                } catch (Exception e) {
+                    logger.error("sync initMinApp error,storeId=" + storeId, e);
+                }
+            }
+        }
+    }
 }

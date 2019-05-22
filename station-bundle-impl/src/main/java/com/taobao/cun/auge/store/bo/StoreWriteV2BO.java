@@ -100,4 +100,12 @@ public interface StoreWriteV2BO {
      * @return
      */
     public Map<String, Object> initSingleMiniapp(Long storeId);
+
+    /**
+     * 初始化小程序
+     *
+     * @param storeIds
+     * @return
+     */
+    public void  batchInitSingleMiniapp(List<Long> storeIds);
 }

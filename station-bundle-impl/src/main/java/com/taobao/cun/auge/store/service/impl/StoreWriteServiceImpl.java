@@ -296,4 +296,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Map<String, Object> initSingleMiniapp(Long storeId) {
 		return storeWriteV2BO.initSingleMiniapp(storeId);
 	}
+
+    @Override
+    public void batchInitSingleMiniapp(List<Long> storeIds) {
+
+    }
 }
