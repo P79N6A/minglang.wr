@@ -795,6 +795,12 @@
 				<groupId>com.taobao.kfc</groupId>
 				<artifactId>kfc-core</artifactId>
 				<version>4.1.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.pandora</groupId>
+						<artifactId>taobao-hsf.sar-bom</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.cun</groupId>

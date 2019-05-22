@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.security;
 
+import java.util.Optional;
+
 import javax.annotation.Resource;
 
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -12,5 +14,10 @@ public class ProhibitedWordCheckServiceImpl implements ProhibitedWordCheckServic
 	@Override
 	public boolean isProhibitedWord(String word) {
 		return prohibitedWordChecker.isProhibitedWord(word);
+	}
+
+	@Override
+	public Optional<String> getProhibitedWord(String text) {
+		return prohibitedWordChecker.getProhibitedWord(text);
 	}
 }

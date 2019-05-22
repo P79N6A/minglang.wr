@@ -32,7 +32,7 @@ public class ProhibitedWordChecker {
             if(result.isMatch()) {
 	            List<MatchItem> matchItems = result.getMatchedKeywords();
 	            if (matchItems.size() > 0) {
-	            	Optional.of(matchItems.get(0).getKeyword());
+	            	return Optional.of(matchItems.get(0).getKeyword());
 	            }
             }
         } finally {
