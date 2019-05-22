@@ -103,7 +103,7 @@ public class ShareStoreConfiguration {
 	@Bean
 	public SiteReadService siteReadService(
 			HsfConsumerContext context,
-			@Value("${hsf.consumer.version.sharestore}") String version){
+			@Value("${hsf.consumer.version.minapp}") String version){
 		return context.hsfConsumerBuilder(SiteReadService.class, HSFGroup.HSF.getName(), version).build();
 	}
 	/**
@@ -115,7 +115,7 @@ public class ShareStoreConfiguration {
 	@Bean
 	public SiteWriteService siteWriteService(
 			HsfConsumerContext context,
-			@Value("${hsf.consumer.version.sharestore}") String version){
+			@Value("${hsf.consumer.version.minapp}") String version){
 		return context.hsfConsumerBuilder(SiteWriteService.class, HSFGroup.HSF.getName(), version).build();
 	}
 
@@ -128,7 +128,7 @@ public class ShareStoreConfiguration {
 	@Bean
 	public MiniAppService miniAppService(
 			HsfConsumerContext context,
-			@Value("${hsf.consumer.version.sharestore}") String version){
+			@Value("${hsf.consumer.version.minapp}") String version){
 		return context.hsfConsumerBuilder(MiniAppService.class, HSFGroup.HSF.getName(), version).build();
 	}
 }

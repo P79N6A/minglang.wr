@@ -797,41 +797,34 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         Map<String, Object> result = new HashMap<>();
         result.put("storeId", String.valueOf(storeId));
         try {
-            /**
-             *  先判断站点是否存在，不存在的话首先初始化站点
-             */
-
+             //先判断站点是否存在，不存在的话首先初始化站点
             com.alibaba.alisite.model.Result<SiteDTO> siteDTOResult = siteReadService.getSiteByBizCodeAndBizId(storeId, diamondConfiguredProperties.getMinAppBizCode());
-            if (siteDTOResult == null || !siteDTOResult.isSuccess()) {
-                result.put("success", false);
-                result.put("errorMessage", "查询站点失败");
-                return result;
+            if (siteDTOResult == null || !siteDTOResult.isSuccess()) {//查询站点失败
+                logger.error("getSiteByBizCodeAndBizId error[" + storeId + "]");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId+"");
+
             }
             if (siteDTOResult.getResult() == null) {
                 com.alibaba.alisite.model.Result applyResult = siteWriteService.applySite(storeId, diamondConfiguredProperties.getMinAppBizCode());
-                if (applyResult == null || !applyResult.isSuccess()) {
-                    result.put("success", false);
-                    result.put("errorMessage", "初始化站点失败");
-                    return result;
+                if (applyResult == null || !applyResult.isSuccess()) {//初始化站点失败
+                    logger.error("applySite error[" + storeId + "]");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
                 }
                 com.alibaba.alisite.model.Result releaseResult = siteWriteService.releaseSite(storeId, diamondConfiguredProperties.getMinAppBizCode());
                 if (releaseResult == null || !releaseResult.isSuccess()) {
-                    result.put("success", false);
-                    result.put("errorMessage", "发布站点失败");
-                    return result;
+                    //发布站点失败
+                    logger.error("releaseSite error[" + storeId + "]");
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
                 }
             }
             /**
              *  初始化小程序
              */
             com.taobao.place.client.domain.dataobject.StoreDO storeDO = storeServiceV2.getStoreByIdWithCache(storeId);
-            if (storeDO == null) {
-                result.put("success", false);
-                result.put("errorMessage", "查询门店失败");
-                return result;
+            if (storeDO == null) {//查询门店失败
+                logger.error("getStoreByIdWithCache error[" + storeId + "]");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
             }
-
-
             if (StringUtils.isNotEmpty(storeDO.getName())) {
                 if (storeDO.getName().contains("(") || storeDO.getName().contains(")")
                         || storeDO.getName().contains("（") || storeDO.getName().contains("）")) {
@@ -869,7 +862,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             openMiniAppDTO.setSupportTaobao(true);
             String storeIcon = diamondConfiguredProperties.getMinAppIconPreFix() + storeDO.getPic();
             openMiniAppDTO.setStoreIcon(storeIcon);
-
             openMiniAppDTO.setStoreCategoryCode(String.valueOf(storeDO.getCategoryId()));
             //openMiniAppDTO.setTemplateId(templateId);
             //openMiniAppDTO.setTemplateVersion(version);
@@ -884,7 +876,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             openMiniAppDTO.setSchemaData(schemaData);
             // 营业执照号
             //String licenseCode = storeDO.getAttribute(StoreAttribute.LICENSE_CODE.getKey());
-
             /**
              * 以下字段不能为空
              */
