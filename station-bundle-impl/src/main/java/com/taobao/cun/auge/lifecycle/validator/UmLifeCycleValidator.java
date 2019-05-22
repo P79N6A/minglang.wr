@@ -149,7 +149,7 @@ public class UmLifeCycleValidator {
     public void checkStationNameKfc(String stationName) {
         if (prohibitedWordChecker.hasProhibitedWord(stationName)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-                "优盟店名称包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(stationName));
+                "优盟店名称包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(stationName).get());
         }
     }
 
@@ -161,7 +161,7 @@ public class UmLifeCycleValidator {
     public void checkAdressKfc(String addressDetail) {
         if (prohibitedWordChecker.hasProhibitedWord(addressDetail)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-                "地址包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(addressDetail));
+                "地址包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(addressDetail).get());
         }
     }
 

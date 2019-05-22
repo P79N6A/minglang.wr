@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.common.utils.DateUtil;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
@@ -49,6 +50,8 @@ public class CuntaoCountyQueryBo {
 	private CuntaoCountyExtMapper cuntaoCountyExtMapper;
 	@Resource
 	private CuntaoUserOrgService cuntaoUserOrgService;
+	@Resource
+	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
 	
 	/**
 	 * 县点基本信息
@@ -213,6 +216,10 @@ public class CuntaoCountyQueryBo {
 				item.setTownName(office.getTownName());
 			}
 		}
+	}
+	
+	public List<CainiaoWarehouseDto> getCainiaoWarehouseByCountyId(Long countyId){
+		return cainiaoCountyRemoteBo.getCainiaoWarehouseByCountyId(countyId);
 	}
 	
 	class CountyOrgInfo{

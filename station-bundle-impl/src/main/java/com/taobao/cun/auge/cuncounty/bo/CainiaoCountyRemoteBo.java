@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -8,6 +12,7 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.taobao.cun.auge.cuncounty.dto.CainiaoCountyDto;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
 import com.taobao.cun.auge.cuncounty.mail.CainiaoCountyUpdateMessage;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
@@ -44,6 +49,14 @@ public class CainiaoCountyRemoteBo {
 	private CainiaoCountyUpdateMessage cainiaoCountyUpdateMessage;
 	@Resource
 	private CaiNiaoService caiNiaoService;
+	
+	public List<CainiaoWarehouseDto> getCainiaoWarehouseByCountyId(Long countyId) {
+		return Stream.of(countyId)
+		.filter(i->null != cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyId, CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION))
+		.flatMap(i->caiNiaoAdapter.queryWarehouseById(countyId).stream())
+		.map(BeanConvertUtils::convert)
+		.collect(Collectors.toList());
+	}
 	
 	Long createCainiaoCounty(Long countyId){
 		CainiaoCounty cainiaoCounty = cuntaoCountyExtMapper.getCainiaoCounty(countyId);

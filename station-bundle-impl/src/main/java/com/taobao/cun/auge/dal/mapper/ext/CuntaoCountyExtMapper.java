@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitename;
 
 /**
  * 县服务中心
@@ -115,4 +116,11 @@ public interface CuntaoCountyExtMapper {
 	 * @param operator
 	 */
 	void updateCainiaoCountyStoreType(@Param("id") Long id, @Param("storeType") String storeType, @Param("operator") String operator);
+	
+	/**
+	 * 按code（县 or 市）查询白名单
+	 * @param codes
+	 * @return
+	 */
+	List<CuntaoCountyWhitename> getCuntaoCountyWhitenamesByCodes(List<String> codes);
 }
