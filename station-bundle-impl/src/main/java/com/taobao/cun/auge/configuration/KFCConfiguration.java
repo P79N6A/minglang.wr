@@ -1,13 +1,9 @@
 package com.taobao.cun.auge.configuration;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.google.common.collect.Lists;
-import com.taobao.kfc.client.lite.config.ApplyConfig;
 import com.taobao.kfc.client.lite.config.GlobalConfig;
 import com.taobao.kfc.client.lite.service.LiteMergeSearchService;
 
