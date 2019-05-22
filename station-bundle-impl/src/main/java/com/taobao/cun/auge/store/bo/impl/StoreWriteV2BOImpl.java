@@ -905,8 +905,14 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 openMiniAppDTO.setStoreLatitude(0D);
             }
             com.alibaba.alisite.model.Result openResult = miniAppService.open(openMiniAppDTO);
-            result.put("success", true);
-            result.put("data", openResult);
+            if(openResult.isSuccess()) {
+                result.put("data", openResult.getResult());
+                result.put("success", true);
+
+            }else {
+                result.put("success", false);
+                result.put("error", openResult.getError());
+            }
             return result;
         } catch (Exception e) {
             result.put("success", false);
