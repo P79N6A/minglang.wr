@@ -130,6 +130,9 @@ public class DiamondConfiguredProperties {
     @Value("${com.taobao.cun.auge.store.minApp.version}")
     private String minAppVersion;
 
+    @Value("${com.taobao.cun.auge.store.minApp.getlastversion}")
+    private String minAppGetLastVersion;
+
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
 
@@ -144,6 +147,14 @@ public class DiamondConfiguredProperties {
 
     @Value("${decorate.feedback.route.url}")
     private String decorateFeedbackRouteUrl;
+
+    public String getMinAppGetLastVersion() {
+        return minAppGetLastVersion;
+    }
+
+    public void setMinAppGetLastVersion(String minAppGetLastVersion) {
+        this.minAppGetLastVersion = minAppGetLastVersion;
+    }
 
     public String getMinAppTemplateId() {
         return minAppTemplateId;
