@@ -797,7 +797,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         Map<String, Object> result = new HashMap<>();
         result.put("storeId", String.valueOf(storeId));
         try {
-             //先判断站点是否存在，不存在的话首先初始化站点
+            //这段逻辑应不在需要，对方接口内部判断
+            /* //先判断站点是否存在，不存在的话首先初始化站点
             com.alibaba.alisite.model.Result<SiteDTO> siteDTOResult = siteReadService.getSiteByBizCodeAndBizId(storeId, diamondConfiguredProperties.getMinAppBizCode());
             if (siteDTOResult == null || !siteDTOResult.isSuccess()) {//查询站点失败
                 logger.error("getSiteByBizCodeAndBizId error[" + storeId + "]");
@@ -816,7 +817,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                     logger.error("releaseSite error[" + storeId + "]");
                     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
                 }
-            }
+            }*/
             /**
              *  初始化小程序
              */
