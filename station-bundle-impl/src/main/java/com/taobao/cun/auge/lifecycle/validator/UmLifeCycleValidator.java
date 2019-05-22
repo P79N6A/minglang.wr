@@ -1,10 +1,16 @@
 package com.taobao.cun.auge.lifecycle.validator;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.security.ProhibitedWordChecker;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -15,9 +21,6 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.um.dto.UnionMemberUpdateDto;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author haihu.fhh
@@ -34,9 +37,9 @@ public class UmLifeCycleValidator {
     @Autowired
     private PartnerInstanceQueryService partnerInstanceQueryService;
 
-    @Autowired
-    private KFCServiceConfig kfcServiceConfig;
-
+    @Resource
+	private ProhibitedWordChecker prohibitedWordChecker;
+	
     //优盟描述最多50个字
     private static final int UM_DESC_MAX_SIZE = 50;
 
@@ -144,9 +147,9 @@ public class UmLifeCycleValidator {
      * @param stationName
      */
     public void checkStationNameKfc(String stationName) {
-        if (kfcServiceConfig.isProhibitedWord(stationName)) {
+        if (prohibitedWordChecker.hasProhibitedWord(stationName)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-                "优盟店名称包含违禁词汇：" + kfcServiceConfig.kfcCheck(stationName).get("word"));
+                "优盟店名称包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(stationName));
         }
     }
 
@@ -156,9 +159,9 @@ public class UmLifeCycleValidator {
      * @param addressDetail
      */
     public void checkAdressKfc(String addressDetail) {
-        if (kfcServiceConfig.isProhibitedWord(addressDetail)) {
+        if (prohibitedWordChecker.hasProhibitedWord(addressDetail)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,
-                "地址包含违禁词汇：" + kfcServiceConfig.kfcCheck(addressDetail).get("word"));
+                "地址包含违禁词汇：" + prohibitedWordChecker.getProhibitedWord(addressDetail));
         }
     }
 

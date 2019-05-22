@@ -19,6 +19,7 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 public class Application{
 
     public static void main(String[] args) {
+    	System.setProperty("kfc.enableSlsLog", "false");
 		SpringApplication.run(Application.class, args);
     }
 
