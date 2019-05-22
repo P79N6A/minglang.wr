@@ -17,6 +17,8 @@ public class KFCConfiguration {
 	private String environment;
 	@Value("${kfc.globalConfig.projectName}")
 	private String projectName;
+	@Value("${kfc.globalConfig.packageVersion}")
+	private String packageVersion;
 	
 	@Value("${kfc.applyConfig.applyCode}")
 	private String applyCode;
@@ -33,15 +35,8 @@ public class KFCConfiguration {
 		globalConfig.setLoadMode("serialization");
 		globalConfig.setSerializationType("hessian");
 		globalConfig.setReloadDelay(5);
-		//globalConfig.setPackageVersion(packageVersion);
+		globalConfig.setPackageVersion(packageVersion);
 		liteMergeSearchService.setGlobalConfig(globalConfig);
-		
-		List<ApplyConfig> applyConfigs = Lists.newArrayList();
-		ApplyConfig applyConfig = new ApplyConfig();
-		applyConfig.setApplyCode(applyCode);
-		applyConfig.setDecryptKey(decryptKey);
-		applyConfigs.add(applyConfig);
-		liteMergeSearchService.setApplyConfigs(applyConfigs);
 		return liteMergeSearchService;
 	}
 }
