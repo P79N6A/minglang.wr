@@ -864,8 +864,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             String storeIcon = diamondConfiguredProperties.getMinAppIconPreFix() + storeDO.getPic();
             openMiniAppDTO.setStoreIcon(storeIcon);
             openMiniAppDTO.setStoreCategoryCode(String.valueOf(storeDO.getCategoryId()));
-            //openMiniAppDTO.setTemplateId(templateId);
-            //openMiniAppDTO.setTemplateVersion(version);
+            openMiniAppDTO.setTemplateId(Long.parseLong(diamondConfiguredProperties.getMinAppTemplateId()));
+            openMiniAppDTO.setTemplateVersion(Integer.parseInt(diamondConfiguredProperties.getMinAppVersion()));
             Map<String, Object> schemaData = new HashMap<>();
             schemaData.put("storeId", storeId);
             schemaData.put("storeIcon", storeIcon);
