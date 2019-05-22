@@ -773,7 +773,12 @@
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>oss-client</artifactId>
-				<version>1.0.6</version>
+				<version>1.0.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun.oss</groupId>
+				<artifactId>aliyun-sdk-oss</artifactId>
+				<version>3.4.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.kfc</groupId>
