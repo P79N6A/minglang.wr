@@ -30,7 +30,7 @@ public class KFCConfiguration {
 		globalConfig.setEnvironment(environment);
 		globalConfig.setProjectName(projectName);
 		globalConfig.setGroupName("default");
-		globalConfig.setLoadMode("loadMode");
+		globalConfig.setLoadMode("serialization");
 		globalConfig.setSerializationType("hessian");
 		globalConfig.setReloadDelay(5);
 		//globalConfig.setPackageVersion(packageVersion);
