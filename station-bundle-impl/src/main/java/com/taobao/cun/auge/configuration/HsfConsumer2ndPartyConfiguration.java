@@ -1,5 +1,17 @@
 package com.taobao.cun.auge.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
+import org.esb.finance.service.contract.EsbFinanceContractAdapter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ProductService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
@@ -88,20 +100,8 @@ import com.taobao.uic.common.util.ClientInfo;
 import com.taobao.union.api.client.service.EntryService;
 import com.taobao.wws.hsf2icesrv;
 import com.tmall.usc.channel.client.UscChannelRelationService;
-import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
-import org.esb.finance.service.contract.EsbFinanceContractAdapter;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.util.ArrayList;
-import java.util.List;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration  {
-
 	@HSFConsumer(serviceVersion="${new.customer.unit.service.version}",serviceGroup="HSF")
 	private NewCustomerUnitQueryService newCustomerUnitQueryService;
 
