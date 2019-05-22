@@ -12,8 +12,8 @@ public class ProhibitedWordCheckServiceImpl implements ProhibitedWordCheckServic
 	private ProhibitedWordChecker prohibitedWordChecker;
 	
 	@Override
-	public boolean isProhibitedWord(String word) {
-		return prohibitedWordChecker.isProhibitedWord(word);
+	public boolean hasProhibitedWord(String word) {
+		return prohibitedWordChecker.hasProhibitedWord(word);
 	}
 
 	@Override

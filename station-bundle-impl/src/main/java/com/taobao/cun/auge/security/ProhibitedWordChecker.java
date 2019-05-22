@@ -41,7 +41,7 @@ public class ProhibitedWordChecker {
         return Optional.empty();
     }
 
-	public boolean isProhibitedWord(String word) {
+	public boolean hasProhibitedWord(String word) {
 		return getProhibitedWord(word).isPresent();
 	}
 }

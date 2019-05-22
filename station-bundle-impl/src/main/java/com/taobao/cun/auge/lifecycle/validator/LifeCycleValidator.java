@@ -1,13 +1,18 @@
 package com.taobao.cun.auge.lifecycle.validator;
 
-import com.alibaba.common.lang.StringUtil;
+import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.security.ProhibitedWordChecker;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -19,9 +24,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class LifeCycleValidator {
@@ -34,8 +36,8 @@ public class LifeCycleValidator {
 	@Autowired
     StationBO stationBO;
 	
-	@Autowired
-	private KFCServiceConfig kfcServiceConfig;
+	@Resource
+	private ProhibitedWordChecker prohibitedWordChecker;
 
 
 	public void validateSettling(PartnerInstanceDto partnerInstanceDto) throws AugeBusinessException {
@@ -91,8 +93,8 @@ public class LifeCycleValidator {
                 && !StringUtil.isEmpty(ins.getStationDto().getAddress().getAddressDetail())) {
             sb.append(ins.getStationDto().getAddress().getAddressDetail());
         }
-	    if(kfcServiceConfig.isProhibitedWord(sb.toString())){
-	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+kfcServiceConfig.kfcCheck(sb.toString()).get("word"));
+	    if(prohibitedWordChecker.hasProhibitedWord(sb.toString())){
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+prohibitedWordChecker.getProhibitedWord(sb.toString()));
 	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
 	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址不可以包含村小二名称");
 	    }

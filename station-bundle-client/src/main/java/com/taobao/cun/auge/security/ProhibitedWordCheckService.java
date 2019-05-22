@@ -13,7 +13,7 @@ public interface ProhibitedWordCheckService {
 	 * @param word
 	 * @return
 	 */
-	boolean isProhibitedWord(String word);
+	boolean hasProhibitedWord(String word);
 	
 	/**
 	 * 获取一段文本中包含的一个违禁词

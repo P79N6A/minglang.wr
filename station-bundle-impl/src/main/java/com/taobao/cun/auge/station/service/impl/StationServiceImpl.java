@@ -13,12 +13,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
@@ -83,9 +81,6 @@ public class StationServiceImpl implements StationService {
     
     @Autowired
     private LifeCycleValidator lifeCycleValidator;
-    
-    @Autowired
-    KFCServiceConfig kfcServiceConfig;
     
     @Autowired
     private StationMapper stationMapper;
