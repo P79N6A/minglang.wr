@@ -47,6 +47,14 @@
   update cainiao_county set cainiao_county_id= #{caiNiaostationId} where county_id=#{countyId}
   </update>
   
+  <select id="getCuntaoCountyWhitenamesByCodes" parameterType="list" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoCountyWhitenameMapper.BaseResultMap">
+  	select distinct * from cuntao_county_whitename where (county_code in
+  	<foreach collection="list" item="code" open="(" close=")" separator=",">#{code}</foreach>
+  	or city_code in
+  	<foreach collection="list" item="code" open="(" close=")" separator=",">#{code}</foreach>
+  	) and is_deleted='n' and state='enabled'
+  </select>
+  
   <select id="query" parameterType="com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition" resultType="com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO">
 	SELECT
 		a.id,
