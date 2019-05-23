@@ -118,6 +118,20 @@ public class DiamondConfiguredProperties {
     @Value("${com.taobao.cun.auge.store.subImage}")
     private String storeSubImage;
 
+    @Value("${com.taobao.cun.auge.store.minApp.bizCode}")
+    private String minAppBizCode;
+
+    @Value("${com.taobao.cun.auge.store.minApp.icon.prefix}")
+    private String minAppIconPreFix;
+
+    @Value("${com.taobao.cun.auge.store.minApp.templateid}")
+    private String minAppTemplateId;
+
+    @Value("${com.taobao.cun.auge.store.minApp.version}")
+    private String minAppVersion;
+
+    @Value("${com.taobao.cun.auge.store.minApp.getlastversion}")
+    private String minAppGetLastVersion;
 
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
@@ -133,6 +147,46 @@ public class DiamondConfiguredProperties {
 
     @Value("${decorate.feedback.route.url}")
     private String decorateFeedbackRouteUrl;
+
+    public String getMinAppGetLastVersion() {
+        return minAppGetLastVersion;
+    }
+
+    public void setMinAppGetLastVersion(String minAppGetLastVersion) {
+        this.minAppGetLastVersion = minAppGetLastVersion;
+    }
+
+    public String getMinAppTemplateId() {
+        return minAppTemplateId;
+    }
+
+    public void setMinAppTemplateId(String minAppTemplateId) {
+        this.minAppTemplateId = minAppTemplateId;
+    }
+
+    public String getMinAppVersion() {
+        return minAppVersion;
+    }
+
+    public void setMinAppVersion(String minAppVersion) {
+        this.minAppVersion = minAppVersion;
+    }
+
+    public String getMinAppBizCode() {
+        return minAppBizCode;
+    }
+
+    public void setMinAppBizCode(String minAppBizCode) {
+        this.minAppBizCode = minAppBizCode;
+    }
+
+    public String getMinAppIconPreFix() {
+        return minAppIconPreFix;
+    }
+
+    public void setMinAppIconPreFix(String minAppIconPreFix) {
+        this.minAppIconPreFix = minAppIconPreFix;
+    }
 
     public String getDecorateFeedbackRouteUrl() {
         return decorateFeedbackRouteUrl;

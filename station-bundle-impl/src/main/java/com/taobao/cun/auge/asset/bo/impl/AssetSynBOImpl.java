@@ -551,7 +551,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 					updateAsset.setAliNo(a.getAliNo());
 					updateAsset.setOwnerName(ownerName);
 					updateAsset.setOwnerWorkno(ownerWorkNo);
-					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())|| a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())) {
 						//||a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())
 						updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 					}
