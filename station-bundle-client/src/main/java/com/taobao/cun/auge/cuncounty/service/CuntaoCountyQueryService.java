@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.taobao.cun.auge.common.PageOutput;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
@@ -51,4 +52,11 @@ public interface CuntaoCountyQueryService {
 	 * @return
 	 */
 	CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId);
+	
+	/**
+	 * 获取菜鸟县仓信息
+	 * @param countyId
+	 * @return
+	 */
+	List<CainiaoWarehouseDto> getCainiaoWarehouseByCountyId(Long countyId);
 }

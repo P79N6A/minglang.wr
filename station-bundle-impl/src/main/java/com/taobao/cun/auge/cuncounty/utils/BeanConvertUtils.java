@@ -5,12 +5,15 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.AttachmentVO;
 import com.taobao.cun.auge.common.utils.BeanCopy;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
+import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyWhitenameDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CainiaoCountyEditDto;
@@ -19,12 +22,14 @@ import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContactAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovContractEditDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyGovProtocolAddDto;
 import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyOfficeEditDto;
+import com.taobao.cun.auge.cuncounty.dto.edit.CuntaoCountyWhitenameAddDto;
 import com.taobao.cun.auge.dal.domain.CainiaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContact;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovContract;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyGovProtocol;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyOffice;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyWhitename;
 
 /**
  * 对象转换
@@ -97,6 +102,17 @@ public class BeanConvertUtils {
 	}
 	
 	/**
+	 * 菜鸟县仓
+	 * @param warehouseDTO
+	 * @return
+	 */
+	public static CainiaoWarehouseDto convert(WarehouseDTO warehouseDTO) {
+		CainiaoWarehouseDto cainiaoWarehouseDto = createBean(CainiaoWarehouseDto.class, warehouseDTO);
+		cainiaoWarehouseDto.setState(CainiaoWarehouseStateEnum.valueof(warehouseDTO.getWarehouseStatus().name()));
+		return cainiaoWarehouseDto;
+	}
+	
+	/**
 	 * 政府协议
 	 * @param cuntaoCountyGovProtocolAddDto
 	 * @return
@@ -117,6 +133,18 @@ public class BeanConvertUtils {
 		cainiaoCounty.setState("new");
 		cainiaoCounty.setCainiaoCountyId(0L);
 		return cainiaoCounty;
+	}
+	
+	/**
+	 * 白名单
+	 * @param cuntaoCountyWhitenameAddDto
+	 * @return
+	 */
+	public static CuntaoCountyWhitename convert(CuntaoCountyWhitenameAddDto cuntaoCountyWhitenameAddDto) {
+		CuntaoCountyWhitename cuntaoCountyWhitename = createBean(CuntaoCountyWhitename.class, cuntaoCountyWhitenameAddDto);
+		cuntaoCountyWhitename.setState(CuntaoCountyWhitenameDto.STATE_ENABLED);
+		cuntaoCountyWhitename.setCountyId(0L);
+		return cuntaoCountyWhitename;
 	}
 	
 	public static <T, S> List<T> listConvert(Class<T> targetClass, List<S> sources){

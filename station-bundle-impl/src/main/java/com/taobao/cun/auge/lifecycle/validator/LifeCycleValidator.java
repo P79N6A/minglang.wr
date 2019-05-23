@@ -94,7 +94,7 @@ public class LifeCycleValidator {
             sb.append(ins.getStationDto().getAddress().getAddressDetail());
         }
 	    if(prohibitedWordChecker.hasProhibitedWord(sb.toString())){
-	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+prohibitedWordChecker.getProhibitedWord(sb.toString()));
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+prohibitedWordChecker.getProhibitedWord(sb.toString()).get());
 	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
 	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址不可以包含村小二名称");
 	    }
