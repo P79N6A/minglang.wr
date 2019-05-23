@@ -4,6 +4,7 @@ import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreGroupInfoDto;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建门店  新接口
@@ -92,4 +93,19 @@ public interface StoreWriteV2BO {
      * @return
      */
     public Boolean syncAddStoreInfo(List<Long> stationId);
+
+    /**
+     * 初始化门店小程序
+     * @param storeId
+     * @return
+     */
+    public Map<String, Object> initSingleMiniapp(Long storeId);
+
+    /**
+     * 初始化小程序
+     *
+     * @param storeIds
+     * @return
+     */
+    public void  batchInitSingleMiniapp(List<Long> storeIds);
 }

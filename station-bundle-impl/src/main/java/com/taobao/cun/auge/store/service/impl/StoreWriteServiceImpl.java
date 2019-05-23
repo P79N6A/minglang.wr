@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @HSFProvider(serviceInterface = StoreWriteService.class)
 @Service("storeWriteService")
@@ -289,5 +290,15 @@ public class StoreWriteServiceImpl implements StoreWriteService {
     @Override
     public Boolean unBindStoreGroup(Long groupId, List<Long> shareStoreIds) {
         return storeWriteV2BO.unBindStoreGroup(groupId,shareStoreIds);
+    }
+
+	@Override
+	public Map<String, Object> initSingleMiniapp(Long storeId) {
+		return storeWriteV2BO.initSingleMiniapp(storeId);
+	}
+
+    @Override
+    public void batchInitSingleMiniapp(List<Long> storeIds) {
+
     }
 }

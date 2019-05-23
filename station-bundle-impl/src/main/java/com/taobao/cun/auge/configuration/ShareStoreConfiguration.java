@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.configuration;
 
+import com.alibaba.alisite.api.MiniAppService;
+import com.alibaba.alisite.api.SiteReadService;
+import com.alibaba.alisite.api.SiteWriteService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.inventory.sic.service.client.store.StoreInfoServiceClient;
@@ -8,10 +11,7 @@ import com.taobao.place.client.service.GroupBindService;
 import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreGroupService;
 import com.taobao.place.client.service.StoreUpdateService;
-import com.taobao.place.client.service.v2.StoreCreateServiceV2;
-import com.taobao.place.client.service.v2.StoreExtendServiceV2;
-import com.taobao.place.client.service.v2.StoreUpdateServiceV2;
-import com.taobao.place.client.service.v2.StoreDeleteServiceV2;
+import com.taobao.place.client.service.v2.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,5 +85,50 @@ public class ShareStoreConfiguration {
 			HsfConsumerContext context,
 			@Value("${hsf.consumer.version.sharestore}") String version){
 		return context.hsfConsumerBuilder(GroupBindService.class, HSFGroup.HSF.getName(), version).build();
+	}
+
+	@Bean
+	public StoreServiceV2 storeServiceV2(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.sharestore}") String version){
+		return context.hsfConsumerBuilder(StoreServiceV2.class, HSFGroup.HSF.getName(), version).build();
+	}
+
+	/**
+	 * 门点小程序 查询服务
+	 * @param context
+	 * @param version
+	 * @return
+	 */
+	@Bean
+	public SiteReadService siteReadService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.minapp}") String version){
+		return context.hsfConsumerBuilder(SiteReadService.class, HSFGroup.HSF.getName(), version).build();
+	}
+	/**
+	 * 门点小程序 写服务
+	 * @param context
+	 * @param version
+	 * @return
+	 */
+	@Bean
+	public SiteWriteService siteWriteService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.minapp}") String version){
+		return context.hsfConsumerBuilder(SiteWriteService.class, HSFGroup.HSF.getName(), version).build();
+	}
+
+	/**
+	 * 门点小程序 写服务
+	 * @param context
+	 * @param version
+	 * @return
+	 */
+	@Bean
+	public MiniAppService miniAppService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.minapp}") String version){
+		return context.hsfConsumerBuilder(MiniAppService.class, HSFGroup.HSF.getName(), version).build();
 	}
 }
