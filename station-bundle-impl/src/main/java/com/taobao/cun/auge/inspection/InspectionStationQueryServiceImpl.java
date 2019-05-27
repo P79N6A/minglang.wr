@@ -18,8 +18,6 @@ import com.taobao.cun.auge.dal.domain.InspectionStation;
 import com.taobao.cun.auge.dal.example.InspectionStationExample;
 import com.taobao.cun.auge.dal.mapper.InspectionStationMapper;
 import com.taobao.cun.auge.inspection.condition.InspectionPagedCondition;
-import com.taobao.cun.auge.inspection.condition.InspectionStationTypes;
-import com.taobao.cun.auge.inspection.condition.InspectionStatus;
 import com.taobao.cun.auge.inspection.dto.InspectionStationDto;
 import com.taobao.cun.auge.inspection.dto.InspectionStatusSummaryDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -57,12 +55,11 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
         //待审批 未自检 属于自检的状态
         if (InspectionStateEnum.TO_AUDIT.getCode().equalsIgnoreCase(inspectionState) || InspectionStateEnum.UN_PARTER_INSPECTION.getCode().equalsIgnoreCase(inspectionState)) {
             return InspectionTypeEnum.PARTNER_INSPECTION.getCode();
-        }else if(InspectionStateEnum.UNINSPECTION.getCode().equalsIgnoreCase(inspectionState)){
+        } else if (InspectionStateEnum.UNINSPECTION.getCode().equalsIgnoreCase(inspectionState)) {
             return InspectionTypeEnum.INSPECTION.getCode();
         }
         return null;
     }
-
 
     private List<InspectionStationDto> convert(List<InspectionStation> inspections) {
         List<InspectionStationDto> results = Lists.newArrayList();
@@ -80,7 +77,6 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
         return results;
     }
 
-
     @Override
     public InspectionStatusSummaryDto countInspectionStatusSummary(
             InspectionPagedCondition condition) {
@@ -95,13 +91,16 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
         example.setInspectionState(condition.getInspectionState());
         List<InspectionStatusSummary> summary = partnerInstanceInspectionMapper.countInspectionSummaryByExample(example);
         InspectionStatusSummaryDto result = new InspectionStatusSummaryDto();
-        Integer hasInspection = getInspetionStatusCount(InspectionStatus.HAS_INSPECTION, summary);
-        Integer planInspection = getInspetionStatusCount(InspectionStatus.PLAN_INSPECTION, summary);
-        Integer unInspection = getInspetionStatusCount(InspectionStatus.UNINSPECTION, summary);
+        //未巡检
+        Integer unInspection = getInspetionStatusCount(InspectionStateEnum.UNINSPECTION.getCode(), summary);
+        //待审批
+        Integer toAudit = getInspetionStatusCount(InspectionStateEnum.TO_AUDIT.getCode(), summary);
+        //未自检
+        Integer unPartnerInspection = getInspetionStatusCount(InspectionStateEnum.UN_PARTER_INSPECTION.getCode(), summary);
         PageDto<InspectionStationDto> page = queryByPage(condition);
-        result.setHasInspectionNum(hasInspection);
-        result.setPlanInspectionNum(planInspection);
         result.setUnInspectionNum(unInspection);
+        result.setToAuditInspectionNum(toAudit);
+        result.setUnPartnerInspectionNum(unPartnerInspection);
         result.setTotalInspectionNum(Integer.parseInt(page.getTotal() + ""));
         return result;
     }

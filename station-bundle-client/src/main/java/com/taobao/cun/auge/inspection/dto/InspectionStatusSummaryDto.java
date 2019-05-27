@@ -20,14 +20,14 @@ public class InspectionStatusSummaryDto implements Serializable{
 	private Integer unInspectionNum;
 	
 	/**
-	 * 计划巡检
+	 * 未自检
 	 */
-	private Integer planInspectionNum;
+	private Integer unPartnerInspectionNum;
 	
 	/**
-	 * 已巡检
+	 * 待审核
 	 */
-	private Integer hasInspectionNum;
+	private Integer toAuditInspectionNum;
 
 	public Integer getTotalInspectionNum() {
 		return totalInspectionNum;
@@ -45,22 +45,19 @@ public class InspectionStatusSummaryDto implements Serializable{
 		this.unInspectionNum = unInspectionNum;
 	}
 
-	public Integer getPlanInspectionNum() {
-		return planInspectionNum;
+	public Integer getUnPartnerInspectionNum() {
+		return unPartnerInspectionNum;
 	}
 
-	public void setPlanInspectionNum(Integer planInspectionNum) {
-		this.planInspectionNum = planInspectionNum;
+	public void setUnPartnerInspectionNum(Integer unPartnerInspectionNum) {
+		this.unPartnerInspectionNum = unPartnerInspectionNum;
 	}
 
-	public Integer getHasInspectionNum() {
-		return hasInspectionNum;
+	public Integer getToAuditInspectionNum() {
+		return toAuditInspectionNum;
 	}
 
-	public void setHasInspectionNum(Integer hasInspectionNum) {
-		this.hasInspectionNum = hasInspectionNum;
+	public void setToAuditInspectionNum(Integer toAuditInspectionNum) {
+		this.toAuditInspectionNum = toAuditInspectionNum;
 	}
-	
-	
-	
 }
