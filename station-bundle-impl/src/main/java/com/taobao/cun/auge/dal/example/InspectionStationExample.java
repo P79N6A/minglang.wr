@@ -17,50 +17,50 @@ public class InspectionStationExample implements Serializable {
 	 * 组织ID路径
 	 */
     private String orgIdPath;
-	
+
     /**
      * 服务站类型
      */
 	private String type;
-	
+
 	/**
 	 * 服务站入驻状态
 	 */
 	private String state;
-	
+
 	/**
 	 * 服务站入驻状态
 	 */
 	private List<String> states;
-	
+
 	/**
 	 * 村点名称
 	 */
 	private String stationName;
-	
+
 	/**
 	 * 门店类型
 	 */
 	private String storeCategory;
 
 	/**
-	 * 服务站模式
+	 * 巡检类型
 	 */
-	private String mode;
-	
+	private String inspectionType;
+
 	/**
 	 * 巡检状态
 	 */
 	private String inspectionState;
-	
-	
+
+
 	private String  level;
-	
+
 	/**
 	 * 服务开始时间
 	 */
 	private Date serviceBeginDate;
-	
+
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -101,14 +101,6 @@ public class InspectionStationExample implements Serializable {
 		this.storeCategory = storeCategory;
 	}
 
-	public String getMode() {
-		return mode;
-	}
-
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
-
 	public String getInspectionState() {
 		return inspectionState;
 	}
@@ -141,4 +133,11 @@ public class InspectionStationExample implements Serializable {
 		this.states = states;
 	}
 
+	public String getInspectionType() {
+		return inspectionType;
+	}
+
+	public void setInspectionType(String inspectionType) {
+		this.inspectionType = inspectionType;
+	}
 }
