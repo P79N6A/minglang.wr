@@ -112,7 +112,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     @Autowired
     private StationBO stationBo;
 
-    private ExecutorService executorService = new ThreadPoolExecutor(5,30,60000, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(200));
+    private ExecutorService executorService = new ThreadPoolExecutor(5,30,60000, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<>());
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
@@ -450,13 +450,24 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
             for (PartnerStationRel partnerStationRel : resList) {
 
+                executorService.submit(()->{
 
-                List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
+                     List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
+
+                     partnerInsuranceDetails.forEach(pid -> {
+                        partnerInsuranceDetailMapper.insert(pid);
+                            }
+                     );
+
+                });
+
+
+                /*List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
 
                 partnerInsuranceDetails.forEach(pid -> {
                     partnerInsuranceDetailMapper.insert(pid);
                         }
-                );
+                );*/
             }
 
             if (resList.size()<pageSize) {
