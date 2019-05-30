@@ -997,4 +997,18 @@ public class AssetSynBOImpl implements AssetSynBO {
           System.out.println(l);
 
       }
+
+	@Override
+	public void updateUse(List<String> aliNo) {
+		AssetExample assetExample = new AssetExample();
+		if (aliNo != null) {
+			assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoIn(aliNo);
+			Asset updateAsset = new Asset();
+			DomainUtils.beforeUpdate(updateAsset, "sys");
+			updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+			assetMapper.updateByExampleSelective(updateAsset,assetExample);
+		}
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+
+	}
 }
