@@ -165,10 +165,7 @@
         <if test="type == 'TPS' or type == 'tps' ">
             left join cuntao_store store on store.station_id=instance.station_id and store.is_deleted = 'n'
         </if>
-        <if test="inspectionType == 'PARTNER_INSPECTION' or inspectionType == 'INSPECTION' ">
-            left join partner_station_tag tag on tag.station_id=instance.station_id and
-            tag.tag_type=#{inspectionType,jdbcType=VARCHAR} and tag.is_deleted='n'
-        </if>
+        left join partner_station_tag tag on tag.station_id=instance.station_id and tag.is_deleted='n'
         ,partner p,station s,cuntao_org org
         where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
         and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'

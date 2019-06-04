@@ -83,11 +83,11 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
         InspectionStationExample example = new InspectionStationExample();
         example.setOrgIdPath(condition.getOrgIdPath());
         example.setState(condition.getState());
-        example.setStates(condition.getStates());
         example.setStationName(condition.getStationName());
         example.setStoreCategory(condition.getStoreCategory());
         example.setType(condition.getType());
         example.setLevel(condition.getLevel());
+        example.setStates(condition.getStates());
         example.setInspectionState(condition.getInspectionState());
         List<InspectionStatusSummary> summary = partnerInstanceInspectionMapper.countInspectionSummaryByExample(example);
         InspectionStatusSummaryDto result = new InspectionStatusSummaryDto();
