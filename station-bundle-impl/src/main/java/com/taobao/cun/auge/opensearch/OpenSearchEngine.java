@@ -14,6 +14,7 @@ public class OpenSearchEngine {
     }
 
     public OpenSearchSearchResult  doQuery(CloudsearchSearch cloudsearchSearch)  {
+    	logger.info("OpenSearch:{}", cloudsearchSearch.getQuery());
         try {
             return parser.parse(cloudsearchSearch.search());
         } catch (Exception e) {
