@@ -697,7 +697,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
             int count = cuntaoStoreMapper.countByExample(example);
             logger.info("sync store begin,count={}", count);
-            int pageSize = 200;
+            int pageSize = 50;
             int pageNum = 1;
             int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
             while (pageNum <= total) {
@@ -787,9 +787,18 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
         //更新 门店子照片
         uploadStoreSubImage(cuntaoStore.getShareStoreId());
-//        //绑定门店组
+        //绑定门店组
+        bindStoreGroup(cuntaoStore.getShareStoreId());
+
         //初始化小程序
         initSingleMiniapp(cuntaoStore.getShareStoreId());
+    }
+
+
+    private void bindStoreGroup(Long shareStoreId) {
+        List<Long> storeIdList = new ArrayList<>();
+        storeIdList.add(shareStoreId);
+        groupBindService.batchBindStore(589785L, storeIdList);
     }
 
     @Override

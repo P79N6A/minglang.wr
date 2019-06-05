@@ -79,6 +79,8 @@ public interface AssetService {
      */
     public void delete(Long assetId, String operator);
 
+    public void updateUse(List<String> aliNo);
+
     /**
      * 获得资产详情
      *

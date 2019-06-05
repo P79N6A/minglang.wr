@@ -314,4 +314,8 @@ public class AssetServiceImpl implements AssetService{
 		return assetSynBO.batchDisRouter();
 	}
 
+	@Override
+	public void updateUse(List<String> aliNo) {
+		assetSynBO.updateUse(aliNo);
+	}
 }
