@@ -314,7 +314,7 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 		try {
 			OpenSearchSearchResult openSearchSearchResult = openSearchManager
 					.doQuery(cloudsearchSearch);
-			if (openSearchSearchResult.isSuccess()) {
+			if (openSearchSearchResult != null && openSearchSearchResult.isSuccess()) {
 				result.setSuccess(true);
 				result.setModel(realStationExitFilter(openSearchSearchResult));
 				if (result.getModel() != null
