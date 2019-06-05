@@ -247,4 +247,10 @@ public interface StoreWriteService {
      */
     public void  batchInitSingleMiniapp(List<Long> storeIds);
 
+
+    /**
+     * 根据主键更新淘宝userId  重新入住已有站点使用
+     */
+    public void  updateTaobaoUserIdById(Long id,Long taobaoUserId);
+
 }
