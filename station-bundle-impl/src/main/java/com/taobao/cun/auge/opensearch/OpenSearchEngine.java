@@ -1,10 +1,12 @@
 package com.taobao.cun.auge.opensearch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.opensearch.javasdk.CloudsearchSearch;
-import org.apache.log4j.Logger;
 
 public class OpenSearchEngine {
-    private static final Logger log                          = Logger.getLogger(OpenSearchEngine.class);
+    private static final Logger logger  = LoggerFactory.getLogger(OpenSearchEngine.class);
     private OpenSearchParser parser;
 
     public void setParser(OpenSearchParser parser) {
@@ -15,8 +17,8 @@ public class OpenSearchEngine {
         try {
             return parser.parse(cloudsearchSearch.search());
         } catch (Exception e) {
-            log.error("OpenSearchEngine-doQuery-exception", e);
-            throw new RuntimeException(e);
+        	logger.error("OpenSearchEngine-doQuery-exception:{}", cloudsearchSearch.getQuery(), e);
+        	return null;
         }
 
     }
