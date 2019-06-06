@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import com.alibaba.fastjson.JSON;
 
@@ -19,20 +20,23 @@ import com.alipay.insopenprod.common.service.facade.model.request.scene.InsPolic
 import com.alipay.insopenprod.common.service.facade.model.request.scene.InsProductAgreementQryRequest;
 import com.alipay.insopenprod.common.service.facade.model.result.scene.InsPolicySearchResult;
 import com.alipay.insopenprod.common.service.facade.model.result.scene.InsProductAgreementResult;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.DiamondFactory;
-import com.taobao.cun.auge.dal.domain.CuntaoQualification;
-import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.*;
+import com.taobao.cun.auge.dal.mapper.PartnerInsuranceDetailMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.cun.auge.insurance.dto.BusinessInfoDto;
 import com.taobao.cun.auge.insurance.dto.PersonInfoDto;
+import com.taobao.cun.auge.insurance.enums.InsuranceStateEnum;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -98,6 +102,17 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;
+
+    @Autowired
+    private PartnerStationRelMapper partnerStationRelMapper;
+
+    @Autowired
+    private PartnerInsuranceDetailMapper partnerInsuranceDetailMapper;
+
+    @Autowired
+    private StationBO stationBo;
+
+    private ExecutorService executorService = new ThreadPoolExecutor(5,30,60000, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<>());
 
     private static final Logger logger = LoggerFactory.getLogger(CuntaoInsuranceServiceImpl.class);
 
@@ -166,9 +181,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (partnerInstance != null && PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())) {
                 Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-                if(partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())){
+                if (partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())) {
                     //如果站点状态是已退出的，则返回买过保险
-                    return  true;
+                    return true;
                 }
                 if (null == partner || StringUtils.isEmpty(partner.getIdenNum())) {
                     return false;
@@ -178,8 +193,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                     return true;
                 }
                 //二.原始数据没有查询到则调用蚂蚁接口，判断是否买过保险
-                InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
-                    Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+                InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "INEFFECTIVE_OR_GUARANTEE");
                 if (searchResult.isSuccess() && searchResult.getTotal() > 0) {
                     return true;
                 }
@@ -221,7 +235,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
      * @param idenNum
      * @return
      */
-    private InsPolicySearchResult queryInsuranceFromAlipay(String idenNum, List<String> statusList) {
+    private InsPolicySearchResult queryInsuranceFromAlipay(String idenNum, String status) {
         InsPolicySearchRequest insRequest = new InsPolicySearchRequest();
         InsQueryPerson insQueryPerson = new InsQueryPerson();
         //1投保人，2被保人，村淘默认按照投保人维度查询
@@ -234,7 +248,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         //产品列表集合村淘合伙人意外险:4025
         insRequest.setProductList(Lists.newArrayList(PAI_NO));
         //保单状态
-        insRequest.setStatus("INEFFECTIVE_OR_GUARANTEE");
+        if (status != null) {
+            insRequest.setStatus(status);
+        }
         insRequest.setPageNo(1);
         insRequest.setPageSize(20);
         //投放渠道，必填，村淘默认cuntao
@@ -254,7 +270,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     public Integer hasReInsurance(Long taobaoUserId) {
         try {
             if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(
-                taobaoUserId)) {
+                    taobaoUserId)) {
                 return 0;
             }
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -265,8 +281,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             // 查询新平台的保险数据
             Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
             //查询未生效或在保障中的保单
-            InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
-                Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+            InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "INEFFECTIVE_OR_GUARANTEE");
             Date nowTime = new Date();
 
             //1.新平台数据判断
@@ -276,7 +291,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 for (InsPolicy policy : searchResult.getPolicys()) {
                     //找到距离保险止期最大的值
                     maxDurDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime()) > maxDurDate ? DateUtil
-                        .daysBetween(nowTime, policy.getEffectEndTime()) : maxDurDate;
+                            .daysBetween(nowTime, policy.getEffectEndTime()) : maxDurDate;
                 }
                 if (maxDurDate > insuranceExpiredDay) {
                     return 0;
@@ -287,14 +302,14 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
             // 2.查询老平台保险数据
             AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
-                String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
+                    String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
                 //因为是已买保险之后才会调用该接口
                 int maxDurDate = 0;
                 for (InsPolicyDTO policyDto : insure.getModel()) {
                     //找到距离保险止期最大的值
                     maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()) > maxDurDate ? DateUtil
-                        .daysBetween(nowTime, policyDto.getEffectEndTime()) : maxDurDate;
+                            .daysBetween(nowTime, policyDto.getEffectEndTime()) : maxDurDate;
                 }
                 if (maxDurDate > insuranceExpiredDay) {
                     return 0;
@@ -324,12 +339,12 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     public Integer hasInsuranceForMobile(Long taobaoUserId) {
         try {
             if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(
-                taobaoUserId)) {
+                    taobaoUserId)) {
                 return 365;
             }
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (partnerInstance == null || !PartnerInstanceTypeEnum.isTpOrTps(partnerInstance.getType())
-                    ||partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())) {
+                    || partnerInstance.getState().equals(StationStatusEnum.CLOSED.getCode())) {
                 //只有合伙人和淘帮手才强制买保险,同时站点已经退出的也返回已买保险
                 return 365;
             }
@@ -340,8 +355,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 return 0;
             }
             //查询未生效或在保障中的保单
-            InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(),
-                Lists.newArrayList("INEFFECTIVE_OR_GUARANTEE"));
+            InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "INEFFECTIVE_OR_GUARANTEE");
             Date nowTime = new Date();
             //1.新平台数据判断
             if (searchResult.isSuccess() && CollectionUtils.isNotEmpty(searchResult.getPolicys())) {
@@ -350,7 +364,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
                 for (InsPolicy policy : searchResult.getPolicys()) {
                     //找到距离保险止期最大的
                     maxDurDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime()) > maxDurDate ? DateUtil
-                        .daysBetween(nowTime, policy.getEffectEndTime()) : maxDurDate;
+                            .daysBetween(nowTime, policy.getEffectEndTime()) : maxDurDate;
                 }
                 //<0，新平台的保险都过期了
                 return maxDurDate < 0 ? 0 : maxDurDate;
@@ -359,13 +373,13 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
 
             // 2.查询老平台保险数据
             AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
-                String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
+                    String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
             if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
                 //约定给-10（事实上，此处可以给任意负整数）
                 int maxDurDate = -10;
                 for (InsPolicyDTO policyDto : insure.getModel()) {
                     maxDurDate = DateUtil.daysBetween(nowTime, policyDto.getEffectEndTime()) > maxDurDate ? DateUtil
-                        .daysBetween(nowTime, policyDto.getEffectEndTime()) : maxDurDate;
+                            .daysBetween(nowTime, policyDto.getEffectEndTime()) : maxDurDate;
                 }
                 //如果保单过期了，即maxDurDate<0
                 return maxDurDate < 0 ? 0 : maxDurDate;
@@ -382,7 +396,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
     @Override
     public Boolean hasEmployerInsurance(Long taobaoUserId) {
         if (SWITCH_OFF.equals(diamondConfiguredProperties.getInSureSwitch()) || isInFactoryAlipayList(
-            taobaoUserId)) {
+                taobaoUserId)) {
             return true;
         }
         InsProductAgreementQryRequest request = new InsProductAgreementQryRequest();
@@ -399,7 +413,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
             return false;
         }
         InsProductAgreementResult result = insSceneApiFacade.queryProductAgreement(request);
-        if (result.isSuccess() &&  InsAgreementStatusEnum.EFFECTIVE.getCode().equals(result.getStatus())) {
+        if (result.isSuccess() && InsAgreementStatusEnum.EFFECTIVE.getCode().equals(result.getStatus())) {
             return true;
         } else if (!result.isSuccess()) {
             logger.info("{bizType} {parameter}", "insurance", JSON.toJSONString(request));
@@ -411,11 +425,139 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService {
         return false;
     }
 
-    private static String cut0156ForAlipayAccount(String partnerAlipayUserId){
-        if(partnerAlipayUserId.endsWith("0156")){
-            return partnerAlipayUserId.substring(0,partnerAlipayUserId.length()-4);
+    private static String cut0156ForAlipayAccount(String partnerAlipayUserId) {
+        if (partnerAlipayUserId.endsWith("0156")) {
+            return partnerAlipayUserId.substring(0, partnerAlipayUserId.length() - 4);
         }
         return partnerAlipayUserId;
+    }
+
+    @Override
+    public void countInsuranceData(int pageSize) {
+        //物理删除之前的数据
+        int deletedCount = partnerInsuranceDetailMapper.deleteByExample(null);
+        logger.info("delete from partner_insurance_detail ,count = {}", deletedCount);
+        int pageNum = 1;
+        int handledCount = 0 ;
+        PartnerStationRelExample example = new PartnerStationRelExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIsCurrentEqualTo("y")
+                .andTypeIn(Lists.newArrayList("TP","TPS")).andStateIn(Lists.newArrayList("DECORATING","SERVICING","CLOSING"));
+        long startTime = System.currentTimeMillis();
+        while (true) {
+            PageHelper.startPage(pageNum++, pageSize,"id asc");
+            List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+            handledCount += resList.size();
+            logger.info("query partner_station_rel data ,count = {} ，id = {}", handledCount,resList.get(resList.size()-1).getId());
+            for (PartnerStationRel partnerStationRel : resList) {
+
+                executorService.submit(()->{
+
+                     List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
+
+                     partnerInsuranceDetails.forEach(pid -> {
+                        partnerInsuranceDetailMapper.insert(pid);
+                            }
+                     );
+
+                });
+
+
+                /*List<PartnerInsuranceDetail> partnerInsuranceDetails = buildPartnerInsuranceDetailList(partnerStationRel.getTaobaoUserId(), partnerStationRel.getStationId(), null, partnerStationRel.getState());
+
+                partnerInsuranceDetails.forEach(pid -> {
+                    partnerInsuranceDetailMapper.insert(pid);
+                        }
+                );*/
+            }
+
+            if (resList.size()<pageSize) {
+                break;
+            }
+
+        }
+        logger.info("count insurance data costs = {} ms ,handledCount count = {} ",System.currentTimeMillis()-startTime,handledCount);
+    }
+
+
+    private List<PartnerInsuranceDetail> buildPartnerInsuranceDetailList(Long taobaoUserId, Long stationId, String stationName,String state) {
+
+        // 查询新平台的保险数据
+        Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+        if (partner == null || StringUtils.isBlank(partner.getIdenNum())) {
+            return null;
+        }
+        List<PartnerInsuranceDetail> resultList = new ArrayList<PartnerInsuranceDetail>();
+        Date nowTime = new Date();
+        InsPolicySearchResult searchResult = queryInsuranceFromAlipay(partner.getIdenNum(), "GUARANTEE");
+
+        //1.查询新平台数据
+        if (searchResult.isSuccess() && CollectionUtils.isNotEmpty(searchResult.getPolicys())) {
+            for (InsPolicy policy : searchResult.getPolicys()) {
+                //找到距离保险止期最大的
+                int durDate = DateUtil.daysBetween(nowTime, policy.getEffectEndTime()) ;
+                PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                        policy.getEffectStartTime(),policy.getEffectEndTime(),policy.getPolicyStatus(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"n",state);
+                resultList.add(insuranceDetail);
+            }
+            //如果已经在新平台购买过保险了，那么就不再去查询老平台保险
+            return resultList;
+        }
+        // 2.查询老平台保险数据
+        AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService.queryPolicyByInsured(
+                String.valueOf(taobaoUserId), SP_TYPE, SP_NO);
+        if (insure.isSuccess() && insure.getModel() != null && insure.getModel().size() > 0) {
+            InsPolicyDTO insPolicyDTO = null ;
+            int durDate = -10000;
+            for (InsPolicyDTO insPolicyDTONew : insure.getModel()) {
+                int newDurDate = DateUtil.daysBetween(nowTime, insPolicyDTONew.getEffectEndTime());
+                if(newDurDate > durDate ){
+                    durDate = newDurDate;
+                    insPolicyDTO = insPolicyDTONew;
+                }
+
+            }
+            if(insPolicyDTO != null){
+                PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                        insPolicyDTO.getEffectStartTime(),insPolicyDTO.getEffectEndTime(), InsuranceStateEnum.valueof(Integer.valueOf(insPolicyDTO.getStatus())).getDesc(),Long.valueOf(durDate),partner.getName(),stationId,stationName,"y",state);
+                resultList.add(insuranceDetail);
+            }else{
+                PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                        null,null, null,Long.valueOf(durDate),partner.getName(),stationId,stationName,"y",state);
+                resultList.add(insuranceDetail);
+            }
+
+            return resultList;
+        }
+        PartnerInsuranceDetail insuranceDetail = buildPartnerInsuranceDetail(taobaoUserId, partner.getIdenNum(),
+                null,null, null,0L,partner.getName(),stationId,stationName,"x",state);
+        resultList.add(insuranceDetail);
+        return resultList;
+    }
+
+
+
+
+    private PartnerInsuranceDetail buildPartnerInsuranceDetail(Long taobaoUserId, String idenNum,Date effectStartTime,Date effectEndTime,String status,Long expiredDay ,String parnterName,Long stationId,String stationName,String isOld,String state) {
+        Station station = stationBo.getStationById(stationId);
+        PartnerInsuranceDetail insuranceDetail = new PartnerInsuranceDetail();
+        insuranceDetail.setTaobaoUserId(taobaoUserId);
+        insuranceDetail.setIdenNum(idenNum);
+        insuranceDetail.setEffectStartTime(effectStartTime);
+        insuranceDetail.setEffectEndTime(effectEndTime);
+        insuranceDetail.setCreator("system");
+        insuranceDetail.setGmtCreate(new Date());
+        insuranceDetail.setGmtModified(new Date());
+        insuranceDetail.setExpiredDay(expiredDay);
+        insuranceDetail.setIsOld(isOld);
+        insuranceDetail.setStatus(status);
+        insuranceDetail.setType(state);
+        insuranceDetail.setIsDeleted("n");
+        insuranceDetail.setName(parnterName);
+        insuranceDetail.setStationId(stationId);
+        insuranceDetail.setStationName(station.getName());
+        insuranceDetail.setOrgId(station.getApplyOrg());
+        insuranceDetail.setExtInfo(expiredDay<=0?"n":"y");
+        return insuranceDetail;
     }
 
 }
