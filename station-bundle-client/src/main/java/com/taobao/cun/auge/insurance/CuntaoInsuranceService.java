@@ -51,4 +51,11 @@ public interface CuntaoInsuranceService {
 	 */
 	Boolean hasEmployerInsurance(Long taobaoUserId);
 
+
+	/**
+	 * 定时调用蚂蚁接口拉取全量的保险数据
+	 * @param pageSize
+	 */
+	void countInsuranceData(int pageSize);
+
 }
