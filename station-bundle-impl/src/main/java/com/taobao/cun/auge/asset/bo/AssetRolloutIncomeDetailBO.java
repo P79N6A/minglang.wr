@@ -92,6 +92,12 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId);
+	/**
+	 * 查询待签收资产
+	 * @param assetId
+	 * @return
+	 */
+	public List<AssetRolloutIncomeDetail> queryWaitSignByAssetIdList(Long assetId);
 	
 	/**
 	 * 撤销  

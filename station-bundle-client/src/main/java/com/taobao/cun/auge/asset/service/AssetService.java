@@ -249,5 +249,12 @@ public interface AssetService {
   	 * @return
   	 */
   	public Boolean batchDisRouter();
+
+
+    /**
+     * 删除出库单
+     * @param rolloutId
+     */
+    public void deleteByRolloutId(Long rolloutId);
     
 }
