@@ -318,4 +318,9 @@ public class AssetServiceImpl implements AssetService{
 	public void updateUse(List<String> aliNo) {
 		assetSynBO.updateUse(aliNo);
 	}
+
+	@Override
+	public void deleteByRolloutId(Long rolloutId) {
+		assetRolloutBO.deleteByRolloutId(rolloutId);
+	}
 }

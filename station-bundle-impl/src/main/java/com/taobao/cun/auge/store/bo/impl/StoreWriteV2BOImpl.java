@@ -730,7 +730,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         Station station = stationBO.getStationById(stationId);
         if (station == null || StationStatusEnum.QUIT.getCode().equals(station.getStatus())) {//服务站已经退出
             logger.info("sync-store-close,stationId={}", stationId);
-            closeStore(stationId);
+            //closeStore(stationId);
             return;
         }
 
@@ -755,7 +755,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         storeDTO.setBusinessTime("10:00-19:00");
         storeDTO.setOuterId(String.valueOf(station.getId()));
         storeDTO.addTag(StoreTags.NEED_OPERATE_PHYSICAL_STORE);
-
+        storeDTO.addTag(StoreTags.CUNTAO_STORE);
 
         if (!Strings.isNullOrEmpty(station.getLat())) {
             storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
@@ -776,8 +776,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
         storeDTO.setStoreId(cuntaoStore.getShareStoreId());
         // 更新共享门店
-        ResultDO<Boolean> result = storeUpdateServiceV2.update(storeDTO,
-                diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+        ResultDO<Boolean> result = storeUpdateServiceV2.update(storeDTO, 3405569954L, StoreBizType.STORE_ITEM_BIZ.getValue());
         if (result.isFailured()) {
             logger.error("sync-store-to-share error[" + station.getId() + "]:" + result.getFullErrorMsg());
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, station.getId() + result.getFullErrorMsg());
@@ -785,11 +784,13 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cuntaoStore.setName(station.getName());
         cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
         cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        logger.info("sync-store-no-cuntao-store-data-uploadStoreSubImage,stationId={}", stationId);
         //更新 门店子照片
         uploadStoreSubImage(cuntaoStore.getShareStoreId());
+        logger.info("sync-store-no-cuntao-store-data-bindStoreGroup,stationId={}", stationId);
         //绑定门店组
         bindStoreGroup(cuntaoStore.getShareStoreId());
-
+        logger.info("sync-store-no-cuntao-store-data-initSingleMiniapp,stationId={}", stationId);
         //初始化小程序
         initSingleMiniapp(cuntaoStore.getShareStoreId());
     }

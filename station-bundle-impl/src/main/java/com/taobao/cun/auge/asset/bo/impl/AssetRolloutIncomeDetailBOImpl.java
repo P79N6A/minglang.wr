@@ -153,6 +153,21 @@ public class AssetRolloutIncomeDetailBOImpl implements
     }
 
     @Override
+    public List<AssetRolloutIncomeDetail> queryWaitSignByAssetIdList(Long assetId) {
+        ValidateUtils.notNull(assetId);
+        AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+        criteria.andAssetIdEqualTo(assetId);
+        List<AssetRolloutIncomeDetail> resList = assetRolloutIncomeDetailMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(resList)) {
+            return null;
+        }
+        return resList;
+    }
+
+    @Override
     public AssetRolloutIncomeDetail cancel(Long assetId, String operator) {
         ValidateUtils.notNull(assetId);
         AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);

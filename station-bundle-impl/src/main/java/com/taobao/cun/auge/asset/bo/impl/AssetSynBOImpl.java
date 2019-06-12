@@ -518,31 +518,33 @@ public class AssetSynBOImpl implements AssetSynBO {
 						logger.info("sync asset begin,a.getStatus()={}", a.getStatus());
 						Long assetId1 = a.getId();
 						// 如果有入库单 检查 是否删除入库单
-						AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId1);
-						if (detail != null
-								&& detail.getType().equals(AssetRolloutIncomeDetailTypeEnum.TRANSFER.getCode())) {
-							assetRolloutIncomeDetailBO.signAsset(detail.getId(), "zhuanyi");
-							Long incomeId = detail.getIncomeId();
-							Long rolloutId = detail.getRolloutId();
-							if (incomeId != null) {
-								// 更新出入库单状态
-								if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
-									assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, "zhuanyi");
-								} else {
-									assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, "zhuanyi");
+						List<AssetRolloutIncomeDetail> detailList = assetRolloutIncomeDetailBO.queryWaitSignByAssetIdList(assetId1);
+						for (AssetRolloutIncomeDetail detail: detailList) {
+							if (detail != null) {
+								assetRolloutIncomeDetailBO.signAsset(detail.getId(), "zhuanyi");
+								Long incomeId = detail.getIncomeId();
+								Long rolloutId = detail.getRolloutId();
+								if (incomeId != null) {
+									// 更新出入库单状态
+									if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
+										assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, "zhuanyi");
+									} else {
+										assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, "zhuanyi");
+									}
 								}
-							}
-							if (rolloutId != null) {
-								if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
-									assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE,
-											"zhuanyi");
-								} else {
-									assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING,
-											"zhuanyi");
+								if (rolloutId != null) {
+									if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
+										assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE,
+												"zhuanyi");
+									} else {
+										assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING,
+												"zhuanyi");
+									}
 								}
-							}
 
+							}
 						}
+
 					}
 
 					Asset updateAsset = new Asset();
