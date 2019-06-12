@@ -36,6 +36,13 @@ public interface AssetRolloutBO {
 	 * @param rolloutId
 	 */
 	public void cancelRolleoutAsset(AssetRolloutCancelDto cancelDto);
+
+
+	/**
+	 * 删除出库单
+	 * @param rolloutId
+	 */
+	public void deleteByRolloutId(Long rolloutId);
 	
 	
 	/**
