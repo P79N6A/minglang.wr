@@ -679,7 +679,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 		
 		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
-		if (w == null || !w.isUse() || !WarehouseType.TAOBAO.getTypeInt().equals( w.getWhTypeValue()))) {
+		if (w == null || !w.isUse() || !WarehouseType.TAOBAO.getTypeInt().equals( w.getWhTypeValue())) {
 			return false;
 		}
 		
