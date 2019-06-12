@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.taobao.delivery.common.constant.WarehouseType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -678,7 +679,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 		
 		WarehouseDTO w = caiNiaoAdapter.queryWarehouseByCainiaoCountyId(cnCountyId);
-		if (w == null || !w.isUse()) {
+		if (w == null || !w.isUse() || !WarehouseType.TAOBAO.getTypeInt().equals( w.getWhTypeValue())) {
 			return false;
 		}
 		
