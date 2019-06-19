@@ -783,6 +783,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         }
         cuntaoStore.setName(station.getName());
         cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+        cuntaoStore.setGmtModified(new Date());
+        cuntaoStore.setModifier("openminapp");
         cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
         logger.info("sync-store-no-cuntao-store-data-uploadStoreSubImage,stationId={}", stationId);
         //更新 门店子照片
@@ -800,6 +802,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         List<Long> storeIdList = new ArrayList<>();
         storeIdList.add(shareStoreId);
         groupBindService.batchBindStore(589785L, storeIdList);
+        updatGroupByShareStoreId(589785L, shareStoreId, "y");
     }
 
     @Override
