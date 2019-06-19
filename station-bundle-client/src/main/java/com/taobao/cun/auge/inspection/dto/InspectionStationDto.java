@@ -174,6 +174,16 @@ public class InspectionStationDto implements Serializable{
 	 */
 	private Integer seriousViolationPoints;
 
+    /**
+     * 转换风险等级
+     */
+	private String upgradeRiskGrade;
+
+    /**
+     * 升级方案
+     */
+	private String upgradePlan;
+
 	/**
 	 * 获取村服务站id
 	 *
@@ -193,8 +203,23 @@ public class InspectionStationDto implements Serializable{
 		this.stationId = stationId;
 	}
 
+    public String getUpgradeRiskGrade() {
+        return upgradeRiskGrade;
+    }
 
-	/**
+    public void setUpgradeRiskGrade(String upgradeRiskGrade) {
+        this.upgradeRiskGrade = upgradeRiskGrade;
+    }
+
+    public String getUpgradePlan() {
+        return upgradePlan;
+    }
+
+    public void setUpgradePlan(String upgradePlan) {
+        this.upgradePlan = upgradePlan;
+    }
+
+    /**
 	 * 获取合伙人id
 	 *
 	 * @return partner_id - 合伙人id
@@ -265,7 +290,7 @@ public class InspectionStationDto implements Serializable{
 	/**
 	 * 设置姓名
 	 *
-	 * @param name
+	 * @param partnerName
 	 *            姓名
 	 */
 	public void setPartnerName(String partnerName) {
@@ -304,7 +329,7 @@ public class InspectionStationDto implements Serializable{
 	/**
 	 * 设置服务站名称
 	 *
-	 * @param name
+	 * @param stationName
 	 *            服务站名称
 	 */
 	public void setStationName(String stationName) {
