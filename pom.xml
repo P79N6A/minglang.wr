@@ -569,6 +569,10 @@
 				<exclusions>
 					<exclusion>
 						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
 						<artifactId>forest-client</artifactId>
 					</exclusion>
 					<exclusion>
@@ -665,6 +669,14 @@
 					<exclusion>
 						<groupId>com.taobao.mallitemcenter</groupId>
 						<artifactId>mic-common</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -868,6 +880,18 @@
 					<exclusion>
 						<groupId>com.tmall.nova</groupId>
 						<artifactId>nova-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-realtime</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
