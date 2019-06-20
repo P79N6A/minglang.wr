@@ -85,6 +85,9 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 
 	private List<InspectionStationDto> initUpgradeRecord(List<InspectionStationDto> inspectionStationDtos){
         List<Long> stationIds = inspectionStationDtos.stream().map(i->i.getStationId()).distinct().collect(Collectors.toList());
+        if(stationIds == null || stationIds.isEmpty()){
+        	return inspectionStationDtos;
+		}
         List<CuntaoContactRecordDto> cuntaoContactRecordDtos = cuntaoContactRecordService.queryLatestRecords(VisitTypeEnum.UPGRADE.getCode(), stationIds);
         if(cuntaoContactRecordDtos != null){
 			Map<Long,CuntaoContactRecordDto> map = cuntaoContactRecordDtos.stream().collect(Collectors.toMap(r->r.getStationId(), r->r));

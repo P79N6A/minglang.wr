@@ -42,6 +42,9 @@ import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.recruit.contact.dto.CuntaoContactRecordDto;
+import com.taobao.cun.recruit.contact.enums.VisitTypeEnum;
+import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.hsf.util.RequestCtxUtil;
 import com.taobao.security.util.SensitiveDataUtil;
@@ -54,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -133,6 +137,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Autowired
     private NewRevenueCommunicationService newRevenueCommunicationService;
+    @Resource
+    private CuntaoContactRecordService cuntaoContactRecordService;
 
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -211,7 +217,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         buildStoreInfo(insDto);
         //buildInspectionInfo(insDto);
+        buildUpgradeRecord(insDto);
         return insDto;
+    }
+
+    private void buildUpgradeRecord(PartnerInstanceDto insDto) {
+        CuntaoContactRecordDto cuntaoContactRecordDto = cuntaoContactRecordService.queryLatestRecord(VisitTypeEnum.UPGRADE.getCode(), insDto.getStationId());
+        if(cuntaoContactRecordDto != null){
+            insDto.setOperateName(cuntaoContactRecordDto.getOperatorName());
+            insDto.setOperatePhone(cuntaoContactRecordDto.getContactorPhone());
+            insDto.setOperatePersonal(cuntaoContactRecordDto.getOperatePersonal());
+            insDto.setOperateMethod(cuntaoContactRecordDto.getOperateMethodEnum().getDesc());
+        }
     }
 
     @Override
