@@ -94,13 +94,8 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 			return inspectionStationDtos.stream().peek(i->{
 				CuntaoContactRecordDto record = map.get(i.getStationId());
 				if(record != null){
-					if(record.getRiskGradeEnum() != null) {
-						i.setUpgradeRiskGrade(record.getRiskGradeEnum().getDesc());
-					}
-
-					if(record.getUpgradePlanEnum() != null){
-						i.setUpgradePlan(record.getUpgradePlanEnum().getDesc());
-					}
+					i.setUpgradeRiskGrade(record.getRiskGrade());
+					i.setUpgradePlan(record.getUpgradePlan());
 				}
 			}).collect(Collectors.toList());
 		}

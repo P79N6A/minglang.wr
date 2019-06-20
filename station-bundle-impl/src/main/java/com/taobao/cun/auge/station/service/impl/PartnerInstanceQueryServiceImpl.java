@@ -227,7 +227,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             insDto.setOperateName(cuntaoContactRecordDto.getOperatorName());
             insDto.setOperatePhone(cuntaoContactRecordDto.getContactorPhone());
             insDto.setOperatePersonal(cuntaoContactRecordDto.getOperatePersonal());
-            insDto.setOperateMethod(cuntaoContactRecordDto.getOperateMethodEnum().getDesc());
+            insDto.setOperateMethod(cuntaoContactRecordDto.getOperateMethod());
         }
     }
 
