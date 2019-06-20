@@ -114,4 +114,12 @@ public interface StoreReadService {
 	 * @return
 	 */
 	public PageDto<Long> queryByPageForShrhPermissionToTPS(Date beginDate, int pageNum,int pageSize);
+
+
+	/**
+	 * 从运营任务中心取门店子图
+	 * @param taskInstanceId
+	 * @return
+	 */
+	public List<String> getSubImageFromTask(Long taskInstanceId);
 }

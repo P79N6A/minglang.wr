@@ -120,6 +120,9 @@ public class HsfConsumerConfiguration  {
 
 	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
 	private TaskElementService taskElementService;
+
+	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
+	private TaskInstanceService taskInstanceService;
 	
 	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private StoreSReadService storeSReadService;

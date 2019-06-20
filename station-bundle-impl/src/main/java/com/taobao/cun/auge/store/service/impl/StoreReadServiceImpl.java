@@ -26,6 +26,8 @@ import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
+import com.taobao.cun.auge.task.dto.TaskInstanceDto;
+import com.taobao.cun.auge.task.service.TaskInstanceService;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityEmployeeInfoDto;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityEmployeeInfoService;
 import com.taobao.cun.shared.base.result.ResultModel;
@@ -69,6 +71,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Autowired
 	private ServiceAbilityEmployeeInfoService serviceAbilityEmployeeInfoService;
+
+	@Autowired
+	private TaskInstanceService taskInstanceService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -261,5 +266,14 @@ public class StoreReadServiceImpl implements StoreReadService {
 		List<Long> stationIds = rList.stream().map(PartnerStationRel::getStationId).collect(Collectors.toList());
 
 		return PageDtoUtil.success(rList, getstoreId(stationIds));
+	}
+
+	@Override
+	public List<String> getSubImageFromTask(Long taskInstanceId) {
+		com.taobao.cun.auge.common.dto.OperatorDto od = new com.taobao.cun.auge.common.dto.OperatorDto();
+		od.copyOperatorDto(com.taobao.cun.auge.common.dto.OperatorDto.defaultOperator());
+		TaskInstanceDto dto = taskInstanceService.getTaskInstanceById(taskInstanceId, od);
+		//dto.getTaskNodes()
+		return null;
 	}
 }

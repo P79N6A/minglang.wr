@@ -28,9 +28,6 @@ import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -955,5 +952,15 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 }
             }
         }
+    }
+
+    @Override
+    public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId) {
+        return null;
+    }
+
+    @Override
+    public Boolean checkOpenLightStore(Long taobaoUserId) {
+        return null;
     }
 }

@@ -108,4 +108,20 @@ public interface StoreWriteV2BO {
      * @return
      */
     public void  batchInitSingleMiniapp(List<Long> storeIds);
+
+    /**
+     * 初始化轻店
+     * @param taobaoUserId
+     * @param subImageList
+     * @param taskInstanceId
+     * @return
+     */
+    public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId);
+
+    /**
+     *
+     * @param taobaoUserId
+     * @return
+     */
+    public Boolean checkOpenLightStore(Long taobaoUserId);
 }

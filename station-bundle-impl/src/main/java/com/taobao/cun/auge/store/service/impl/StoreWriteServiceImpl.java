@@ -307,5 +307,13 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
     }
 
+	@Override
+	public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId) {
+		return storeWriteV2BO.initLightStore(taobaoUserId,subImageList,taskInstanceId);
+	}
 
+	@Override
+	public Boolean checkOpenLightStore(Long taobaoUserId) {
+		return storeWriteV2BO.checkOpenLightStore(taobaoUserId);
+	}
 }
