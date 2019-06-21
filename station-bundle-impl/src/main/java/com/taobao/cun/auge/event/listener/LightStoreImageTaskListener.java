@@ -52,7 +52,7 @@ public class LightStoreImageTaskListener implements EventListener{
 
         if (TaskInstanceEventEnum.COMPLETED.equals(eventType) && BUSI_TYPE_CODE.equals(busiTypeCode)) {
             List<String> imageList = storeReadService.getSubImageFromTask(taskInstanceId);
-            storeWriteV2BO.initLightStore(Long.parseLong(userId),imageList,taskInstanceId);
+            storeWriteV2BO.initLightStore(Long.parseLong(userId),taskInstanceId);
         }
     }
 }

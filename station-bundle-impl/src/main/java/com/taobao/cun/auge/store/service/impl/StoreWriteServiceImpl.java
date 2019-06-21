@@ -308,8 +308,33 @@ public class StoreWriteServiceImpl implements StoreWriteService {
     }
 
 	@Override
-	public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId) {
-		return storeWriteV2BO.initLightStore(taobaoUserId,subImageList,taskInstanceId);
+	public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId) {
+		return storeWriteV2BO.initLightStore(taobaoUserId,taskInstanceId);
+	}
+
+	@Override
+	public Boolean modifyStoreInfoForLightStore(Long storeId) {
+		return storeWriteV2BO.modifyStoreInfoForLightStore(storeId);
+	}
+
+	@Override
+	public Boolean modifyStoreSubImageFromTask(Long storeId) {
+		return storeWriteV2BO.modifyStoreSubImageFromTask(storeId);
+	}
+
+	@Override
+	public Boolean bindDefaultStoreGroup(Long storeId) {
+		return storeWriteV2BO.bindDefaultStoreGroup(storeId);
+	}
+
+	@Override
+	public String initSingleMiniappForLightStore(Long storeId) {
+		return storeWriteV2BO.initSingleMiniappForLightStore(storeId);
+	}
+
+	@Override
+	public Boolean openLightStorePermission(Long storeId) {
+		return storeWriteV2BO.openLightStorePermission(storeId);
 	}
 
 	@Override

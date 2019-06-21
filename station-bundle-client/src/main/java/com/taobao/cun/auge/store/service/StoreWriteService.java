@@ -257,11 +257,45 @@ public interface StoreWriteService {
     /**
      * 初始化轻店
      * @param taobaoUserId
-     * @param subImageList
      * @param taskInstanceId
      * @return
      */
-    public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId);
+    public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId);
+
+    /**
+     *初始化轻店修改基础信息
+     * @param storeId
+     * @return
+     */
+    public Boolean modifyStoreInfoForLightStore(Long storeId);
+
+    /**
+     * 更新轻店子图
+     * @param storeId
+     * @return
+     */
+    public Boolean modifyStoreSubImageFromTask(Long storeId);
+
+    /**
+     * 绑定轻店默认用户组
+     * @param storeId
+     * @return
+     */
+    public Boolean bindDefaultStoreGroup(Long storeId);
+
+    /**
+     * 初始化轻店小程序
+     * @param storeId
+     * @return
+     */
+    public String initSingleMiniappForLightStore(Long storeId);
+
+    /**
+     * 开通轻店权限
+     * @param storeId
+     * @return
+     */
+    public Boolean openLightStorePermission(Long storeId);
 
     /**
      *

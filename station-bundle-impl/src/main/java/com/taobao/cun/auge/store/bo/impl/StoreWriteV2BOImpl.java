@@ -955,7 +955,87 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     }
 
     @Override
-    public Boolean initLightStore(Long taobaoUserId,List<String> subImageList,Long taskInstanceId) {
+    public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId) {
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (rel == null) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人不存在");
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean modifyStoreInfoForLightStore(Long storeId) {
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreBySharedStoreId(storeId);
+        if (cuntaoStore == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "cuntaostore is null");
+        }
+        Long stationId= cuntaoStore.getStationId();
+        Station station = stationBO.getStationById(stationId);
+        if (station == null || StationStatusEnum.QUIT.getCode().equals(station.getStatus())) {//服务站已经退出
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "station is quit or null");
+        }
+
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+        if (rel == null) {//不是当前服务站
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "instance is null");
+        }
+
+        Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
+
+        StoreDTO storeDTO = new StoreDTO();
+        storeDTO.setName(station.getName());
+        storeDTO.setAddress(station.getAddress());
+        storeDTO.setBusinessTime("10:00-19:00");
+        storeDTO.setOuterId(String.valueOf(station.getId()));
+        storeDTO.addTag(StoreTags.NEED_OPERATE_PHYSICAL_STORE);
+        storeDTO.addTag(StoreTags.CUNTAO_STORE);
+
+        if (!Strings.isNullOrEmpty(station.getLat())) {
+            storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+        }
+        if (!Strings.isNullOrEmpty(station.getLng())) {
+            storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
+        }
+        storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+        storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+        storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+        storeDTO.addContact(partner.getMobile());
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_ID.getKey(), String.valueOf(partner.getTaobaoUserId()));
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_USER_NAME.getKey(), partner.getName());
+        storeDTO.addAttribute(StoreAttribute.SHOPPING_GUIDE_TITLE.getKey(), "店长");
+        storeDTO.setPic(diamondConfiguredProperties.getStoreMainImage());
+        storeDTO.setStoreId(cuntaoStore.getShareStoreId());
+        // 更新共享门店
+        ResultDO<Boolean> result = storeUpdateServiceV2.update(storeDTO, 3405569954L, StoreBizType.STORE_ITEM_BIZ.getValue());
+        if (result.isFailured()) {
+            logger.error("sync-store-to-share error[storeId:" + storeId + "]:" + result.getFullErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + result.getFullErrorMsg());
+        }
+        cuntaoStore.setName(station.getName());
+        cuntaoStore.setTaobaoUserId(rel.getTaobaoUserId());
+        cuntaoStore.setGmtModified(new Date());
+        cuntaoStore.setModifier("system");
+        cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean modifyStoreSubImageFromTask(Long storeId) {
+        return null;
+    }
+
+    @Override
+    public Boolean bindDefaultStoreGroup(Long storeId) {
+        return null;
+    }
+
+    @Override
+    public String initSingleMiniappForLightStore(Long storeId) {
+        return null;
+    }
+
+    @Override
+    public Boolean openLightStorePermission(Long storeId) {
         return null;
     }
 
