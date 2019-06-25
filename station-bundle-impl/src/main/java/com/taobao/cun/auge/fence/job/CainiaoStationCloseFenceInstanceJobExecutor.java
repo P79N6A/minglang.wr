@@ -44,7 +44,7 @@ public class CainiaoStationCloseFenceInstanceJobExecutor extends AbstractFenceIn
 				.collectList()
 				.block();
 		logger.info("size:{}", fenceEntities.size());
-		logger.info("ids:", fenceEntities.stream().map(f->f.getId()).collect(Collectors.toList()));
+		logger.info("ids:{}", fenceEntities.stream().map(f->f.getId()).collect(Collectors.toList()));
 				//.subscribe(this::deleteFenceEntity);
 		return counter.get();
 	}
