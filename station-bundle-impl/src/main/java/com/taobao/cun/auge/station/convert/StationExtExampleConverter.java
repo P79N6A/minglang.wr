@@ -65,13 +65,13 @@ public final class StationExtExampleConverter {
 		if (CollectionUtil.isEmpty(typeEnums)) {
 			return Collections.<String> emptyList();
 		}
-		List<String> statuses = new ArrayList<String>(typeEnums.size());
-		for (PartnerInstanceTypeEnum statusEnum : typeEnums) {
-			if (null == statusEnum) {
+		List<String> types = new ArrayList<String>(typeEnums.size());
+		for (PartnerInstanceTypeEnum typeEnum : typeEnums) {
+			if (null == typeEnum) {
 				continue;
 			}
-			statuses.add(statusEnum.getCode());
+			types.add(typeEnum.getCode());
 		}
-		return statuses;
+		return types;
 	}
 }

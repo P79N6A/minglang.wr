@@ -143,4 +143,10 @@ public interface StationBO {
      * @return
      */
     int getServicingNumByOrgId(Long orgId);
+
+	/**
+	 * 获取服务中的站点
+	 * @return
+	 */
+	List<Station> getServicingStations();
 }
