@@ -113,6 +113,12 @@
 		<if test="type != null and type != ''">
 			and p.type = #{type,jdbcType=VARCHAR}
 		</if>
+		<if test="types != null">
+			and p.type in
+			<foreach item="item" collection="types" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		<if test="orgId != null">
 			and s.apply_org = #{orgId,jdbcType=BIGINT}
 		</if>
