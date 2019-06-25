@@ -8,6 +8,7 @@ import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.dto.job.CainiaoStationCloseFenceInstanceJob;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class CainiaoStationCloseFenceInstanceJobExecutor extends AbstractFenceIn
 	private void queryStations(FluxSink<Station> emitter){
 		StationCondition stationCondition = new StationCondition();
 		stationCondition.setPageStart(1);
+		stationCondition.setTypes(Lists.newArrayList(PartnerInstanceTypeEnum.TP, PartnerInstanceTypeEnum.TPS));
 		stationCondition.setPageSize(Integer.MAX_VALUE);
 		stationCondition.setStationStatuses(Lists.newArrayList(StationStatusEnum.DECORATING, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING));
 		Page<Station> page =  stationBO.getStations(stationCondition);
