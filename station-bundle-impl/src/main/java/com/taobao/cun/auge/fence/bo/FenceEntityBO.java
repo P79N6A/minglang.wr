@@ -77,6 +77,14 @@ public interface FenceEntityBO {
      * @return
      */
     List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, String fenceType);
+
+    /**
+     * 获取村点某些类型的围栏实例
+     * @param stationId
+     * @param fenceTypes
+     * @return
+     */
+    List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, List<String> fenceTypes);
     
     /**
      * 获取站点关联某个模板生成的实例

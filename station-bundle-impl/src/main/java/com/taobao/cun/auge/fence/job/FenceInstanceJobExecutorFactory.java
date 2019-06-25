@@ -2,20 +2,8 @@ package com.taobao.cun.auge.fence.job;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.fence.dto.job.*;
 import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 
 @Component
 public class FenceInstanceJobExecutorFactory {
@@ -50,7 +38,10 @@ public class FenceInstanceJobExecutorFactory {
 	private BatchStationInitFenceInstanceJobExecutor batchStationInitFenceInstanceJobExecutor;
 	
 	@Resource
-	private TemplateDeleteFenceInstanceJobExecutor templateDeleteFenceInstanceJobExecutor; 
+	private TemplateDeleteFenceInstanceJobExecutor templateDeleteFenceInstanceJobExecutor;
+
+	@Resource
+	private CainiaoStationCloseFenceInstanceJobExecutor cainiaoStationCloseFenceInstanceJobExecutor;
 	
 	@SuppressWarnings("unchecked")
 	<F extends FenceInstanceJob> FenceInstanceJobExecutor<F> getFenceInstanceJobExecutor(F fenceInstanceJob){
@@ -97,7 +88,10 @@ public class FenceInstanceJobExecutorFactory {
 		if(fenceInstanceJob instanceof TemplateDeleteFenceInstanceJob) {
 			return (FenceInstanceJobExecutor<F>) templateDeleteFenceInstanceJobExecutor;
 		}
-		
+
+		if(fenceInstanceJob instanceof CainiaoStationCloseFenceInstanceJob){
+			return (FenceInstanceJobExecutor<F>)cainiaoStationCloseFenceInstanceJobExecutor;
+		}
 		
 		return null;
 	}
