@@ -42,7 +42,7 @@ public class CainiaoStationCloseFenceInstanceJobExecutor extends AbstractFenceIn
 	protected int doExecute(CainiaoStationCloseFenceInstanceJob fenceInstanceJob) {
 		final AtomicInteger counter = new AtomicInteger();
 		List<FenceEntity> fenceEntities = Flux.create(this::queryStations)
-				.parallel(3)
+				.parallel(2)
 				.filter(this::isCainiaoStationClosed)
 				.flatMap(s->queryFenceEntities(s, fenceInstanceJob.getFenceTypes()))
 				.sequential()
