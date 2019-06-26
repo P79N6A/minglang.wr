@@ -15,7 +15,6 @@ import reactor.core.publisher.FluxSink;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 菜鸟站点（县仓、菜鸟站点）停业，要关闭相关围栏
@@ -36,16 +35,14 @@ public class CainiaoStationCloseFenceInstanceJobExecutor extends AbstractFenceIn
 	@Override
 	protected int doExecute(CainiaoStationCloseFenceInstanceJob fenceInstanceJob) {
 		final AtomicInteger counter = new AtomicInteger();
-		List<FenceEntity> fenceEntities = Flux.create(this::queryStations)
+		Flux.create(this::queryStations)
 				.parallel(2)
 				.filter(this::isCainiaoStationClosed)
 				.flatMap(s->queryFenceEntities(s, fenceInstanceJob.getFenceTypes()))
-				.sequential()
-				.collectList()
-				.block();
-		logger.info("size:{}", fenceEntities.size());
-		logger.info("ids:{}", fenceEntities.stream().map(f->f.getId()).collect(Collectors.toList()));
-				//.subscribe(this::deleteFenceEntity);
+				.subscribe(f->{
+					deleteFenceEntity(f);
+					counter.incrementAndGet();
+				});
 		return counter.get();
 	}
 
