@@ -1,16 +1,6 @@
 package com.taobao.cun.auge.fence.service;
 
-import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.*;
 
 /**
  * 创建围栏实例的任务
@@ -88,4 +78,10 @@ public interface FenceInstanceJobService {
 	 * @param stationInitFenceInstanceJob
 	 */
 	void createJob(BatchStationInitFenceInstanceJob stationInitFenceInstanceJob);
+
+	/**
+	 * 菜鸟站点（县仓、菜鸟站点）停业，要关闭相关围栏
+	 * @param cainiaoStationCloseFenceInstanceJob
+	 */
+	void createJob(CainiaoStationCloseFenceInstanceJob cainiaoStationCloseFenceInstanceJob);
 }
