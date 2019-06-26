@@ -111,7 +111,16 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 		return entityMapper.selectByExample(example);
 	}
 
-	@Override
+    @Override
+    public List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, List<String> fenceTypes) {
+        FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n")
+                .andStationIdEqualTo(stationId)
+                .andTypeIn(fenceTypes);
+        return entityMapper.selectByExample(example);
+    }
+
+    @Override
 	public FenceEntity getStationFenceEntityByTemplateId(Long stationId, Long templateId) {
 		FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId)

@@ -5,18 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
-import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.*;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = FenceInstanceJobService.class)
@@ -85,6 +74,11 @@ public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 	@Override
 	public void createJob(BatchStationQuitFenceInstanceJob stationQuitFenceInstanceJob) {
 		fenceInstanceJobBo.insertJob(stationQuitFenceInstanceJob);
+	}
+
+	@Override
+	public void createJob(CainiaoStationCloseFenceInstanceJob cainiaoStationCloseFenceInstanceJob) {
+		fenceInstanceJobBo.insertJob(cainiaoStationCloseFenceInstanceJob);
 	}
 
 	@Override

@@ -113,6 +113,12 @@
 		<if test="type != null and type != ''">
 			and p.type = #{type,jdbcType=VARCHAR}
 		</if>
+		<if test="types != null">
+			and p.type in
+			<foreach item="item" collection="types" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		<if test="orgId != null">
 			and s.apply_org = #{orgId,jdbcType=BIGINT}
 		</if>
@@ -223,4 +229,11 @@
 	and a.id=b.station_id and a.apply_org=#{orgId}
 	and b.type in('TP','TPS') and b.state in('SERVICING','DECORATING')
     </select>
+
+	<select id="getServicingStations" resultMap="BaseResultMap">
+		select a.* from station a,partner_station_rel b
+		where a.is_deleted='n' and b.is_deleted='n'
+		and a.id=b.station_id
+		and b.type in('TP','TPS') and b.state in('SERVICING','DECORATING','CLOSING')
+	</select>
 </mapper>

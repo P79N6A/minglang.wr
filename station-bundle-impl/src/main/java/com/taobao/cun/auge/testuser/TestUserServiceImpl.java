@@ -2,9 +2,15 @@ package com.taobao.cun.auge.testuser;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
+import com.taobao.cun.auge.dal.domain.PartnerApplyExample;
+import com.taobao.cun.auge.dal.mapper.PartnerApplyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.recruit.partner.enums.PartnerApplyStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,11 @@ public class TestUserServiceImpl implements TestUserService{
 	
 	@Autowired
 	private TestUserInfoManager testUserInfoManager;
+
+	@Autowired
+	PartnerApplyMapper partnerApplyMapper;
+
+
     @Override
     public boolean isTestUser(Long taobaoUserId, String bizCode,boolean allMatch) {
     	Assert.notNull(taobaoUserId);
@@ -57,5 +68,15 @@ public class TestUserServiceImpl implements TestUserService{
 		return result;
 	}
 
-    
+	@Override
+	public void updatePartnerApplyStatusToAddressPass(List<Long> ids) {
+		PartnerApplyExample example = new PartnerApplyExample();
+		PartnerApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIdIn(ids);
+		criteria.andIsDeletedEqualTo("n");
+		PartnerApply p = new PartnerApply();
+		p.setState(PartnerApplyStateEnum.STATE_ADDRESS_AUDIT_PASS.getCode());
+		DomainUtils.beforeUpdate(p, "sys");
+		partnerApplyMapper.updateByExampleSelective(p,example);
+	}
 }
