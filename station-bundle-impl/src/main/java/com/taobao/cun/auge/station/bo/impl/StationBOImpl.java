@@ -288,4 +288,9 @@ public class StationBOImpl implements StationBO {
 	public int getServicingNumByOrgId(Long orgId) {
 		return stationExtMapper.getServicingNumByOrg(orgId);
 	}
+
+	@Override
+	public List<Station> getServicingStations(){
+		return stationExtMapper.getServicingStations();
+	}
 }
