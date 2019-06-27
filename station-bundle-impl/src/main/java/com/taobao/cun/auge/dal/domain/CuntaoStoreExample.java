@@ -1234,6 +1234,146 @@ public class CuntaoStoreExample {
             addCriterion("store_group_ids not between", value1, value2, "storeGroupIds");
             return (Criteria) this;
         }
+
+        public Criteria andMinappIdIsNull() {
+            addCriterion("minapp_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdIsNotNull() {
+            addCriterion("minapp_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdEqualTo(String value) {
+            addCriterion("minapp_id =", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdNotEqualTo(String value) {
+            addCriterion("minapp_id <>", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdGreaterThan(String value) {
+            addCriterion("minapp_id >", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdGreaterThanOrEqualTo(String value) {
+            addCriterion("minapp_id >=", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdLessThan(String value) {
+            addCriterion("minapp_id <", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdLessThanOrEqualTo(String value) {
+            addCriterion("minapp_id <=", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdLike(String value) {
+            addCriterion("minapp_id like", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdNotLike(String value) {
+            addCriterion("minapp_id not like", value, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdIn(List<String> values) {
+            addCriterion("minapp_id in", values, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdNotIn(List<String> values) {
+            addCriterion("minapp_id not in", values, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdBetween(String value1, String value2) {
+            addCriterion("minapp_id between", value1, value2, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMinappIdNotBetween(String value1, String value2) {
+            addCriterion("minapp_id not between", value1, value2, "minappId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdIsNull() {
+            addCriterion("sub_image_task_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdIsNotNull() {
+            addCriterion("sub_image_task_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdEqualTo(String value) {
+            addCriterion("sub_image_task_id =", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdNotEqualTo(String value) {
+            addCriterion("sub_image_task_id <>", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdGreaterThan(String value) {
+            addCriterion("sub_image_task_id >", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdGreaterThanOrEqualTo(String value) {
+            addCriterion("sub_image_task_id >=", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdLessThan(String value) {
+            addCriterion("sub_image_task_id <", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdLessThanOrEqualTo(String value) {
+            addCriterion("sub_image_task_id <=", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdLike(String value) {
+            addCriterion("sub_image_task_id like", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdNotLike(String value) {
+            addCriterion("sub_image_task_id not like", value, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdIn(List<String> values) {
+            addCriterion("sub_image_task_id in", values, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdNotIn(List<String> values) {
+            addCriterion("sub_image_task_id not in", values, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdBetween(String value1, String value2) {
+            addCriterion("sub_image_task_id between", value1, value2, "subImageTaskId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubImageTaskIdNotBetween(String value1, String value2) {
+            addCriterion("sub_image_task_id not between", value1, value2, "subImageTaskId");
+            return (Criteria) this;
+        }
     }
 
     /**

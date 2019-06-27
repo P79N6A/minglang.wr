@@ -1027,4 +1027,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         logger.info("submitQuitUmTask : {}", JSON.toJSONString(quitUmTaskVo));
     }
 
+    @Override
+    public void submitInitLightStoreTask(Long storeId) {
+
+    }
 }

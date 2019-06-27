@@ -30,6 +30,7 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -72,8 +73,6 @@ import java.util.stream.Collectors;
 public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
     private static final Logger logger = LoggerFactory.getLogger(StoreWriteV2BO.class);
-
-
     @Resource
     private DiamondConfiguredProperties diamondConfiguredProperties;
 
@@ -119,9 +118,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     @Autowired
     private DefaultDivisionAdapterManager defaultDivisionAdapterManager;
 
-    @Resource
-    private PartnerInstanceQueryService partnerInstanceQueryService;
-
     @Autowired
     private EmployeeWriteBO employeeWriteBO;
 
@@ -136,17 +132,20 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     @Autowired
     private UicReadAdapter uicReadAdapter;
 
-    @Autowired
-    private SiteReadService siteReadService;
-
-    @Autowired
-    private SiteWriteService siteWriteService;
+//    @Autowired
+//    private SiteReadService siteReadService;
+//
+//    @Autowired
+//    private SiteWriteService siteWriteService;
 
     @Autowired
     private StoreServiceV2 storeServiceV2;
 
     @Autowired
     private MiniAppService miniAppService;
+
+    @Autowired
+    private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Override
     public Long createByStationId(Long stationId) {
@@ -956,11 +955,23 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
     @Override
     public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId) {
+        logger.info("sync-initLightStore,storeId={},taskInstanceId={}", taobaoUserId,taskInstanceId);
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if (rel == null) {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人不存在");
         }
-        return null;
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreByStationId(rel.getStationId());
+        if (cuntaoStore == null) {//不是当前服务站
+            logger.error("sync-initLightStore,stationId={},taobaoUserId={}", rel.getStationId(),taobaoUserId);
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人没有门店信息");
+        }
+        cuntaoStore.setSubImageTaskId(String.valueOf(taskInstanceId));
+        cuntaoStore.setTaobaoUserId(rel.getTaobaoUserId());
+        cuntaoStore.setGmtModified(new Date());
+        cuntaoStore.setModifier("system");
+        cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        generalTaskSubmitService.submitInitLightStoreTask(cuntaoStore.getShareStoreId());
+        return Boolean.TRUE;
     }
 
     @Override
@@ -974,12 +985,10 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (station == null || StationStatusEnum.QUIT.getCode().equals(station.getStatus())) {//服务站已经退出
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "station is quit or null");
         }
-
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
         if (rel == null) {//不是当前服务站
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "instance is null");
         }
-
         Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
 
         StoreDTO storeDTO = new StoreDTO();
