@@ -776,7 +776,6 @@
 				<version>3.4.2</version>
 			</dependency>
 
-		<!--
 			<dependency>
 				<groupId>com.taobao.kfc</groupId>
 				<artifactId>kfc-client</artifactId>
@@ -799,7 +798,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-		-->
+
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
