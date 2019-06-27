@@ -11,6 +11,7 @@ import com.alipay.api.request.AntMerchantExpandIndirectImageUploadRequest;
 import com.alipay.api.request.AntMerchantExpandIndirectZftCreateRequest;
 import com.alipay.api.response.AntMerchantExpandIndirectImageUploadResponse;
 import com.alipay.api.response.AntMerchantExpandIndirectZftCreateResponse;
+import com.taobao.common.tfs.TfsManager;
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -30,6 +31,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
+import com.taobao.cun.service.attachement.TfsService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.mtop.api.util.StringUtil;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -68,6 +71,9 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private TfsManager tfsManager;
 
     @Autowired
     private PartnerApplyService partnerApplyService;
@@ -141,19 +147,17 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         AttachmentDto idcardImgsFace = attachmentService.getAttachment(applyId,
                 AttachmentBizTypeEnum.IDCARD_IMGS_FACE_BIZTYPE);
 
-        String idcardImgsFaceUrl = DOLWAN_IMAGE_URI + "?fileName=" + idcardImgsFace.getFsId() + "&fileType="
-                + idcardImgsFace.getFileType() + "&title=" + idcardImgsFace.getTitle();
-
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-        request.setImageType("jpg");
+  //      request.setImageType("jpg");
 //        if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".png")||idcardImgsFace.getTitle().endsWith(".PNG"))){
 //            request.setImageType("png");
 //        }
 //        else if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".jpg")||idcardImgsFace.getTitle().endsWith(".JPG"))){
 //            request.setImageType("jpg");
 //        }
-        saveToFile(idcardImgsFaceUrl,"/home/admin/"+idcardImgsFace.getTitle());
-        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle());
+        byte[] bt = doGetFileFromTfs(idcardImgsFace.getFsId(), idcardImgsFace.getFileType());
+
+        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle(),bt);
         request.setImageContent(ImageContent);
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
@@ -166,9 +170,6 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                 AttachmentBizTypeEnum.IDCARD_IMGS_BACK_BIZTYPE);
 
 
-        String idcardImgsBackUrl = DOLWAN_IMAGE_URI + "?fileName=" + idcardImgsBack.getFsId() + "&fileType="
-                + idcardImgsBack.getFileType() + "&title=" + idcardImgsBack.getTitle();
-
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
 
         if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".png")||idcardImgsBack.getTitle().endsWith(".PNG"))){
@@ -177,9 +178,10 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         else if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".jpg")||idcardImgsBack.getTitle().endsWith(".JPG"))){
             request.setImageType("jpg");
         }
-        saveToFile(idcardImgsBackUrl,"/home/admin/"+idcardImgsBack.getTitle());
+        //saveToFile(idcardImgsBackUrl,"/home/admin/"+idcardImgsBack.getTitle());
+        byte[] bt = doGetFileFromTfs(idcardImgsBack.getFsId(), idcardImgsBack.getFileType());
 
-        FileItem ImageContent = new FileItem(idcardImgsBackUrl);
+        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsBack.getTitle(),bt);
         request.setImageContent(ImageContent);
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
@@ -278,7 +280,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         return response;
     }
 
-    public void saveToFile(String destUrl,String destFileName) {
+    private void saveToFile(String destUrl,String destFileName) {
 
         FileOutputStream fos = null;
         BufferedInputStream bis = null;
@@ -307,6 +309,20 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             } catch (IOException e) {
             } catch (NullPointerException e) {
             }
+        }
+    }
+
+    private byte[] doGetFileFromTfs(String fileName, String fileType) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(5000);
+        String tfsSuffix = null;
+        if(fileName != null && fileName.endsWith(".tfsprivate")){
+            tfsSuffix = ".tfsprivate";
+        }
+        boolean flag = tfsManager.fetchFile(fileName, tfsSuffix,byteArrayOutputStream);
+        if (flag) {
+            return byteArrayOutputStream.toByteArray();
+        } else {
+            return null;
         }
     }
 
