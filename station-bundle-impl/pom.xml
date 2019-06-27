@@ -531,6 +531,10 @@
 					<groupId>com.tmall.nova</groupId>
 					<artifactId>nova-client</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.taobao.forest</groupId>
+					<artifactId>forest-client</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
