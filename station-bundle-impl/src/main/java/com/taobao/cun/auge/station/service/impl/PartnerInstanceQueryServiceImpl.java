@@ -224,7 +224,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     private void buildUpgradeRecord(PartnerInstanceDto insDto) {
         CuntaoContactRecordDto cuntaoContactRecordDto = cuntaoContactRecordService.queryLatestRecord(VisitTypeEnum.UPGRADE.getCode(), insDto.getStationId());
         if(cuntaoContactRecordDto != null){
-            insDto.setOperateName(cuntaoContactRecordDto.getOperatorName());
+            insDto.setOperateName(cuntaoContactRecordDto.getOperateName());
             insDto.setOperatePhone(cuntaoContactRecordDto.getContactorPhone());
             insDto.setOperatePersonal(cuntaoContactRecordDto.getOperatePersonal());
             insDto.setOperateMethod(cuntaoContactRecordDto.getOperateMethod());
