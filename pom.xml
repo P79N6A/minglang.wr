@@ -29,7 +29,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.8.5</auge.station.client.version>
+		<auge.station.client.version>4.8.6</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
@@ -775,6 +775,8 @@
 				<artifactId>aliyun-sdk-oss</artifactId>
 				<version>3.4.2</version>
 			</dependency>
+
+		<!--
 			<dependency>
 				<groupId>com.taobao.kfc</groupId>
 				<artifactId>kfc-client</artifactId>
@@ -797,6 +799,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+		-->
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
@@ -961,6 +964,11 @@
 				<groupId>com.alibaba.site</groupId>
 				<artifactId>basic-alisite-client</artifactId>
 				<version>3.1.12</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alipay.sdk</groupId>
+			  <artifactId>alipay-sdk-java</artifactId>
+			  <version>3.7.89.ALL</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

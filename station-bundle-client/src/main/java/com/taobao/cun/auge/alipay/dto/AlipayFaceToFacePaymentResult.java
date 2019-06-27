@@ -2,11 +2,12 @@ package com.taobao.cun.auge.alipay.dto;
 
 import java.io.Serializable;
 
-public class AlipayFaceToFacePaymentResult implements Serializable {
+public class AlipayFaceToFacePaymentResult<T> implements Serializable {
 
     private boolean success;
     private String resultCode;
     private String errorMsg;
+    private T data;
 
     public boolean isSuccess() {
         return success;
@@ -30,5 +31,13 @@ public class AlipayFaceToFacePaymentResult implements Serializable {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
