@@ -585,6 +585,22 @@
 			<groupId>com.alibaba.site</groupId>
 			<artifactId>basic-alisite-client</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.taobao.cun.module</groupId>
+            <artifactId>station-bundle-client</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
