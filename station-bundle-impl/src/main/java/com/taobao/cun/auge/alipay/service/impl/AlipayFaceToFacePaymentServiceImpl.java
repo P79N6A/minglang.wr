@@ -31,6 +31,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.mtop.api.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     public static final String DOLWAN_IMAGE_URI = "/image/doDownLoadImage.json";
 
-    public static final String DOLWAN_QUAN_IMAGE_URI="http://sellercenter.cn-hangzhou.oss-pub.aliyun-inc.com/quali/";
+    public static final String DOLWAN_QUAN_IMAGE_URI="http://sellercenter.cn-hangzhou.oss-pub.aliyun-inc.com/";
 
     public static final String INDIVIDUAL_BUSINESS="1";
 
@@ -145,7 +146,14 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
         request.setImageType("jpg");
-        FileItem ImageContent = new FileItem(idcardImgsFaceUrl);
+        if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".png")||idcardImgsFace.getTitle().endsWith(".PNG"))){
+            request.setImageType("png");
+        }
+        else if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".jpg")||idcardImgsFace.getTitle().endsWith(".JPG"))){
+            request.setImageType("jpg");
+        }
+        saveToFile(idcardImgsFaceUrl,"/home/admin/"+idcardImgsFace.getTitle());
+        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle());
         request.setImageContent(ImageContent);
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
@@ -162,7 +170,15 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                 + idcardImgsBack.getFileType() + "&title=" + idcardImgsBack.getTitle();
 
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-        request.setImageType("jpg");
+
+        if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".png")||idcardImgsBack.getTitle().endsWith(".PNG"))){
+            request.setImageType("png");
+        }
+        else if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".jpg")||idcardImgsBack.getTitle().endsWith(".JPG"))){
+            request.setImageType("jpg");
+        }
+        saveToFile(idcardImgsBackUrl,"/home/admin/"+idcardImgsBack.getTitle());
+
         FileItem ImageContent = new FileItem(idcardImgsBackUrl);
         request.setImageContent(ImageContent);
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
@@ -177,8 +193,15 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         if(cuntaoQualification!=null){
             String certUrl=DOLWAN_QUAN_IMAGE_URI+cuntaoQualification.getQualiPic();
             AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-            request.setImageType("png");
-            FileItem ImageContent = new FileItem(certUrl);
+            if(StringUtil.isNotBlank(cuntaoQualification.getQualiPic())&&(cuntaoQualification.getQualiPic().endsWith(".png")||cuntaoQualification.getQualiPic().endsWith(".PNG"))){
+                request.setImageType("png");
+            }
+            else if(StringUtil.isNotBlank(cuntaoQualification.getQualiPic())&&(cuntaoQualification.getQualiPic().endsWith(".jpg")||cuntaoQualification.getQualiPic().endsWith(".JPG"))){
+                request.setImageType("jpg");
+            }
+            saveToFile(certUrl,"/home/admin/"+cuntaoQualification.getQualiPic());
+
+            FileItem ImageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic());
             request.setImageContent(ImageContent);
             response = alipayClient.execute(request);
         }
