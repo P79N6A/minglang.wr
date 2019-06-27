@@ -601,6 +601,10 @@
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

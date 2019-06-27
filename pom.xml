@@ -967,6 +967,11 @@
 				<artifactId>reactor-core</artifactId>
 				<version>3.2.10.RELEASE</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alipay.sdk</groupId>
+				<artifactId>alipay-sdk-java</artifactId>
+				<version>3.7.89.ALL</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
