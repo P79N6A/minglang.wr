@@ -1,8 +1,12 @@
 package com.taobao.cun.auge.inspection;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.recruit.contact.dto.CuntaoContactRecordDto;
+import com.taobao.cun.recruit.contact.enums.VisitTypeEnum;
+import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
@@ -27,12 +31,16 @@ import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+import javax.annotation.Resource;
+
 @Service("inspectionStationQueryService")
 @HSFProvider(serviceInterface = InspectionStationQueryService.class)
 public class InspectionStationQueryServiceImpl implements InspectionStationQueryService {
 
 	@Autowired
 	private InspectionStationMapper partnerInstanceInspectionMapper;
+	@Resource
+	private CuntaoContactRecordService cuntaoContactRecordService;
 	
 	@Autowired
 	private CuntaoUserOrgService cuntaoUserOrgService;
@@ -53,7 +61,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setInspectionState(condition.getInspectionState());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize(),true,false);
 		Page<InspectionStation> inspections = partnerInstanceInspectionMapper.selectInspectionStationByExample(example);
-		PageDto<InspectionStationDto> success = PageDtoUtil.success(inspections, convert(inspections));
+		PageDto<InspectionStationDto> success = PageDtoUtil.success(inspections, initUpgradeRecord(convert(inspections)));
 		return success;
 	}
 
@@ -74,6 +82,26 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		}
 		return results;
 	}
+
+	private List<InspectionStationDto> initUpgradeRecord(List<InspectionStationDto> inspectionStationDtos){
+        List<Long> stationIds = inspectionStationDtos.stream().map(i->i.getStationId()).distinct().collect(Collectors.toList());
+        if(stationIds == null || stationIds.isEmpty()){
+        	return inspectionStationDtos;
+		}
+        List<CuntaoContactRecordDto> cuntaoContactRecordDtos = cuntaoContactRecordService.queryLatestRecords(VisitTypeEnum.UPGRADE.getCode(), stationIds);
+        if(cuntaoContactRecordDtos != null){
+			Map<Long,CuntaoContactRecordDto> map = cuntaoContactRecordDtos.stream().collect(Collectors.toMap(r->r.getStationId(), r->r));
+			return inspectionStationDtos.stream().peek(i->{
+				CuntaoContactRecordDto record = map.get(i.getStationId());
+				if(record != null){
+					i.setUpgradeRiskGrade(record.getRiskGrade());
+					i.setUpgradePlan(record.getUpgradePlan());
+				}
+			}).collect(Collectors.toList());
+		}
+
+        return inspectionStationDtos;
+    }
 
 
 	@Override
