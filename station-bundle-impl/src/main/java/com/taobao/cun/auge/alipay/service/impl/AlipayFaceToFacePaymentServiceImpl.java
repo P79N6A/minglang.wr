@@ -146,12 +146,12 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
         request.setImageType("jpg");
-        if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".png")||idcardImgsFace.getTitle().endsWith(".PNG"))){
-            request.setImageType("png");
-        }
-        else if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".jpg")||idcardImgsFace.getTitle().endsWith(".JPG"))){
-            request.setImageType("jpg");
-        }
+//        if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".png")||idcardImgsFace.getTitle().endsWith(".PNG"))){
+//            request.setImageType("png");
+//        }
+//        else if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".jpg")||idcardImgsFace.getTitle().endsWith(".JPG"))){
+//            request.setImageType("jpg");
+//        }
         saveToFile(idcardImgsFaceUrl,"/home/admin/"+idcardImgsFace.getTitle());
         FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle());
         request.setImageContent(ImageContent);
