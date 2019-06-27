@@ -217,4 +217,11 @@ public interface StationDecorateService {
  	public void auditStationDecorateAfterNodeFish(Long stationId,ProcessApproveResultEnum approveResultEnum,String auditOpinion);
 
 
+	/**
+	 * 初始化装修记录
+	 * @param stationId
+	 */
+	void initStationDecorateInfo(Long stationId);
+
+
 }
