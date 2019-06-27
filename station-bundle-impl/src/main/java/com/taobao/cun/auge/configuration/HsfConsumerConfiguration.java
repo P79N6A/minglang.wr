@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -127,6 +128,6 @@ public class HsfConsumerConfiguration  {
 	private StoreSWriteService storeSWriteService;
 	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private WhiteListWriteService whiteListWriteService;
-	
-
+	@HSFConsumer(serviceVersion = "${spring.hsf.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private CuntaoContactRecordService cuntaoContactRecordService;
 }
