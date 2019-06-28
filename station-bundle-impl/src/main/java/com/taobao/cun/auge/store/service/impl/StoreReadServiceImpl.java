@@ -2,6 +2,8 @@ package com.taobao.cun.auge.store.service.impl;
 
 import com.alibaba.cuntao.ctsm.client.dto.read.ServiceJudgmentForStoreQuitDTO;
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
@@ -10,6 +12,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.*;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
@@ -27,7 +30,11 @@ import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
+import com.taobao.cun.auge.task.dto.TaskElementDto;
 import com.taobao.cun.auge.task.dto.TaskInstanceDto;
+import com.taobao.cun.auge.task.dto.TaskNodeDto;
+import com.taobao.cun.auge.task.enums.TaskElementType;
+import com.taobao.cun.auge.task.enums.TaskNodeTypeEnum;
 import com.taobao.cun.auge.task.service.TaskInstanceService;
 import com.taobao.cun.recruit.ability.dto.ServiceAbilityEmployeeInfoDto;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityEmployeeInfoService;
@@ -40,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +56,9 @@ import static com.taobao.cun.auge.common.utils.PageDtoUtil.success;
 @HSFProvider(serviceInterface = StoreReadService.class)
 @Service("storeReadService")
 public class StoreReadServiceImpl implements StoreReadService {
+
+	@Resource
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	
 	@Autowired
 	private StoreReadBO storeReadBO;
@@ -276,10 +287,30 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Override
 	public List<Map<String,String>>  getSubImageFromTask(Long taskInstanceId) {
+		List<Map<String,String>> res = new ArrayList<>();
 		com.taobao.cun.auge.common.dto.OperatorDto od = new com.taobao.cun.auge.common.dto.OperatorDto();
 		od.copyOperatorDto(com.taobao.cun.auge.common.dto.OperatorDto.defaultOperator());
 		TaskInstanceDto dto = taskInstanceService.getTaskInstanceById(taskInstanceId, od);
-		//dto.getTaskNodes()
-		return null;
+		if (dto == null ) {
+			return res;
+		}
+		List<TaskNodeDto> busiModeList = dto.getTaskNodes().stream().filter(i -> TaskNodeTypeEnum.TASK_NODE.equals(i.getNodeType())).collect(Collectors.toList());
+		for (TaskNodeDto d : busiModeList) {
+			for (TaskElementDto d1 : d.getTaskElements()) {
+				if (TaskElementType.PHOTO.equals(d1.getElementType()) && !"PHOTO4".equals(d1.getElementKey())) {
+					List<Map<String, String>> l = JSON.parseObject(d1.getResult(), new TypeReference<List<Map<String, String>>>() {
+					});
+					for (int i=0;i<l.size();i++) {
+						Map<String,String> p = new HashMap<>();
+						String url = res.get(i).get("url").replace(diamondConfiguredProperties.getStoreImagePerfix(), "");
+						p.put("url",url);
+						p.put("name","子图"+i);
+						p.put("seq",""+i);
+						res.add(p);
+					}
+				}
+			}
+		}
+		return res;
 	}
 }
