@@ -328,7 +328,7 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	}
 
 	@Override
-	public String initSingleMiniappForLightStore(Long storeId) {
+	public Boolean initSingleMiniappForLightStore(Long storeId) {
 		return storeWriteV2BO.initSingleMiniappForLightStore(storeId);
 	}
 
@@ -337,8 +337,4 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteV2BO.openLightStorePermission(storeId);
 	}
 
-	@Override
-	public Boolean checkOpenLightStore(Long taobaoUserId) {
-		return storeWriteV2BO.checkOpenLightStore(taobaoUserId);
-	}
 }

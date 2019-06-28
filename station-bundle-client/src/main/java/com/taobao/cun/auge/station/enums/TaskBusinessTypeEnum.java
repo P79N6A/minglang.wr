@@ -51,6 +51,9 @@ public class TaskBusinessTypeEnum implements Serializable {
 
 	public static final TaskBusinessTypeEnum QUIT_UM = new TaskBusinessTypeEnum("QUIT_UM", "退出优盟");
 
+	public static final TaskBusinessTypeEnum INIT_LIGHT_STORE = new TaskBusinessTypeEnum("INIT_LIGHT_STORE", "初始化轻店");
+
+
 	static {
 		mappings.put("SETTLING_SYS_PROCESS", SETTLING_SYS_PROCESS);
 		mappings.put("UPDATE_SERVICING_CAINIAO", UPDATE_SERVICING_CAINIAO);
@@ -67,6 +70,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 		mappings.put("CLOSED_TO_CAINIAO", CLOSED_TO_CAINIAO);
 		mappings.put("CLOSED_UM", CLOSED_UM);
 		mappings.put("QUIT_UM", QUIT_UM);
+		mappings.put("INIT_LIGHT_STORE", INIT_LIGHT_STORE);
+
 	}
 
 	public TaskBusinessTypeEnum(String code, String desc) {

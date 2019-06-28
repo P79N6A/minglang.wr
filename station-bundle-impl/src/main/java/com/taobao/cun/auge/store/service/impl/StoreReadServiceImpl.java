@@ -40,10 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.taobao.cun.auge.common.utils.PageDtoUtil.success;
@@ -278,7 +275,7 @@ public class StoreReadServiceImpl implements StoreReadService {
 	}
 
 	@Override
-	public List<String> getSubImageFromTask(Long taskInstanceId) {
+	public List<Map<String,String>>  getSubImageFromTask(Long taskInstanceId) {
 		com.taobao.cun.auge.common.dto.OperatorDto od = new com.taobao.cun.auge.common.dto.OperatorDto();
 		od.copyOperatorDto(com.taobao.cun.auge.common.dto.OperatorDto.defaultOperator());
 		TaskInstanceDto dto = taskInstanceService.getTaskInstanceById(taskInstanceId, od);

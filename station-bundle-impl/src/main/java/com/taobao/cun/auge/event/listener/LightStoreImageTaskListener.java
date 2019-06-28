@@ -29,9 +29,6 @@ public class LightStoreImageTaskListener implements EventListener{
     private static final String BUSI_TYPE_CODE="LIGHT_STORE";
 
     @Autowired
-    private StoreReadService storeReadService;
-
-    @Autowired
     private StoreWriteV2BO storeWriteV2BO;
 
     @Override
@@ -51,7 +48,6 @@ public class LightStoreImageTaskListener implements EventListener{
         }
 
         if (TaskInstanceEventEnum.COMPLETED.equals(eventType) && BUSI_TYPE_CODE.equals(busiTypeCode)) {
-            List<String> imageList = storeReadService.getSubImageFromTask(taskInstanceId);
             storeWriteV2BO.initLightStore(Long.parseLong(userId),taskInstanceId);
         }
     }

@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.bo.impl;
 import com.alibaba.alisite.api.MiniAppService;
 import com.alibaba.alisite.api.SiteReadService;
 import com.alibaba.alisite.api.SiteWriteService;
+import com.alibaba.alisite.model.dto.result.MiniAppResultDTO;
 import com.alibaba.alisite.model.dto.result.SiteDTO;
 import com.alibaba.alisite.model.dto.result.StoreOpenMiniAppDTO;
 import com.alibaba.cuntao.ctsm.client.service.read.StoreSReadService;
@@ -38,8 +39,11 @@ import com.taobao.cun.auge.store.bo.StoreWriteV2BO;
 import com.taobao.cun.auge.store.dto.*;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
+import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.mdjxc.common.result.DataResult;
 import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
@@ -62,6 +66,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.taobao.place.client.domain.dto.StoreDTO;
 
@@ -146,6 +151,13 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
 
     @Autowired
     private GeneralTaskSubmitService generalTaskSubmitService;
+
+    @Autowired
+    private StoreReadService storeReadService;
+
+    @Autowired
+    @Qualifier("storeEndorApiClient")
+    private EndorApiClient storeEndorApiClient;
 
     @Override
     public Long createByStationId(Long stationId) {
@@ -660,12 +672,12 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             return;
         }
         String gIds = cuntaoStore.getStoreGroupIds();
-        List<Long> sList = null;
+        Set<Long> sList = null;
         if (StringUtils.isNotEmpty(gIds)) {
-            sList = JSON.parseObject(gIds, new TypeReference<List<Long>>() {
+            sList = JSON.parseObject(gIds, new TypeReference<Set<Long>>() {
             });
         } else {
-            sList = new ArrayList<>();
+            sList = new HashSet<>();
         }
         if ("y".equals(isBind)) {
             sList.add(groupId);
@@ -806,34 +818,10 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         Map<String, Object> result = new HashMap<>();
         result.put("storeId", String.valueOf(storeId));
         try {
-            //这段逻辑应不在需要，对方接口内部判断
-            /* //先判断站点是否存在，不存在的话首先初始化站点
-            com.alibaba.alisite.model.Result<SiteDTO> siteDTOResult = siteReadService.getSiteByBizCodeAndBizId(storeId, diamondConfiguredProperties.getMinAppBizCode());
-            if (siteDTOResult == null || !siteDTOResult.isSuccess()) {//查询站点失败
-                logger.error("getSiteByBizCodeAndBizId error[" + storeId + "]");
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId+"");
-
-            }
-            if (siteDTOResult.getResult() == null) {
-                com.alibaba.alisite.model.Result applyResult = siteWriteService.applySite(storeId, diamondConfiguredProperties.getMinAppBizCode());
-                if (applyResult == null || !applyResult.isSuccess()) {//初始化站点失败
-                    logger.error("applySite error[" + storeId + "]");
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
-                }
-                com.alibaba.alisite.model.Result releaseResult = siteWriteService.releaseSite(storeId, diamondConfiguredProperties.getMinAppBizCode());
-                if (releaseResult == null || !releaseResult.isSuccess()) {
-                    //发布站点失败
-                    logger.error("releaseSite error[" + storeId + "]");
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
-                }
-            }*/
-            /**
-             *  初始化小程序
-             */
             com.taobao.place.client.domain.dataobject.StoreDO storeDO = storeServiceV2.getStoreByIdWithCache(storeId);
             if (storeDO == null) {//查询门店失败
                 logger.error("getStoreByIdWithCache error[" + storeId + "]");
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId +"");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "");
             }
             if (StringUtils.isNotEmpty(storeDO.getName())) {
                 if (storeDO.getName().contains("(") || storeDO.getName().contains(")")
@@ -873,8 +861,8 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             String storeIcon = diamondConfiguredProperties.getMinAppIconPreFix() + storeDO.getPic();
             openMiniAppDTO.setStoreIcon(storeIcon);
             openMiniAppDTO.setStoreCategoryCode(String.valueOf(storeDO.getCategoryId()));
-            if("n".equals(diamondConfiguredProperties.getMinAppGetLastVersion())) {
-                if(StringUtils.isNotEmpty(diamondConfiguredProperties.getMinAppTemplateId())){
+            if ("n".equals(diamondConfiguredProperties.getMinAppGetLastVersion())) {
+                if (StringUtils.isNotEmpty(diamondConfiguredProperties.getMinAppTemplateId())) {
                     openMiniAppDTO.setTemplateId(Long.parseLong(diamondConfiguredProperties.getMinAppTemplateId()));
                 }
                 if (StringUtils.isNotEmpty(diamondConfiguredProperties.getMinAppVersion())) {
@@ -921,18 +909,18 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 openMiniAppDTO.setStoreLatitude(0D);
             }
             com.alibaba.alisite.model.Result openResult = miniAppService.open(openMiniAppDTO);
-            if(openResult.isSuccess()) {
+            if (openResult.isSuccess()) {
                 result.put("data", openResult.getResult());
                 result.put("success", true);
 
-            }else {
+            } else {
                 result.put("success", false);
                 result.put("error", openResult.getError());
             }
             return result;
         } catch (Exception e) {
             result.put("success", false);
-            result.put("errorMessage", "系统异常:"+e.getMessage());
+            result.put("errorMessage", "系统异常:" + e.getMessage());
             logger.error("openMiniapp error, storeId:{}", storeId, e);
             return result;
         }
@@ -945,7 +933,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 logger.info("sync initMinApp,storeId={}", storeId);
                 try {
                     Map<String, Object> stringObjectMap = initSingleMiniapp(storeId);
-                    logger.info("sync initMinApp,storeId="+storeId+"res="+JSON.toJSONString(stringObjectMap));
+                    logger.info("sync initMinApp,storeId=" + storeId + "res=" + JSON.toJSONString(stringObjectMap));
                 } catch (Exception e) {
                     logger.error("sync initMinApp error,storeId=" + storeId, e);
                 }
@@ -954,22 +942,23 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     }
 
     @Override
-    public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId) {
-        logger.info("sync-initLightStore,storeId={},taskInstanceId={}", taobaoUserId,taskInstanceId);
+    public Boolean initLightStore(Long taobaoUserId, Long taskInstanceId) {
+        logger.info("sync-initLightStore,storeId={},taskInstanceId={}", taobaoUserId, taskInstanceId);
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         if (rel == null) {
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人不存在");
+            logger.error("sync-initLightStore error:rel is null,taobaoUserId={}", taobaoUserId);
+            return Boolean.TRUE;
         }
         CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreByStationId(rel.getStationId());
         if (cuntaoStore == null) {//不是当前服务站
-            logger.error("sync-initLightStore,stationId={},taobaoUserId={}", rel.getStationId(),taobaoUserId);
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE, "当前合伙人没有门店信息");
+            logger.error("sync-initLightStore error cuntaostore is null,stationId={},taobaoUserId={}", rel.getStationId(), taobaoUserId);
+            return Boolean.TRUE;
         }
         cuntaoStore.setSubImageTaskId(String.valueOf(taskInstanceId));
         cuntaoStore.setTaobaoUserId(rel.getTaobaoUserId());
         cuntaoStore.setGmtModified(new Date());
         cuntaoStore.setModifier("system");
-        cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
         generalTaskSubmitService.submitInitLightStoreTask(cuntaoStore.getShareStoreId());
         return Boolean.TRUE;
     }
@@ -980,7 +969,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (cuntaoStore == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "cuntaostore is null");
         }
-        Long stationId= cuntaoStore.getStationId();
+        Long stationId = cuntaoStore.getStationId();
         Station station = stationBO.getStationById(stationId);
         if (station == null || StationStatusEnum.QUIT.getCode().equals(station.getStatus())) {//服务站已经退出
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + "station is quit or null");
@@ -1024,32 +1013,83 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         cuntaoStore.setTaobaoUserId(rel.getTaobaoUserId());
         cuntaoStore.setGmtModified(new Date());
         cuntaoStore.setModifier("system");
-        cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+        cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
         return Boolean.TRUE;
     }
 
     @Override
     public Boolean modifyStoreSubImageFromTask(Long storeId) {
-        return null;
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreBySharedStoreId(storeId);
+        if (cuntaoStore == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + " error:cuntaostore is null");
+        }
+        if (cuntaoStore.getSubImageTaskId() == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + " error:cuntaostore imagetaskid is null");
+        }
+        List<Map<String, String>> imageList = storeReadService.getSubImageFromTask(Long.parseLong(cuntaoStore.getSubImageTaskId()));
+
+        StoreAlbumDO albumDO = new StoreAlbumDO();
+        albumDO.setPicCdnDomainName(diamondConfiguredProperties.getStoreImagePerfix());
+        if (CollectionUtils.isEmpty(imageList)) {
+            return Boolean.TRUE;
+        }
+        List<StoreAlbumDO.PictureDO> pictures = imageList.stream().map(l1 -> bulidPic(l1)).collect(Collectors.toList());
+        albumDO.setPictures(pictures);
+
+        ResultDO<Boolean> res = storeExtendServiceV2.updateExtends(storeId, StoreExtendsTypeV2.STORE_ENVIRONMENT_PICS, albumDO);
+        if (res.isFailured()) {
+            logger.error("modifyStoreSubImageFromTask error[" + storeId + "]:" + res.getFullErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "modifyStoreSubImageFromTask error[" + storeId + "]:" + res.getFullErrorMsg());
+        }
+
+        return Boolean.TRUE;
     }
 
     @Override
     public Boolean bindDefaultStoreGroup(Long storeId) {
-        return null;
+        List<Long> storeIdList = new ArrayList<>();
+        storeIdList.add(storeId);
+        return bindStoreGroup(589785L, storeIdList);
     }
 
     @Override
-    public String initSingleMiniappForLightStore(Long storeId) {
-        return null;
+    public Boolean initSingleMiniappForLightStore(Long storeId) {
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreBySharedStoreId(storeId);
+        if (cuntaoStore == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "initSingleMiniappForLightStore error[" + storeId + "]:"
+                    + " error:cuntaostore is null");
+        }
+        Map<String, Object> rmap = initSingleMiniapp(storeId);
+        if ((Boolean) rmap.get("success") && rmap.get("data") != null) {
+            List<MiniAppResultDTO> res = (List<MiniAppResultDTO>) rmap.get("data");
+            MiniAppResultDTO dto = res.get(0);
+            if (dto != null && dto.getSuccess() && dto.getType() == 1) {
+                cuntaoStore.setGmtModified(new Date());
+                cuntaoStore.setModifier("system");
+                cuntaoStore.setMinappId(dto.getAppId());
+                cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
+                return Boolean.TRUE;
+            }
+        }
+        logger.error("initSingleMiniappForLightStore error[" + storeId + "]:" + JSONObject.toJSONString(rmap));
+        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "initSingleMiniappForLightStore error[" + storeId + "]:"
+                + JSONObject.toJSONString(rmap));
+
     }
 
     @Override
     public Boolean openLightStorePermission(Long storeId) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkOpenLightStore(Long taobaoUserId) {
-        return null;
+        CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreBySharedStoreId(storeId);
+        if (cuntaoStore == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "initSingleMiniappForLightStore error[" + storeId + "]:"
+                    + " error:cuntaostore is null");
+        }
+        UserRoleAddDto user = new UserRoleAddDto();
+        user.setCreator("system");
+        user.setOrgId(2L);
+        user.setRoleName("Cunpartner_BizApp_183_User");
+        user.setUserId(String.valueOf(cuntaoStore.getTaobaoUserId()));
+        storeEndorApiClient.getUserRoleServiceClient().addUserRole(user, null);
+        return Boolean.TRUE;
     }
 }

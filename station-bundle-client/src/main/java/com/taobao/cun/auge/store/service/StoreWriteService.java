@@ -288,7 +288,7 @@ public interface StoreWriteService {
      * @param storeId
      * @return
      */
-    public String initSingleMiniappForLightStore(Long storeId);
+    public Boolean initSingleMiniappForLightStore(Long storeId);
 
     /**
      * 开通轻店权限
@@ -296,12 +296,5 @@ public interface StoreWriteService {
      * @return
      */
     public Boolean openLightStorePermission(Long storeId);
-
-    /**
-     *
-     * @param taobaoUserId
-     * @return
-     */
-    public Boolean checkOpenLightStore(Long taobaoUserId);
 
 }

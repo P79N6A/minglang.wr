@@ -74,8 +74,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		if(partner == null){
 			return null;
 		}
-		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
-		return storeDto;
+		return toStoreDto(station, stationDto, cuntaoStore,partner);
 	}
 
 	private StoreDto toStoreDto(Station station, StationDto stationDto, CuntaoStore cuntaoStore,Partner partner) {
@@ -91,6 +90,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setCategory(cuntaoStore.getStoreCategory());
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
 		storeDto.setStatus(cuntaoStore.getStatus());
+		storeDto.setMinappId(cuntaoStore.getMinappId());
 		storeDto.setEndorOrgId(cuntaoStore.getEndorOrgId());
 		if(partner !=null){
 			storeDto.setTaobaoNick(partner.getTaobaoNick());

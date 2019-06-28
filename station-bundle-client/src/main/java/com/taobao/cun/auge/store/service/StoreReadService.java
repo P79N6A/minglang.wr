@@ -2,6 +2,7 @@ package com.taobao.cun.auge.store.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
@@ -121,5 +122,5 @@ public interface StoreReadService {
 	 * @param taskInstanceId
 	 * @return
 	 */
-	public List<String> getSubImageFromTask(Long taskInstanceId);
+	public List<Map<String,String>> getSubImageFromTask(Long taskInstanceId);
 }
