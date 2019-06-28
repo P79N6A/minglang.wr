@@ -539,7 +539,7 @@
 			<dependency>
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
-				<version>2.4.3</version>
+				<version>2.5.6</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.crm</groupId>
@@ -567,6 +567,10 @@
 				<artifactId>tp-client-base</artifactId>
 				<version>1.9.91-CUNTAO</version>
 				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
 					<exclusion>
 						<groupId>com.taobao.forest</groupId>
 						<artifactId>forest-client</artifactId>
@@ -665,6 +669,14 @@
 					<exclusion>
 						<groupId>com.taobao.mallitemcenter</groupId>
 						<artifactId>mic-common</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -868,6 +880,18 @@
 					<exclusion>
 						<groupId>com.tmall.nova</groupId>
 						<artifactId>nova-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-realtime</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

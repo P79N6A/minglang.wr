@@ -771,4 +771,17 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			}
 		}
 	}
+
+	@Override
+	public void initStationDecorateInfo(Long stationId) {
+		PartnerStationRel psp = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+		// 生成装修记录
+		StationDecorateDto stationDecorateDto = new StationDecorateDto();
+		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+		stationDecorateDto.setStationId(stationId);
+		stationDecorateDto.setPartnerUserId(psp.getTaobaoUserId());
+		stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW_SELF);
+		stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
+		stationDecorateBO.addStationDecorate(stationDecorateDto);
+	}
 }

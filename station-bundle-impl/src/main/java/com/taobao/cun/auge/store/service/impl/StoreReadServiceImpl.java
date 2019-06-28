@@ -17,6 +17,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -70,6 +71,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 	private CaiNiaoService caiNiaoService;
 
 	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
+
+	@Autowired
 	private ServiceAbilityEmployeeInfoService serviceAbilityEmployeeInfoService;
 
 	@Autowired
@@ -83,7 +87,12 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Override
 	public StoreDto getStoreByTaobaoUserId(Long taobaoUserId) {
-		return storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
+		PartnerStationRel p = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (p == null ){
+			return null;
+		}
+		return storeReadBO.getStoreDtoByStationId(p.getStationId());
+		//return storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
 	}
 
 	@Override

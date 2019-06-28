@@ -152,6 +152,15 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private String incomeMode;
 
 	private Date incomeModeBeginTime;
+
+	/**实际运营人*/
+	private String operateName;
+	/**运营人电话*/
+	private String operatePhone;
+	/**是否本人经营*/
+	private String operatePersonal;
+	/**经营模式*/
+	private String operateMethod;
 	
 	/**
 	 * 是否有巡检记录
@@ -163,6 +172,38 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getOperateName() {
+		return operateName;
+	}
+
+	public void setOperateName(String operateName) {
+		this.operateName = operateName;
+	}
+
+	public String getOperatePhone() {
+		return operatePhone;
+	}
+
+	public void setOperatePhone(String operatePhone) {
+		this.operatePhone = operatePhone;
+	}
+
+	public String getOperatePersonal() {
+		return operatePersonal;
+	}
+
+	public void setOperatePersonal(String operatePersonal) {
+		this.operatePersonal = operatePersonal;
+	}
+
+	public String getOperateMethod() {
+		return operateMethod;
+	}
+
+	public void setOperateMethod(String operateMethod) {
+		this.operateMethod = operateMethod;
 	}
 
 	public Date getApplyTime() {
