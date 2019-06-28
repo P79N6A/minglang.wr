@@ -43,7 +43,7 @@ public class XSettingRuleParse implements SettingRuleParse {
 
 		if(storeNum + transingStoreNum > 0) {
 			//已经有一家体验店
-			if(storeNum + transingStoreNum == 1 && isWhitename(townLevelDto)){
+			if(storeNum + transingStoreNum == 1 && isInWhitename(townLevelDto)){
 				//如果是超大城关镇
 				if(isBigChengguanTown(townLevelDto)){
 					PartnerApplyConfirmIntentionEnum e = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
@@ -62,11 +62,12 @@ public class XSettingRuleParse implements SettingRuleParse {
 			param.put("transingStoreNum", transingStoreNum);
 			return Lists.newArrayList(new RuleResult("CLOSE", MessageHelper.rend(MESSAGE, param)));
 		}else {
-			return Lists.newArrayList(new RuleResult(townLevelStationRuleDto.getStationTypeCode(), townLevelStationRuleDto.getStationTypeDesc()));
+			PartnerApplyConfirmIntentionEnum e = PartnerApplyConfirmIntentionEnum.TPS_ELEC;
+			return Lists.newArrayList(new RuleResult(e.getCode(), e.getDesc()));
 		}
 	}
 
-	private boolean isWhitename(TownLevelDto townLevelDto){
+	private boolean isInWhitename(TownLevelDto townLevelDto){
 		return userFilterService.isMatch("partner-tbid-whitename", townLevelDto.getTownCode());
 	}
 
@@ -75,6 +76,6 @@ public class XSettingRuleParse implements SettingRuleParse {
 	}
 
 	private boolean isBigTown(TownLevelDto townLevelDto){
-		return true;//townLevelDto.getElecPredictionGmv() >= 1500 * 10000 || townLevelDto.getTownPopulation() >= 10 * 10000;
+		return townLevelDto.getElecPredictionGmv() >= 1500 * 10000 || townLevelDto.getTownPopulation() >= 10 * 10000;
 	}
 }
