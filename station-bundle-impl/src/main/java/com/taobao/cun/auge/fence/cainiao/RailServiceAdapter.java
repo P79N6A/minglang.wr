@@ -33,4 +33,11 @@ public interface RailServiceAdapter {
 	 * @param fenceEntity
 	 */
 	void updateCainiaoFenceState(FenceEntity fenceEntity);
+
+	/**
+	 * 检查在菜鸟是否存在
+	 * @param cainianFenceId
+	 * @return
+	 */
+	boolean isExistsCainiaoFence(Long cainianFenceId);
 }
