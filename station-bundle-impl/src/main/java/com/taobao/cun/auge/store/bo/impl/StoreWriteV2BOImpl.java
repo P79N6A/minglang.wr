@@ -1026,7 +1026,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (cuntaoStore.getSubImageTaskId() == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, storeId + " error:cuntaostore imagetaskid is null");
         }
-        List<Map<String, String>> imageList = storeReadService.getSubImageFromTask(Long.parseLong(cuntaoStore.getSubImageTaskId()));
+        List<Map<String, String>> imageList = storeReadService.getSubImageFromTask(Long.parseLong(cuntaoStore.getSubImageTaskId()),cuntaoStore.getTaobaoUserId());
 
         StoreAlbumDO albumDO = new StoreAlbumDO();
         albumDO.setPicCdnDomainName(diamondConfiguredProperties.getStoreImagePerfix());
