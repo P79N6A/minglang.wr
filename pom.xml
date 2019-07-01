@@ -169,7 +169,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-bundle.client</artifactId>
-				<version>3.8.9-SNAPSHOT</version>
+				<version>3.7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao</groupId>
@@ -786,6 +786,28 @@
 				<groupId>com.aliyun.oss</groupId>
 				<artifactId>aliyun-sdk-oss</artifactId>
 				<version>3.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.kfc</groupId>
+				<artifactId>kfc-client</artifactId>
+				<version>4.1.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.pandora</groupId>
+						<artifactId>taobao-hsf.sar-bom</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.kfc</groupId>
+				<artifactId>kfc-core</artifactId>
+				<version>4.1.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.pandora</groupId>
+						<artifactId>taobao-hsf.sar-bom</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
