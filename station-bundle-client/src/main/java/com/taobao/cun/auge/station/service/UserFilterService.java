@@ -22,7 +22,7 @@ public interface UserFilterService {
 	
 	/**
 	 * 添加一条过滤规则
-	 * @param userFilterDto
+	 * @param userFilterRuleDto
 	 */
 	void addUserFilterRule(UserFilterRuleDto userFilterRuleDto);
 	
@@ -42,7 +42,8 @@ public interface UserFilterService {
 	
 	/**
 	 * 删除过滤规则
-	 * @param id
+	 * @param bizType
+	 * @param userId
 	 */
 	void deleteUserFilterRules(String bizType, String userId);
 }

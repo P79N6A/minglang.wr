@@ -40,7 +40,13 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	private IRailService railService;
 	
 	private static Long COUNTRY_ID = 86L;
-	
+
+	@Override
+	public boolean isExistsCainiaoFence(Long cainianFenceId){
+		BaseResult<RailInfoResult> result = railService.getRailInfoById(cainianFenceId);
+		return result.isSuccess() && result.getResult() != null;
+	}
+
 	@Override
 	public Long addCainiaoFence(FenceEntity fenceEntity) {
 		RailInfoRequest request = toCainiaoFence(fenceEntity);

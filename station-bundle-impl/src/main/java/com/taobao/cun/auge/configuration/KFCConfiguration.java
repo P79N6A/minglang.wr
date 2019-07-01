@@ -9,25 +9,25 @@ import com.taobao.kfc.client.lite.service.LiteMergeSearchService;
 
 @Configuration
 public class KFCConfiguration {
-	@Value("${kfc.globalConfig.environment}")
-	private String environment;
-	@Value("${kfc.globalConfig.projectName}")
-	private String projectName;
-	@Value("${kfc.globalConfig.packageVersion}")
-	private String packageVersion;
-	
-	@Bean
-	public LiteMergeSearchService liteMergeSearchService() {
-		LiteMergeSearchService liteMergeSearchService = new LiteMergeSearchService();
-		GlobalConfig globalConfig = new GlobalConfig();
-		globalConfig.setEnvironment(environment);
-		globalConfig.setProjectName(projectName);
-		globalConfig.setGroupName("default");
-		globalConfig.setLoadMode("serialization");
-		globalConfig.setSerializationType("hessian");
-		globalConfig.setReloadDelay(5);
-		globalConfig.setPackageVersion(packageVersion);
-		liteMergeSearchService.setGlobalConfig(globalConfig);
-		return liteMergeSearchService;
-	}
+    @Value("${kfc.globalConfig.environment}")
+    private String environment;
+    @Value("${kfc.globalConfig.projectName}")
+    private String projectName;
+    @Value("${kfc.globalConfig.packageVersion}")
+    private String packageVersion;
+
+    @Bean
+    public LiteMergeSearchService liteMergeSearchService() {
+        LiteMergeSearchService liteMergeSearchService = new LiteMergeSearchService();
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setEnvironment(environment);
+        globalConfig.setProjectName(projectName);
+        globalConfig.setGroupName("default");
+        globalConfig.setLoadMode("serialization");
+        globalConfig.setSerializationType("hessian");
+        globalConfig.setReloadDelay(5);
+        globalConfig.setPackageVersion(packageVersion);
+        liteMergeSearchService.setGlobalConfig(globalConfig);
+        return liteMergeSearchService;
+    }
 }
