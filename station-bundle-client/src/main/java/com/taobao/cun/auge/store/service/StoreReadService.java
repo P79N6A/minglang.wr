@@ -122,5 +122,5 @@ public interface StoreReadService {
 	 * @param taskInstanceId
 	 * @return
 	 */
-	public List<Map<String,String>> getSubImageFromTask(Long taskInstanceId);
+	public List<Map<String,String>> getSubImageFromTask(Long taskInstanceId,Long taobaoUserId);
 }

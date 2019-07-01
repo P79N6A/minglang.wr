@@ -8,6 +8,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.api.enums.station.IncomeModeEnum;
+import com.taobao.cun.auge.client.operator.DefaultOperatorEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -286,10 +287,12 @@ public class StoreReadServiceImpl implements StoreReadService {
 	}
 
 	@Override
-	public List<Map<String,String>>  getSubImageFromTask(Long taskInstanceId) {
+	public List<Map<String,String>>  getSubImageFromTask(Long taskInstanceId,Long taobaoUserId) {
 		List<Map<String,String>> res = new ArrayList<>();
 		com.taobao.cun.auge.common.dto.OperatorDto od = new com.taobao.cun.auge.common.dto.OperatorDto();
-		od.copyOperatorDto(com.taobao.cun.auge.common.dto.OperatorDto.defaultOperator());
+		od.setOperator(String.valueOf(taobaoUserId));
+		od.setOperatorType(DefaultOperatorEnum.HAVANA);
+		//od.copyOperatorDto(com.taobao.cun.auge.common.dto.OperatorDto.defaultOperator());
 		TaskInstanceDto dto = taskInstanceService.getTaskInstanceById(taskInstanceId, od);
 		if (dto == null ) {
 			return res;
