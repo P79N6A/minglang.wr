@@ -104,8 +104,20 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             if(apply!=null){
                 AntMerchantExpandIndirectImageUploadResponse idcardImgsFaceResponse=  uploadIdcardImgsFace(apply.getId());
                 logger.info("taobaoUserId="+taobaoUserId+",uploadIdCardImgsFace="+idcardImgsFaceResponse.isSuccess());
+                if(!idcardImgsFaceResponse.isSuccess()){
+                    result.setSuccess(false);
+                    result.setResultCode("UPLOAD_IMAGE_ERROR");
+                    result.setErrorMsg("uploadIdCardImgsFace erroe");
+                    return result;
+                }
                 AntMerchantExpandIndirectImageUploadResponse idcardImgsBackResponse= uploadIdcardImgsBack(apply.getId());
                 logger.info("taobaoUserId="+taobaoUserId+",uploadIdCardImgsBack="+idcardImgsBackResponse.isSuccess());
+                if(!idcardImgsBackResponse.isSuccess()){
+                    result.setSuccess(false);
+                    result.setResultCode("UPLOAD_IMAGE_ERROR");
+                    result.setErrorMsg("uploadIdCardImgsBack erroe");
+                    return result;
+                }
                 CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
                 PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
                 if(instance!=null){
@@ -113,6 +125,12 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                     AccountMoneyDto accountMoneyDto= accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
                     AntMerchantExpandIndirectImageUploadResponse certImageResponse= uploadCertImage(cuntaoQualification);
                     logger.info("taobaoUserId="+taobaoUserId+",certImageResponse="+certImageResponse.isSuccess());
+                    if(!certImageResponse.isSuccess()){
+                        result.setSuccess(false);
+                        result.setResultCode("UPLOAD_IMAGE_ERROR");
+                        result.setErrorMsg("uploadCertImgs erroe");
+                        return result;
+                    }
                     AntMerchantExpandIndirectZftCreateResponse response= createZft(instance,apply,station,accountMoneyDto,cuntaoQualification,idcardImgsFaceResponse,idcardImgsBackResponse,certImageResponse);
                     if(response.isSuccess()){
                         result.setSuccess(true);
@@ -148,17 +166,12 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                 AttachmentBizTypeEnum.IDCARD_IMGS_FACE_BIZTYPE);
 
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-  //      request.setImageType("jpg");
-//        if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".png")||idcardImgsFace.getTitle().endsWith(".PNG"))){
-//            request.setImageType("png");
-//        }
-//        else if(StringUtil.isNotBlank(idcardImgsFace.getTitle())&&(idcardImgsFace.getTitle().endsWith(".jpg")||idcardImgsFace.getTitle().endsWith(".JPG"))){
-//            request.setImageType("jpg");
-//        }
+
         byte[] bt = doGetFileFromTfs(idcardImgsFace.getFsId(), idcardImgsFace.getFileType());
 
         FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle(),bt);
         request.setImageContent(ImageContent);
+        request.setImageType(idcardImgsFace.getFileType());
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
         return response;
@@ -169,20 +182,14 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         AttachmentDto idcardImgsBack = attachmentService.getAttachment(applyId,
                 AttachmentBizTypeEnum.IDCARD_IMGS_BACK_BIZTYPE);
 
-
         AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
 
-//        if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".png")||idcardImgsBack.getTitle().endsWith(".PNG"))){
-//            request.setImageType("png");
-//        }
-//        else if(StringUtil.isNotBlank(idcardImgsBack.getTitle())&&(idcardImgsBack.getTitle().endsWith(".jpg")||idcardImgsBack.getTitle().endsWith(".JPG"))){
-//            request.setImageType("jpg");
-//        }
-        //saveToFile(idcardImgsBackUrl,"/home/admin/"+idcardImgsBack.getTitle());
         byte[] bt = doGetFileFromTfs(idcardImgsBack.getFsId(), idcardImgsBack.getFileType());
 
         FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsBack.getTitle(),bt);
         request.setImageContent(ImageContent);
+        request.setImageType(idcardImgsBack.getFileType());
+
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
         return response;
