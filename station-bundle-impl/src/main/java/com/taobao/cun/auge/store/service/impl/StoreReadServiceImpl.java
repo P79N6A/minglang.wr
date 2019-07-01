@@ -298,14 +298,20 @@ public class StoreReadServiceImpl implements StoreReadService {
 			return res;
 		}
 		List<TaskNodeDto> busiModeList = dto.getTaskNodes().stream().filter(i -> TaskNodeTypeEnum.TASK_NODE.equals(i.getNodeType())).collect(Collectors.toList());
+		if (org.apache.commons.collections.CollectionUtils.isEmpty(busiModeList)) {
+			return res;
+		}
 		for (TaskNodeDto d : busiModeList) {
+			if (org.apache.commons.collections.CollectionUtils.isEmpty(d.getTaskElements())) {
+				continue;
+			}
 			for (TaskElementDto d1 : d.getTaskElements()) {
 				if (TaskElementType.PHOTO.equals(d1.getElementType()) && !"PHOTO4".equals(d1.getElementKey())) {
 					List<Map<String, String>> l = JSON.parseObject(d1.getResult(), new TypeReference<List<Map<String, String>>>() {
 					});
 					for (int i=0;i<l.size();i++) {
 						Map<String,String> p = new HashMap<>();
-						String url = res.get(i).get("url").replace(diamondConfiguredProperties.getStoreImagePerfix(), "");
+						String url = l.get(i).get("url").replace(diamondConfiguredProperties.getStoreImagePerfix(), "");
 						p.put("url",url);
 						p.put("name","子图"+i);
 						p.put("seq",""+i);
