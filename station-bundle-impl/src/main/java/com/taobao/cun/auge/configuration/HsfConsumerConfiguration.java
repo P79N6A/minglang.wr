@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.platform.service.KfcTextService;
 import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -130,4 +131,6 @@ public class HsfConsumerConfiguration  {
 	private WhiteListWriteService whiteListWriteService;
 	@HSFConsumer(serviceVersion = "${spring.hsf.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private CuntaoContactRecordService cuntaoContactRecordService;
+	@HSFConsumer(serviceVersion = "${spring.hsf.version}", serviceGroup = "HSF", clientTimeout = 10000)
+	private KfcTextService kfcTextService;
 }

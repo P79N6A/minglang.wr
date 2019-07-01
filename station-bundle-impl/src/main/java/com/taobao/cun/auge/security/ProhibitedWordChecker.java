@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.platform.service.KfcTextService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.diagnostic.Profiler;
@@ -20,25 +22,21 @@ import com.taobao.kfc.client.lite.service.LiteMergeSearchService;
 @Component
 public class ProhibitedWordChecker {
 	@Resource
-    private LiteMergeSearchService liteMergeSearchService;
+    private KfcTextService kfcTextService;
     
-    private static String firstApply = "xinxianquanpingbi";
-    private static String secondApply = "pingbiciku";
-
     public Optional<String> getProhibitedWord(String str) {
+        List<String> words = null;
         try {
-            Profiler.enter("kfcCheck:" + str);
-            KeywordMatchResult result = liteMergeSearchService.search(str, firstApply, new String[] {secondApply});
-            if(result.isMatch()) {
-	            List<MatchItem> matchItems = result.getMatchedKeywords();
-	            if (matchItems.size() > 0) {
-	            	return Optional.of(matchItems.get(0).getKeyword());
-	            }
-            }
-        } finally {
-            Profiler.release();
+            words = kfcTextService.getProhibitedWords(str);
+        } catch(Exception e){
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        if(CollectionUtils.isNotEmpty(words)) {
+            return Optional.of(words.get(0));
+        }else{
+            return Optional.empty();
+        }
     }
 
 	public boolean hasProhibitedWord(String word) {
