@@ -301,6 +301,7 @@ public class StoreReadServiceImpl implements StoreReadService {
 		if (org.apache.commons.collections.CollectionUtils.isEmpty(busiModeList)) {
 			return res;
 		}
+		int seq = 1;
 		for (TaskNodeDto d : busiModeList) {
 			if (org.apache.commons.collections.CollectionUtils.isEmpty(d.getTaskElements())) {
 				continue;
@@ -313,9 +314,10 @@ public class StoreReadServiceImpl implements StoreReadService {
 						Map<String,String> p = new HashMap<>();
 						String url = l.get(i).get("url").replace(diamondConfiguredProperties.getStoreImagePerfix(), "");
 						p.put("url",url);
-						p.put("name","子图"+i);
-						p.put("seq",""+i);
+						p.put("name","子图"+seq);
+						p.put("seq",""+seq);
 						res.add(p);
+						seq++;
 					}
 				}
 			}
