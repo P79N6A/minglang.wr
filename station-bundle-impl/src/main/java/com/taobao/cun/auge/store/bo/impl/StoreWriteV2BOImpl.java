@@ -698,26 +698,27 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     public Boolean syncAddStoreInfo(List<Long> stationIds) {
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(stationIds)) {// 指定参数
             batchSyn(stationIds);
-        } else {
-            CuntaoStoreExample example = new CuntaoStoreExample();
-            example.createCriteria().andIsDeletedEqualTo("n");
-            example.setOrderByClause("id asc");
-
-            int count = cuntaoStoreMapper.countByExample(example);
-            logger.info("sync store begin,count={}", count);
-            int pageSize = 50;
-            int pageNum = 1;
-            int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
-            while (pageNum <= total) {
-                logger.info("sync-store-doing {},{}", pageNum, pageSize);
-                PageHelper.startPage(pageNum, pageSize);
-                List<CuntaoStore> storeList = cuntaoStoreMapper.selectByExample(example);
-                List<Long> stationIdList = storeList.stream().map(CuntaoStore::getStationId).collect(Collectors.toList());
-                batchSyn(stationIdList);
-                pageNum++;
-            }
         }
-        logger.info("sync-store-finish");
+//        else {
+//            CuntaoStoreExample example = new CuntaoStoreExample();
+//            example.createCriteria().andIsDeletedEqualTo("n");
+//            example.setOrderByClause("id asc");
+//
+//            int count = cuntaoStoreMapper.countByExample(example);
+//            logger.info("sync store begin,count={}", count);
+//            int pageSize = 50;
+//            int pageNum = 1;
+//            int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+//            while (pageNum <= total) {
+//                logger.info("sync-store-doing {},{}", pageNum, pageSize);
+//                PageHelper.startPage(pageNum, pageSize);
+//                List<CuntaoStore> storeList = cuntaoStoreMapper.selectByExample(example);
+//                List<Long> stationIdList = storeList.stream().map(CuntaoStore::getStationId).collect(Collectors.toList());
+//                batchSyn(stationIdList);
+//                pageNum++;
+//            }
+//        }
+//        logger.info("sync-store-finish");
         return Boolean.TRUE;
     }
 
