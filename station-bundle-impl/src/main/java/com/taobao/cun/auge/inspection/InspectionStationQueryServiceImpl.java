@@ -53,6 +53,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setStoreCategory(condition.getStoreCategory());
 		example.setLevel(condition.getLevel());
 		example.setStates(condition.getStates());
+		example.setType(condition.getType());
 		example.setServiceBeginDate(condition.getServiceBeginDate());
 		example.setInspectionState(condition.getInspectionState());
 		example.setInspectionType(getInspectionType(condition.getInspectionState()));
