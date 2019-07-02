@@ -17,6 +17,7 @@ import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.alipay.dto.AlipayFaceToFacePaymentResult;
 import com.taobao.cun.auge.alipay.dto.StationAlipayInfoDto;
+import com.taobao.cun.auge.alipay.process.AlipayClientProcessor;
 import com.taobao.cun.auge.alipay.service.AlipayFaceToFacePaymentService;
 import com.taobao.cun.auge.alipay.service.StationAlipayInfoService;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
@@ -60,15 +61,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     public static final String ENTERPRISE="2";
 
-    public static final String APP_ID="2019062065613587";
-
-    public static final String PRIVATE_KEY="pid_prikey_2088021455776254_2019062065613587_rsa2";
-
-    public static final String ALIPAY_PUBLIC_KEY="pid_alipay_pubkey_2088021455776254_2019062065613587_rsa2";
-
-    public static final AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", APP_ID, PRIVATE_KEY, "json", "GBK", ALIPAY_PUBLIC_KEY, "RSA2");
-
-
+    public static final AlipayClient alipayClient = AlipayClientProcessor.getAlipayClient();
     @Autowired
     private AttachmentService attachmentService;
 

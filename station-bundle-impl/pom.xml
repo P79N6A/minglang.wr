@@ -483,6 +483,7 @@
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-client</artifactId>
@@ -491,6 +492,7 @@
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-core</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.taobao.mmp</groupId>
 			<artifactId>mmp-common</artifactId>
@@ -609,6 +611,14 @@
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
         </dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-client-extension</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
