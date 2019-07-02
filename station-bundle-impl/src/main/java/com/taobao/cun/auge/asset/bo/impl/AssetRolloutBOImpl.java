@@ -519,4 +519,12 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		return assetRolloutMapper.selectByExample(example);
 	}
 
+	@Override
+	public void deleteByRolloutId(Long rolloutId) {
+		AssetRollout record = new AssetRollout();
+		record.setId(rolloutId);
+		DomainUtils.beforeDelete(record,"sys");
+		assetRolloutMapper.updateByPrimaryKeySelective(record);
+		assetRolloutIncomeDetailBO.cancelByRolloutId(rolloutId,"sys");
+	}
 }

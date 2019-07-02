@@ -80,6 +80,9 @@ public class PartnerSopServiceImpl implements PartnerSopService {
         }else {
             PartnerInstanceDto lastPsr = partnerInstanceBO.getLastPartnerInstance(taobaoUserId);
             if (lastPsr == null) {
+                if (pa != null && StringUtils.isNotEmpty(pa.getOwnOrgId())) {
+                    bulidCountyInfo(rs,Long.parseLong(pa.getOwnOrgId()));
+                }
                 rs.setPartnerIsntanceStateDesc("未入驻");
             }else {
                 bulidStationInfo(rs, lastPsr.getState().getCode(),lastPsr.getId(),lastPsr.getStationId());
@@ -95,13 +98,17 @@ public class PartnerSopServiceImpl implements PartnerSopService {
         if (s != null) {
             rs.setStationName(s.getName());
             rs.setStationAddress(buildAddress(s));
-            //构建县信息
-            rs.setCountyLeaderName(bulidCountyLeader(s.getApplyOrg(), UserRole.COUNTY_LEADER));
-            CuntaoOrgDto cuntaoOrg = cuntaoOrgServiceClient.getCuntaoOrg(s.getApplyOrg());
-            CuntaoOrgDto org = cuntaoOrgServiceClient.getAncestor(s.getApplyOrg(), OrgRangeType.SPECIALTEAM);
-            rs.setTeamLeaderName(bulidCountyLeader(org.getId(),UserRole.TEAM_LEADER));
-            rs.setCountyName(cuntaoOrg == null ?"":cuntaoOrg.getName());
+            bulidCountyInfo(rs,s.getApplyOrg());
         }
+    }
+
+    private void bulidCountyInfo(PartnerSopRltDto rs,Long orgId){
+        //构建县信息
+        rs.setCountyLeaderName(bulidCountyLeader(orgId, UserRole.COUNTY_LEADER));
+        CuntaoOrgDto cuntaoOrg = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
+        CuntaoOrgDto org = cuntaoOrgServiceClient.getAncestor(orgId, OrgRangeType.SPECIALTEAM);
+        rs.setTeamLeaderName(bulidCountyLeader(org.getId(),UserRole.TEAM_LEADER));
+        rs.setCountyName(cuntaoOrg == null ?"":cuntaoOrg.getName());
     }
 
     private String bulidCountyLeader(Long orgId,UserRole userRole) {

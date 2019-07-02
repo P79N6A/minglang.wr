@@ -79,6 +79,8 @@ public interface AssetService {
      */
     public void delete(Long assetId, String operator);
 
+    public void updateUse(List<String> aliNo);
+
     /**
      * 获得资产详情
      *
@@ -247,5 +249,12 @@ public interface AssetService {
   	 * @return
   	 */
   	public Boolean batchDisRouter();
+
+
+    /**
+     * 删除出库单
+     * @param rolloutId
+     */
+    public void deleteByRolloutId(Long rolloutId);
     
 }

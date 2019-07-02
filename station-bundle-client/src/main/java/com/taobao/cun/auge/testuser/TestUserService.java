@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.testuser;
 
+import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.common.result.Result;
@@ -14,4 +15,6 @@ public interface TestUserService {
     Map<String,String> getTestUserConfig(Long taobaoUserId,String bizCode);
     
     Result<UserMatchInfo> getUserMatchInfo(Long taobaoUserId);
+
+    public void updatePartnerApplyStatusToAddressPass(List<Long> ids);
 }

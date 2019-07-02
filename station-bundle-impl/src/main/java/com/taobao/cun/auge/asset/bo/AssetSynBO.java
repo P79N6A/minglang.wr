@@ -28,5 +28,7 @@ public interface AssetSynBO {
 	 
 	 
 	 public Boolean batchDisRouter();
+
+	public void updateUse(List<String> aliNo);
 	
 }

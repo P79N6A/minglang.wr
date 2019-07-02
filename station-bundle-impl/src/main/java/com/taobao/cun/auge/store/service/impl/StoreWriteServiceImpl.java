@@ -293,6 +293,11 @@ public class StoreWriteServiceImpl implements StoreWriteService {
     }
 
 	@Override
+	public void updateTaobaoUserIdById(Long id, Long taobaoUserId) {
+		storeWriteBO.updateTaobaoUserIdById(id,taobaoUserId);
+	}
+
+	@Override
 	public Map<String, Object> initSingleMiniapp(Long storeId) {
 		return storeWriteV2BO.initSingleMiniapp(storeId);
 	}
@@ -301,4 +306,6 @@ public class StoreWriteServiceImpl implements StoreWriteService {
     public void batchInitSingleMiniapp(List<Long> storeIds) {
 
     }
+
+
 }

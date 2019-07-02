@@ -14,5 +14,10 @@ public interface StoreTags {
 	 */
 	public static final int NEED_OPERATE_PHYSICAL_STORE=210000;
 
-
+	/**
+	 * /**
+	 *  村淘门店标
+	 *  CUNTAO_STORE(200101)
+	 */
+	public static final int CUNTAO_STORE=200101;
 }
