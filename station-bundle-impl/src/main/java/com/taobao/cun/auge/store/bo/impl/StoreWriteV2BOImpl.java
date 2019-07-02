@@ -190,7 +190,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, stationId + result.getFullErrorMsg() + result.getResult());
         }
         //上传其他图片
-        uploadStoreSubImage(result.getResult());
+        //uploadStoreSubImage(result.getResult());
 
         String scmCode = "";
         try {
@@ -294,7 +294,7 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             logger.error("createSupplyStore error[" + station.getId() + "]:" + result.getFullErrorMsg());
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, station.getId() + result.getFullErrorMsg());
         }
-        uploadStoreSubImage(result.getResult());
+        //uploadStoreSubImage(result.getResult());
         insertLocalStore(station, "", result.getResult(), station.getName(), station.getId(), StoreCategoryConstants.FMCG);
         initGoodSupplyFeature(station.getId());
         initStoreWarehouse(result.getResult(), partner.getTaobaoUserId());
@@ -802,7 +802,18 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         bindStoreGroup(cuntaoStore.getShareStoreId());
         logger.info("sync-store-no-cuntao-store-data-initSingleMiniapp,stationId={}", stationId);
         //初始化小程序
-        initSingleMiniapp(cuntaoStore.getShareStoreId());
+        Map<String, Object> rmap = initSingleMiniapp(cuntaoStore.getShareStoreId());
+        if ((Boolean) rmap.get("success") && rmap.get("data") != null) {
+            List<MiniAppResultDTO> res = (List<MiniAppResultDTO>) rmap.get("data");
+            MiniAppResultDTO dto = res.get(0);
+            if (dto != null && dto.getSuccess() && dto.getType() == 1) {
+                cuntaoStore.setGmtModified(new Date());
+                cuntaoStore.setModifier("system");
+                cuntaoStore.setMinappId(dto.getAppId());
+                cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
+                return Boolean.TRUE;
+            }
+        }
     }
 
 
@@ -931,9 +942,23 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(storeIds)) {
             for (Long storeId : storeIds) {
                 logger.info("sync initMinApp,storeId={}", storeId);
+                CuntaoStore cuntaoStore = storeReadBO.getCuntaoStoreBySharedStoreId(storeId);
+                if (cuntaoStore == null) {
+                    continue;
+                }
                 try {
-                    Map<String, Object> stringObjectMap = initSingleMiniapp(storeId);
-                    logger.info("sync initMinApp,storeId=" + storeId + "res=" + JSON.toJSONString(stringObjectMap));
+                    Map<String, Object> rmap = initSingleMiniapp(storeId);
+                    logger.info("sync initMinApp,storeId=" + storeId + "res=" + JSON.toJSONString(rmap));
+                    if ((Boolean) rmap.get("success") && rmap.get("data") != null) {
+                        List<MiniAppResultDTO> res = (List<MiniAppResultDTO>) rmap.get("data");
+                        MiniAppResultDTO dto = res.get(0);
+                        if (dto != null && dto.getSuccess() && dto.getType() == 1) {
+                            cuntaoStore.setGmtModified(new Date());
+                            cuntaoStore.setModifier("system");
+                            cuntaoStore.setMinappId(dto.getAppId());
+                            cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
+                        }
+                    }
                 } catch (Exception e) {
                     logger.error("sync initMinApp error,storeId=" + storeId, e);
                 }
