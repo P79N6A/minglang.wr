@@ -970,11 +970,6 @@
 				<version>3.2.10.RELEASE</version>
 			</dependency>
 			<dependency>
-				<groupId>com.alipay.sdk</groupId>
-				<artifactId>alipay-sdk-java</artifactId>
-				<version>3.7.89.ALL</version>
-			</dependency>
-			<dependency>
 				<groupId>com.taobao.keycenter</groupId>
 				<artifactId>keycenter-client</artifactId>
 				<version>2.3.7</version>
@@ -983,6 +978,11 @@
 				<groupId>com.taobao.keycenter</groupId>
 				<artifactId>keycenter-client-extension</artifactId>
 				<version>2.3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.sdk</groupId>
+				<artifactId>alipay-sdk-java</artifactId>
+				<version>3.7.89.ALL</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

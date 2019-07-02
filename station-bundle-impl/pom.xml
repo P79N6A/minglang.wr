@@ -607,10 +607,6 @@
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.alipay.sdk</groupId>
-            <artifactId>alipay-sdk-java</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>com.taobao.keycenter</groupId>
 			<artifactId>keycenter-client</artifactId>
@@ -619,6 +615,10 @@
 			<groupId>com.taobao.keycenter</groupId>
 			<artifactId>keycenter-client-extension</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
