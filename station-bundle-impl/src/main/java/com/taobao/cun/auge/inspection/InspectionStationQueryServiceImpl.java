@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.sop.inspection.enums.InspectionStateEnum;
+import com.taobao.cun.auge.sop.inspection.enums.InspectionTypeEnum;
 import com.taobao.cun.recruit.contact.dto.CuntaoContactRecordDto;
 import com.taobao.cun.recruit.contact.enums.VisitTypeEnum;
 import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
@@ -21,13 +23,9 @@ import com.taobao.cun.auge.dal.domain.InspectionStation;
 import com.taobao.cun.auge.dal.example.InspectionStationExample;
 import com.taobao.cun.auge.dal.mapper.InspectionStationMapper;
 import com.taobao.cun.auge.inspection.condition.InspectionPagedCondition;
-import com.taobao.cun.auge.inspection.condition.InspectionStationTypes;
-import com.taobao.cun.auge.inspection.condition.InspectionStatus;
 import com.taobao.cun.auge.inspection.dto.InspectionStationDto;
 import com.taobao.cun.auge.inspection.dto.InspectionStatusSummaryDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
-import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -53,18 +51,26 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setState(condition.getState());
 		example.setStationName(condition.getStationName());
 		example.setStoreCategory(condition.getStoreCategory());
-		example.setMode(getVersion(condition.getType()));
-		example.setType(getType(condition.getType()));
 		example.setLevel(condition.getLevel());
 		example.setStates(condition.getStates());
 		example.setServiceBeginDate(condition.getServiceBeginDate());
 		example.setInspectionState(condition.getInspectionState());
+		example.setInspectionType(getInspectionType(condition.getInspectionState()));
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize(),true,false);
 		Page<InspectionStation> inspections = partnerInstanceInspectionMapper.selectInspectionStationByExample(example);
 		PageDto<InspectionStationDto> success = PageDtoUtil.success(inspections, initUpgradeRecord(convert(inspections)));
 		return success;
 	}
 
+	private String getInspectionType(String inspectionState) {
+		//待审批 未自检 属于自检的状态
+		if (InspectionStateEnum.TO_AUDIT.getCode().equalsIgnoreCase(inspectionState) || InspectionStateEnum.UN_PARTER_INSPECTION.getCode().equalsIgnoreCase(inspectionState)) {
+			return InspectionTypeEnum.PARTNER_INSPECTION.getCode();
+		} else if (InspectionStateEnum.UNINSPECTION.getCode().equalsIgnoreCase(inspectionState)) {
+			return InspectionTypeEnum.INSPECTION.getCode();
+		}
+		return null;
+	}
 	
 	
 	private List<InspectionStationDto> convert(List<InspectionStation> inspections){
@@ -113,20 +119,22 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setStates(condition.getStates());
 		example.setStationName(condition.getStationName());
 		example.setStoreCategory(condition.getStoreCategory());
-		example.setMode(getVersion(condition.getType()));
-		example.setType(getType(condition.getType()));
+		example.setType(condition.getType());
 		example.setLevel(condition.getLevel());
 		example.setInspectionState(condition.getInspectionState());
 		List<InspectionStatusSummary> summary = partnerInstanceInspectionMapper.countInspectionSummaryByExample(example);
 		InspectionStatusSummaryDto result = new InspectionStatusSummaryDto();
-		Integer hasInspection = getInspetionStatusCount(InspectionStatus.HAS_INSPECTION,summary);
-		Integer planInspection = getInspetionStatusCount(InspectionStatus.PLAN_INSPECTION,summary);
-		Integer unInspection = getInspetionStatusCount(InspectionStatus.UNINSPECTION,summary);
+		//未巡检
+		Integer unInspection = getInspetionStatusCount(InspectionStateEnum.UNINSPECTION.getCode(), summary);
+		//待审批
+		Integer toAudit = getInspetionStatusCount(InspectionStateEnum.TO_AUDIT.getCode(), summary);
+		//未自检
+		Integer unPartnerInspection = getInspetionStatusCount(InspectionStateEnum.UN_PARTER_INSPECTION.getCode(), summary);
 		PageDto<InspectionStationDto> page = queryByPage(condition);
-		result.setHasInspectionNum(hasInspection);
-		result.setPlanInspectionNum(planInspection);
 		result.setUnInspectionNum(unInspection);
-		result.setTotalInspectionNum(Integer.parseInt(page.getTotal()+""));
+		result.setToAuditInspectionNum(toAudit);
+		result.setUnPartnerInspectionNum(unPartnerInspection);
+		result.setTotalInspectionNum(Integer.parseInt(page.getTotal() + ""));
 		return result;
 	}
 	
@@ -137,20 +145,5 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 			}
 		}
 		return 0;
-	}
-	
-	
-	public static String getVersion(String type){
-		if(InspectionStationTypes.TP_V4.equals(type)){
-			return "v4";
-		}
-		return null;
-	}
-	
-	public static String getType(String type){
-		if(InspectionStationTypes.TP_V4.equals(type)){
-			return "TP";
-		}
-		return type;
 	}
 }
