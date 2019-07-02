@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.alipay.process;
 
-import com.alibaba.alisite.consts.Env;
 import com.alibaba.keycenter.client.extension.alipay.KeyCenterNewAlipayClient;
 import com.alibaba.keycenter.client.extension.alipay.internal.security.KeyCenterAlipaySignChecker;
 import com.alibaba.keycenter.client.properties.KeyCenterProperties;
