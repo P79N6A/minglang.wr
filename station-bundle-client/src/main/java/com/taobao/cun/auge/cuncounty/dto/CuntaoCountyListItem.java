@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 
 /**
@@ -62,6 +63,11 @@ public class CuntaoCountyListItem {
      * 运营时间
      */
     private String operateDate;
+
+	/**
+	 * 政府拜访记录
+	 */
+	private CuntaoGovContactRecordSummaryDto cuntaoGovContactRecordSummaryDto;
     
     /**
      * 县小二
@@ -222,5 +228,13 @@ public class CuntaoCountyListItem {
 
 	public void setProtocolEndDate(String protocolEndDate) {
 		this.protocolEndDate = protocolEndDate;
+	}
+
+	public CuntaoGovContactRecordSummaryDto getCuntaoGovContactRecordSummaryDto() {
+		return cuntaoGovContactRecordSummaryDto;
+	}
+
+	public void setCuntaoGovContactRecordSummaryDto(CuntaoGovContactRecordSummaryDto cuntaoGovContactRecordSummaryDto) {
+		this.cuntaoGovContactRecordSummaryDto = cuntaoGovContactRecordSummaryDto;
 	}
 }

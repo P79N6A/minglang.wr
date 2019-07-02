@@ -129,7 +129,10 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="new_revenue_communication" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+		<table tableName="cuntao_gov_contact_record" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		<table tableName="cuntao_gov_contact_record_risk" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 	</context>
