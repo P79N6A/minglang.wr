@@ -613,6 +613,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
 			<artifactId>keycenter-client-extension</artifactId>
 		</dependency>
         <dependency>
