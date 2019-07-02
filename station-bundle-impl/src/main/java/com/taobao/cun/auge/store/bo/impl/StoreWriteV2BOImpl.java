@@ -811,7 +811,6 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
                 cuntaoStore.setModifier("system");
                 cuntaoStore.setMinappId(dto.getAppId());
                 cuntaoStoreMapper.updateByPrimaryKeySelective(cuntaoStore);
-                return Boolean.TRUE;
             }
         }
     }
