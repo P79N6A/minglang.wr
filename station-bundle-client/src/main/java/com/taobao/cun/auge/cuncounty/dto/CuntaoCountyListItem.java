@@ -83,7 +83,11 @@ public class CuntaoCountyListItem {
      * 省负责人
      */
     private List<CuntaoUserOrgVO> provinceLeaders = Lists.newArrayList();
-    
+
+	/**
+	 * 协议编号
+	 */
+	private String serialNum;
     /**
      * 协议开始时间
      */
@@ -93,7 +97,28 @@ public class CuntaoCountyListItem {
      * 协议结束时间
      */
     private String protocolEndDate;
-    
+
+	/**
+	 * 协议即将失效
+	 */
+	private boolean protocolWillExpire = false;
+
+	public boolean isProtocolWillExpire() {
+		return protocolWillExpire;
+	}
+
+	public void setProtocolWillExpire(boolean protocolWillExpire) {
+		this.protocolWillExpire = protocolWillExpire;
+	}
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
+
 	public String getTownName() {
 		return townName;
 	}

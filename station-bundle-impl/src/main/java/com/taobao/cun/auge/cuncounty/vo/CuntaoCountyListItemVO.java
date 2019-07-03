@@ -42,6 +42,8 @@ public class CuntaoCountyListItemVO {
      * 镇名
      */
     private String townName;
+
+    private String serialNum;
     
     private Date gmtProtocolStartDate;
     
@@ -50,7 +52,15 @@ public class CuntaoCountyListItemVO {
      * 运营时间
      */
     private Date operateDate;
-    
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
+
 	public String getTownName() {
 		return townName;
 	}

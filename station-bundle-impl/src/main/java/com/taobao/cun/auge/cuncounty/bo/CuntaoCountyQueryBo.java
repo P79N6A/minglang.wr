@@ -1,10 +1,17 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
+import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -52,6 +59,8 @@ public class CuntaoCountyQueryBo {
 	private CuntaoUserOrgService cuntaoUserOrgService;
 	@Resource
 	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
+	@Resource
+	private CuntaoGovContactRecordQueryBo cuntaoGovContactRecordQueryBo;
 	
 	/**
 	 * 县点基本信息
@@ -165,8 +174,32 @@ public class CuntaoCountyQueryBo {
 		
 		initOffice(cuntaoCountyListItems, countyIds);
 		initLeader(cuntaoCountyListItems, countyOrgInfos);
+		initTags(cuntaoCountyListItems, countyIds);
 		
 		return cuntaoCountyListItems;
+	}
+
+	private void initTags(List<CuntaoCountyListItem> cuntaoCountyListItems, List<Long> countyIds) {
+		List<CuntaoGovContactRecordSummaryDto> records = cuntaoGovContactRecordQueryBo.queryLatestRecords(countyIds);
+		if(CollectionUtils.isEmpty(records)){
+			return;
+		}
+
+		Map<Long, CuntaoCountyListItem> map = cuntaoCountyListItems.stream().collect(Collectors.toMap(CuntaoCountyListItem::getId, Function.identity()));
+		records.forEach(r->{
+			map.get(r.getCountyId()).setCuntaoGovContactRecordSummaryDto(r);
+		});
+
+		cuntaoCountyListItems.forEach(c->{
+			if(!Strings.isNullOrEmpty(c.getSerialNum())){
+				if(c.getProtocolEndDate() != null){
+					LocalDate date = LocalDate.now();
+					date = date.plusDays(180);
+					LocalDate protocolLocalDate = LocalDate.parse(c.getProtocolEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					c.setProtocolWillExpire(date.isAfter(protocolLocalDate));
+				}
+			}
+		});
 	}
 
 	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {
