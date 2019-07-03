@@ -269,7 +269,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("out_door_images",outDoorimages);
             String[]services=new String[1];
             services[0]="当面付";
-            jsonObject.put("services",services);
+            jsonObject.put("service",services);
             jsonObject.put("sign_time_with_isv",instance.getOpenDate());
             jsonObject.put("alipay_logon_id",accountMoneyDto.getAlipayAccount());
             jsonObject.put("binding_alipay_logon_id",accountMoneyDto.getAlipayAccount());
