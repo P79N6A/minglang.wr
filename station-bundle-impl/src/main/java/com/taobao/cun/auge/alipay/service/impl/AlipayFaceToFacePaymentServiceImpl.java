@@ -195,11 +195,14 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         if(cuntaoQualification!=null){
             String certUrl=DOLWAN_QUAN_IMAGE_URI+cuntaoQualification.getQualiPic();
             AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-            if(StringUtil.isNotBlank(cuntaoQualification.getQualiPic())&&(cuntaoQualification.getQualiPic().endsWith(".png")||cuntaoQualification.getQualiPic().endsWith(".PNG"))){
-                request.setImageType("png");
-            }
-            else if(StringUtil.isNotBlank(cuntaoQualification.getQualiPic())&&(cuntaoQualification.getQualiPic().endsWith(".jpg")||cuntaoQualification.getQualiPic().endsWith(".JPG"))){
-                request.setImageType("jpg");
+            String pic=cuntaoQualification.getQualiPic();
+            if(StringUtil.isNotBlank(pic)){
+                if(pic.indexOf(".png")>0||pic.indexOf(".PNG")>0) {
+                    request.setImageType("png");
+                }
+                else if(pic.indexOf(".jpg")>0||pic.indexOf(".JPG")>0){
+                    request.setImageType("jpg");
+                }
             }
             saveToFile(certUrl,"/home/admin/"+cuntaoQualification.getQualiPic());
 
