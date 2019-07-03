@@ -6,21 +6,21 @@ import java.util.Map;
 /**
  * 风险是否解决
  */
-public class CuntaoGovContactRecordStateEnum {
+public class CuntaoGovContactRiskStateEnum {
 	private String code;
     private String desc;
 
-    private static final Map<String, CuntaoGovContactRecordStateEnum> MAPPINGS = new HashMap<String, CuntaoGovContactRecordStateEnum>();
+    private static final Map<String, CuntaoGovContactRiskStateEnum> MAPPINGS = new HashMap<String, CuntaoGovContactRiskStateEnum>();
 
-    public static final CuntaoGovContactRecordStateEnum RESOLVED = new CuntaoGovContactRecordStateEnum("RESOLVED", "已解决");
-    public static final CuntaoGovContactRecordStateEnum UNRESOLVED = new CuntaoGovContactRecordStateEnum("UNRESOLVED", "未解决");
+    public static final CuntaoGovContactRiskStateEnum RESOLVED = new CuntaoGovContactRiskStateEnum("RESOLVED", "已解决");
+    public static final CuntaoGovContactRiskStateEnum UNRESOLVED = new CuntaoGovContactRiskStateEnum("UNRESOLVED", "未解决");
 
     static {
     	MAPPINGS.put("RESOLVED", RESOLVED);
     	MAPPINGS.put("UNRESOLVED", UNRESOLVED);
     }
 
-    public CuntaoGovContactRecordStateEnum(String code, String desc) {
+    public CuntaoGovContactRiskStateEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -41,7 +41,7 @@ public class CuntaoGovContactRecordStateEnum {
 		this.desc = desc;
 	}
 
-	public static CuntaoGovContactRecordStateEnum valueof(String code) {
+	public static CuntaoGovContactRiskStateEnum valueof(String code) {
         if (code == null) {
             return null;
         }

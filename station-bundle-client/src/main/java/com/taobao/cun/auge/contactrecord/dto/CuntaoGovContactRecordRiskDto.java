@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.contactrecord.dto;
 
-import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordStateEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskStateEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskTypeEnum;
 
@@ -33,7 +33,7 @@ public class CuntaoGovContactRecordRiskDto {
     /**
      * 状态
      */
-    private CuntaoGovContactRecordStateEnum state;
+    private CuntaoGovContactRiskStateEnum state;
 
     public Long getContactId() {
         return contactId;
@@ -67,11 +67,11 @@ public class CuntaoGovContactRecordRiskDto {
         this.riskType = riskType;
     }
 
-    public CuntaoGovContactRecordStateEnum getState() {
+    public CuntaoGovContactRiskStateEnum getState() {
         return state;
     }
 
-    public void setState(CuntaoGovContactRecordStateEnum state) {
+    public void setState(CuntaoGovContactRiskStateEnum state) {
         this.state = state;
     }
 }

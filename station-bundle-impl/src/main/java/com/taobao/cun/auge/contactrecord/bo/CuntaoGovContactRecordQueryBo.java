@@ -9,7 +9,7 @@ import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordDetailDto;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordRiskDto;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
-import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordStateEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskStateEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskTypeEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordWayEnum;
@@ -76,7 +76,7 @@ public class CuntaoGovContactRecordQueryBo {
                 dto.setRiskDesc(r.getRiskDesc());
                 dto.setRiskLevel(CuntaoGovContactRiskLevelEnum.valueof(r.getRiskLevel()));
                 dto.setRiskType(CuntaoGovContactRiskTypeEnum.valueof(r.getRiskType()));
-                dto.setState(CuntaoGovContactRecordStateEnum.valueof(r.getState()));
+                dto.setState(CuntaoGovContactRiskStateEnum.valueof(r.getState()));
                 return dto;
             }).collect(Collectors.toList());
         }else{

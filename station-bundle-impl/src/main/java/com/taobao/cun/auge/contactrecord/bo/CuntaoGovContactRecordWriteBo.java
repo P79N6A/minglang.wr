@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.util.concurrent.AtomicLongMap;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordAddDto;
-import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordStateEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskStateEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecord;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecordRisk;
@@ -60,7 +60,7 @@ public class CuntaoGovContactRecordWriteBo {
                 r.setGmtModified(new Date());
                 r.setContactId(cuntaoGovContactRecord.getId());
 
-                if(CuntaoGovContactRecordStateEnum.UNRESOLVED.equals(r.getState())) {
+                if(CuntaoGovContactRiskStateEnum.UNRESOLVED.equals(r.getState())) {
                     if (CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())) {
                         num.getAndIncrement("high");
                     }
