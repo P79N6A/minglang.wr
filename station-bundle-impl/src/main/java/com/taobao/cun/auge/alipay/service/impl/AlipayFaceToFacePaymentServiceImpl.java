@@ -285,7 +285,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("legal_cert_back_image",idcardImgsBackResponse.getImageId());
 
             String[]outDoorImages=new String[1];
-            outDoorImages[0]=outDoorImageResponse.getImageId();
+            outDoorImages[0]=certImageResponse.getImageId();
             jsonObject.put("out_door_images",outDoorImages);
 
             AddressInfo addressInfo=new AddressInfo();
@@ -306,9 +306,6 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             contactInfo.setMobile(apply.getPhone());
             jsonObject.put("contact_infos",contactInfo);
 
-            String[]outDoorimages=new String[1];
-            outDoorimages[0]="";
-            jsonObject.put("out_door_images",outDoorimages);
             String[]services=new String[1];
             services[0]="当面付";
             jsonObject.put("service",services);
