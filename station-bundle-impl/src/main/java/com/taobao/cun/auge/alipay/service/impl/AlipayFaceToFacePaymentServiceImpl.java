@@ -61,7 +61,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     public static final String DOLWAN_QUAN_IMAGE_URI="http://sellercenter.cn-hangzhou.oss-pub.aliyun-inc.com/";
 
-    public static final String OUT_DOOR_IMAGE_URL="http://img.alicdn.com//imgextra/i3/3405569954/O1CN01fNR9HU2NOyxVAeRUz_!!3405569954.png";
+    public static final String OUT_DOOR_IMAGE_URL="http://img.alicdn.com/imgextra/i3/3405569954/O1CN01fNR9HU2NOyxVAeRUz_!!3405569954.png";
 
     public static final String INDIVIDUAL_BUSINESS="1";
 
@@ -249,22 +249,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
         FileItem imageContent = new FileItem("/home/admin/outDoorImage",bt);
         request.setImageContent(imageContent);
-        String imageType=imageContent.getMimeType();
-        if("image/jpeg".equals(imageType)){
-            request.setImageType("jpeg");
-        }
-        else if("image/gif".equals(imageType)){
-            request.setImageType("gif");
-        }
-        else if("image/png".equals(imageType)){
-            request.setImageType("png");
-        }
-        else if("image/bmp".equals(imageType)){
-            request.setImageType("bmp");
-        }
-        else{
-            request.setImageType("application/octet-stream");
-        }
+
+        request.setImageType("png");
 
         AntMerchantExpandIndirectImageUploadResponse response  = alipayClient.execute(request);
 
