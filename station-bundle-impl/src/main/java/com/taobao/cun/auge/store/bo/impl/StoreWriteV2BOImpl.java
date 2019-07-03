@@ -1084,6 +1084,9 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "initSingleMiniappForLightStore error[" + storeId + "]:"
                     + " error:cuntaostore is null");
         }
+        if (StringUtils.isNotEmpty(cuntaoStore.getMinappId())) {
+            return Boolean.TRUE;
+        }
         Map<String, Object> rmap = initSingleMiniapp(storeId);
         if ((Boolean) rmap.get("success") && rmap.get("data") != null) {
             List<MiniAppResultDTO> res = (List<MiniAppResultDTO>) rmap.get("data");
