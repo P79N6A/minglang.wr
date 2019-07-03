@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.CuntaoGovContactRecordExtMapper">
-  <select id="queryLatestRecords" resultMap="com.taobao.cun.auge.dal.domain.CuntaoGovContactRecord.BaseResultMap">
+  <select id="queryLatestRecords" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoGovContactRecordMapper.BaseResultMap">
 	  select * from cuntao_gov_contact_record where id in(
 		  select max(id) from cuntao_gov_contact_record where county_id in
 		  <foreach collection="countyIds" item="countyId" open="(" close=")" separator=",">
