@@ -138,6 +138,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                     if(response.isSuccess()){
                         result.setSuccess(true);
                         result.setData(response.getOrderId());
+                        logger.info("taobaoUserId="+taobaoUserId+",orderId="+response.getOrderId());
                         StationAlipayInfoDto stationAlipayInfoDto=new StationAlipayInfoDto();
                         stationAlipayInfoDto.setAlipayAccount(accountMoneyDto.getAlipayAccount());
                         stationAlipayInfoDto.setAlipayOrderId(response.getOrderId());
