@@ -159,8 +159,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
         byte[] bt = doGetFileFromTfs(idcardImgsFace.getFsId(), idcardImgsFace.getFileType());
 
-        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle(),bt);
-        request.setImageContent(ImageContent);
+        FileItem imageContent = new FileItem("/home/admin/"+idcardImgsFace.getTitle(),bt);
+        request.setImageContent(imageContent);
         request.setImageType(idcardImgsFace.getFileType());
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
 
@@ -176,8 +176,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
         byte[] bt = doGetFileFromTfs(idcardImgsBack.getFsId(), idcardImgsBack.getFileType());
 
-        FileItem ImageContent = new FileItem("/home/admin/"+idcardImgsBack.getTitle(),bt);
-        request.setImageContent(ImageContent);
+        FileItem imageContent = new FileItem("/home/admin/"+idcardImgsBack.getTitle(),bt);
+        request.setImageContent(imageContent);
         request.setImageType(idcardImgsBack.getFileType());
 
         AntMerchantExpandIndirectImageUploadResponse response = alipayClient.execute(request);
@@ -197,7 +197,23 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
             FileItem imageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic(),bt);
             request.setImageContent(imageContent);
-            request.setImageType(imageContent.getMimeType());
+            String imageType=imageContent.getMimeType();
+            if("image/jpeg".equals(imageType)){
+                request.setImageType("jpeg");
+            }
+            else if("image/gif".equals(imageType)){
+                request.setImageType("gif");
+            }
+            else if("image/png".equals(imageType)){
+                request.setImageType("png");
+            }
+            else if("image/bmp".equals(imageType)){
+                request.setImageType("bmp");
+            }
+            else{
+                request.setImageType("application/octet-stream");
+            }
+
             response = alipayClient.execute(request);
         }
         return response;
