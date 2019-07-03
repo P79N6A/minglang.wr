@@ -52,8 +52,6 @@ public class CuntaoGovContactRecordWriteBo {
         if(!Strings.isNullOrEmpty(cuntaoGovContactRecordAddDto.getRiskInfos())){
             List<CuntaoGovContactRecordRisk> risks = JSONArray.parseArray(cuntaoGovContactRecordAddDto.getRiskInfos(), CuntaoGovContactRecordRisk.class);
             AtomicLongMap num = AtomicLongMap.create();
-            int middleRiskNum = 0;
-            int lowRiskNum = 0;
             risks.forEach(r->{
                 r.setCreator(cuntaoGovContactRecordAddDto.getOperator());
                 r.setModifier(cuntaoGovContactRecordAddDto.getOperator());
