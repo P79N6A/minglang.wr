@@ -40,10 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -189,24 +186,16 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     }
 
-    private AntMerchantExpandIndirectImageUploadResponse uploadCertImage(CuntaoQualification cuntaoQualification ) throws AlipayApiException {
+    private AntMerchantExpandIndirectImageUploadResponse uploadCertImage(CuntaoQualification cuntaoQualification ) throws Exception {
 
         AntMerchantExpandIndirectImageUploadResponse response=null;
         if(cuntaoQualification!=null){
             String certUrl=DOLWAN_QUAN_IMAGE_URI+cuntaoQualification.getQualiPic();
             AntMerchantExpandIndirectImageUploadRequest request = new AntMerchantExpandIndirectImageUploadRequest();
-   //         String pic=cuntaoQualification.getQualiPic();
-//            if(StringUtil.isNotBlank(pic)){
-//                if(pic.indexOf(".png")>0||pic.indexOf(".PNG")>0) {
-//                    request.setImageType("png");
-//                }
-//                else if(pic.indexOf(".jpg")>0||pic.indexOf(".JPG")>0){
-//                    request.setImageType("jpg");
-//                }
-//            }
-            saveToFile(certUrl,"/home/admin/"+cuntaoQualification.getQualiPic());
 
-            FileItem ImageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic());
+            byte[]bt=getUrlFileData(certUrl);
+
+            FileItem ImageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic(),bt);
             request.setImageContent(ImageContent);
             response = alipayClient.execute(request);
         }
@@ -313,6 +302,24 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             } catch (NullPointerException e) {
             }
         }
+    }
+
+    public static byte[] getUrlFileData(String fileUrl) throws Exception
+    {
+        URL url = new URL(fileUrl);
+        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+        httpConn.connect();
+        InputStream cin = httpConn.getInputStream();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = cin.read(buffer)) != -1) {
+            outStream.write(buffer, 0, len);
+        }
+        cin.close();
+        byte[] fileData = outStream.toByteArray();
+        outStream.close();
+        return fileData;
     }
 
     private byte[] doGetFileFromTfs(String fileName, String fileType) {
