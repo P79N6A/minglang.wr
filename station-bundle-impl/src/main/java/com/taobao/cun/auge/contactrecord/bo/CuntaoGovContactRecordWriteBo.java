@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.util.concurrent.AtomicLongMap;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordAddDto;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordStateEnum;
 import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecord;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecordRisk;
@@ -59,14 +60,16 @@ public class CuntaoGovContactRecordWriteBo {
                 r.setGmtModified(new Date());
                 r.setContactId(cuntaoGovContactRecord.getId());
 
-                if(CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())){
-                    num.getAndIncrement("high");
-                }
-                if(CuntaoGovContactRiskLevelEnum.MIDDLE.getCode().equals(r.getRiskLevel())){
-                    num.getAndIncrement("middle");
-                }
-                if(CuntaoGovContactRiskLevelEnum.LOW.getCode().equals(r.getRiskLevel())){
-                    num.getAndIncrement("low");
+                if(CuntaoGovContactRecordStateEnum.UNRESOLVED.equals(r.getState())) {
+                    if (CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())) {
+                        num.getAndIncrement("high");
+                    }
+                    if (CuntaoGovContactRiskLevelEnum.MIDDLE.getCode().equals(r.getRiskLevel())) {
+                        num.getAndIncrement("middle");
+                    }
+                    if (CuntaoGovContactRiskLevelEnum.LOW.getCode().equals(r.getRiskLevel())) {
+                        num.getAndIncrement("low");
+                    }
                 }
                 cuntaoGovContactRecordRiskMapper.insert(r);
 
