@@ -121,15 +121,6 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                     return result;
                 }
 
-//                AntMerchantExpandIndirectImageUploadResponse outDoorImageResponse=uploadOutDoorImage(OUT_DOOR_IMAGE_URL);
-//                logger.info("taobaoUserId="+taobaoUserId+",outDoorImageResponse="+outDoorImageResponse.isSuccess());
-//                if(!outDoorImageResponse.isSuccess()){
-//                    result.setSuccess(false);
-//                    result.setResultCode("UPLOAD_IMAGE_ERROR");
-//                    result.setErrorMsg("outDoorImageResponse erroe");
-//                    return result;
-//                }
-
                 CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
                 PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
                 if(instance!=null){
@@ -265,8 +256,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         if(instance!=null&&apply!=null&&accountMoneyDto!=null&&cuntaoQualification!=null){
             AntMerchantExpandIndirectZftCreateRequest request = new AntMerchantExpandIndirectZftCreateRequest();
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("external_id",apply.getTaobaoUserId());
-            jsonObject.put("name",cuntaoQualification.getCompanyName());
+            jsonObject.put("external_id","cuntao_"+apply.getTaobaoUserId());
+            jsonObject.put("name",cuntaoQualification.getLegalPerson());
             jsonObject.put("alias_name",cuntaoQualification.getCompanyName());
             if(INDIVIDUAL_BUSINESS.equals(cuntaoQualification.getEnterpriceType().toString())){
                 jsonObject.put("merchant_type","07");
