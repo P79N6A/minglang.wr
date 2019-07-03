@@ -17,6 +17,9 @@ public class CuntaoGovContactRecordAddDto {
     private String operator;
     @NotNull(message = "拜访日期不能为空")
     private Date contactDate;
+    /**
+     * 拜访方式，定义见：{@link com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordWayEnum}
+     */
     @NotBlank(message = "拜访方式不能为空")
     private String contactWay;
     @NotBlank(message = "拜访对象姓名不能为空")
@@ -37,6 +40,10 @@ public class CuntaoGovContactRecordAddDto {
      * {"riskLevel":"hight","riskType":"xxxx","riskDesc":"xxxx","state":"RESOLVED"},
      * {"riskLevel":"low","riskType":"xxxx","riskDesc":"xxxx","state":"UNRESOLVED"}
      * ]
+     *
+     * riskLevel定义见：{@link com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum}
+     * riskType定义见：{@link com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskTypeEnum}
+     * state定义见：{@link com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskStateEnum}
      */
     private String riskInfos;
 

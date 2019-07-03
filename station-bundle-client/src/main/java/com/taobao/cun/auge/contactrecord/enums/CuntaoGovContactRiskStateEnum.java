@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 风险是否解决
+ * 风险状态
  */
 public class CuntaoGovContactRiskStateEnum {
 	private String code;

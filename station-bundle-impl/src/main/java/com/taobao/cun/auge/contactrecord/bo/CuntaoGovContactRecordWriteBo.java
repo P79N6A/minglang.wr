@@ -58,6 +58,7 @@ public class CuntaoGovContactRecordWriteBo {
                 r.setModifier(cuntaoGovContactRecordAddDto.getOperator());
                 r.setGmtCreate(new Date());
                 r.setGmtModified(new Date());
+                r.setIsDeleted("n");
                 r.setContactId(cuntaoGovContactRecord.getId());
 
                 if(CuntaoGovContactRiskStateEnum.UNRESOLVED.equals(r.getState())) {
