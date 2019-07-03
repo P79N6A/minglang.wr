@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 @Service("alipayFaceToFacePaymentService")
 @HSFProvider(serviceInterface= AlipayFaceToFacePaymentService.class, clientTimeout = 10000)
@@ -270,7 +272,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             String[]services=new String[1];
             services[0]="当面付";
             jsonObject.put("service",services);
-            jsonObject.put("sign_time_with_isv",instance.getOpenDate());
+            DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd"); //HH表示24小时制；
+            jsonObject.put("sign_time_with_isv",dFormat.format(instance.getOpenDate()));
             jsonObject.put("alipay_logon_id",accountMoneyDto.getAlipayAccount());
             jsonObject.put("binding_alipay_logon_id",accountMoneyDto.getAlipayAccount());
 
