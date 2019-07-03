@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.contactrecord.dto;
 
-import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactWayEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordWayEnum;
 
 import java.util.Date;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CuntaoGovContactRecordDetailDto {
     /**
      * 拜访方式
      */
-    private CuntaoGovContactWayEnum contactWay;
+    private CuntaoGovContactRecordWayEnum contactWayEnum;
     /**
      * 拜访对象姓名
      */
@@ -59,6 +59,14 @@ public class CuntaoGovContactRecordDetailDto {
      * 风险信息
      */
     private List<CuntaoGovContactRecordRiskDto> risks;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getCountyId() {
         return countyId;
@@ -92,12 +100,12 @@ public class CuntaoGovContactRecordDetailDto {
         this.contactDate = contactDate;
     }
 
-    public CuntaoGovContactWayEnum getContactWay() {
-        return contactWay;
+    public CuntaoGovContactRecordWayEnum getContactWayEnum() {
+        return contactWayEnum;
     }
 
-    public void setContactWay(CuntaoGovContactWayEnum contactWay) {
-        this.contactWay = contactWay;
+    public void setContactWayEnum(CuntaoGovContactRecordWayEnum contactWayEnum) {
+        this.contactWayEnum = contactWayEnum;
     }
 
     public String getContactorName() {

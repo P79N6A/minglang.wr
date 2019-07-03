@@ -6,15 +6,15 @@ import java.util.Map;
 /**
  * 拜访方式
  */
-public class CuntaoGovContactWayEnum {
+public class CuntaoGovContactRecordWayEnum {
 	private String code;
     private String desc;
 
-    private static final Map<String, CuntaoGovContactWayEnum> MAPPINGS = new HashMap<String, CuntaoGovContactWayEnum>();
+    private static final Map<String, CuntaoGovContactRecordWayEnum> MAPPINGS = new HashMap<String, CuntaoGovContactRecordWayEnum>();
 
-    public static final CuntaoGovContactWayEnum DINGTALK = new CuntaoGovContactWayEnum("DINGTALK", "钉钉");
-    public static final CuntaoGovContactWayEnum TELE = new CuntaoGovContactWayEnum("TELE", "电话");
-    public static final CuntaoGovContactWayEnum DOOR_TO_DOOR = new CuntaoGovContactWayEnum("DOOR_TO_DOOR", "上门");
+    public static final CuntaoGovContactRecordWayEnum DINGTALK = new CuntaoGovContactRecordWayEnum("DINGTALK", "钉钉");
+    public static final CuntaoGovContactRecordWayEnum TELE = new CuntaoGovContactRecordWayEnum("TELE", "电话");
+    public static final CuntaoGovContactRecordWayEnum DOOR_TO_DOOR = new CuntaoGovContactRecordWayEnum("DOOR_TO_DOOR", "上门");
 
     static {
     	MAPPINGS.put("DINGTALK", DINGTALK);
@@ -22,7 +22,7 @@ public class CuntaoGovContactWayEnum {
     	MAPPINGS.put("DOOR_TO_DOOR", DOOR_TO_DOOR);
     }
 
-    public CuntaoGovContactWayEnum(String code, String desc) {
+    public CuntaoGovContactRecordWayEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -43,7 +43,7 @@ public class CuntaoGovContactWayEnum {
 		this.desc = desc;
 	}
 
-	public static CuntaoGovContactWayEnum valueof(String code) {
+	public static CuntaoGovContactRecordWayEnum valueof(String code) {
         if (code == null) {
             return null;
         }

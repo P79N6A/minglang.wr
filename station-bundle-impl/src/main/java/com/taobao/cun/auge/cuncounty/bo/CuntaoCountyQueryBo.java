@@ -64,7 +64,7 @@ public class CuntaoCountyQueryBo {
 	
 	/**
 	 * 根据ORGID查询县点基本信息
-	 * @param countyId
+	 * @param orgId
 	 * @return
 	 */
 	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {

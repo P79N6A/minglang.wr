@@ -34,8 +34,8 @@ public class CuntaoGovContactRecordAddDto {
     /**
      * 拜访风险信息（JSON格式）
      * [
-     * {"riskLevel":"hight","riskType":"xxxx","riskDesc":"xxxx","state":"resolved"},
-     * {"riskLevel":"low","riskType":"xxxx","riskDesc":"xxxx","state":"resolved"}
+     * {"riskLevel":"hight","riskType":"xxxx","riskDesc":"xxxx","state":"RESOLVED"},
+     * {"riskLevel":"low","riskType":"xxxx","riskDesc":"xxxx","state":"UNRESOLVED"}
      * ]
      */
     private String riskInfos;

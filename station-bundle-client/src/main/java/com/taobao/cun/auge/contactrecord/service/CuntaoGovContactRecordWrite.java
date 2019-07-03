@@ -4,6 +4,8 @@ import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordAddDto;
 
 /**
  * 政府拜访小记写服务
+ *
+ * @author chengyu.zhoucy
  */
 public interface CuntaoGovContactRecordWrite {
     /**

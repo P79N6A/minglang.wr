@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.contactrecord.dto;
 
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRecordStateEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskTypeEnum;
+
 /**
  * 政府拜访风险信息
  *
@@ -14,12 +18,12 @@ public class CuntaoGovContactRecordRiskDto {
     /**
      * 风险等级
      */
-    private String riskLevel;
+    private CuntaoGovContactRiskLevelEnum riskLevel;
 
     /**
      * 问题类型
      */
-    private String riskType;
+    private CuntaoGovContactRiskTypeEnum riskType;
 
     /**
      * 问题类型描述
@@ -29,7 +33,7 @@ public class CuntaoGovContactRecordRiskDto {
     /**
      * 状态
      */
-    private String state;
+    private CuntaoGovContactRecordStateEnum state;
 
     public Long getContactId() {
         return contactId;
@@ -37,22 +41,6 @@ public class CuntaoGovContactRecordRiskDto {
 
     public void setContactId(Long contactId) {
         this.contactId = contactId;
-    }
-
-    public String getRiskLevel() {
-        return riskLevel;
-    }
-
-    public void setRiskLevel(String riskLevel) {
-        this.riskLevel = riskLevel;
-    }
-
-    public String getRiskType() {
-        return riskType;
-    }
-
-    public void setRiskType(String riskType) {
-        this.riskType = riskType;
     }
 
     public String getRiskDesc() {
@@ -63,11 +51,27 @@ public class CuntaoGovContactRecordRiskDto {
         this.riskDesc = riskDesc;
     }
 
-    public String getState() {
+    public CuntaoGovContactRiskLevelEnum getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(CuntaoGovContactRiskLevelEnum riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+
+    public CuntaoGovContactRiskTypeEnum getRiskType() {
+        return riskType;
+    }
+
+    public void setRiskType(CuntaoGovContactRiskTypeEnum riskType) {
+        this.riskType = riskType;
+    }
+
+    public CuntaoGovContactRecordStateEnum getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(CuntaoGovContactRecordStateEnum state) {
         this.state = state;
     }
 }
