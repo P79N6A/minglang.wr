@@ -8,6 +8,6 @@
 			  #{countyId}
 		  </foreach>
 		  and is_deleted ='n' group by county_id
-	  ) x
+	  )
   </select>
 </mapper>
