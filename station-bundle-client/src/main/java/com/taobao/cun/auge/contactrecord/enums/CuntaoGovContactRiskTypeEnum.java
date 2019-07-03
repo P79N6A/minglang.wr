@@ -21,8 +21,8 @@ public class CuntaoGovContactRiskTypeEnum {
     public static final CuntaoGovContactRiskTypeEnum HIGH_KEEP_CONTRACT = new CuntaoGovContactRiskTypeEnum("HIGH_KEEP_CONTRACT", "合同履约");
     public static final CuntaoGovContactRiskTypeEnum HIGH_NZ_DISPUTE = new CuntaoGovContactRiskTypeEnum("HIGH_NZ_DISPUTE", "农资纠纷");
     public static final CuntaoGovContactRiskTypeEnum HIGH_SGTZ = new CuntaoGovContactRiskTypeEnum("HIGH_SGTZ", "收改调整");
-    public static final CuntaoGovContactRiskTypeEnum HIGH_SHJF = new CuntaoGovContactRiskTypeEnum("HIGH_SH", "社会纠纷");
-    public static final CuntaoGovContactRiskTypeEnum HIGH_CDXZ = new CuntaoGovContactRiskTypeEnum("HIGH_CD", "场地闲置");
+    public static final CuntaoGovContactRiskTypeEnum HIGH_SHJF = new CuntaoGovContactRiskTypeEnum("HIGH_SHJF", "社会纠纷");
+    public static final CuntaoGovContactRiskTypeEnum HIGH_CDXZ = new CuntaoGovContactRiskTypeEnum("HIGH_CDXZ", "场地闲置");
     public static final CuntaoGovContactRiskTypeEnum HIGH_OTHER = new CuntaoGovContactRiskTypeEnum("HIGH_OTHER", "其它情形");
 
     public static final CuntaoGovContactRiskTypeEnum MIDDLE_DJSL = new CuntaoGovContactRiskTypeEnum("MIDDLE_DJSL", "对接失联");
