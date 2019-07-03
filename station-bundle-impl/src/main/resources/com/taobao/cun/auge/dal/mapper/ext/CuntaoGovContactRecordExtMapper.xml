@@ -3,7 +3,7 @@
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.CuntaoGovContactRecordExtMapper">
   <select id="queryLatestRecords" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoGovContactRecordMapper.BaseResultMap">
 	  select * from cuntao_gov_contact_record where id in(
-		  select max(id) from cuntao_gov_contact_record where county_id in
+		  select max(id) from cuntao_gov_contact_record where is_deleted ='n' and county_id in
 		  <foreach collection="countyIds" item="countyId" open="(" close=")" separator=",">
 			  #{countyId}
 		  </foreach>
