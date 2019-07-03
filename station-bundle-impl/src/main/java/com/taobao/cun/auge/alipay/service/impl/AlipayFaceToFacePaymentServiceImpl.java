@@ -35,11 +35,16 @@ import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.service.attachement.TfsService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.mtop.api.util.StringUtil;
+import com.taobao.uic.common.domain.BasePaymentAccountDO;
+import com.taobao.uic.common.domain.ResultDO;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -84,6 +89,9 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
     @Autowired
     private StationBO stationBO;
+
+    @Resource
+    private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
 
 
 
@@ -232,11 +240,11 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("external_id",apply.getTaobaoUserId());
             jsonObject.put("name",cuntaoQualification.getCompanyName());
             jsonObject.put("alias_name",cuntaoQualification.getCompanyName());
-            if(INDIVIDUAL_BUSINESS.equals(cuntaoQualification.getEnterpriceType())){
+            if(INDIVIDUAL_BUSINESS.equals(cuntaoQualification.getEnterpriceType().toString())){
                 jsonObject.put("merchant_type","07");
                 jsonObject.put("cert_name",cuntaoQualification.getCompanyName());
             }
-            else if(ENTERPRISE.equals(cuntaoQualification.getEnterpriceType())){
+            else if(ENTERPRISE.equals(cuntaoQualification.getEnterpriceType().toString())){
                 jsonObject.put("merchant_type","01");
             }
             jsonObject.put("mcc","5722");
@@ -274,11 +282,12 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("service",services);
             DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd"); //HH表示24小时制；
             jsonObject.put("sign_time_with_isv",dFormat.format(instance.getOpenDate()));
-            jsonObject.put("alipay_logon_id",accountMoneyDto.getAlipayAccount());
-            jsonObject.put("binding_alipay_logon_id",accountMoneyDto.getAlipayAccount());
-
+            ResultDO<BasePaymentAccountDO>paymentAccountDOResultDO= uicPaymentAccountReadServiceClient.getAccountByUserId(apply.getTaobaoUserId());
+            if(paymentAccountDOResultDO.isSuccess()&&paymentAccountDOResultDO.getModule()!=null){
+                jsonObject.put("alipay_logon_id",paymentAccountDOResultDO.getModule().getOutUser());
+                jsonObject.put("binding_alipay_logon_id",paymentAccountDOResultDO.getModule().getOutUser());
+            }
             request.setBizContent(jsonObject.toString());
-
             response = alipayClient.execute(request);
         }
 
