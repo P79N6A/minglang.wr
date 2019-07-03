@@ -2,8 +2,10 @@ package com.taobao.cun.auge.contactrecord.bo;
 
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.AtomicLongMap;
 import com.taobao.cun.auge.common.utils.BeanCopy;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordAddDto;
+import com.taobao.cun.auge.contactrecord.enums.CuntaoGovContactRiskLevelEnum;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecord;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecordRisk;
 import com.taobao.cun.auge.dal.domain.CuntaoGovContactRecordRiskExample;
@@ -41,17 +43,40 @@ public class CuntaoGovContactRecordWriteBo {
         cuntaoGovContactRecord.setVisitorName(emp360Adapter.getName(cuntaoGovContactRecordAddDto.getOperator()));
         cuntaoGovContactRecord.setGmtCreate(new Date());
         cuntaoGovContactRecord.setGmtModified(new Date());
+        cuntaoGovContactRecord.setIsDeleted("n");
+        cuntaoGovContactRecord.setHighRiskNum(0);
+        cuntaoGovContactRecord.setLowRiskNum(0);
+        cuntaoGovContactRecord.setMiddleRiskNum(0);
         cuntaoGovContactRecordMapper.insert(cuntaoGovContactRecord);
 
         if(!Strings.isNullOrEmpty(cuntaoGovContactRecordAddDto.getRiskInfos())){
             List<CuntaoGovContactRecordRisk> risks = JSONArray.parseArray(cuntaoGovContactRecordAddDto.getRiskInfos(), CuntaoGovContactRecordRisk.class);
+            AtomicLongMap num = AtomicLongMap.create();
+            int middleRiskNum = 0;
+            int lowRiskNum = 0;
             risks.forEach(r->{
                 r.setCreator(cuntaoGovContactRecordAddDto.getOperator());
                 r.setModifier(cuntaoGovContactRecordAddDto.getOperator());
                 r.setGmtCreate(new Date());
                 r.setGmtModified(new Date());
                 r.setContactId(cuntaoGovContactRecord.getId());
+
+                if(CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())){
+                    num.getAndIncrement("high");
+                }
+                if(CuntaoGovContactRiskLevelEnum.MIDDLE.getCode().equals(r.getRiskLevel())){
+                    num.getAndIncrement("middle");
+                }
+                if(CuntaoGovContactRiskLevelEnum.LOW.getCode().equals(r.getRiskLevel())){
+                    num.getAndIncrement("low");
+                }
                 cuntaoGovContactRecordRiskMapper.insert(r);
+
+                cuntaoGovContactRecord.setHighRiskNum((int)num.get("high"));
+                cuntaoGovContactRecord.setLowRiskNum((int)num.get("low"));
+                cuntaoGovContactRecord.setMiddleRiskNum((int)num.get("middle"));
+
+                cuntaoGovContactRecordMapper.updateByPrimaryKey(cuntaoGovContactRecord);
             });
         }
 
