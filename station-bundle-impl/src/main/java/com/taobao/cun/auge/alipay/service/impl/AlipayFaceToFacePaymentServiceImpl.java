@@ -195,8 +195,9 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 
             byte[]bt=getUrlFileData(certUrl);
 
-            FileItem ImageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic(),bt);
-            request.setImageContent(ImageContent);
+            FileItem imageContent = new FileItem("/home/admin/"+cuntaoQualification.getQualiPic(),bt);
+            request.setImageContent(imageContent);
+            request.setImageType(imageContent.getMimeType());
             response = alipayClient.execute(request);
         }
         return response;
