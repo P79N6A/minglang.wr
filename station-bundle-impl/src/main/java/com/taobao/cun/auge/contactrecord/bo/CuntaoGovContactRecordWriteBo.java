@@ -73,13 +73,12 @@ public class CuntaoGovContactRecordWriteBo {
                     }
                 }
                 cuntaoGovContactRecordRiskMapper.insert(r);
-
-                cuntaoGovContactRecord.setHighRiskNum((int)num.get("high"));
-                cuntaoGovContactRecord.setLowRiskNum((int)num.get("low"));
-                cuntaoGovContactRecord.setMiddleRiskNum((int)num.get("middle"));
-
-                cuntaoGovContactRecordMapper.updateByPrimaryKey(cuntaoGovContactRecord);
             });
+
+            cuntaoGovContactRecord.setHighRiskNum((int)num.get("high"));
+            cuntaoGovContactRecord.setLowRiskNum((int)num.get("low"));
+            cuntaoGovContactRecord.setMiddleRiskNum((int)num.get("middle"));
+            cuntaoGovContactRecordMapper.updateByPrimaryKey(cuntaoGovContactRecord);
         }
 
         return cuntaoGovContactRecord.getId();
