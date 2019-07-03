@@ -61,7 +61,7 @@ public class CuntaoGovContactRecordWriteBo {
                 r.setIsDeleted("n");
                 r.setContactId(cuntaoGovContactRecord.getId());
 
-                if(CuntaoGovContactRiskStateEnum.UNRESOLVED.equals(r.getState())) {
+                if(CuntaoGovContactRiskStateEnum.UNRESOLVED.getCode().equals(r.getState())) {
                     if (CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())) {
                         num.getAndIncrement("high");
                     }
