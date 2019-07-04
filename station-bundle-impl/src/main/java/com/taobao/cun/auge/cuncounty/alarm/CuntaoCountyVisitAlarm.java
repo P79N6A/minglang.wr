@@ -47,11 +47,11 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
 
         List<Optional<AppMsgPushInfoDto>> msgs = Lists.newArrayList();
 
-        if(isNMonthBefore(record, 1)){
+        if(record == null || isNMonthBefore(record, 1)){
             msgs.add(buildMsg(item, String.format(VISIT_1_ALARM, item.getCountyName())));
         }
 
-        if(isNMonthBefore(record, 3)){
+        if(record == null || isNMonthBefore(record, 3)){
             msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getCountyName())));
         }
 
