@@ -103,6 +103,9 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
 
     private StationAlipayInfoDto convertToDto(StationAlipayInfo stationAlipayInfo){
 
+        if(stationAlipayInfo==null){
+            return null;
+        }
         StationAlipayInfoDto stationAlipayInfoDto=new StationAlipayInfoDto();
         BeanUtils.copyProperties(stationAlipayInfo,stationAlipayInfoDto);
         return stationAlipayInfoDto;
@@ -110,6 +113,9 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
 
     private StationAlipayInfo convertTo(StationAlipayInfoDto stationAlipayInfoDto){
 
+        if(stationAlipayInfoDto==null){
+            return null;
+        }
         StationAlipayInfo stationAlipayInfo=new StationAlipayInfo();
         BeanUtils.copyProperties(stationAlipayInfoDto,stationAlipayInfo);
         return stationAlipayInfo;
