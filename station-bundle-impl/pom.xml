@@ -483,7 +483,6 @@
 			<groupId>com.taobao.common.division</groupId>
 			<artifactId>common-division</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-client</artifactId>
@@ -492,7 +491,6 @@
 			<groupId>com.taobao.kfc</groupId>
 			<artifactId>kfc-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.taobao.mmp</groupId>
 			<artifactId>mmp-common</artifactId>
