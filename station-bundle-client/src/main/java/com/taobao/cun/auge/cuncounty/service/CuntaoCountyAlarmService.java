@@ -7,5 +7,10 @@ public interface CuntaoCountyAlarmService {
     /**
      * 预警
      */
-    void alarm();
+    void protocolAlarm();
+
+    /**
+     * 拜访预警
+     */
+    void visitAlarm();
 }

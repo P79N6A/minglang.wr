@@ -2,13 +2,10 @@ package com.taobao.cun.auge.cuncounty.bo;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
-
-import com.google.common.base.Splitter;
 import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.*;
+import com.taobao.cun.auge.cuncounty.tag.CountyTagUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -166,18 +163,7 @@ public class CuntaoCountyQueryBo {
 	}
 
 	private void initTags(CuntaoCountyListItem cuntaoCountyListItem, CuntaoCountyListItemVO cuntaoCountyListItemVO) {
-		if(Strings.isNullOrEmpty(cuntaoCountyListItemVO.getTags())){
-			return;
-		}
-
-		List<CuntaoCountyTagEnum> tags = Splitter.on(",").omitEmptyStrings().splitToList(cuntaoCountyListItemVO.getTags()).stream().map(t->{
-			CuntaoCountyTagEnum e = CuntaoCountyTagEnum.valueof(t);
-			if(e == null){
-				e = new CuntaoCountyTagEnum(t, t);
-			}
-			return e;
-		}).collect(Collectors.toList());
-		cuntaoCountyListItem.setTags(tags);
+		cuntaoCountyListItem.setTags(CountyTagUtils.convert(cuntaoCountyListItemVO.getTags()));
 	}
 
 	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {

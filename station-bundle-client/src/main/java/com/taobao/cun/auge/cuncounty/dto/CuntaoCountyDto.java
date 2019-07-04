@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
+import java.util.List;
+
 /**
  * 县服务中心
  * @author chengyu.zhoucy
@@ -49,7 +51,20 @@ public class CuntaoCountyDto {
      */
     private String operateDate;
 
-    public String getOperateDate() {
+	/**
+	 * 县点标签
+	 */
+	private List<CuntaoCountyTagEnum> countyTags;
+
+	public List<CuntaoCountyTagEnum> getCountyTags() {
+		return countyTags;
+	}
+
+	public void setCountyTags(List<CuntaoCountyTagEnum> countyTags) {
+		this.countyTags = countyTags;
+	}
+
+	public String getOperateDate() {
 		return operateDate;
 	}
 
