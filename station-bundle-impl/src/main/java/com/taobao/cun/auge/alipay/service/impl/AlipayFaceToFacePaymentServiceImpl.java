@@ -139,12 +139,16 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                         result.setSuccess(true);
                         result.setData(response.getOrderId());
                         logger.info("taobaoUserId="+taobaoUserId+",orderId="+response.getOrderId());
-                        StationAlipayInfoDto stationAlipayInfoDto=new StationAlipayInfoDto();
-                        stationAlipayInfoDto.setAlipayAccount(accountMoneyDto.getAlipayAccount());
-                        stationAlipayInfoDto.setAlipayOrderId(response.getOrderId());
-                        stationAlipayInfoDto.setStationId(station.getId().toString());
-                        stationAlipayInfoDto.setTaobaoUserId(taobaoUserId.toString());
-                        stationAlipayInfoService.saveStationAlipayInfo(stationAlipayInfoDto);
+                        StationAlipayInfoDto oldInfo= stationAlipayInfoService.getStationAlipayInfoByTaobaoUserId(taobaoUserId.toString());
+                        if(oldInfo==null){
+                            StationAlipayInfoDto stationAlipayInfoDto=new StationAlipayInfoDto();
+                            stationAlipayInfoDto.setAlipayAccount(accountMoneyDto.getAlipayAccount());
+                            stationAlipayInfoDto.setAlipayOrderId(response.getOrderId());
+                            stationAlipayInfoDto.setStationId(station.getId().toString());
+                            stationAlipayInfoDto.setTaobaoUserId(taobaoUserId.toString());
+                            Long id=stationAlipayInfoService.saveStationAlipayInfo(stationAlipayInfoDto);
+                            logger.info("taobaoUserId="+taobaoUserId+",saveStationAlipayInfo=success,saveStationAlipayInfoId="+id.toString());
+                        }
                         logger.info("taobaoUserId="+taobaoUserId+",createTwoLevelMerchants=success");
                     }
                     else{
