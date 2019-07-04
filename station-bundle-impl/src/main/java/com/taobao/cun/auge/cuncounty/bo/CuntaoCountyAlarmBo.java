@@ -5,7 +5,9 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.platform.dto.AppMsgPushInfoDto;
 import com.taobao.cun.crius.event.ExtEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CuntaoCountyAlarmBo {
     public void alarm(){
         AppMsgPushInfoDto appMsgPushInfoDto = new AppMsgPushInfoDto();
