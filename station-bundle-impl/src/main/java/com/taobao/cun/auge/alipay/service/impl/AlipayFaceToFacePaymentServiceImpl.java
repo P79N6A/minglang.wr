@@ -50,6 +50,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service("alipayFaceToFacePaymentService")
 @HSFProvider(serviceInterface= AlipayFaceToFacePaymentService.class, clientTimeout = 10000)
@@ -134,7 +135,8 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
 //                        result.setErrorMsg("uploadCertImgs erroe");
 //                        return result;
 //                    }
-                    AntMerchantExpandIndirectZftCreateResponse response= createZft(instance,apply,station,accountMoneyDto,cuntaoQualification,idcardImgsFaceResponse,idcardImgsBackResponse);
+                    ResultDO<BasePaymentAccountDO>paymentAccountDOResultDO= uicPaymentAccountReadServiceClient.getAccountByUserId(apply.getTaobaoUserId());
+                    AntMerchantExpandIndirectZftCreateResponse response= createZft(instance,apply, paymentAccountDOResultDO,station,accountMoneyDto,cuntaoQualification,idcardImgsFaceResponse,idcardImgsBackResponse);
                     if(response.isSuccess()){
                         result.setSuccess(true);
                         result.setData(response.getOrderId());
@@ -142,10 +144,13 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                         StationAlipayInfoDto oldInfo= stationAlipayInfoService.getStationAlipayInfoByTaobaoUserId(taobaoUserId.toString());
                         if(oldInfo==null){
                             StationAlipayInfoDto stationAlipayInfoDto=new StationAlipayInfoDto();
-                            stationAlipayInfoDto.setAlipayAccount(accountMoneyDto.getAlipayAccount());
+                            stationAlipayInfoDto.setAlipayAccount(paymentAccountDOResultDO.getModule().getOutUser());
                             stationAlipayInfoDto.setAlipayOrderId(response.getOrderId());
                             stationAlipayInfoDto.setStationId(station.getId().toString());
                             stationAlipayInfoDto.setTaobaoUserId(taobaoUserId.toString());
+                            stationAlipayInfoDto.setIsDeleted("n");
+                            stationAlipayInfoDto.setGmtCreate(new Date());
+                            stationAlipayInfoDto.setGmtModified(new Date());
                             Long id=stationAlipayInfoService.saveStationAlipayInfo(stationAlipayInfoDto);
                             logger.info("taobaoUserId="+taobaoUserId+",saveStationAlipayInfo=success,saveStationAlipayInfoId="+id.toString());
                         }
@@ -253,7 +258,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
         return response;
     }
 
-    private AntMerchantExpandIndirectZftCreateResponse createZft(PartnerStationRel instance,PartnerApplyDto apply,Station station,
+    private AntMerchantExpandIndirectZftCreateResponse createZft(PartnerStationRel instance,PartnerApplyDto apply,ResultDO<BasePaymentAccountDO>paymentAccountDOResultDO,Station station,
                                                                  AccountMoneyDto accountMoneyDto, CuntaoQualification cuntaoQualification,
                                                                  AntMerchantExpandIndirectImageUploadResponse idcardImgsFaceResponse, AntMerchantExpandIndirectImageUploadResponse idcardImgsBackResponse
    ) throws AlipayApiException {
@@ -308,7 +313,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("service",services);
             DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd"); //HH表示24小时制；
             jsonObject.put("sign_time_with_isv",dFormat.format(instance.getOpenDate()));
-            ResultDO<BasePaymentAccountDO>paymentAccountDOResultDO= uicPaymentAccountReadServiceClient.getAccountByUserId(apply.getTaobaoUserId());
+
             if(paymentAccountDOResultDO.isSuccess()&&paymentAccountDOResultDO.getModule()!=null){
                 jsonObject.put("alipay_logon_id",paymentAccountDOResultDO.getModule().getOutUser());
                 jsonObject.put("binding_alipay_logon_id",paymentAccountDOResultDO.getModule().getOutUser());
