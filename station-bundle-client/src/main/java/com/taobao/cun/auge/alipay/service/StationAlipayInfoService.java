@@ -13,7 +13,7 @@ public interface StationAlipayInfoService {
 
     public void updateStationAlipayInfo(StationAlipayInfoDto stationAlipayInfoDto);
 
-    public void dealZftMessage(Map<String,String> params);
+    public String dealZftMessage(Map<String,String> params);
 
 
 }

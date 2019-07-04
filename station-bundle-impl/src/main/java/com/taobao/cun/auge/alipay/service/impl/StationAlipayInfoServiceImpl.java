@@ -26,6 +26,10 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
 
     public static final String METHOD_ZFC_PASSED="ant.merchant.expand.indirect.zft.passed";
 
+    public static final String SUCCESS="success";
+
+    public static final String FAIL="fail";
+
     @Autowired
     private StationAlipayInfoBO stationAlipayInfoBO;
 
@@ -50,10 +54,10 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
 
 
     @Override
-    public void dealZftMessage(Map<String, String> params) {
+    public String dealZftMessage(Map<String, String> params) {
 
         if(params==null){
-            return;
+            return FAIL;
         }
         String msgMethod=params.get("msg_method");
         if(METHOD_ZFC_REJECTED.equals(msgMethod)){
@@ -72,6 +76,7 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
                   logger.info("dealZftMessage,the method=ant.merchant.expand.indirect.zft.rejected, external_id="+externalId+",reason="+reason+",update success");
               }
           }
+          return SUCCESS;
         }
         else if(METHOD_ZFC_PASSED.equals(msgMethod)){
             String bizContent=params.get("biz_content");
@@ -91,7 +96,9 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
                     logger.info("dealZftMessage,the method=ant.merchant.expand.indirect.zft.passed, external_id="+externalId+",smid="+smid+",memo="+memo+",update success");
                 }
             }
+            return SUCCESS;
         }
+        return FAIL;
     }
 
     private StationAlipayInfoDto convertToDto(StationAlipayInfo stationAlipayInfo){
