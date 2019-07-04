@@ -2,6 +2,9 @@ package com.taobao.cun.auge.cuncounty.bo;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Joiner;
+import com.taobao.cun.auge.cuncounty.vo.CountyTag;
+import com.taobao.cun.auge.dal.domain.CuntaoCountyExample;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,5 +126,11 @@ public class CuntaoCountyWriteBo {
 		cainiaoCountyEditDto.setOperator(operator);
 		cainiaoCountyEditDto.setCountyId(cuntaoCounty.getId());
 		cainiaoCountyBo.save(cainiaoCountyEditDto);
+	}
+
+	public void updateTags(CountyTag countyTag){
+		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(countyTag.getCountyId());
+		cuntaoCounty.setTags(Joiner.on(",").join(countyTag.getTags()));
+		cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
 	}
 }

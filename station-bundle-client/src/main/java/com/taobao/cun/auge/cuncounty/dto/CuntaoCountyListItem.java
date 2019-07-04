@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 
 /**
@@ -65,10 +64,10 @@ public class CuntaoCountyListItem {
     private String operateDate;
 
 	/**
-	 * 政府拜访记录
+	 * 协议ID
 	 */
-	private CuntaoGovContactRecordSummaryDto cuntaoGovContactRecordSummaryDto;
-    
+	private Long contractId;
+
     /**
      * 县小二
      */
@@ -98,17 +97,22 @@ public class CuntaoCountyListItem {
      */
     private String protocolEndDate;
 
-	/**
-	 * 协议即将失效
-	 */
-	private boolean protocolWillExpire = false;
+	private List<CuntaoCountyTagEnum> tags;
 
-	public boolean isProtocolWillExpire() {
-		return protocolWillExpire;
+	public Long getContractId() {
+		return contractId;
 	}
 
-	public void setProtocolWillExpire(boolean protocolWillExpire) {
-		this.protocolWillExpire = protocolWillExpire;
+	public void setContractId(Long contractId) {
+		this.contractId = contractId;
+	}
+
+	public List<CuntaoCountyTagEnum> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<CuntaoCountyTagEnum> tags) {
+		this.tags = tags;
 	}
 
 	public String getSerialNum() {
@@ -253,13 +257,5 @@ public class CuntaoCountyListItem {
 
 	public void setProtocolEndDate(String protocolEndDate) {
 		this.protocolEndDate = protocolEndDate;
-	}
-
-	public CuntaoGovContactRecordSummaryDto getCuntaoGovContactRecordSummaryDto() {
-		return cuntaoGovContactRecordSummaryDto;
-	}
-
-	public void setCuntaoGovContactRecordSummaryDto(CuntaoGovContactRecordSummaryDto cuntaoGovContactRecordSummaryDto) {
-		this.cuntaoGovContactRecordSummaryDto = cuntaoGovContactRecordSummaryDto;
 	}
 }

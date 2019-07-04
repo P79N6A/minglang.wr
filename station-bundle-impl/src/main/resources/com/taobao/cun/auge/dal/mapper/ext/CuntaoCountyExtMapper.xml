@@ -60,6 +60,8 @@
 		a.id,
 		a.name,
 		a.state,
+	  	a.tags,
+	  	b.id as contractId,
 	  	b.serial_num as serialNum,
 		b.gmt_protocol_start as gmtProtocolStartDate,
 		b.gmt_protocol_end as gmtProtocolEndDate,

@@ -53,6 +53,26 @@ public class CuntaoCountyListItemVO {
      */
     private Date operateDate;
 
+    private String tags;
+
+    private Long contractId;
+
+	public Long getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(Long contractId) {
+		this.contractId = contractId;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
 	public String getSerialNum() {
 		return serialNum;
 	}

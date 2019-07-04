@@ -1,17 +1,14 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Splitter;
 import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
-import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
-import org.apache.commons.collections.CollectionUtils;
+import com.taobao.cun.auge.cuncounty.dto.*;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -19,15 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.common.utils.DateUtil;
-import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOrgDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
@@ -149,8 +137,7 @@ public class CuntaoCountyQueryBo {
 		List<CuntaoCountyListItem> cuntaoCountyListItems = Lists.newArrayList();
 		
 		List<Long> countyIds = Lists.newArrayList();
-		
-		
+
 		Map<Long, CountyOrgInfo> countyOrgInfos = Maps.newHashMap();
 		for(CuntaoCountyListItemVO vo : cuntaoCountyListItemVOs) {
 			countyIds.add(vo.getId());
@@ -169,37 +156,28 @@ public class CuntaoCountyQueryBo {
 			cuntaoCountyListItem.setState(vo.getState());
 			cuntaoCountyListItem.setProtocolEndDate(DateUtil.format(vo.getGmtProtocolEndDate(), "yyyy-MM-dd"));
 			cuntaoCountyListItem.setOperateDate(DateUtil.format(vo.getOperateDate(), "yyyy-MM-dd"));
+			initTags(cuntaoCountyListItem, vo);
 			cuntaoCountyListItems.add(cuntaoCountyListItem);
 		}
 		
 		initOffice(cuntaoCountyListItems, countyIds);
 		initLeader(cuntaoCountyListItems, countyOrgInfos);
-		initTags(cuntaoCountyListItems, countyIds);
-		
 		return cuntaoCountyListItems;
 	}
 
-	private void initTags(List<CuntaoCountyListItem> cuntaoCountyListItems, List<Long> countyIds) {
-		List<CuntaoGovContactRecordSummaryDto> records = cuntaoGovContactRecordQueryBo.queryLatestRecords(countyIds);
-		if(CollectionUtils.isEmpty(records)){
+	private void initTags(CuntaoCountyListItem cuntaoCountyListItem, CuntaoCountyListItemVO cuntaoCountyListItemVO) {
+		if(Strings.isNullOrEmpty(cuntaoCountyListItemVO.getTags())){
 			return;
 		}
 
-		Map<Long, CuntaoCountyListItem> map = cuntaoCountyListItems.stream().collect(Collectors.toMap(CuntaoCountyListItem::getId, Function.identity()));
-		records.forEach(r->{
-			map.get(r.getCountyId()).setCuntaoGovContactRecordSummaryDto(r);
-		});
-
-		cuntaoCountyListItems.forEach(c->{
-			if(!Strings.isNullOrEmpty(c.getSerialNum())){
-				if(c.getProtocolEndDate() != null){
-					LocalDate date = LocalDate.now();
-					date = date.plusDays(180);
-					LocalDate protocolLocalDate = LocalDate.parse(c.getProtocolEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-					c.setProtocolWillExpire(date.isAfter(protocolLocalDate));
-				}
+		List<CuntaoCountyTagEnum> tags = Splitter.on(",").omitEmptyStrings().splitToList(cuntaoCountyListItemVO.getTags()).stream().map(t->{
+			CuntaoCountyTagEnum e = CuntaoCountyTagEnum.valueof(t);
+			if(e == null){
+				e = new CuntaoCountyTagEnum(t, t);
 			}
-		});
+			return e;
+		}).collect(Collectors.toList());
+		cuntaoCountyListItem.setTags(tags);
 	}
 
 	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {
