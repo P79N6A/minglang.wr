@@ -111,6 +111,19 @@ public class StoreDto implements Serializable{
 	 * 分销商Code
 	 */
 	private String distributorCode;
+	/**
+	 * 小程序ID
+	 */
+	private String minappId;
+
+	public String getMinappId() {
+		return minappId;
+	}
+
+	public void setMinappId(String minappId) {
+		this.minappId = minappId;
+	}
+
 	public Long getId() {
 		return id;
 	}

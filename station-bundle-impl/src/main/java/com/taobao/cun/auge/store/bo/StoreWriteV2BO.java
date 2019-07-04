@@ -108,4 +108,47 @@ public interface StoreWriteV2BO {
      * @return
      */
     public void  batchInitSingleMiniapp(List<Long> storeIds);
+
+    /**
+     * 初始化轻店
+     * @param taobaoUserId
+     * @param taskInstanceId
+     * @return
+     */
+    public Boolean initLightStore(Long taobaoUserId,Long taskInstanceId);
+
+    /**
+     *初始化轻店修改基础信息
+     * @param storeId
+     * @return
+     */
+    public Boolean modifyStoreInfoForLightStore(Long storeId);
+
+    /**
+     * 更新轻店子图
+     * @param storeId
+     * @return
+     */
+    public Boolean modifyStoreSubImageFromTask(Long storeId);
+
+    /**
+     * 绑定轻店默认用户组
+     * @param storeId
+     * @return
+     */
+    public Boolean bindDefaultStoreGroup(Long storeId);
+
+    /**
+     * 初始化轻店小程序
+     * @param storeId
+     * @return
+     */
+    public Boolean initSingleMiniappForLightStore(Long storeId);
+
+    /**
+     * 开通轻店权限
+     * @param storeId
+     * @return
+     */
+    public Boolean openLightStorePermission(Long storeId);
 }
