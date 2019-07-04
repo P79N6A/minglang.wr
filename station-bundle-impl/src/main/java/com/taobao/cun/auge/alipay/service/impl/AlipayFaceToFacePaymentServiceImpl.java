@@ -274,7 +274,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("merchant_type","06");
             jsonObject.put("mcc","5722");
             jsonObject.put("cert_no",apply.getIdenNum());
-            jsonObject.put("cert_type","201");
+            jsonObject.put("cert_type","100");
            // jsonObject.put("cert_image",certImageResponse.getImageId());
             jsonObject.put("legal_name",cuntaoQualification.getLegalPerson());
             jsonObject.put("legal_cert_no",apply.getIdenNum());
