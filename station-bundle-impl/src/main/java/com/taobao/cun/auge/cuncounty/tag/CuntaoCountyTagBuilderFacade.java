@@ -28,11 +28,11 @@ public class CuntaoCountyTagBuilderFacade {
 
     public void build(){
         Flux.generate(publisher::publish)
+                .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .parallel(3)
                 .map(cuntaoCountyProtocolTagBuilder::build)
                 .map(cuntaoCountyRiskTagBuilder::build)
                 .map(t->t.getT1())
-                .doOnError(e->logger.error(e.getMessage(), e))
                 .subscribe(cuntaoCountyWriteBo::updateTags);
     }
 }
