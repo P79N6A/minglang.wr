@@ -264,17 +264,18 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("external_id","cuntao_"+apply.getTaobaoUserId());
             jsonObject.put("name",cuntaoQualification.getLegalPerson());
             jsonObject.put("alias_name",cuntaoQualification.getCompanyName());
-            if(INDIVIDUAL_BUSINESS.equals(cuntaoQualification.getEnterpriceType().toString())){
-                jsonObject.put("merchant_type","07");
-                jsonObject.put("cert_name",cuntaoQualification.getCompanyName());
-            }
-            else if(ENTERPRISE.equals(cuntaoQualification.getEnterpriceType().toString())){
-                jsonObject.put("merchant_type","01");
-            }
+//            if(INDIVIDUAL_BUSINESS.equals(cuntaoQualification.getEnterpriceType().toString())){
+//                jsonObject.put("merchant_type","07");
+//                jsonObject.put("cert_name",cuntaoQualification.getCompanyName());
+//            }
+//            else if(ENTERPRISE.equals(cuntaoQualification.getEnterpriceType().toString())){
+//                jsonObject.put("merchant_type","01");
+//            }
+            jsonObject.put("merchant_type","06");
             jsonObject.put("mcc","5722");
-            jsonObject.put("cert_no",cuntaoQualification.getQualiNo());
+            jsonObject.put("cert_no",apply.getIdenNum());
             jsonObject.put("cert_type","201");
-            jsonObject.put("cert_image",certImageResponse.getImageId());
+           // jsonObject.put("cert_image",certImageResponse.getImageId());
             jsonObject.put("legal_name",cuntaoQualification.getLegalPerson());
             jsonObject.put("legal_cert_no",apply.getIdenNum());
             jsonObject.put("legal_cert_front_image",idcardImgsFaceResponse.getImageId());
