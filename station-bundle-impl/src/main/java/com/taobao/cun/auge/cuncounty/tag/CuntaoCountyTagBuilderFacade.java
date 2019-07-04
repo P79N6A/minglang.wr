@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
-import javax.inject.Qualifier;
 
 /**
  * 县服务中心标签构建器
@@ -27,7 +26,7 @@ public class CuntaoCountyTagBuilderFacade {
     private CuntaoCountyWriteBo cuntaoCountyWriteBo;
 
     public void build(){
-        Flux.generate(publisher::publish)
+        Flux.create(publisher::publish)
                 .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .parallel(3)
                 .map(cuntaoCountyProtocolTagBuilder::build)
