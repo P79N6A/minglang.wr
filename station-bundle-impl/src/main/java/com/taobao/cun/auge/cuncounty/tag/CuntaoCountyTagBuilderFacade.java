@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.cuncounty.tag;
 
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyWriteBo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -14,6 +16,7 @@ import javax.inject.Qualifier;
  */
 @Component
 public class CuntaoCountyTagBuilderFacade {
+    private Logger logger = LoggerFactory.getLogger(CuntaoCountyTagBuilderFacade.class);
     @Resource
     private Publisher publisher;
     @Resource(name = "cuntaoCountyProtocolTagBuilder")
@@ -29,6 +32,7 @@ public class CuntaoCountyTagBuilderFacade {
                 .map(cuntaoCountyProtocolTagBuilder::build)
                 .map(cuntaoCountyRiskTagBuilder::build)
                 .map(t->t.getT1())
+                .doOnError(e->logger.error(e.getMessage(), e))
                 .subscribe(cuntaoCountyWriteBo::updateTags);
     }
 }
