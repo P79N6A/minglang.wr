@@ -33,6 +33,7 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
     @Override
     public void alarm() {
         Flux.create(publisher::publish)
+                .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .map(t->t.getT2())
                 .filter(this::filter)
                 .parallel(3)

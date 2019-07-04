@@ -12,6 +12,8 @@ import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.crius.event.ExtEvent;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     @Resource
     private CuntaoUserOrgService cuntaoUserOrgService;
     @Resource
