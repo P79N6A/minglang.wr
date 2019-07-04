@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.cuncounty.tag;
+package com.taobao.cun.auge.cuncounty.alarm;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
@@ -7,6 +7,7 @@ import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
+import com.taobao.cun.auge.cuncounty.tag.Publisher;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.platform.dto.AppMsgPushInfoDto;
 import com.taobao.cun.crius.event.ExtEvent;

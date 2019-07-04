@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
+import javax.inject.Qualifier;
 
 /**
  * 县服务中心标签构建器
@@ -15,9 +16,9 @@ import javax.annotation.Resource;
 public class CuntaoCountyTagBuilderFacade {
     @Resource
     private Publisher publisher;
-    @Resource
-    private CuntaoCountyTagBuilder cuntaoCountyTagBuilder;
-    @Resource
+    @Resource(name = "cuntaoCountyProtocolTagBuilder")
+    private CuntaoCountyTagBuilder cuntaoCountyProtocolTagBuilder;
+    @Resource(name = "cuntaoCountyRiskTagBuilder")
     private CuntaoCountyTagBuilder cuntaoCountyRiskTagBuilder;
     @Resource
     private CuntaoCountyWriteBo cuntaoCountyWriteBo;
@@ -25,7 +26,7 @@ public class CuntaoCountyTagBuilderFacade {
     public void build(){
         Flux.generate(publisher::publish)
                 .parallel(3)
-                .map(cuntaoCountyTagBuilder::build)
+                .map(cuntaoCountyProtocolTagBuilder::build)
                 .map(cuntaoCountyRiskTagBuilder::build)
                 .map(t->t.getT1())
                 .subscribe(cuntaoCountyWriteBo::updateTags);
