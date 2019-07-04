@@ -32,7 +32,7 @@ public class CuntaoCountyRiskTagBuilder implements CuntaoCountyTagBuilder{
         if(CollectionUtils.isNotEmpty(list)){
             CuntaoGovContactRecordSummaryDto dto = list.get(0);
             if(dto.getLowRiskNum() != null && dto.getLowRiskNum().intValue() > 0){
-                countyTag.getTags().add(String.format(HIGH, dto.getLowRiskNum()));
+                countyTag.getTags().add(String.format(LOW, dto.getLowRiskNum()));
             }
 
             if(dto.getHighRiskNum() != null && dto.getHighRiskNum().intValue() > 0){
