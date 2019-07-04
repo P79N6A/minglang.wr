@@ -126,15 +126,15 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
                 if(instance!=null){
                     Station station=stationBO.getStationById(instance.getStationId());
                     AccountMoneyDto accountMoneyDto= accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-                    AntMerchantExpandIndirectImageUploadResponse certImageResponse= uploadCertImage(cuntaoQualification);
-                    logger.info("taobaoUserId="+taobaoUserId+",certImageResponse="+certImageResponse.isSuccess());
-                    if(!certImageResponse.isSuccess()){
-                        result.setSuccess(false);
-                        result.setResultCode("UPLOAD_IMAGE_ERROR");
-                        result.setErrorMsg("uploadCertImgs erroe");
-                        return result;
-                    }
-                    AntMerchantExpandIndirectZftCreateResponse response= createZft(instance,apply,station,accountMoneyDto,cuntaoQualification,idcardImgsFaceResponse,idcardImgsBackResponse,certImageResponse);
+//                    AntMerchantExpandIndirectImageUploadResponse certImageResponse= uploadCertImage(cuntaoQualification);
+//                    logger.info("taobaoUserId="+taobaoUserId+",certImageResponse="+certImageResponse.isSuccess());
+//                    if(!certImageResponse.isSuccess()){
+//                        result.setSuccess(false);
+//                        result.setResultCode("UPLOAD_IMAGE_ERROR");
+//                        result.setErrorMsg("uploadCertImgs erroe");
+//                        return result;
+//                    }
+                    AntMerchantExpandIndirectZftCreateResponse response= createZft(instance,apply,station,accountMoneyDto,cuntaoQualification,idcardImgsFaceResponse,idcardImgsBackResponse);
                     if(response.isSuccess()){
                         result.setSuccess(true);
                         result.setData(response.getOrderId());
@@ -256,7 +256,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
     private AntMerchantExpandIndirectZftCreateResponse createZft(PartnerStationRel instance,PartnerApplyDto apply,Station station,
                                                                  AccountMoneyDto accountMoneyDto, CuntaoQualification cuntaoQualification,
                                                                  AntMerchantExpandIndirectImageUploadResponse idcardImgsFaceResponse, AntMerchantExpandIndirectImageUploadResponse idcardImgsBackResponse
-    , AntMerchantExpandIndirectImageUploadResponse certImageResponse) throws AlipayApiException {
+   ) throws AlipayApiException {
         AntMerchantExpandIndirectZftCreateResponse response=null;
         if(instance!=null&&apply!=null&&accountMoneyDto!=null&&cuntaoQualification!=null){
             AntMerchantExpandIndirectZftCreateRequest request = new AntMerchantExpandIndirectZftCreateRequest();
@@ -282,7 +282,7 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             jsonObject.put("legal_cert_back_image",idcardImgsBackResponse.getImageId());
 
             String[]outDoorImages=new String[1];
-            outDoorImages[0]=certImageResponse.getImageId();
+            outDoorImages[0]=idcardImgsFaceResponse.getImageId();
             jsonObject.put("out_door_images",outDoorImages);
 
             AddressInfo addressInfo=new AddressInfo();
