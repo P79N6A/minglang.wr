@@ -2,6 +2,7 @@ package com.taobao.cun.auge.store.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
@@ -114,4 +115,19 @@ public interface StoreReadService {
 	 * @return
 	 */
 	public PageDto<Long> queryByPageForShrhPermissionToTPS(Date beginDate, int pageNum,int pageSize);
+
+
+	/**
+	 * 从运营任务中心取门店子图
+	 * @param taskInstanceId
+	 * @return
+	 */
+	public List<Map<String,String>> getSubImageFromTask(Long taskInstanceId,Long taobaoUserId);
+
+	/**
+	 *测试从商户中心获取图片
+	 * @param storeId
+	 * @return
+	 */
+	public Object getImageFromPlace(Long storeId);
 }
