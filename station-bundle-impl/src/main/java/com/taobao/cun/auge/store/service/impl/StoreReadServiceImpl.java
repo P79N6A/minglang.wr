@@ -41,6 +41,8 @@ import com.taobao.cun.recruit.ability.dto.ServiceAbilityEmployeeInfoDto;
 import com.taobao.cun.recruit.ability.service.ServiceAbilityEmployeeInfoService;
 import com.taobao.cun.shared.base.result.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.place.client.domain.enumtype.v2.StoreExtendsTypeV2;
+import com.taobao.place.client.service.v2.StoreExtendServiceV2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +89,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Autowired
 	private TaskInstanceService taskInstanceService;
+
+	@Autowired
+	private StoreExtendServiceV2 storeExtendServiceV2;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -323,5 +328,10 @@ public class StoreReadServiceImpl implements StoreReadService {
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public Object getImageFromPlace(Long storeId) {
+		return storeExtendServiceV2.getStoreExtends(storeId, StoreExtendsTypeV2.STORE_ENVIRONMENT_PICS);
 	}
 }

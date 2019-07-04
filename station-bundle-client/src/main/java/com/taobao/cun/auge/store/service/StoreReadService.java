@@ -123,4 +123,11 @@ public interface StoreReadService {
 	 * @return
 	 */
 	public List<Map<String,String>> getSubImageFromTask(Long taskInstanceId,Long taobaoUserId);
+
+	/**
+	 *测试从商户中心获取图片
+	 * @param storeId
+	 * @return
+	 */
+	public Object getImageFromPlace(Long storeId);
 }
