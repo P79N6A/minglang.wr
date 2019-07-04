@@ -97,7 +97,7 @@ public class CuntaoCountyListItem {
      */
     private String protocolEndDate;
 
-	private List<CuntaoCountyTagEnum> tags;
+	private List<CuntaoCountyTagEnum> countyTags;
 
 	public Long getContractId() {
 		return contractId;
@@ -107,12 +107,12 @@ public class CuntaoCountyListItem {
 		this.contractId = contractId;
 	}
 
-	public List<CuntaoCountyTagEnum> getTags() {
-		return tags;
+	public List<CuntaoCountyTagEnum> getCountyTags() {
+		return countyTags;
 	}
 
-	public void setTags(List<CuntaoCountyTagEnum> tags) {
-		this.tags = tags;
+	public void setCountyTags(List<CuntaoCountyTagEnum> countyTags) {
+		this.countyTags = countyTags;
 	}
 
 	public String getSerialNum() {

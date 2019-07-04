@@ -163,7 +163,7 @@ public class CuntaoCountyQueryBo {
 	}
 
 	private void initTags(CuntaoCountyListItem cuntaoCountyListItem, CuntaoCountyListItemVO cuntaoCountyListItemVO) {
-		cuntaoCountyListItem.setTags(CountyTagUtils.convert(cuntaoCountyListItemVO.getTags()));
+		cuntaoCountyListItem.setCountyTags(CountyTagUtils.convert(cuntaoCountyListItemVO.getTags()));
 	}
 
 	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {

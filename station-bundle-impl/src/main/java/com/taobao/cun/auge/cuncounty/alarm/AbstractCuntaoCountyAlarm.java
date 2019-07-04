@@ -40,8 +40,8 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
         content.setPushTitle("请注意跟进");
         content.setContent("请注意跟进");
         infoDto.setContent(content);
-        infoDto.setMsgType("cuntaoCRM" + "StoreInspection");
-        infoDto.setMsgTypeDetail("StoreInspection");
+        infoDto.setMsgType("cuntaoCRM" + "govbusiness");
+        infoDto.setMsgTypeDetail("govbusiness");
         infoDto.setReceivers(Lists.newArrayList(empIds));
         infoDto.setReceiverType("EMPIDS");
         infoDto.setSender(0L);

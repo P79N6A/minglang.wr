@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -42,11 +41,11 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
     }
 
     private boolean filter(CuntaoCountyListItem item){
-        return CountyTagUtils.containAlarmTags(item.getTags());
+        return CountyTagUtils.containAlarmTags(item.getCountyTags());
     }
 
     private Optional<AppMsgPushInfoDto> buildProtocolAlarmMsg(CuntaoCountyListItem item){
-        Optional<CuntaoCountyTagEnum> optional = CountyTagUtils.getProtocolTag(item.getTags());
+        Optional<CuntaoCountyTagEnum> optional = CountyTagUtils.getProtocolTag(item.getCountyTags());
         if(optional.isPresent()){
             CuntaoCountyTagEnum tag = optional.get();
             if(CuntaoCountyTagEnum.protocolNotExists.getCode().equals(tag.getCode())){
