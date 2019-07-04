@@ -97,6 +97,9 @@ public class CuntaoCountyListItem {
      */
     private String protocolEndDate;
 
+	/**
+	 * 县点标签
+	 */
 	private List<CuntaoCountyTagEnum> countyTags;
 
 	public Long getContractId() {
