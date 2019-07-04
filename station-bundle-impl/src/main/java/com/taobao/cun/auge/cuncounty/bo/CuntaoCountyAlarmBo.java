@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.platform.dto.AppMsgPushInfoDto;
+import com.taobao.cun.crius.event.ExtEvent;
 
 public class CuntaoCountyAlarmBo {
     public void alarm(){
