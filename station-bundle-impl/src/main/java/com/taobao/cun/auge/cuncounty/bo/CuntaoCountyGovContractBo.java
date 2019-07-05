@@ -1,9 +1,15 @@
 package com.taobao.cun.auge.cuncounty.bo;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Strings;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyProtocolRiskEnum;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyTagEnum;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,5 +67,35 @@ public class CuntaoCountyGovContractBo {
 			cuntaoCountyGovContractDto.setAttachmentVOList(BeanConvertUtils.convertAttachmentVO(cuntaoCountyGovContractDto.getAttachments()));
 		}
 		return cuntaoCountyGovContractDto;
+	}
+
+	/**
+	 * 检查县点协议风险
+	 * @param countyId
+	 * @return
+	 */
+	public CuntaoCountyProtocolRiskEnum checkContractRisk(Long countyId){
+		CuntaoCountyGovContractDto cuntaoCountyGovContractDto = getCuntaoCountyGovContract(countyId);
+		if(cuntaoCountyGovContractDto != null){
+			if(!Strings.isNullOrEmpty(cuntaoCountyGovContractDto.getSerialNum())){
+				if(isWillExpire(cuntaoCountyGovContractDto)) {
+					return CuntaoCountyProtocolRiskEnum.protocolWillExpire;
+				}else{
+					return null;
+				}
+			}else{
+				return CuntaoCountyProtocolRiskEnum.protocolMaybeNotExists;
+			}
+		}else{
+			return CuntaoCountyProtocolRiskEnum.protocolNotExists;
+		}
+
+	}
+
+	private boolean isWillExpire(CuntaoCountyGovContractDto cuntaoCountyGovContractDto){
+		LocalDate date = LocalDate.now();
+		date = date.plusDays(90);
+		LocalDate protocolLocalDate = LocalDate.parse(cuntaoCountyGovContractDto.getProtocolEnd(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		return date.isAfter(protocolLocalDate);
 	}
 }

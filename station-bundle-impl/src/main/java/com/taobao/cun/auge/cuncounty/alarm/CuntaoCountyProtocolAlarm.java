@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.cuncounty.alarm;
 
+import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyGovContractBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyTagEnum;
-import com.taobao.cun.auge.cuncounty.tag.CountyTagUtils;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyProtocolRiskEnum;
 import com.taobao.cun.auge.cuncounty.tag.Publisher;
 import com.taobao.cun.auge.platform.dto.AppMsgPushInfoDto;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,8 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
     private final static String RENEW_ALARM = "您所负责的【%s】合同于%d天到期，请及时进行处理";
     private final static String NEW_ALARM = "您所负责的【%s】未签订合同，请您判断是否同政府有合作关系，若有及时到ORG补全政府协议信息";
     private final static String FILL_ALARM = "您所负责的【%s】疑似未签协议，请您及时到ORG补充政府协议编号及协议时间";
-
+    @Resource
+    private CuntaoCountyGovContractBo cuntaoCountyGovContractBo;
     @Resource
     private Publisher publisher;
 
@@ -35,27 +36,21 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
         Flux.create(publisher::publish)
                 .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .map(t->t.getT2())
-                .filter(this::filter)
                 .parallel(3)
                 .map(this::buildProtocolAlarmMsg)
                 .subscribe(this::doAlarm);
     }
 
-    private boolean filter(CuntaoCountyListItem item){
-        return CountyTagUtils.containAlarmTags(item.getCountyTags());
-    }
-
     private Optional<AppMsgPushInfoDto> buildProtocolAlarmMsg(CuntaoCountyListItem item){
-        Optional<CuntaoCountyTagEnum> optional = CountyTagUtils.getProtocolTag(item.getCountyTags());
-        if(optional.isPresent()){
-            CuntaoCountyTagEnum tag = optional.get();
-            if(CuntaoCountyTagEnum.protocolNotExists.getCode().equals(tag.getCode())){
+        CuntaoCountyProtocolRiskEnum cuntaoCountyProtocolRiskEnum = cuntaoCountyGovContractBo.checkContractRisk(item.getId());
+        if(cuntaoCountyProtocolRiskEnum != null){
+            if(CuntaoCountyProtocolRiskEnum.protocolNotExists.getCode().equals(cuntaoCountyProtocolRiskEnum.getCode())){
                 return buildMsg(item, String.format(NEW_ALARM, item.getName()));
             }
-            if(CuntaoCountyTagEnum.protocolMaybeNotExists.getCode().equals(tag.getCode())){
+            if(CuntaoCountyProtocolRiskEnum.protocolMaybeNotExists.getCode().equals(cuntaoCountyProtocolRiskEnum.getCode())){
                 return buildMsg(item, String.format(FILL_ALARM, item.getName()));
             }
-            if(CuntaoCountyTagEnum.protocolWillExpire.getCode().equals(tag.getCode())){
+            if(CuntaoCountyProtocolRiskEnum.protocolWillExpire.getCode().equals(cuntaoCountyProtocolRiskEnum.getCode())){
                 return buildMsg(item, String.format(RENEW_ALARM, item.getName(), day(item)));
             }
         }
