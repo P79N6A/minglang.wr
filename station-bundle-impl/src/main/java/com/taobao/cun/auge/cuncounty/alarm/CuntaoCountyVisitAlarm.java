@@ -54,7 +54,7 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
         }
 
         CuntaoGovContactRecordDetailDto latestDoorToDoorRecord = cuntaoGovContactRecordQueryBo.queryLatestRecord(item.getId(), CuntaoGovContactRecordWayEnum.DOOR_TO_DOOR.getCode());
-        if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 2)){
+        if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 3)){
             msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getName())));
         }
 

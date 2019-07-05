@@ -10,7 +10,6 @@ import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -26,6 +25,7 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
     private final static String RENEW_ALARM = "您所负责的【%s】合同于%d天到期，请及时进行处理";
     private final static String NEW_ALARM = "您所负责的【%s】未签订合同，请您判断是否同政府有合作关系，若有及时到ORG补全政府协议信息";
     private final static String FILL_ALARM = "您所负责的【%s】疑似未签协议，请您及时到ORG补充政府协议编号及协议时间";
+    private final static String EXPIRE_ALARM = "您所负责的【%s】合同已过期%d天，请及时进行处理";
     @Resource
     private CuntaoCountyGovContractBo cuntaoCountyGovContractBo;
     @Resource
@@ -53,14 +53,16 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
             if(CuntaoCountyProtocolRiskEnum.protocolWillExpire.getCode().equals(cuntaoCountyProtocolRiskEnum.getCode())){
                 return buildMsg(item, String.format(RENEW_ALARM, item.getName(), day(item)));
             }
+            if(CuntaoCountyProtocolRiskEnum.protocolExpire.getCode().equals(cuntaoCountyProtocolRiskEnum.getCode())){
+                return buildMsg(item, String.format(EXPIRE_ALARM, item.getName(), -1 * day(item)));
+            }
         }
         return Optional.empty();
     }
 
-    private int day(CuntaoCountyListItem item){
+    private long day(CuntaoCountyListItem item){
         LocalDate today = LocalDate.now();
         LocalDate protocolLocalDate = LocalDate.parse(item.getProtocolEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        Period period = Period.between(protocolLocalDate, today);
-        return period.getDays();
+        return protocolLocalDate.toEpochDay() - today.toEpochDay();
     }
 }

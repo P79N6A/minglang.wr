@@ -78,7 +78,9 @@ public class CuntaoCountyGovContractBo {
 		CuntaoCountyGovContractDto cuntaoCountyGovContractDto = getCuntaoCountyGovContract(countyId);
 		if(cuntaoCountyGovContractDto != null){
 			if(!Strings.isNullOrEmpty(cuntaoCountyGovContractDto.getSerialNum())){
-				if(isWillExpire(cuntaoCountyGovContractDto)) {
+				if(isProtocolExpire(cuntaoCountyGovContractDto)) {
+					return CuntaoCountyProtocolRiskEnum.protocolExpire;
+				}else if(isProtocolWillExpire(cuntaoCountyGovContractDto)) {
 					return CuntaoCountyProtocolRiskEnum.protocolWillExpire;
 				}else{
 					return null;
@@ -92,9 +94,14 @@ public class CuntaoCountyGovContractBo {
 
 	}
 
-	private boolean isWillExpire(CuntaoCountyGovContractDto cuntaoCountyGovContractDto){
-		LocalDate date = LocalDate.now();
-		date = date.plusDays(90);
+	private boolean isProtocolExpire(CuntaoCountyGovContractDto cuntaoCountyGovContractDto){
+		LocalDate today = LocalDate.now();
+		LocalDate protocolLocalDate = LocalDate.parse(cuntaoCountyGovContractDto.getProtocolEnd(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		return today.isAfter(protocolLocalDate);
+	}
+
+	private boolean isProtocolWillExpire(CuntaoCountyGovContractDto cuntaoCountyGovContractDto){
+		LocalDate date = LocalDate.now().plusDays(90);
 		LocalDate protocolLocalDate = LocalDate.parse(cuntaoCountyGovContractDto.getProtocolEnd(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		return date.isAfter(protocolLocalDate);
 	}

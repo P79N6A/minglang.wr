@@ -12,9 +12,11 @@ public class CuntaoCountyProtocolRiskEnum {
     public static final CuntaoCountyProtocolRiskEnum protocolWillExpire = new CuntaoCountyProtocolRiskEnum("protocolWillExpire", "协议临期");
     public static final CuntaoCountyProtocolRiskEnum protocolNotExists = new CuntaoCountyProtocolRiskEnum("protocolNotExists", "未签协议");
     public static final CuntaoCountyProtocolRiskEnum protocolMaybeNotExists = new CuntaoCountyProtocolRiskEnum("protocolMaybeNotExists", "疑似未签协议");
+    public static final CuntaoCountyProtocolRiskEnum protocolExpire = new CuntaoCountyProtocolRiskEnum("protocolExpire", "协议过期");
 
     static {
     	MAPPINGS.put("protocolWillExpire", protocolWillExpire);
+        MAPPINGS.put("protocolExpire", protocolExpire);
     	MAPPINGS.put("protocolNotExists", protocolNotExists);
     	MAPPINGS.put("protocolMaybeNotExists", protocolMaybeNotExists);
     }

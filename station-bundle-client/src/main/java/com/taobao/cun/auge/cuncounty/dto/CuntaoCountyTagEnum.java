@@ -10,11 +10,13 @@ public class CuntaoCountyTagEnum {
     private static final Map<String, CuntaoCountyTagEnum> MAPPINGS = new HashMap<String, CuntaoCountyTagEnum>();
 
     public static final CuntaoCountyTagEnum protocolWillExpire = new CuntaoCountyTagEnum("protocolWillExpire", "协议临期");
+    public static final CuntaoCountyTagEnum protocolExpire = new CuntaoCountyTagEnum("protocolExpire", "协议过期");
     public static final CuntaoCountyTagEnum protocolNotExists = new CuntaoCountyTagEnum("protocolNotExists", "未签协议");
     public static final CuntaoCountyTagEnum protocolMaybeNotExists = new CuntaoCountyTagEnum("protocolMaybeNotExists", "疑似未签协议");
 
     static {
     	MAPPINGS.put("protocolWillExpire", protocolWillExpire);
+        MAPPINGS.put("protocolExpire", protocolExpire);
     	MAPPINGS.put("protocolNotExists", protocolNotExists);
     	MAPPINGS.put("protocolMaybeNotExists", protocolMaybeNotExists);
     }
