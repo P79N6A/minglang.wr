@@ -33,7 +33,6 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
         if(empIds.isEmpty()){
             return Optional.empty();
         }
-        AppMsgPushInfoDto appMsgPushInfoDto = new AppMsgPushInfoDto();
         AppMsgPushInfoDto infoDto = new AppMsgPushInfoDto();
         infoDto.setAction("all");
         infoDto.setAppId("cuntaoCRM");
@@ -48,7 +47,7 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
         infoDto.setReceivers(Lists.newArrayList(empIds));
         infoDto.setReceiverType("EMPIDS");
         infoDto.setSender(0L);
-        return Optional.of(appMsgPushInfoDto);
+        return Optional.of(infoDto);
     }
 
     private List<String> getUserIds(CuntaoCountyListItem item){
