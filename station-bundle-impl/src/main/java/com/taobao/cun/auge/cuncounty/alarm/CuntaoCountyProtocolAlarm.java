@@ -50,13 +50,13 @@ public class CuntaoCountyProtocolAlarm extends AbstractCuntaoCountyAlarm {
         if(optional.isPresent()){
             CuntaoCountyTagEnum tag = optional.get();
             if(CuntaoCountyTagEnum.protocolNotExists.getCode().equals(tag.getCode())){
-                return buildMsg(item, String.format(NEW_ALARM, item.getCountyName()));
+                return buildMsg(item, String.format(NEW_ALARM, item.getName()));
             }
             if(CuntaoCountyTagEnum.protocolMaybeNotExists.getCode().equals(tag.getCode())){
-                return buildMsg(item, String.format(FILL_ALARM, item.getCountyName()));
+                return buildMsg(item, String.format(FILL_ALARM, item.getName()));
             }
             if(CuntaoCountyTagEnum.protocolWillExpire.getCode().equals(tag.getCode())){
-                return buildMsg(item, String.format(RENEW_ALARM, item.getCountyName(), day(item)));
+                return buildMsg(item, String.format(RENEW_ALARM, item.getName(), day(item)));
             }
         }
         return Optional.empty();

@@ -50,12 +50,12 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
         List<Optional<AppMsgPushInfoDto>> msgs = Lists.newArrayList();
 
         if(latestRecord == null || isNMonthBefore(latestRecord, 1)){
-            msgs.add(buildMsg(item, String.format(VISIT_1_ALARM, item.getCountyName())));
+            msgs.add(buildMsg(item, String.format(VISIT_1_ALARM, item.getName())));
         }
 
         CuntaoGovContactRecordDetailDto latestDoorToDoorRecord = cuntaoGovContactRecordQueryBo.queryLatestRecord(item.getId(), CuntaoGovContactRecordWayEnum.DOOR_TO_DOOR.getCode());
         if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 3)){
-            msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getCountyName())));
+            msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getName())));
         }
 
         return Flux.fromIterable(msgs);

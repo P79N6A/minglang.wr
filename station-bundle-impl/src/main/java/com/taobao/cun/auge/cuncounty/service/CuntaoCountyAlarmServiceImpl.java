@@ -12,9 +12,9 @@ import java.util.concurrent.ExecutorService;
 @Validated
 @HSFProvider(serviceInterface = CuntaoCountyAlarmService.class)
 public class CuntaoCountyAlarmServiceImpl implements CuntaoCountyAlarmService{
-    @Resource
+    @Resource(name="cuntaoCountyProtocolAlarm")
     private CuntaoCountyAlarm cuntaoCountyProtocolAlarm;
-    @Resource
+    @Resource(name="cuntaoCountyVisitAlarm")
     private CuntaoCountyAlarm cuntaoCountyVisitAlarm;
     @Resource
     private AlarmTest alarmTest;
