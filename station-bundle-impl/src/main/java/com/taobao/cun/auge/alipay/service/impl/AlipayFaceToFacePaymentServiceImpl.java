@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.alipay.service.impl;
 
+import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.FileItem;
 import com.alipay.api.domain.AddressInfo;
 import com.alipay.api.domain.ContactInfo;
@@ -35,13 +35,10 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
-import com.taobao.cun.service.attachement.TfsService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.mtop.api.util.StringUtil;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
-import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
