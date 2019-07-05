@@ -7,6 +7,9 @@
 		  <foreach collection="countyIds" item="countyId" open="(" close=")" separator=",">
 			  #{countyId}
 		  </foreach>
+	      <if test="contactWay != null">
+			  and contact_way = #{contactWay}
+		  </if>
 		  and is_deleted ='n' group by county_id
 	  )
   </select>

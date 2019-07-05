@@ -25,8 +25,8 @@ public class CuntaoCountyAlarmServiceImpl implements CuntaoCountyAlarmService{
         executorService = Executors.newFixedThreadPool(1, "county-tag-job-");
     }
     @Override
-    public void test(Long bizId, String textContent, String msgType){
-        alarmTest.alarm(bizId, textContent, msgType);
+    public void test(Long bizId, String empId, String textContent, String msgType){
+        alarmTest.alarm(bizId, empId, textContent, msgType);
     }
 
     @Override

@@ -100,11 +100,15 @@ public class CuntaoGovContactRecordQueryBo {
     }
 
     public List<CuntaoGovContactRecordSummaryDto> queryLatestRecords(List<Long> countyIds) {
-        return BeanCopy.copyList(CuntaoGovContactRecordSummaryDto.class,cuntaoGovContactRecordExtMapper.queryLatestRecords(countyIds));
+        return BeanCopy.copyList(CuntaoGovContactRecordSummaryDto.class,cuntaoGovContactRecordExtMapper.queryLatestRecords(countyIds, null));
     }
 
     public CuntaoGovContactRecordDetailDto queryLatestRecord(Long countyId) {
-        List<CuntaoGovContactRecord> cuntaoGovContactRecords = cuntaoGovContactRecordExtMapper.queryLatestRecords(Lists.newArrayList(countyId));
+        return queryLatestRecord(countyId, null);
+    }
+
+    public CuntaoGovContactRecordDetailDto queryLatestRecord(Long countyId, String contactWay) {
+        List<CuntaoGovContactRecord> cuntaoGovContactRecords = cuntaoGovContactRecordExtMapper.queryLatestRecords(Lists.newArrayList(countyId), contactWay);
         if(CollectionUtils.isNotEmpty(cuntaoGovContactRecords)){
             return toCuntaoGovContactRecordDetailDto(cuntaoGovContactRecords.get(0));
         }
