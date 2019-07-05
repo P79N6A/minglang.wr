@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.taobao.cun.auge.dal.mapper.ext.CuntaoGovContactRecordExtMapper">
   <select id="queryLatestRecords" resultMap="com.taobao.cun.auge.dal.mapper.CuntaoGovContactRecordMapper.BaseResultMap">
-	  select * from cuntao_gov_contact_record where id in(
-		  select max(id) from cuntao_gov_contact_record where is_deleted ='n' and county_id in
+	  select a.* from cuntao_gov_contact_record a ,(
+		  select id,max(contact_date) from cuntao_gov_contact_record where is_deleted ='n' and county_id in
 		  <foreach collection="countyIds" item="countyId" open="(" close=")" separator=",">
 			  #{countyId}
 		  </foreach>
 	      <if test="contactWay != null">
 			  and contact_way = #{contactWay}
 		  </if>
-		  and is_deleted ='n' group by county_id
-	  )
+		  group by county_id
+	  ) b where a.id=b.id
   </select>
 </mapper>
