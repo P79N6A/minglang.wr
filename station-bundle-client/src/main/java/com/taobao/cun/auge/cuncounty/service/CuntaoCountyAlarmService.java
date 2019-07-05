@@ -13,4 +13,6 @@ public interface CuntaoCountyAlarmService {
      * 拜访预警
      */
     void visitAlarm();
+
+    void test(Long bizId, String textContent, String msgType);
 }

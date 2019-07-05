@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.cuncounty.service;
 
 import com.taobao.cun.auge.common.concurrent.Executors;
+import com.taobao.cun.auge.cuncounty.alarm.AlarmTest;
 import com.taobao.cun.auge.cuncounty.alarm.CuntaoCountyAlarm;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.validation.annotation.Validated;
@@ -15,11 +16,17 @@ public class CuntaoCountyAlarmServiceImpl implements CuntaoCountyAlarmService{
     private CuntaoCountyAlarm cuntaoCountyProtocolAlarm;
     @Resource
     private CuntaoCountyAlarm cuntaoCountyVisitAlarm;
+    @Resource
+    private AlarmTest alarmTest;
 
     private ExecutorService executorService = null;
 
     public CuntaoCountyAlarmServiceImpl() {
         executorService = Executors.newFixedThreadPool(1, "county-tag-job-");
+    }
+    @Override
+    public void test(Long bizId, String textContent, String msgType){
+        alarmTest.alarm(bizId, textContent, msgType);
     }
 
     @Override

@@ -61,14 +61,15 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
     }
 
     protected void doAlarm(Optional<AppMsgPushInfoDto> appMsgPushInfoDto){
-        AppMsgPushInfoDto msg = appMsgPushInfoDto.get();
-        SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
-        simpleAppBizLog.setBizKey(msg.getContent().getBizId());
-        simpleAppBizLog.setBizType("push_msg");
-        simpleAppBizLog.setCreator("sys");
-        simpleAppBizLog.setState("NEW");
-        simpleAppBizLog.setMessage(msg.getContent().getTitle());
-        appBizLogBo.addLog(simpleAppBizLog);
-        //appMsgPushInfoDto.ifPresent(msg->EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg))));
+        appMsgPushInfoDto.ifPresent(msg->{
+            SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
+            simpleAppBizLog.setBizKey(msg.getContent().getBizId());
+            simpleAppBizLog.setBizType("push_msg");
+            simpleAppBizLog.setCreator("sys");
+            simpleAppBizLog.setState("NEW");
+            simpleAppBizLog.setMessage(msg.getContent().getTitle());
+            appBizLogBo.addLog(simpleAppBizLog);
+            //EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg)));
+        });
     }
 }
