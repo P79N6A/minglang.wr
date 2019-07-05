@@ -9,12 +9,15 @@ import com.alipay.api.domain.AddressInfo;
 import com.alipay.api.domain.ContactInfo;
 import com.alipay.api.request.AntMerchantExpandIndirectImageUploadRequest;
 import com.alipay.api.request.AntMerchantExpandIndirectZftCreateRequest;
+import com.alipay.api.request.AntMerchantExpandOrderQueryRequest;
 import com.alipay.api.response.AntMerchantExpandIndirectImageUploadResponse;
 import com.alipay.api.response.AntMerchantExpandIndirectZftCreateResponse;
+import com.alipay.api.response.AntMerchantExpandOrderQueryResponse;
 import com.taobao.common.tfs.TfsManager;
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.alipay.dto.AlipayFaceToFaceOrderInfo;
 import com.taobao.cun.auge.alipay.dto.AlipayFaceToFacePaymentResult;
 import com.taobao.cun.auge.alipay.dto.StationAlipayInfoDto;
 import com.taobao.cun.auge.alipay.process.AlipayClientProcessor;
@@ -171,6 +174,42 @@ public class AlipayFaceToFacePaymentServiceImpl implements AlipayFaceToFacePayme
             result.setErrorMsg(e.getMessage());
          }
         return result;
+    }
+
+    @Override
+    public AlipayFaceToFaceOrderInfo getAlipayFaceToFaceOrderInfoByTaobaoUserId(Long taobaoUserId) throws Exception {
+
+        AlipayFaceToFaceOrderInfo alipayFaceToFaceOrderInfo=new AlipayFaceToFaceOrderInfo();
+        StationAlipayInfoDto stationAlipayInfoDto= stationAlipayInfoService.getStationAlipayInfoByTaobaoUserId(taobaoUserId.toString());
+        if(stationAlipayInfoDto!=null){
+            AntMerchantExpandOrderQueryRequest request = new AntMerchantExpandOrderQueryRequest();
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("order_id",stationAlipayInfoDto.getAlipayOrderId());
+            request.setBizContent(jsonObject.toString());
+            AntMerchantExpandOrderQueryResponse response = alipayClient.execute(request);
+            if(response.isSuccess()){
+                alipayFaceToFaceOrderInfo.setSmid(response.getIpRoleId().get(0));
+                alipayFaceToFaceOrderInfo.setMerchantName(response.getMerchantName());
+                alipayFaceToFaceOrderInfo.setApplyTime(response.getApplyTime());
+                alipayFaceToFaceOrderInfo.setStatus(response.getStatus());
+                alipayFaceToFaceOrderInfo.setExtInfo(response.getExtInfo());
+            }
+        }
+        return alipayFaceToFaceOrderInfo;
+    }
+
+    @Override
+    public void updateAlipayFaceToFaceOrderInfoByTaobaoUserId(Long taobaoUserId) throws Exception {
+
+        AlipayFaceToFaceOrderInfo alipayFaceToFaceOrderInfo= getAlipayFaceToFaceOrderInfoByTaobaoUserId(taobaoUserId);
+        if(alipayFaceToFaceOrderInfo!=null&&StringUtil.isNotBlank(alipayFaceToFaceOrderInfo.getSmid())){
+            StationAlipayInfoDto stationAlipayInfoDto= stationAlipayInfoService.getStationAlipayInfoByTaobaoUserId(taobaoUserId.toString());
+            stationAlipayInfoDto.setAuditStatus("passed");
+            stationAlipayInfoDto.setAuditMemo(alipayFaceToFaceOrderInfo.getExtInfo());
+            stationAlipayInfoDto.setGmtModified(new Date());
+            stationAlipayInfoDto.setSmid(alipayFaceToFaceOrderInfo.getSmid());
+            stationAlipayInfoService.updateStationAlipayInfo(stationAlipayInfoDto);
+        }
     }
 
     private AntMerchantExpandIndirectImageUploadResponse uploadIdcardImgsFace(Long applyId) throws AlipayApiException {
