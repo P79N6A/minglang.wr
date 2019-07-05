@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlarmTest {
     public void alarm(Long bizId, String empId, String textContent, String msgType){
-        AppMsgPushInfoDto appMsgPushInfoDto = new AppMsgPushInfoDto();
         AppMsgPushInfoDto infoDto = new AppMsgPushInfoDto();
         infoDto.setAction("all");
         infoDto.setAppId("cuntaoCRM");
@@ -26,6 +25,6 @@ public class AlarmTest {
         infoDto.setReceivers(Lists.newArrayList(empId));
         infoDto.setReceiverType("EMPIDS");
         infoDto.setSender(0L);
-        EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(appMsgPushInfoDto)));
+        EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(infoDto)));
     }
 }
