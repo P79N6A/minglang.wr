@@ -68,7 +68,7 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
             simpleAppBizLog.setState("NEW");
             simpleAppBizLog.setMessage(msg.getContent().getTitle());
             appBizLogBo.addLog(simpleAppBizLog);
-            //EventDispatcherUtil.dispatch("CUN_APP_GOV_BUSINESS_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg)));
+            //EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg)));
         });
     }
 }
