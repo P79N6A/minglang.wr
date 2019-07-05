@@ -27,7 +27,7 @@ import java.util.Optional;
 @Component("cuntaoCountyVisitAlarm")
 public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
     private final static String VISIT_1_ALARM = "【%s】您本月未对政府进行拜访，请至少保证每月对政府部门进行一次拜访";
-    private final static String VISIT_3_ALARM = "【%s】您近3个月未对政府进行上门拜访，请至少保证每3月上门拜访一次";
+    private final static String VISIT_3_ALARM = "【%s】您近90天未对政府进行上门拜访，请至少保证每90天上门拜访一次";
 
     @Resource
     private Publisher publisher;
@@ -54,7 +54,7 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
         }
 
         CuntaoGovContactRecordDetailDto latestDoorToDoorRecord = cuntaoGovContactRecordQueryBo.queryLatestRecord(item.getId(), CuntaoGovContactRecordWayEnum.DOOR_TO_DOOR.getCode());
-        if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 3)){
+        if(latestDoorToDoorRecord == null || isNDayBefore(latestDoorToDoorRecord, 90)){
             msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getName())));
         }
 
@@ -64,5 +64,10 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
     private boolean isNMonthBefore(CuntaoGovContactRecordDetailDto record, int month) {
         Date before = DateUtils.addMonths(new Date(), -1 * month);
         return DateUtils.truncatedCompareTo(record.getContactDate(), before, Calendar.MONTH) < 0;
+    }
+
+    private boolean isNDayBefore(CuntaoGovContactRecordDetailDto record, int days) {
+        Date before = DateUtils.addDays(new Date(), -1 * days);
+        return DateUtils.truncatedCompareTo(record.getContactDate(), before, Calendar.DATE) < 0;
     }
 }
