@@ -67,7 +67,8 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
           String reason=object.getString("reason");
           if(StringUtil.isNotBlank(externalId)){
               logger.info("dealZftMessage,the method=ant.merchant.expand.indirect.zft.rejected, external_id="+externalId+",reason="+reason);
-              StationAlipayInfo stationAlipayInfo= stationAlipayInfoBO.getStationAlipayInfo(externalId);
+              String taobaoUserId=externalId.substring(7);
+              StationAlipayInfo stationAlipayInfo= stationAlipayInfoBO.getStationAlipayInfo(taobaoUserId);
               if(stationAlipayInfo!=null){
                   stationAlipayInfo.setAuditStatus("rejected");
                   stationAlipayInfo.setAuditMemo(reason);
@@ -86,7 +87,8 @@ public class StationAlipayInfoServiceImpl implements StationAlipayInfoService {
             String smid=object.getString("smid");
             if(StringUtil.isNotBlank(externalId)){
                 logger.info("dealZftMessage,the method=ant.merchant.expand.indirect.zft.passed, external_id="+externalId+",smid="+smid+",memo="+memo);
-                StationAlipayInfo stationAlipayInfo= stationAlipayInfoBO.getStationAlipayInfo(externalId);
+                String taobaoUserId=externalId.substring(7);
+                StationAlipayInfo stationAlipayInfo= stationAlipayInfoBO.getStationAlipayInfo(taobaoUserId);
                 if(stationAlipayInfo!=null){
                     stationAlipayInfo.setAuditStatus("passed");
                     stationAlipayInfo.setAuditMemo(memo);
