@@ -25,6 +25,6 @@ public class AlarmTest {
         infoDto.setReceivers(Lists.newArrayList(empId));
         infoDto.setReceiverType("EMPIDS");
         infoDto.setSender(0L);
-        EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(infoDto)));
+        EventDispatcherUtil.dispatch("CUN_APP_GOV_BUSINESS_MSG_PUSH", new ExtEvent(JSON.toJSONString(infoDto)));
     }
 }
