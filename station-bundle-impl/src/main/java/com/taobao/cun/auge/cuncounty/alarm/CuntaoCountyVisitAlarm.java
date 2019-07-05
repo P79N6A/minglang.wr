@@ -49,12 +49,12 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
 
         List<Optional<AppMsgPushInfoDto>> msgs = Lists.newArrayList();
 
-        if(latestRecord == null || isNMonthBefore(latestRecord, 1)){
+        if(latestRecord == null || isNMonthBefore(latestRecord, 0)){
             msgs.add(buildMsg(item, String.format(VISIT_1_ALARM, item.getName())));
         }
 
         CuntaoGovContactRecordDetailDto latestDoorToDoorRecord = cuntaoGovContactRecordQueryBo.queryLatestRecord(item.getId(), CuntaoGovContactRecordWayEnum.DOOR_TO_DOOR.getCode());
-        if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 3)){
+        if(latestDoorToDoorRecord == null || isNMonthBefore(latestDoorToDoorRecord, 2)){
             msgs.add(buildMsg(item, String.format(VISIT_3_ALARM, item.getName())));
         }
 
@@ -62,7 +62,7 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
     }
 
     private boolean isNMonthBefore(CuntaoGovContactRecordDetailDto record, int month) {
-        Date before = DateUtils.addDays(new Date(), -1 * month);
-        return DateUtils.truncatedCompareTo(record.getContactDate(), before, Calendar.DATE) < 0;
+        Date before = DateUtils.addMonths(new Date(), -1 * month);
+        return DateUtils.truncatedCompareTo(record.getContactDate(), before, Calendar.MONTH) < 0;
     }
 }
