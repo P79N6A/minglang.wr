@@ -85,8 +85,10 @@ public class CuntaoCountyGovContractBo {
 				}else{
 					return null;
 				}
-			}else{
+			}else if(!Strings.isNullOrEmpty(cuntaoCountyGovContractDto.getAttachments())){
 				return CuntaoCountyProtocolRiskEnum.protocolMaybeNotExists;
+			}else{
+				return CuntaoCountyProtocolRiskEnum.protocolNotExists;
 			}
 		}else{
 			return CuntaoCountyProtocolRiskEnum.protocolNotExists;
