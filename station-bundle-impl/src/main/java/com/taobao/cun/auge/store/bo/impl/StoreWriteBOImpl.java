@@ -960,16 +960,17 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	
 	@Override
 	public void syncStore(){
-		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
-		  for(Long storeId :storeIds){
-			 StoreDto store =  storeReadBO.getStoreBySharedStoreId(storeId);
-			 try {
-				 this.syncStore(store.getStationId());
-			} catch (Exception e) {
-				logger.error("syncStore error["+store.getStationId()+"]",e);
-			}
-			
-		  }
+		//测试接口，都不删的  坑
+//		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
+//		  for(Long storeId :storeIds){
+//			 StoreDto store =  storeReadBO.getStoreBySharedStoreId(storeId);
+//			 try {
+//				 this.syncStore(store.getStationId());
+//			} catch (Exception e) {
+//				logger.error("syncStore error["+store.getStationId()+"]",e);
+//			}
+//
+//		  }
 	}
 
 	@Override

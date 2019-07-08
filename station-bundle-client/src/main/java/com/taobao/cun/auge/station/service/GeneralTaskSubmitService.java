@@ -166,4 +166,10 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitQuitUmTask(Long parentStationId, OperatorDto operatorDto);
 
+	/**
+	 * 提交开通轻店任务
+	 * @param storeId
+	 */
+	public void submitInitLightStoreTask(Long storeId);
+
 }

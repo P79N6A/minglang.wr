@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.task.service.TaskInstanceService;
 import com.taobao.cun.recruit.contact.service.CuntaoContactRecordService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -121,6 +122,9 @@ public class HsfConsumerConfiguration  {
 
 	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
 	private TaskElementService taskElementService;
+
+	@HSFConsumer(serviceVersion="${hsf.task.element.taskElementService.version}",serviceGroup="HSF")
+	private TaskInstanceService taskInstanceService;
 	
 	@HSFConsumer(serviceVersion = "${hsf.storeSReadService.version}", serviceGroup = "HSF", clientTimeout = 10000)
 	private StoreSReadService storeSReadService;
