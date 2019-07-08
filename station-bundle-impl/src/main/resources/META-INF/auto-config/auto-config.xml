@@ -88,8 +88,8 @@
 		<property name="messageService.version" defaultValue="1.0.0.daily" description="邮件服务" />
 		<property name="cuntao.millau.config" defaultValue="millau.daily" description="地区" />
 		<property name="finance.invoice.service.version" defaultValue="1.0.0.daily" description="发票服务版本" />
-	
-	
+		<property name="com.taobao.tfs.rsAddr" defaultValue="restful-store.daily.tbsite.net:3800" description="tfs服务器地址"/>
+		<property name="com.taobao.tfs.appKey" defaultValue="545ae7d53eb3c" description="tfsAPPKEY"/>
 	</group>
 
 	<script>

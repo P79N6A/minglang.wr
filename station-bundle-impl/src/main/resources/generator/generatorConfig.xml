@@ -128,5 +128,9 @@
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
+
+		<table tableName="station_alipay_info" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
 	</context>
 </generatorConfiguration>
