@@ -70,7 +70,7 @@ public class CuntaoCountyWhitenameBo {
 	/**
 	 * 把县点ID更新到白名单上
 	 * 
-	 * @param id
+	 * @param countyCode
 	 * @param countyId
 	 */
 	public void updateCountyId(String countyCode, Long countyId) {
