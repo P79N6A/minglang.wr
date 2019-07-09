@@ -35,6 +35,7 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
         Runnable runnable = () ->
         Flux.create(this::publish, FluxSink.OverflowStrategy.BUFFER)
                 .onErrorContinue((e, f)->{
+                    logger.info("error cainiao:{}, {}", f, e.getMessage());
                     SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
                     simpleAppBizLog.setState("error");
                     simpleAppBizLog.setMessage(e.getMessage().substring(0, 125));
@@ -45,6 +46,7 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
                 })
                 .parallel(3)
                 .subscribe(f->{
+                    logger.info("cainiao:{}", f.getCainiaoFenceId());
                     if(!railServiceAdapter.isExistsCainiaoFence(f.getCainiaoFenceId())){
                         SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
                         simpleAppBizLog.setState("success");
