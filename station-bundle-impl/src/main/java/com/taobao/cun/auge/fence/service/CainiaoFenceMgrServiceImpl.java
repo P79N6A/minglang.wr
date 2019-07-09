@@ -35,11 +35,20 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
         final List<Long> errors = Lists.newArrayList();
 
         Flux.fromIterable(fenceEntities)
+                .onErrorContinue((e, f)->{
+                    SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
+                    simpleAppBizLog.setState("error");
+                    simpleAppBizLog.setMessage(e.getMessage());
+                    simpleAppBizLog.setCreator("sys");
+                    simpleAppBizLog.setBizType("fence_check");
+                    simpleAppBizLog.setBizKey(((FenceEntity)f).getCainiaoFenceId());
+                    appBizLogBo.addLog(simpleAppBizLog);
+                })
                 .parallel(3)
                 .subscribe(f->{
                     if(!railServiceAdapter.isExistsCainiaoFence(f.getCainiaoFenceId())){
                         SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
-                        simpleAppBizLog.setState("error");
+                        simpleAppBizLog.setState("success");
                         simpleAppBizLog.setMessage("not exists");
                         simpleAppBizLog.setCreator("sys");
                         simpleAppBizLog.setBizType("fence_check");

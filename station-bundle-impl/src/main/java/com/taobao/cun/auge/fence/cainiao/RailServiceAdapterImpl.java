@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Throwables;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +47,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		try {
 			result = railService.getRailInfoById(cainianFenceId);
 		}catch(Exception e){
-			return null;
+			throw Throwables.propagate(e);
 		}
 
 		if(result.isSuccess()){
