@@ -41,17 +41,30 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	
 	private static Long COUNTRY_ID = 86L;
 
+	private RailInfoResult getCainiaoFence(Long cainianFenceId){
+		BaseResult<RailInfoResult> result = null;
+		try {
+			result = railService.getRailInfoById(cainianFenceId);
+		}catch(Exception e){
+			return null;
+		}
+
+		if(result.isSuccess()){
+			return result.getResult();
+		}else{
+			return null;
+		}
+	}
 	@Override
 	public boolean isExistsCainiaoFence(Long cainianFenceId){
-		BaseResult<RailInfoResult> result = railService.getRailInfoById(cainianFenceId);
-		return result.isSuccess() && result.getResult() != null;
+		return getCainiaoFence(cainianFenceId) != null;
 	}
 
 	@Override
 	public String getCainiaoFenceJSON(Long cainianFenceId){
-		BaseResult<RailInfoResult> result = railService.getRailInfoById(cainianFenceId);
-		if(result.isSuccess() && result.getResult() != null){
-			return JSON.toJSONString(result.getResult());
+		RailInfoResult result = getCainiaoFence(cainianFenceId);
+		if(result != null){
+			return JSON.toJSONString(result);
 		}else{
 			return null;
 		}
