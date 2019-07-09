@@ -43,7 +43,7 @@ public class AlipayClientProcessor {
     public static AlipayClient getAlipayClient() {
 
             KeyCenterNewAlipayClient keyCenterNewAlipayClient = new KeyCenterNewAlipayClient(
-                    AliPayConstants.OPENAPI_GATEWAY_PRE, AliPayConstants.CUNTAO_APP_ID_ONLINE, AliPayConstants.FORMAT,
+                    AliPayConstants.OPENAPI_GATEWAY_ONLINE, AliPayConstants.CUNTAO_APP_ID_ONLINE, AliPayConstants.FORMAT,
                     AliPayConstants.CHARSET, AliPayConstants.SIGN_TYPE);
 
             // Signer: 集团应用方用于生成签名, 所以需要用到应用私钥(由KC平台生成)
