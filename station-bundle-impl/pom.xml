@@ -531,6 +531,10 @@
 					<groupId>com.tmall.nova</groupId>
 					<artifactId>nova-client</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.taobao.forest</groupId>
+					<artifactId>forest-client</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -585,6 +589,38 @@
 			<groupId>com.alibaba.site</groupId>
 			<artifactId>basic-alisite-client</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.taobao.cun.module</groupId>
+            <artifactId>station-bundle-client</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.keycenter</groupId>
+			<artifactId>keycenter-client-extension</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
