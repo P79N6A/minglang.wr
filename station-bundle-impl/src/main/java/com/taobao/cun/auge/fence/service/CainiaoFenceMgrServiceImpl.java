@@ -10,6 +10,7 @@ import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
 import com.taobao.cun.auge.log.SimpleAppBizLog;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -31,16 +32,11 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
 
     @Override
     public void check() {
-        FenceEntityExample example = new FenceEntityExample();
-        example.createCriteria().andIsDeletedEqualTo("n");
-        List<FenceEntity> fenceEntities = fenceEntityMapper.selectByExample(example);
-
-        final List<Long> errors = Lists.newArrayList();
         Flux.create(this::publish, FluxSink.OverflowStrategy.BUFFER)
                 .onErrorContinue((e, f)->{
                     SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
                     simpleAppBizLog.setState("error");
-                    simpleAppBizLog.setMessage(e.getMessage());
+                    simpleAppBizLog.setMessage(e.getMessage().substring(0, 125));
                     simpleAppBizLog.setCreator("sys");
                     simpleAppBizLog.setBizType("fence_check");
                     simpleAppBizLog.setBizKey(((FenceEntity)f).getCainiaoFenceId());
