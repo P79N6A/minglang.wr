@@ -29,7 +29,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.8.6</auge.station.client.version>
+		<auge.station.client.version>4.9.0</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
@@ -169,7 +169,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-bundle.client</artifactId>
-				<version>3.7.1</version>
+				<version>3.9.6</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao</groupId>
@@ -569,10 +569,6 @@
 				<exclusions>
 					<exclusion>
 						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-domain</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
 						<artifactId>forest-client</artifactId>
 					</exclusion>
 					<exclusion>
@@ -669,14 +665,6 @@
 					<exclusion>
 						<groupId>com.taobao.mallitemcenter</groupId>
 						<artifactId>mic-common</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-domain</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-client</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -881,18 +869,6 @@
 						<groupId>com.tmall.nova</groupId>
 						<artifactId>nova-client</artifactId>
 					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-domain</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-client</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.taobao.forest</groupId>
-						<artifactId>forest-realtime</artifactId>
-					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -990,6 +966,26 @@
 				<groupId>io.projectreactor</groupId>
 				<artifactId>reactor-core</artifactId>
 				<version>3.2.10.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.keycenter</groupId>
+				<artifactId>keycenter-client</artifactId>
+				<version>2.3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.keycenter</groupId>
+				<artifactId>keycenter-common</artifactId>
+				<version>2.3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.keycenter</groupId>
+				<artifactId>keycenter-client-extension</artifactId>
+				<version>2.3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.sdk</groupId>
+				<artifactId>alipay-sdk-java</artifactId>
+				<version>3.7.89.ALL</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -4,7 +4,7 @@ public enum UserTag {
 
 	TP_USER_TAG("usertag11#4096"),
 	
-	TP_USER_TAG2("cuntao_village"),
+	 TP_USER_TAG2("cuntao_village"),
 	
 	TPA_USER_TAG("usertag17#8192"),
 	

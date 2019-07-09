@@ -22,6 +22,8 @@
     <result column="seller_share_store_id" jdbcType="BIGINT" property="sellerShareStoreId" />
     <result column="endor_org_id" jdbcType="BIGINT" property="endorOrgId" />
     <result column="store_group_ids" jdbcType="VARCHAR" property="storeGroupIds" />
+    <result column="minapp_id" jdbcType="VARCHAR" property="minappId" />
+    <result column="sub_image_task_id" jdbcType="VARCHAR" property="subImageTaskId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -96,7 +98,7 @@
     -->
     id, gmt_create, gmt_modified, modifier, creator, is_deleted, name, status, store_category, 
     share_store_id, scm_code, station_id, taobao_user_id, seller_share_store_id, endor_org_id, 
-    store_group_ids
+    store_group_ids, minapp_id, sub_image_task_id
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CuntaoStoreExample" resultMap="BaseResultMap">
     <!--
@@ -157,14 +159,14 @@
       creator, is_deleted, name, 
       status, store_category, share_store_id, 
       scm_code, station_id, taobao_user_id, 
-      seller_share_store_id, endor_org_id, store_group_ids
-      )
+      seller_share_store_id, endor_org_id, store_group_ids, 
+      minapp_id, sub_image_task_id)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
       #{creator,jdbcType=VARCHAR}, #{isDeleted,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{status,jdbcType=VARCHAR}, #{storeCategory,jdbcType=VARCHAR}, #{shareStoreId,jdbcType=BIGINT}, 
       #{scmCode,jdbcType=VARCHAR}, #{stationId,jdbcType=BIGINT}, #{taobaoUserId,jdbcType=BIGINT}, 
-      #{sellerShareStoreId,jdbcType=BIGINT}, #{endorOrgId,jdbcType=BIGINT}, #{storeGroupIds,jdbcType=VARCHAR}
-      )
+      #{sellerShareStoreId,jdbcType=BIGINT}, #{endorOrgId,jdbcType=BIGINT}, #{storeGroupIds,jdbcType=VARCHAR}, 
+      #{minappId,jdbcType=VARCHAR}, #{subImageTaskId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoStore">
     <!--
@@ -221,6 +223,12 @@
       <if test="storeGroupIds != null">
         store_group_ids,
       </if>
+      <if test="minappId != null">
+        minapp_id,
+      </if>
+      <if test="subImageTaskId != null">
+        sub_image_task_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -267,6 +275,12 @@
       </if>
       <if test="storeGroupIds != null">
         #{storeGroupIds,jdbcType=VARCHAR},
+      </if>
+      <if test="minappId != null">
+        #{minappId,jdbcType=VARCHAR},
+      </if>
+      <if test="subImageTaskId != null">
+        #{subImageTaskId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -335,6 +349,12 @@
       <if test="record.storeGroupIds != null">
         store_group_ids = #{record.storeGroupIds,jdbcType=VARCHAR},
       </if>
+      <if test="record.minappId != null">
+        minapp_id = #{record.minappId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subImageTaskId != null">
+        sub_image_task_id = #{record.subImageTaskId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -361,7 +381,9 @@
       taobao_user_id = #{record.taobaoUserId,jdbcType=BIGINT},
       seller_share_store_id = #{record.sellerShareStoreId,jdbcType=BIGINT},
       endor_org_id = #{record.endorOrgId,jdbcType=BIGINT},
-      store_group_ids = #{record.storeGroupIds,jdbcType=VARCHAR}
+      store_group_ids = #{record.storeGroupIds,jdbcType=VARCHAR},
+      minapp_id = #{record.minappId,jdbcType=VARCHAR},
+      sub_image_task_id = #{record.subImageTaskId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -418,6 +440,12 @@
       <if test="storeGroupIds != null">
         store_group_ids = #{storeGroupIds,jdbcType=VARCHAR},
       </if>
+      <if test="minappId != null">
+        minapp_id = #{minappId,jdbcType=VARCHAR},
+      </if>
+      <if test="subImageTaskId != null">
+        sub_image_task_id = #{subImageTaskId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -441,7 +469,9 @@
       taobao_user_id = #{taobaoUserId,jdbcType=BIGINT},
       seller_share_store_id = #{sellerShareStoreId,jdbcType=BIGINT},
       endor_org_id = #{endorOrgId,jdbcType=BIGINT},
-      store_group_ids = #{storeGroupIds,jdbcType=VARCHAR}
+      store_group_ids = #{storeGroupIds,jdbcType=VARCHAR},
+      minapp_id = #{minappId,jdbcType=VARCHAR},
+      sub_image_task_id = #{subImageTaskId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

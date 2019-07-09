@@ -1027,4 +1027,29 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         logger.info("submitQuitUmTask : {}", JSON.toJSONString(quitUmTaskVo));
     }
 
+    @Override
+    public void submitInitLightStoreTask(Long storeId) {
+        List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+        taskLists.add(bulidInitLightStoreParam(1L,"修改门店信息","modifyStoreInfoForLightStore",storeId));
+        taskLists.add(bulidInitLightStoreParam(2L,"同步门店子图","modifyStoreSubImageFromTask",storeId));
+        taskLists.add(bulidInitLightStoreParam(3L,"绑定门店组","bindDefaultStoreGroup",storeId));
+        taskLists.add(bulidInitLightStoreParam(4L,"初始化小程序","initSingleMiniappForLightStore",storeId));
+        taskLists.add(bulidInitLightStoreParam(5L,"开通轻店权限","openLightStorePermission",storeId));
+        taskSubmitService.submitTasks(taskLists);
+    }
+
+    private GeneralTaskDto bulidInitLightStoreParam(Long step,String stepDesc, String methdodName,Long storeId) {
+        GeneralTaskDto storeTaskVo = new GeneralTaskDto();
+        storeTaskVo.setBusinessNo(String.valueOf(storeId));
+        storeTaskVo.setBeanName("storeWriteService");
+        storeTaskVo.setBusinessStepNo(step);
+        storeTaskVo.setBusinessType(TaskBusinessTypeEnum.INIT_LIGHT_STORE.getCode());
+        storeTaskVo.setBusinessStepDesc(stepDesc);
+        storeTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+        storeTaskVo.setMethodName(methdodName);
+        storeTaskVo.setParameterType(Long.class.getName());
+        storeTaskVo.setParameter(String.valueOf(storeId));
+        storeTaskVo.setPriority(TaskPriority.HIGH);
+        return storeTaskVo;
+    }
 }
