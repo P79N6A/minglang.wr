@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +37,7 @@ import com.taobao.cun.common.util.BeanCopy;
  */
 @Component
 public class RailServiceAdapterImpl implements RailServiceAdapter {
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Value("${cainiao.fence.cpcode}")
 	private String cpcode;
 	@Resource
@@ -74,6 +77,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	@Override
 	public Long addCainiaoFence(FenceEntity fenceEntity) {
 		RailInfoRequest request = toCainiaoFence(fenceEntity);
+		logger.info("request:{}", JSON.toJSONString(request));
 		BaseResult<Long> result = railService.addRail(request);
 		if(result.isSuccess()) {
 			return result.getResult();
@@ -85,6 +89,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	@Override
 	public void updateCainiaoFence(FenceEntity fenceEntity) {
 		RailInfoRequest request = toCainiaoFence(fenceEntity);
+		logger.info("request:{}", JSON.toJSONString(request));
 		BaseResult<Boolean> result = railService.updateRailById(request);
 		if(!result.isSuccess()) {
 			throw new RailException(request, "updateRailById:code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
