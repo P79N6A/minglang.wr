@@ -32,6 +32,7 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
 
     @Override
     public void check() {
+        Runnable runnable = () ->
         Flux.create(this::publish, FluxSink.OverflowStrategy.BUFFER)
                 .onErrorContinue((e, f)->{
                     SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
@@ -54,6 +55,8 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
                         appBizLogBo.addLog(simpleAppBizLog);
                     }
                 });
+
+        new Thread(runnable).run();
     }
 
     private void publish(FluxSink<FenceEntity> sink){
