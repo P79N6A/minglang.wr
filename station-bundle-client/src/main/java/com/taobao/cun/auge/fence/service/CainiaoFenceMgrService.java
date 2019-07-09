@@ -8,4 +8,6 @@ public interface CainiaoFenceMgrService {
      * @param cainiaoFenceId
      */
     String getCainiaoFences(Long cainiaoFenceId);
+
+    void check();
 }

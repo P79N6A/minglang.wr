@@ -50,7 +50,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	@Override
 	public String getCainiaoFenceJSON(Long cainianFenceId){
 		BaseResult<RailInfoResult> result = railService.getRailInfoById(cainianFenceId);
-		if(result.isSuccess()){
+		if(result.isSuccess() && result.getResult() != null){
 			return JSON.toJSONString(result.getResult());
 		}else{
 			return null;
