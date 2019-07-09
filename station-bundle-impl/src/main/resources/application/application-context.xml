@@ -10,6 +10,9 @@
 	<!--event-client -->
 	<import resource="classpath*:/application/beans-event-client-context.xml" />
 
+
+	<import resource="classpath*:/application/beans-tfs.xml" />
+
 	<bean id="cuntaoOrgServiceClient"
 		class="com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl"
 		init-method="init">
