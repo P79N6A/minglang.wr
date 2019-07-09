@@ -1,8 +1,7 @@
 package com.taobao.cun.auge.fence.service;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.google.common.collect.Lists;
-import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.FenceEntityExample;
 import com.taobao.cun.auge.dal.mapper.FenceEntityMapper;
@@ -10,15 +9,16 @@ import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
 import com.taobao.cun.auge.log.SimpleAppBizLog;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @HSFProvider(serviceInterface = CainiaoFenceMgrService.class)
 public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
+    private Logger logger = LoggerFactory.getLogger(getClass());
     @Resource
     private FenceEntityMapper fenceEntityMapper;
     @Resource
@@ -58,21 +58,16 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
 
     private void publish(FluxSink<FenceEntity> sink){
         int page = 1;
-        int pages = 0;
         while(true) {
+            logger.info("page {}", page);
             FenceEntityExample example = new FenceEntityExample();
             example.createCriteria().andIsDeletedEqualTo("n");
             PageHelper.startPage(page, 1000);
-            PageDto<FenceEntity> pageDto = (PageDto<FenceEntity>) fenceEntityMapper.selectByExample(example);
-            if(pageDto.getItems() != null){
-                for (FenceEntity item : pageDto.getItems()) {
-                    sink.next(item);
-                }
-            }
-            if(pages == 0) {
-                pages = pageDto.getPages();
-            }
-            if(page >= pages){
+            Page<FenceEntity> pageDto = (Page<FenceEntity>) fenceEntityMapper.selectByExample(example);
+
+            pageDto.stream().forEach(item->sink.next(item));
+
+            if(page >= pageDto.getPages()){
                 break;
             }
             page++;
