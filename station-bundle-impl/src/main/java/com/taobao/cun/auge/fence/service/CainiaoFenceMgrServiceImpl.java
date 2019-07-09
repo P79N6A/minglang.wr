@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.fence.service;
 
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.FenceEntityExample;
 import com.taobao.cun.auge.dal.mapper.FenceEntityMapper;
@@ -9,6 +11,7 @@ import com.taobao.cun.auge.log.SimpleAppBizLog;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,8 +36,7 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
         List<FenceEntity> fenceEntities = fenceEntityMapper.selectByExample(example);
 
         final List<Long> errors = Lists.newArrayList();
-
-        Flux.fromIterable(fenceEntities)
+        Flux.create(this::publish, FluxSink.OverflowStrategy.BUFFER)
                 .onErrorContinue((e, f)->{
                     SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
                     simpleAppBizLog.setState("error");
@@ -56,5 +58,29 @@ public class CainiaoFenceMgrServiceImpl implements CainiaoFenceMgrService{
                         appBizLogBo.addLog(simpleAppBizLog);
                     }
                 });
+    }
+
+    private void publish(FluxSink<FenceEntity> sink){
+        int page = 1;
+        int pages = 0;
+        while(true) {
+            FenceEntityExample example = new FenceEntityExample();
+            example.createCriteria().andIsDeletedEqualTo("n");
+            PageHelper.startPage(page, 1000);
+            PageDto<FenceEntity> pageDto = (PageDto<FenceEntity>) fenceEntityMapper.selectByExample(example);
+            if(pageDto.getItems() != null){
+                for (FenceEntity item : pageDto.getItems()) {
+                    sink.next(item);
+                }
+            }
+            if(pages == 0) {
+                pages = pageDto.getPages();
+            }
+            if(page >= pages){
+                break;
+            }
+            page++;
+        }
+        sink.complete();
     }
 }
