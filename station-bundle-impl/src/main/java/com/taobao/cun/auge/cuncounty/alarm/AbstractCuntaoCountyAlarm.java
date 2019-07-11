@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
-import com.taobao.cun.auge.log.SimpleAppBizLog;
 import com.taobao.cun.auge.log.bo.AppBizLogBo;
 import com.taobao.cun.auge.platform.dto.AppMsgPushInfoDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
@@ -61,14 +59,7 @@ public abstract class AbstractCuntaoCountyAlarm implements CuntaoCountyAlarm{
 
     protected void doAlarm(Optional<AppMsgPushInfoDto> appMsgPushInfoDto){
         appMsgPushInfoDto.ifPresent(msg->{
-            SimpleAppBizLog simpleAppBizLog = new SimpleAppBizLog();
-            simpleAppBizLog.setBizKey(msg.getContent().getBizId());
-            simpleAppBizLog.setBizType("push_msg");
-            simpleAppBizLog.setCreator("sys");
-            simpleAppBizLog.setState("NEW");
-            simpleAppBizLog.setMessage(msg.getContent().getTitle());
-            appBizLogBo.addLog(simpleAppBizLog);
-            //EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg)));
+            EventDispatcherUtil.dispatch("CUN_APP_STATION_INSPECTION_MSG_PUSH", new ExtEvent(JSON.toJSONString(msg)));
         });
     }
 }
