@@ -414,7 +414,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
-				<artifactId>ommon-uic-commonc</artifactId>
+				<artifactId>common-uic-common</artifactId>
 				<version>3.7.5.16</version>
 				<exclusions>
 					<exclusion>
