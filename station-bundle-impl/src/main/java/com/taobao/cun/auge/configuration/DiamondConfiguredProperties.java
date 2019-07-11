@@ -213,6 +213,17 @@ public class DiamondConfiguredProperties {
     @Value("${batch.close.or.quit.um.max.num}")
     private Integer batchCloseOrQuitUmNum;
 
+    @Value("${com.taobao.cun.auge.createSellerBizScene}")
+    private String createSellerBizScene;
+
+    public String getCreateSellerBizScene() {
+        return createSellerBizScene;
+    }
+
+    public void setCreateSellerBizScene(String createSellerBizScene) {
+        this.createSellerBizScene = createSellerBizScene;
+    }
+
     public String getStoreMainImage() {
         return storeMainImage;
     }

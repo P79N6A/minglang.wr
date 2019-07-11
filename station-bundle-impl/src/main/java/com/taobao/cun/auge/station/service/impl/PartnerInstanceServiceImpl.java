@@ -2200,4 +2200,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void updateIncomeMode(Long instanceId, String incomeMode, String operator) {
 		partnerInstanceBO.updateIncomeMode(instanceId, incomeMode, operator);
 	}
+
+    @Override
+    public Result<Boolean> createTaobaoSellerAndShopId(Long taobaoUserId) {
+        return null;
+    }
 }

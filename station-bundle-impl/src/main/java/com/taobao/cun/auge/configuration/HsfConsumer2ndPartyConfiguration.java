@@ -3,6 +3,8 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.havana.oneid.client.common.HavanaCommonContext;
+import com.taobao.sm.openshop.service.OpenShopService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -550,4 +552,15 @@ public class HsfConsumer2ndPartyConfiguration  {
         rmbService.setAsyncTaskExecutor(threadPoolTaskExecutor);
         return rmbService;
     }
+
+
+    @Bean
+	public HavanaCommonContext havanaCommonContext() {
+		HavanaCommonContext havanaCommonContext = new HavanaCommonContext();
+		havanaCommonContext.setAppName("auge");
+		return havanaCommonContext;
+	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.OpenShopService}",serviceGroup="HSF")
+	private OpenShopService openShopService;
+
 }

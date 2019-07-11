@@ -987,6 +987,30 @@
 				<artifactId>alipay-sdk-java</artifactId>
 				<version>3.7.89.ALL</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>havana.oneid.api.client</artifactId>
+				<version>1.0.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.sm.openshop</groupId>
+				<artifactId>openshop</artifactId>
+				<version>2.0.7</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.itemcenter</groupId>
+						<artifactId>itemcenter-common</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

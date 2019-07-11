@@ -11,6 +11,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.alibaba.havana.oneid.api.HavanaResult;
+import com.alibaba.havana.oneid.api.model.OuterInfo;
+import com.alibaba.havana.oneid.client.api.AccountWriteServiceClient;
+import com.taobao.sm.openshop.domain.OpenShopDO;
+import com.taobao.sm.openshop.domain.Result;
+import com.taobao.sm.openshop.service.OpenShopService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -163,6 +169,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     private BizActionLogBo bizActionLogBo;
     @Autowired
 	private PartnerAdzoneService partnerAdzoneService;
+
+    @Autowired
+    private AccountWriteServiceClient accountWriteServiceClient;
+
+    @Autowired
+    private OpenShopService openShopService;
 
     @Override
     public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
@@ -1217,6 +1229,52 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
             updateInstance.setIncomeModeBeginTime(newMonth);
             DomainUtils.beforeUpdate(updateInstance, operator);
             partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+        }
+    }
+
+    @Override
+    public void createTaobaoSellerAndShopId(Long taobaoUserId) {
+        Qualification qualification = cuntaoQualificationService.queryC2BQualification(taobaoUserId);
+        if(qualification == null||qualification.getStatus() != 1){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "用户营业执照未通过审核");
+        }
+        PartnerStationRel instance = getActivePartnerInstance(taobaoUserId);
+        if(instance == null){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "村淘合伙人信息不存在");
+        }
+        Station station = stationBO.getStationById(instance.getStationId());
+        if(station == null){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "服务站信息不存在");
+        }
+
+        PartnerStationRel update = new  PartnerStationRel();
+        update.setId(instance.getId());
+        if(instance.getShopId() ==null || instance.getSellerId() == null){
+            OuterInfo outerInfo = new OuterInfo();
+            outerInfo.setOuterId(String.valueOf(taobaoUserId));
+            outerInfo.setBizScene(diamondConfiguredProperties.getCreateSellerBizScene());
+
+            HavanaResult<Long> havanaResult = accountWriteServiceClient.queryOrCreateAccount(outerInfo);
+            if (!havanaResult.isSuccess()){
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, taobaoUserId+" 创建卖家账号失败:"+havanaResult.getCode()+havanaResult.getMessage());
+            }
+            Long sellerId = havanaResult.getReturnValue();
+            Long sellerId=0L;
+            OpenShopDO shopParam = new OpenShopDO();
+            shopParam.setUserId(sellerId);
+            shopParam.setShopAddress(station.getAddress());
+            Result<com.taobao.shopservice.core.client.domain.ShopDO> shopDOResult = openShopService.openShop(shopParam, "village_taobao", "auge");
+            if(!shopDOResult.isSuccess()) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, taobaoUserId+" 创建虚拟店铺失败:"+shopDOResult.getErrorCode()+shopDOResult.getErrorMessage());
+            }
+            Integer shopId = shopDOResult.getModule().getShopID();
+            update.setShopId(shopId.longValue());
+            update.setSellerId(sellerId);
+            userTagService.addTag(taobaoUserId, UserTag.SELLER_HQZY_TAG.getTag());
+            userTagService.addTagToUserData(sellerId, 102209);
+            userTagService.addTagToUserData(sellerId, 76481);
+            partnerStationRelMapper.updateByPrimaryKeySelective(update);
+
         }
     }
 }
