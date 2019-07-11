@@ -62,7 +62,12 @@ public class CuntaoCountyListItem {
      * 运营时间
      */
     private String operateDate;
-    
+
+	/**
+	 * 协议ID
+	 */
+	private Long contractId;
+
     /**
      * 县小二
      */
@@ -77,7 +82,11 @@ public class CuntaoCountyListItem {
      * 省负责人
      */
     private List<CuntaoUserOrgVO> provinceLeaders = Lists.newArrayList();
-    
+
+	/**
+	 * 协议编号
+	 */
+	private String serialNum;
     /**
      * 协议开始时间
      */
@@ -87,7 +96,36 @@ public class CuntaoCountyListItem {
      * 协议结束时间
      */
     private String protocolEndDate;
-    
+
+	/**
+	 * 县点标签
+	 */
+	private List<CuntaoCountyTagEnum> countyTags;
+
+	public Long getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(Long contractId) {
+		this.contractId = contractId;
+	}
+
+	public List<CuntaoCountyTagEnum> getCountyTags() {
+		return countyTags;
+	}
+
+	public void setCountyTags(List<CuntaoCountyTagEnum> countyTags) {
+		this.countyTags = countyTags;
+	}
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
+
 	public String getTownName() {
 		return townName;
 	}
