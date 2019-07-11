@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -69,7 +70,7 @@ public class CuntaoCountyWhitenameBo {
 	/**
 	 * 把县点ID更新到白名单上
 	 * 
-	 * @param id
+	 * @param countyCode
 	 * @param countyId
 	 */
 	public void updateCountyId(String countyCode, Long countyId) {
@@ -147,7 +148,11 @@ public class CuntaoCountyWhitenameBo {
 	}
 	
 	public List<CuntaoCountyWhitenameDto> getCuntaoCountyWhitenamesByCodes(List<String> codes){
-		return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class, 
-				cuntaoCountyExtMapper.getCuntaoCountyWhitenamesByCodes(codes));
+		if(CollectionUtils.isEmpty(codes)){
+			return Lists.newArrayList();
+		}else {
+			return BeanConvertUtils.listConvert(CuntaoCountyWhitenameDto.class,
+					cuntaoCountyExtMapper.getCuntaoCountyWhitenamesByCodes(codes));
+		}
 	}
 }

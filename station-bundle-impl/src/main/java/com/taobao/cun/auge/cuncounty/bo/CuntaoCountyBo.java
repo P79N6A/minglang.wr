@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.cuncounty.tag.CountyTagUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,7 @@ public class CuntaoCountyBo {
 		}
 		CuntaoCountyDto cuntaoCountyDto = BeanConvertUtils.convert(CuntaoCountyDto.class, cuntaoCountyMapper.selectByPrimaryKey(id));
 		cuntaoCountyDto.setState(cuntaoCounty.getState());
+		cuntaoCountyDto.setCountyTags(CountyTagUtils.convert(cuntaoCounty.getTags()));
 		return cuntaoCountyDto;
 	}
 	

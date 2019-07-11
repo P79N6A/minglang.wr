@@ -42,6 +42,8 @@ public class CuntaoCountyListItemVO {
      * 镇名
      */
     private String townName;
+
+    private String serialNum;
     
     private Date gmtProtocolStartDate;
     
@@ -50,7 +52,35 @@ public class CuntaoCountyListItemVO {
      * 运营时间
      */
     private Date operateDate;
-    
+
+    private String tags;
+
+    private Long contractId;
+
+	public Long getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(Long contractId) {
+		this.contractId = contractId;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public String getSerialNum() {
+		return serialNum;
+	}
+
+	public void setSerialNum(String serialNum) {
+		this.serialNum = serialNum;
+	}
+
 	public String getTownName() {
 		return townName;
 	}

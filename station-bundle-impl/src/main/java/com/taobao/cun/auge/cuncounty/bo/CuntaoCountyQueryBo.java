@@ -2,9 +2,10 @@ package com.taobao.cun.auge.cuncounty.bo;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
+import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
+import com.taobao.cun.auge.cuncounty.dto.*;
+import com.taobao.cun.auge.cuncounty.tag.CountyTagUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -12,15 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.common.utils.DateUtil;
-import com.taobao.cun.auge.cuncounty.dto.CainiaoWarehouseDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDetailDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOfficeDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyOrgDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateCountDto;
-import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyStateEnum;
 import com.taobao.cun.auge.cuncounty.utils.BeanConvertUtils;
 import com.taobao.cun.auge.cuncounty.vo.CuntaoCountyListItemVO;
 import com.taobao.cun.auge.dal.domain.CuntaoCounty;
@@ -52,6 +44,8 @@ public class CuntaoCountyQueryBo {
 	private CuntaoUserOrgService cuntaoUserOrgService;
 	@Resource
 	private CainiaoCountyRemoteBo cainiaoCountyRemoteBo;
+	@Resource
+	private CuntaoGovContactRecordQueryBo cuntaoGovContactRecordQueryBo;
 	
 	/**
 	 * 县点基本信息
@@ -64,7 +58,7 @@ public class CuntaoCountyQueryBo {
 	
 	/**
 	 * 根据ORGID查询县点基本信息
-	 * @param countyId
+	 * @param orgId
 	 * @return
 	 */
 	public CuntaoCountyDto getCuntaoCountyByOrgId(Long orgId) {
@@ -140,8 +134,7 @@ public class CuntaoCountyQueryBo {
 		List<CuntaoCountyListItem> cuntaoCountyListItems = Lists.newArrayList();
 		
 		List<Long> countyIds = Lists.newArrayList();
-		
-		
+
 		Map<Long, CountyOrgInfo> countyOrgInfos = Maps.newHashMap();
 		for(CuntaoCountyListItemVO vo : cuntaoCountyListItemVOs) {
 			countyIds.add(vo.getId());
@@ -160,13 +153,17 @@ public class CuntaoCountyQueryBo {
 			cuntaoCountyListItem.setState(vo.getState());
 			cuntaoCountyListItem.setProtocolEndDate(DateUtil.format(vo.getGmtProtocolEndDate(), "yyyy-MM-dd"));
 			cuntaoCountyListItem.setOperateDate(DateUtil.format(vo.getOperateDate(), "yyyy-MM-dd"));
+			initTags(cuntaoCountyListItem, vo);
 			cuntaoCountyListItems.add(cuntaoCountyListItem);
 		}
 		
 		initOffice(cuntaoCountyListItems, countyIds);
 		initLeader(cuntaoCountyListItems, countyOrgInfos);
-		
 		return cuntaoCountyListItems;
+	}
+
+	private void initTags(CuntaoCountyListItem cuntaoCountyListItem, CuntaoCountyListItemVO cuntaoCountyListItemVO) {
+		cuntaoCountyListItem.setCountyTags(CountyTagUtils.convert(cuntaoCountyListItemVO.getTags()));
 	}
 
 	private void initLeader(List<CuntaoCountyListItem> cuntaoCountyListItems, Map<Long, CountyOrgInfo> countyOrgInfos) {
