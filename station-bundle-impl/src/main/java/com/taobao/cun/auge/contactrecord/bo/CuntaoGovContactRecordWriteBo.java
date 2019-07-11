@@ -60,17 +60,15 @@ public class CuntaoGovContactRecordWriteBo {
                 r.setGmtModified(new Date());
                 r.setIsDeleted("n");
                 r.setContactId(cuntaoGovContactRecord.getId());
-
-                if(CuntaoGovContactRiskStateEnum.UNRESOLVED.getCode().equals(r.getState())) {
-                    if (CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())) {
-                        num.getAndIncrement("high");
-                    }
-                    if (CuntaoGovContactRiskLevelEnum.MIDDLE.getCode().equals(r.getRiskLevel())) {
-                        num.getAndIncrement("middle");
-                    }
-                    if (CuntaoGovContactRiskLevelEnum.LOW.getCode().equals(r.getRiskLevel())) {
-                        num.getAndIncrement("low");
-                    }
+                r.setState(CuntaoGovContactRiskStateEnum.UNRESOLVED.getCode());
+                if (CuntaoGovContactRiskLevelEnum.HIGH.getCode().equals(r.getRiskLevel())) {
+                    num.getAndIncrement("high");
+                }
+                if (CuntaoGovContactRiskLevelEnum.MIDDLE.getCode().equals(r.getRiskLevel())) {
+                    num.getAndIncrement("middle");
+                }
+                if (CuntaoGovContactRiskLevelEnum.LOW.getCode().equals(r.getRiskLevel())) {
+                    num.getAndIncrement("low");
                 }
                 cuntaoGovContactRecordRiskMapper.insert(r);
             });
