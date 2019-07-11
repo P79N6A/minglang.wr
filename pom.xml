@@ -122,6 +122,17 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>havana.oneid.api.client</artifactId>
+				<version>1.0.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.common.uic.uic-common</groupId>
+						<artifactId>common-uic-common</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>org.codehaus.groovy</groupId>
 				<artifactId>groovy-all</artifactId>
 				<version>2.4.5</version>
@@ -986,17 +997,6 @@
 				<groupId>com.alipay.sdk</groupId>
 				<artifactId>alipay-sdk-java</artifactId>
 				<version>3.7.89.ALL</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba.platform.shared</groupId>
-				<artifactId>havana.oneid.api.client</artifactId>
-				<version>1.0.8</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.taobao.common.uic.uic-common</groupId>
-						<artifactId>common-uic-common</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
