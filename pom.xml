@@ -70,11 +70,11 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.alibaba.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-uic</artifactId>
-				<version>0.0.2-SNAPSHOT</version>
-			</dependency>
+			<!--<dependency>-->
+				<!--<groupId>com.alibaba.springframework.boot</groupId>-->
+				<!--<artifactId>spring-boot-starter-uic</artifactId>-->
+				<!--<version>0.0.2-SNAPSHOT</version>-->
+			<!--</dependency>-->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-expression</artifactId>

@@ -94,10 +94,10 @@
 			<groupId>com.alibaba.boot</groupId>
 			<artifactId>tddl-spring-boot-starter</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.alibaba.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-uic</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.alibaba.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-uic</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
