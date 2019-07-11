@@ -629,6 +629,10 @@
 			<groupId>com.taobao.sm.openshop</groupId>
 			<artifactId>openshop</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.taobao.common</groupId>
+            <artifactId>fulllinkstresstesting</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

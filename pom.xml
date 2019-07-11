@@ -339,6 +339,10 @@
 						<groupId>org.apache.zookeeper</groupId>
 						<artifactId>zookeeper</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.common</groupId>
+						<artifactId>fulllinkstresstesting</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -424,6 +428,11 @@
 				<version>1.1.3</version>
 			</dependency>
 			<dependency>
+				<groupId>com.taobao.common</groupId>
+				<artifactId>fulllinkstresstesting</artifactId>
+				<version>0.9.9.7</version>
+			</dependency>
+			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
 				<version>3.7.5.16</version>
@@ -435,6 +444,10 @@
 					<exclusion>
 						<groupId>org.slf4j</groupId>
 						<artifactId>log4j-over-slf4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.common</groupId>
+						<artifactId>fulllinkstresstesting</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
