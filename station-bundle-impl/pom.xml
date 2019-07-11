@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -76,11 +76,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId>
 			</dependency> -->
-		<!-- AliExpress Starters <dependency> <groupId>com.alibaba.cloud</groupId> 
+		<!-- AliExpress Starters <dependency> <groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-stream-starter-metaq</artifactId> </dependency> -->
-		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> 
+		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId>
 			</dependency> -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
@@ -94,10 +94,10 @@
 			<groupId>com.alibaba.boot</groupId>
 			<artifactId>tddl-spring-boot-starter</artifactId>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.alibaba.springframework.boot</groupId>-->
-			<!--<artifactId>spring-boot-starter-uic</artifactId>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>com.alibaba.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-uic</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
@@ -589,10 +589,10 @@
 			<groupId>com.alibaba.site</groupId>
 			<artifactId>basic-alisite-client</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.taobao.cun.module</groupId>
-            <artifactId>station-bundle-client</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>station-bundle-client</artifactId>
@@ -617,18 +617,18 @@
 			<groupId>com.taobao.keycenter</groupId>
 			<artifactId>keycenter-client-extension</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.alipay.sdk</groupId>
-            <artifactId>alipay-sdk-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.platform.shared</groupId>
-            <artifactId>havana.oneid.api.client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.taobao.sm.openshop</groupId>
-            <artifactId>openshop</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.alipay.sdk</groupId>
+			<artifactId>alipay-sdk-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.platform.shared</groupId>
+			<artifactId>havana.oneid.api.client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.sm.openshop</groupId>
+			<artifactId>openshop</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
