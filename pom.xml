@@ -73,7 +73,7 @@
 			<dependency>
 				<groupId>com.alibaba.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-uic</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.0.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -414,7 +414,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
-				<artifactId>common-uic-common</artifactId>
+				<artifactId>ommon-uic-commonc</artifactId>
 				<version>3.7.5.16</version>
 				<exclusions>
 					<exclusion>
