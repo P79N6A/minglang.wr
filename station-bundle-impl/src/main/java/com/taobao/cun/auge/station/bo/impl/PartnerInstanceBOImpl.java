@@ -1186,9 +1186,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	/**
 	 * 构建返回对象
-	 * @param p
-	 * @param map
-	 * @return
+
 	 */
 	private LxPartnerDto bulidLx(PartnerStationRel p, Map<Long, Partner> pmap,Map<Long, Station> smap){
 		LxPartnerDto pDto = new LxPartnerDto();
@@ -1259,7 +1257,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, taobaoUserId+" 创建卖家账号失败:"+havanaResult.getCode()+havanaResult.getMessage());
             }
             Long sellerId = havanaResult.getReturnValue();
-            Long sellerId=0L;
             OpenShopDO shopParam = new OpenShopDO();
             shopParam.setUserId(sellerId);
             shopParam.setShopAddress(station.getAddress());
