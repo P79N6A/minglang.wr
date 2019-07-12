@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.taobao.cun.auge.common.PageInput;
 

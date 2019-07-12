@@ -87,6 +87,12 @@
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>
+		    <if test="condition.states != null">
+				and q1.state in
+				<foreach collection="condition.states" item="state" separator="," open="(" close=")">
+					#{state}
+				</foreach>
+		    </if>
 			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
 			</if>
@@ -119,6 +125,12 @@
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>
+		  	<if test="condition.states != null">
+			  and q1.state in
+			  <foreach collection="condition.states" item="state" separator="," open="(" close=")">
+				  #{state}
+			  </foreach>
+		  	</if>
 			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
 			</if>
