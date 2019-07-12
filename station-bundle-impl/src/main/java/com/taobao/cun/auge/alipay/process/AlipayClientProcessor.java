@@ -25,6 +25,7 @@ public class AlipayClientProcessor {
     @PostConstruct
     public void init() {
             // 正式环境
+        /*
             KeyCenterProperties properties = new KeyCenterProperties();
             properties.setAppPublishNum(AliPayConstants.KEYCENTER_NUM_ONLINE);
             properties.setPreferProtocal("http");
@@ -37,6 +38,7 @@ public class AlipayClientProcessor {
             signer = new SignerImpl(keyStore);
             verifier = new VerifierImpl(keyStore);
             signChecker = new KeyCenterAlipaySignChecker(verifier, AliPayConstants.CUNTAO_ALIPAY_PUBLIC_KEY_ONLINE);
+         */
 
     }
 
