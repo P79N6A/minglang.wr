@@ -337,4 +337,8 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteV2BO.openLightStorePermission(storeId);
 	}
 
+
+	@Override
+	public Boolean runSyncStoreTask(String storeId){return storeWriteV2BO.runSyncStoreTask(storeId);}
+
 }
