@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.*;
 import com.taobao.cun.auge.cuncounty.tag.CountyTagUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -132,7 +133,9 @@ public class CuntaoCountyQueryBo {
 
 	private List<CuntaoCountyListItem> convert(List<CuntaoCountyListItemVO> cuntaoCountyListItemVOs) {
 		List<CuntaoCountyListItem> cuntaoCountyListItems = Lists.newArrayList();
-		
+		if(CollectionUtils.isEmpty(cuntaoCountyListItemVOs)){
+			return cuntaoCountyListItems;
+		}
 		List<Long> countyIds = Lists.newArrayList();
 
 		Map<Long, CountyOrgInfo> countyOrgInfos = Maps.newHashMap();
