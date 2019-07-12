@@ -29,6 +29,16 @@ public class CuntaoCountyCondition extends PageInput {
 
 	private String tag;
 
+	private List<String> states;
+
+	public List<String> getStates() {
+		return states;
+	}
+
+	public void setStates(List<String> states) {
+		this.states = states;
+	}
+
 	public String getTag() {
 		return tag;
 	}
