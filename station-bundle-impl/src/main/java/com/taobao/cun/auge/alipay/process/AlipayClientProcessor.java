@@ -24,21 +24,21 @@ public class AlipayClientProcessor {
 
     @PostConstruct
     public void init() {
-            // 正式环境
-/*
-            KeyCenterProperties properties = new KeyCenterProperties();
-            properties.setAppPublishNum(AliPayConstants.KEYCENTER_NUM_ONLINE);
-            properties.setPreferProtocal("http");
-            properties.setHttpServiceAddress(AliPayConstants.KEYCENTER_ADDRESS_ONLINE);
+        // 正式环境
 
-            KeyStoreImpl keyStore = new KeyStoreImpl();
-            keyStore.setKeyCenterProperties(properties);
-            keyStore.init();
+        KeyCenterProperties properties = new KeyCenterProperties();
+        properties.setAppPublishNum(AliPayConstants.KEYCENTER_NUM_ONLINE);
+        properties.setPreferProtocal("http");
+        properties.setHttpServiceAddress(AliPayConstants.KEYCENTER_ADDRESS_ONLINE);
 
-            signer = new SignerImpl(keyStore);
-            verifier = new VerifierImpl(keyStore);
-            signChecker = new KeyCenterAlipaySignChecker(verifier, AliPayConstants.CUNTAO_ALIPAY_PUBLIC_KEY_ONLINE);
-*/
+        KeyStoreImpl keyStore = new KeyStoreImpl();
+        keyStore.setKeyCenterProperties(properties);
+        keyStore.init();
+
+        signer = new SignerImpl(keyStore);
+        verifier = new VerifierImpl(keyStore);
+        signChecker = new KeyCenterAlipaySignChecker(verifier, AliPayConstants.CUNTAO_ALIPAY_PUBLIC_KEY_ONLINE);
+
 
     }
 
