@@ -3,6 +3,7 @@ package com.taobao.cun.auge.cuncounty.tag;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyGovContractBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyProtocolRiskEnum;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyTagEnum;
 import com.taobao.cun.auge.cuncounty.vo.CountyTag;
 import org.springframework.stereotype.Component;
 import reactor.util.function.Tuple2;
@@ -27,7 +28,7 @@ public class CuntaoCountyProtocolTagBuilder implements CuntaoCountyTagBuilder{
         CuntaoCountyProtocolRiskEnum cuntaoCountyProtocolRiskEnum = cuntaoCountyGovContractBo.checkContractRisk(item.getId());
 
         if(cuntaoCountyProtocolRiskEnum != null){
-            countyTag.getTags().add(cuntaoCountyProtocolRiskEnum.getCode());
+            countyTag.getTags().add(CuntaoCountyTagEnum.valueof(cuntaoCountyProtocolRiskEnum.getCode()));
         }
 
         return tuple;

@@ -12,13 +12,15 @@ public class CuntaoGovContactRecordWayEnum {
 
     private static final Map<String, CuntaoGovContactRecordWayEnum> MAPPINGS = new HashMap<String, CuntaoGovContactRecordWayEnum>();
 
-    public static final CuntaoGovContactRecordWayEnum DINGTALK = new CuntaoGovContactRecordWayEnum("DINGTALK", "钉钉");
-    public static final CuntaoGovContactRecordWayEnum TELE = new CuntaoGovContactRecordWayEnum("TELE", "电话");
+    public static final CuntaoGovContactRecordWayEnum ONLINE = new CuntaoGovContactRecordWayEnum("ONLINE", "线上拜访");
+    public static final CuntaoGovContactRecordWayEnum GOV_VISIT = new CuntaoGovContactRecordWayEnum("GOV_VISIT", "政府来访");
     public static final CuntaoGovContactRecordWayEnum DOOR_TO_DOOR = new CuntaoGovContactRecordWayEnum("DOOR_TO_DOOR", "上门");
+    public static final CuntaoGovContactRecordWayEnum OTHER = new CuntaoGovContactRecordWayEnum("OTHER", "其他");
 
     static {
-    	MAPPINGS.put("DINGTALK", DINGTALK);
-    	MAPPINGS.put("TELE", TELE);
+        MAPPINGS.put("OTHER", OTHER);
+    	MAPPINGS.put("ONLINE", ONLINE);
+    	MAPPINGS.put("GOV_VISIT", GOV_VISIT);
     	MAPPINGS.put("DOOR_TO_DOOR", DOOR_TO_DOOR);
     }
 

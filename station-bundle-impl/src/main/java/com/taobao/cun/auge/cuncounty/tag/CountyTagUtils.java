@@ -1,32 +1,18 @@
 package com.taobao.cun.auge.cuncounty.tag;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSONArray;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyTagEnum;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 标签工具类
  */
 public class CountyTagUtils {
     public static List<CuntaoCountyTagEnum> convert(String tags){
-        if(Strings.isNullOrEmpty(tags)){
-            return Lists.newArrayList();
-        }
-
-        return Splitter.on(",").omitEmptyStrings().splitToList(tags).stream().map(t->{
-            CuntaoCountyTagEnum e = CuntaoCountyTagEnum.valueof(t);
-            if(e == null){
-                e = new CuntaoCountyTagEnum(t, t);
-            }
-            return e;
-        }).collect(Collectors.toList());
+        return JSONArray.parseArray(tags, CuntaoCountyTagEnum.class);
     }
-
 
     public static boolean containAlarmTags(List<CuntaoCountyTagEnum> tags){
         return containProtocolTags(tags);

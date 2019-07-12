@@ -80,7 +80,10 @@
 		WHERE
 			q1.org_id = q2.id 
 			AND q1.is_deleted = 'n' 
-			AND q2.is_deleted = 'n' 
+			AND q2.is_deleted = 'n'
+	        <if test="condition.tag != null">
+				and q1.tags like concat('%', #{condition.tag}, '%')
+			</if>
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>
@@ -109,7 +112,10 @@
 		WHERE
 			q1.org_id = q2.id 
 			AND q1.is_deleted = 'n' 
-			AND q2.is_deleted = 'n' 
+			AND q2.is_deleted = 'n'
+		    <if test="condition.tag != null">
+			  and q1.tags like concat('%', #{condition.tag}, '%')
+		    </if>
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>

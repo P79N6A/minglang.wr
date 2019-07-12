@@ -2,6 +2,7 @@ package com.taobao.cun.auge.cuncounty.bo;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Joiner;
 import com.taobao.cun.auge.cuncounty.vo.CountyTag;
 import com.taobao.cun.auge.dal.domain.CuntaoCountyExample;
@@ -130,7 +131,7 @@ public class CuntaoCountyWriteBo {
 
 	public void updateTags(CountyTag countyTag){
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(countyTag.getCountyId());
-		cuntaoCounty.setTags(Joiner.on(",").join(countyTag.getTags()));
+		cuntaoCounty.setTags(JSONArray.toJSONString(countyTag.getTags()));
 		cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
 	}
 }

@@ -27,6 +27,16 @@ public class CuntaoCountyCondition extends PageInput {
 	
 	private Date protocolEndDateTo;
 
+	private String tag;
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
 	public String getState() {
 		return state;
 	}
