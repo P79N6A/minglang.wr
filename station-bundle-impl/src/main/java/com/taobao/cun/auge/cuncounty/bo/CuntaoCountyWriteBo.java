@@ -131,11 +131,12 @@ public class CuntaoCountyWriteBo {
 	}
 
 	public void updateTags(CountyTag countyTag){
-		if(CollectionUtils.isEmpty(countyTag.getTags())){
-			return;
-		}
 		CuntaoCounty cuntaoCounty = cuntaoCountyMapper.selectByPrimaryKey(countyTag.getCountyId());
-		cuntaoCounty.setTags(JSONArray.toJSONString(countyTag.getTags()));
+		if(CollectionUtils.isEmpty(countyTag.getTags())){
+			cuntaoCounty.setTags(null);
+		}else {
+			cuntaoCounty.setTags(JSONArray.toJSONString(countyTag.getTags()));
+		}
 		cuntaoCountyMapper.updateByPrimaryKey(cuntaoCounty);
 	}
 }
