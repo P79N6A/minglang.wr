@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.bo.VendorWriteBO;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.company.dto.CuntaoVendorType;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
@@ -16,6 +17,8 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
@@ -35,32 +38,35 @@ import org.springframework.util.Assert;
 public class VendorWriteServiceImpl implements VendorWriteService {
 
 	private static final int ALIPAY_ENTERPRICE_PROMOTED_TYPE = 4;
-	
+
 	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
 
-	
+
 	@Autowired
 	private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
-	
+
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
-	
+
 	@Autowired
 	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
-	
+
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
-	
+
 	@Autowired
 	private PartnerProtocolRelBO partnerProtocolRelBO;
-	
+
 	@Autowired
 	private VendorReadService vendorReadService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(VendorWriteServiceImpl.class);
-	
+
 	@Autowired
 	private VendorWriteBO vendorWriteBO;
+
+    @Autowired
+    private StoreReadBO storeReadBO;
 
 	@Override
 	public Result<Long> addNewVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
@@ -133,10 +139,10 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
-		
+
 	}
 
-	
+
 	private ErrorInfo checkMobileExists(String mobile, String errorMessage) {
 		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(mobile);
@@ -156,8 +162,8 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		}
 		return null;
 	}
-	
-	
+
+
 	private ErrorInfo checkTaobaoNickExists(String taobaoNick, String errorMessage) {
 		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick);
@@ -167,9 +173,9 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
 		ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(taobaoNick);
 		ErrorInfo errorInfo = checkTaobaoNick(companyUserDOresult,"服务商淘宝账号不存在或状态异常!");
@@ -194,10 +200,10 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 				return errorInfo;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	private ErrorInfo checkAddCuntaoVendorDto(CuntaoServiceVendorDto cuntaoVendorDto){
 		try {
 			BeanValidator.validateWithThrowable(cuntaoVendorDto);
@@ -216,41 +222,41 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(vendors != null && !vendors.isEmpty()){
 			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "服务商公司名称已存在!");
 		}
-		
+
 		return null;
 	}
-	
-	
+
+
 	private ErrorInfo checkTaobaoNick(ResultDO<BaseUserDO> baseUserDOresult,String errorMessage){
 		if (baseUserDOresult == null || !baseUserDOresult.isSuccess() || baseUserDOresult.getModule() == null) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
-	
+
 	private ErrorInfo checkAlipayAccount(ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult,String errorMessage){
 		if (basePaymentAccountDOResult == null || !basePaymentAccountDOResult.isSuccess() || basePaymentAccountDOResult.getModule() == null) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
-	
+
 	private ErrorInfo checkEnterprisePromotedType(int promotedType,String errorMessage){
 		if (((promotedType & ALIPAY_ENTERPRICE_PROMOTED_TYPE) != ALIPAY_ENTERPRICE_PROMOTED_TYPE)) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
-	
+
 	private ErrorInfo checkPersonOrEnterprisePromotedType(int promotedType,String errorMessage){
 		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)&&((promotedType & ALIPAY_ENTERPRICE_PROMOTED_TYPE) != ALIPAY_ENTERPRICE_PROMOTED_TYPE)) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	@Override
 	public Result<Boolean> removeVendor(Long companyId,String operator) {
 		Result<Boolean> result = null;
@@ -347,7 +353,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
 		}
 	}
-	
+
 	private Boolean isConfirmProtocol(Long taobaoUserId,ProtocolTypeEnum protcolType){
 		Assert.notNull(taobaoUserId);
 		Assert.notNull(protcolType);
@@ -362,16 +368,31 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		}
 		return false;
 	}
-	
-	
+
+
 	private Boolean confirmProtocol(Long taobaoUserId,ProtocolTypeEnum protcolType){
 		try {
 			Assert.notNull(taobaoUserId);
 			Assert.notNull(protcolType);
 			Result<CuntaoServiceVendorDto> result = vendorReadService.queryVendorByTaobaoUserID(taobaoUserId);
+
 			if(result.getModule() == null){
-				return false;
-				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+                /*
+                 * 中小件送货入户,家电送装,家电送货,家居送装服务场景下,存在服务商未成功创建bug,阻断签约
+                 * 全链路不清楚还有哪些地方依赖,稳妥起见,暂在末端fix BY憨实
+                 */
+				if (protcolType.equals(ProtocolTypeEnum.DELIVERY_GOODS_AGREEMENT) ||
+                        protcolType.equals(ProtocolTypeEnum.VENDOR_INSTALLMENT_AGREEMENT) ||
+						protcolType.equals(ProtocolTypeEnum.VENDOR_DISTRIBUTE_AGREEMENT) ||
+						protcolType.equals(ProtocolTypeEnum.CTS_JZ_SZYT_AGREEMENT)) {
+                    result = createVendor4Service(taobaoUserId);
+				}
+
+				// 仍为空,follow原逻辑
+                if(result.getModule() == null){
+                    return false;
+                    //throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+                }
 			}
 			partnerProtocolRelBO.signProtocol(taobaoUserId,protcolType, result.getModule().getId(), PartnerProtocolRelTargetTypeEnum.VENDOR);
 			return true;
@@ -379,7 +400,29 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			logger.error("confirmProtocol["+taobaoUserId+"]",e);
 			throw new AugeBusinessException(e);
 		}
-		
 	}
-	
+
+    /**
+     * 服务创建服务商,仍不能100%创建成功,需要迭代 BY憨实
+     *
+     * @param userId
+     * @return
+     */
+	private Result<CuntaoServiceVendorDto> createVendor4Service(Long userId) {
+        StoreDto storeDTO = storeReadBO.getStoreDtoByTaobaoUserId(userId);
+        if(null == storeDTO) {
+            return null;
+        }
+        CuntaoServiceVendorDto vendorDTO = new CuntaoServiceVendorDto();
+        vendorDTO.setCompanyName(storeDTO.getName() + "[门店提供New]");
+        vendorDTO.setMobile(storeDTO.getMobile());
+        vendorDTO.setOperator(storeDTO.getMobile());
+        vendorDTO.setTaobaoNick(storeDTO.getTaobaoNick());
+        vendorDTO.setTaobaoUserId(userId);
+        vendorDTO.setType(CuntaoVendorType.SERVICE_VENDOR);
+        vendorDTO.setRemark("SERVICE_ADMIN");
+        addNewVendor(vendorDTO);
+	    return vendorReadService.queryVendorByTaobaoUserID(userId);
+    }
+
 }
