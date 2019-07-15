@@ -2,10 +2,10 @@ package com.taobao.uic.common.util;
 
 import org.apache.log4j.Logger;
 
-public class LoggerInit {
+public class LoggerAugeInit {
 
 
-    static public final Logger LOGGER = Logger.getLogger(LoggerInit.class);
+    static public final Logger LOGGER = Logger.getLogger(LoggerAugeInit.class);
     
     static private final String LOGGER_CACHE_NAME = "com.taobao.uic.common";
     

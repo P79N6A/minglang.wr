@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.taobao.cun.module</groupId>
@@ -29,13 +29,13 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<auge.station.client.version>4.9.1</auge.station.client.version>
+		<auge.station.client.version>4.9.2</auge.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.17</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency
 				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
@@ -73,7 +73,7 @@
 			<dependency>
 				<groupId>com.alibaba.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-uic</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.0.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -120,6 +120,17 @@
 				<artifactId>spring-test</artifactId>
 				<version>${spring.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>havana.oneid.api.client</artifactId>
+				<version>1.0.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.common.uic.uic-common</groupId>
+						<artifactId>common-uic-common</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.groovy</groupId>
@@ -328,6 +339,10 @@
 						<groupId>org.apache.zookeeper</groupId>
 						<artifactId>zookeeper</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.common</groupId>
+						<artifactId>fulllinkstresstesting</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -413,9 +428,14 @@
 				<version>1.1.3</version>
 			</dependency>
 			<dependency>
+				<groupId>com.taobao.common</groupId>
+				<artifactId>fulllinkstresstesting</artifactId>
+				<version>0.9.9.7</version>
+			</dependency>
+			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
-				<version>3.7.5.9</version>
+				<version>3.7.5.16</version>
 				<exclusions>
 					<exclusion>
 						<groupId>ch.qos.logback</groupId>
@@ -424,6 +444,10 @@
 					<exclusion>
 						<groupId>org.slf4j</groupId>
 						<artifactId>log4j-over-slf4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.common</groupId>
+						<artifactId>fulllinkstresstesting</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -986,6 +1010,26 @@
 				<groupId>com.alipay.sdk</groupId>
 				<artifactId>alipay-sdk-java</artifactId>
 				<version>3.7.89.ALL</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.taobao.sm.openshop</groupId>
+				<artifactId>openshop</artifactId>
+				<version>2.0.7</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.itemcenter</groupId>
+						<artifactId>itemcenter-common</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
