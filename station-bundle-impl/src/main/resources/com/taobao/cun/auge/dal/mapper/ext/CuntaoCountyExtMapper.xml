@@ -60,6 +60,9 @@
 		a.id,
 		a.name,
 		a.state,
+	  	a.tags,
+	  	b.id as contractId,
+	  	b.serial_num as serialNum,
 		b.gmt_protocol_start as gmtProtocolStartDate,
 		b.gmt_protocol_end as gmtProtocolEndDate,
 		operate_date as operateDate,
@@ -77,14 +80,23 @@
 		WHERE
 			q1.org_id = q2.id 
 			AND q1.is_deleted = 'n' 
-			AND q2.is_deleted = 'n' 
+			AND q2.is_deleted = 'n'
+	        <if test="condition.tag != null">
+				and q1.tags like concat('%', #{condition.tag}, '%')
+			</if>
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>
+		    <if test="condition.states != null">
+				and q1.state in
+				<foreach collection="condition.states" item="s" separator="," open="(" close=")">
+					#{s}
+				</foreach>
+		    </if>
 			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
 			</if>
-			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
+			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%')
 		) AS a
 	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
 	where 1=1
@@ -106,14 +118,23 @@
 		WHERE
 			q1.org_id = q2.id 
 			AND q1.is_deleted = 'n' 
-			AND q2.is_deleted = 'n' 
+			AND q2.is_deleted = 'n'
+		    <if test="condition.tag != null">
+			  and q1.tags like concat('%', #{condition.tag}, '%')
+		    </if>
 			<if test="condition.state != null">
 			and q1.state=#{condition.state}
 			</if>
+		  	<if test="condition.states != null">
+			  and q1.state in
+			  <foreach collection="condition.states" item="s" separator="," open="(" close=")">
+				  #{s}
+			  </foreach>
+		    </if>
 			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
 			</if>
-			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
+			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%')
 		) AS a
 	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
 	where 1=1
@@ -140,7 +161,7 @@
 			<if test="condition.name != null">
 			and q1.name like CONCAT('%', #{condition.name}, '%')
 			</if>
-			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%') 
+			and CONCAT(q2.temp_full_id_path,'/') like CONCAT(#{condition.fullIdPath}, '/%')
 		) AS a
 	LEFT JOIN ( SELECT * FROM cuntao_county_gov_contract WHERE is_deleted = 'n' ) AS b ON a.id = b.county_id
 	where 1=1

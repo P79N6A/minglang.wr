@@ -56,7 +56,7 @@ public interface CuntaoCountyExtMapper {
 	
 	/**
 	 * 获取办公场地信息
-	 * @param countyId
+	 * @param countyIds
 	 * @return
 	 */
 	List<CuntaoCountyOffice> getCuntaoCountyOffices(@Param("countyIds") List<Long> countyIds);

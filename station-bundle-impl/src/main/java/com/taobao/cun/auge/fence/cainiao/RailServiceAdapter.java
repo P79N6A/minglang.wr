@@ -40,4 +40,11 @@ public interface RailServiceAdapter {
 	 * @return
 	 */
 	boolean isExistsCainiaoFence(Long cainianFenceId);
+
+	/**
+	 * 获取菜鸟围栏
+	 * @param cainianFenceId
+	 * @return
+	 */
+	String getCainiaoFenceJSON(Long cainianFenceId);
 }
