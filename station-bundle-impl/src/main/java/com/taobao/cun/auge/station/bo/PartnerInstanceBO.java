@@ -349,5 +349,11 @@ public interface PartnerInstanceBO {
      * @return
      */
     public List<LxPartnerDto> getActiveLxListrByParentStationId(Long taobaoUserId);
+
+    /**
+     * 创建淘宝卖家和店铺ID
+     * @param taobaoUserId
+     */
+    public void createTaobaoSellerAndShopId(Long taobaoUserId);
 	
 }

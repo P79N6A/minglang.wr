@@ -403,5 +403,11 @@ public interface PartnerInstanceService {
 	 * @param operator
 	 */
 	public void updateIncomeMode(Long instanceId, String incomeMode, String operator);
+
+	/**
+	 * 创建淘宝卖家和店铺ID
+	 * @param taobaoUserId
+	 */
+	public Result<Boolean> createTaobaoSellerAndShopId(Long taobaoUserId);
     
 }

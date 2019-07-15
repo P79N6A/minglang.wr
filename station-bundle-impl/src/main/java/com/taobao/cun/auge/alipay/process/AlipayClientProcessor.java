@@ -39,6 +39,7 @@ public class AlipayClientProcessor {
             verifier = new VerifierImpl(keyStore);
             signChecker = new KeyCenterAlipaySignChecker(verifier, AliPayConstants.CUNTAO_ALIPAY_PUBLIC_KEY_ONLINE);
 
+
     }
 
     public static AlipayClient getAlipayClient() {

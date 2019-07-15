@@ -551,6 +551,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 					DomainUtils.beforeUpdate(updateAsset, "sys");
 					updateAsset.setId(a.getId());
 					updateAsset.setAliNo(a.getAliNo());
+					if (orgId != null) {
+						updateAsset.setOwnerOrgId(orgId);
+					}
 					updateAsset.setOwnerName(ownerName);
 					updateAsset.setOwnerWorkno(ownerWorkNo);
 					if (a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())|| a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())) {
@@ -558,7 +561,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 						updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 					}
 					if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
-						updateAsset.setUseAreaId(a.getOwnerOrgId());
+						//updateAsset.setUseAreaId(a.getOwnerOrgId());
+						updateAsset.setUseAreaId(orgId);
+
 						updateAsset.setUserId(ownerWorkNo);
 						updateAsset.setUserName(ownerName);
 					}

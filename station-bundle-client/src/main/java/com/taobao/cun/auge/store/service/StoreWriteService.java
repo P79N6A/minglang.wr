@@ -297,4 +297,12 @@ public interface StoreWriteService {
      */
     public Boolean openLightStorePermission(Long storeId);
 
+
+    /**
+     * 重跑任务
+     * @param storeId
+     * @return
+     */
+    public Boolean runSyncStoreTask(String storeId);
+
 }

@@ -21,6 +21,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.company.bo.EmployeeWriteBO;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.*;
+import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
@@ -158,6 +159,9 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
     @Autowired
     @Qualifier("storeEndorApiClient")
     private EndorApiClient storeEndorApiClient;
+
+    @Autowired
+    CriusTaskExecuteMapper criusTaskExecuteMapper;
 
     @Override
     public Long createByStationId(Long stationId) {
@@ -1120,4 +1124,25 @@ public class StoreWriteV2BOImpl implements StoreWriteV2BO {
         storeEndorApiClient.getUserRoleServiceClient().addUserRole(user, null);
         return Boolean.TRUE;
     }
+
+
+    @Override
+    public Boolean runSyncStoreTask(String storeId) {
+
+        CriusTaskExecuteExample example = new CriusTaskExecuteExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo("INIT_LIGHT_STORE")
+                .andBusinessNoEqualTo(storeId).andExecuteStateNotEqualTo("success");
+
+        List<CriusTaskExecute> existTaskList = criusTaskExecuteMapper.selectByExample(example);
+        if (existTaskList != null && existTaskList.size() >10) {
+            return Boolean.FALSE;
+        }
+        CriusTaskExecute record = new CriusTaskExecute();
+        record.setExecuteState("init");
+        record.setExecuteTimes(0);
+        record.setMessage("null");
+        criusTaskExecuteMapper.updateByExampleSelective(record,example);
+        return Boolean.TRUE;
+    }
+
 }
