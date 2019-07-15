@@ -14,11 +14,19 @@ public class CuntaoCountyTagEnum {
     public static final CuntaoCountyTagEnum protocolNotExists = new CuntaoCountyTagEnum("protocolNotExists", "未签协议");
     public static final CuntaoCountyTagEnum protocolMaybeNotExists = new CuntaoCountyTagEnum("protocolMaybeNotExists", "疑似未签协议");
 
+    public static final CuntaoCountyTagEnum riskHigh = new CuntaoCountyTagEnum("riskHigh", "高风险");
+    public static final CuntaoCountyTagEnum riskMiddle = new CuntaoCountyTagEnum("riskMiddle", "中风险");
+    public static final CuntaoCountyTagEnum riskLow = new CuntaoCountyTagEnum("riskLow", "低风险");
+
     static {
     	MAPPINGS.put("protocolWillExpire", protocolWillExpire);
         MAPPINGS.put("protocolExpire", protocolExpire);
     	MAPPINGS.put("protocolNotExists", protocolNotExists);
     	MAPPINGS.put("protocolMaybeNotExists", protocolMaybeNotExists);
+
+        MAPPINGS.put("riskHigh", riskHigh);
+        MAPPINGS.put("riskMiddle", riskMiddle);
+        MAPPINGS.put("riskLow", riskLow);
     }
 
     public CuntaoCountyTagEnum(String code, String desc) {

@@ -25,6 +25,7 @@ public class AlipayClientProcessor {
     @PostConstruct
     public void init() {
             // 正式环境
+
             KeyCenterProperties properties = new KeyCenterProperties();
             properties.setAppPublishNum(AliPayConstants.KEYCENTER_NUM_ONLINE);
             properties.setPreferProtocal("http");

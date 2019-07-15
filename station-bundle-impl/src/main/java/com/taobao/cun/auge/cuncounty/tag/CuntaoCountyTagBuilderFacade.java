@@ -26,7 +26,7 @@ public class CuntaoCountyTagBuilderFacade {
     private CuntaoCountyWriteBo cuntaoCountyWriteBo;
 
     public void build(){
-        Flux.create(publisher::publish)
+        Flux.create(publisher::tagPublish)
                 .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .parallel(3)
                 .map(cuntaoCountyProtocolTagBuilder::build)

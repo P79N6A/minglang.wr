@@ -36,7 +36,7 @@ public class CuntaoCountyVisitAlarm extends AbstractCuntaoCountyAlarm {
 
     @Override
     public void alarm() {
-        Flux.create(publisher::publish)
+        Flux.create(publisher::alarmPublish)
                 .onErrorContinue((e,o)->logger.error(e.getMessage(), e))
                 .map(t->t.getT2())
                 .parallel(3)
