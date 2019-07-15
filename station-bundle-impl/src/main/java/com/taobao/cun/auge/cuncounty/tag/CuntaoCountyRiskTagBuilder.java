@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.contactrecord.bo.CuntaoGovContactRecordQueryBo;
 import com.taobao.cun.auge.contactrecord.dto.CuntaoGovContactRecordSummaryDto;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyListItem;
+import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyTagEnum;
 import com.taobao.cun.auge.cuncounty.vo.CountyTag;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -32,15 +33,15 @@ public class CuntaoCountyRiskTagBuilder implements CuntaoCountyTagBuilder{
         if(CollectionUtils.isNotEmpty(list)){
             CuntaoGovContactRecordSummaryDto dto = list.get(0);
             if(dto.getLowRiskNum() != null && dto.getLowRiskNum().intValue() > 0){
-                countyTag.getTags().add(String.format(LOW, dto.getLowRiskNum()));
+                countyTag.getTags().add(new CuntaoCountyTagEnum(CuntaoCountyTagEnum.riskLow.getCode(),String.format(LOW, dto.getLowRiskNum())));
             }
 
             if(dto.getHighRiskNum() != null && dto.getHighRiskNum().intValue() > 0){
-                countyTag.getTags().add(String.format(HIGH, dto.getHighRiskNum()));
+                countyTag.getTags().add(new CuntaoCountyTagEnum(CuntaoCountyTagEnum.riskHigh.getCode(),String.format(HIGH, dto.getHighRiskNum())));
             }
 
             if(dto.getMiddleRiskNum() != null && dto.getMiddleRiskNum().intValue() > 0){
-                countyTag.getTags().add(String.format(MIDDLE, dto.getMiddleRiskNum()));
+                countyTag.getTags().add(new CuntaoCountyTagEnum(CuntaoCountyTagEnum.riskMiddle.getCode(), String.format(MIDDLE, dto.getMiddleRiskNum())));
             }
         }
         return tuple;

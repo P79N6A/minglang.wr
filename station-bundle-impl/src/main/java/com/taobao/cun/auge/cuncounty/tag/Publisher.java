@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.cuncounty.tag;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageOutput;
 import com.taobao.cun.auge.cuncounty.bo.CuntaoCountyQueryBo;
 import com.taobao.cun.auge.cuncounty.dto.CuntaoCountyCondition;
@@ -12,6 +13,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Flux发布
@@ -21,12 +23,22 @@ public class Publisher{
     @Resource
     private CuntaoCountyQueryBo cuntaoCountyQueryBo;
 
-    public void publish(FluxSink<Tuple2<CountyTag, CuntaoCountyListItem>> sink) {
+    public void tagPublish(FluxSink<Tuple2<CountyTag, CuntaoCountyListItem>> sink) {
+        doPublish(sink, Lists.newArrayList(
+                CuntaoCountyStateEnum.OPENING.getCode(),
+                CuntaoCountyStateEnum.WAIT_OPEN.getCode()));
+    }
+
+    public void alarmPublish(FluxSink<Tuple2<CountyTag, CuntaoCountyListItem>> sink) {
+        doPublish(sink, Lists.newArrayList(CuntaoCountyStateEnum.OPENING.getCode()));
+    }
+
+    private void doPublish(FluxSink<Tuple2<CountyTag, CuntaoCountyListItem>> sink, List<String> states){
         CuntaoCountyCondition condition = new CuntaoCountyCondition();
         condition.setOrgId(1L);
         condition.setPage(1);
         condition.setPageSize(Integer.MAX_VALUE);
-        condition.setState(CuntaoCountyStateEnum.OPENING.getCode());
+        condition.setStates(states);
         PageOutput<CuntaoCountyListItem> page = cuntaoCountyQueryBo.query(condition);
         page.getResult().forEach(c-> {
             CountyTag countyTag = new CountyTag();

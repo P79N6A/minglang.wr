@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.cuncounty.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.taobao.cun.auge.common.PageInput;
 
@@ -26,6 +27,26 @@ public class CuntaoCountyCondition extends PageInput {
 	private Date protocolEndDateFrom;
 	
 	private Date protocolEndDateTo;
+
+	private String tag;
+
+	private List<String> states;
+
+	public List<String> getStates() {
+		return states;
+	}
+
+	public void setStates(List<String> states) {
+		this.states = states;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 
 	public String getState() {
 		return state;
