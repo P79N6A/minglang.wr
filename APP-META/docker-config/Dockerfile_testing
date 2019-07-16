@@ -3,6 +3,4 @@ FROM reg.docker.alibaba-inc.com/aone-base-global/xls7u_base:1.0.4
 RUN sed -i '$i\sed -i "s\/180\/360\/g" /home/admin/${APP_NAME}/bin/preload.sh' /home/admin/start.sh
 RUN sed -i '$i\sed -i "N;68i\JAVA_OPTS=\\\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000\\\"" /home/admin/${APP_NAME}/bin/setenv.sh' /home/admin/start.sh
 
-ENV JPDA_ENABLE=1
-
 COPY ${APP_NAME}.tgz /home/admin/${APP_NAME}/target/${APP_NAME}.tgz
