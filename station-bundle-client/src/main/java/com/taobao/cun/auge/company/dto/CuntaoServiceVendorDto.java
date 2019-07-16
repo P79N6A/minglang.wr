@@ -13,6 +13,10 @@ public class CuntaoServiceVendorDto implements Serializable{
 	@NotNull(message="公司名称不能为空")
     private String companyName;
 
+	/**
+	 * 一律以userId为准
+	 */
+	@Deprecated
 	@NotNull(message="联系人旺旺不能为空")
     private String taobaoNick;
 
@@ -28,10 +32,8 @@ public class CuntaoServiceVendorDto implements Serializable{
 	 *支付宝账号
 	 */
 	private String alipayOutUser;
-	
-	/**
-	 * 公司TaobaoNick账号对应的taobaoUserId
-	 */
+
+	@NotNull(message="taobaoUserId不能为空")
 	private Long taobaoUserId;
 	
 	private String operator;
