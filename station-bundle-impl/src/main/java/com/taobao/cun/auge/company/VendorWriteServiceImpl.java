@@ -76,11 +76,11 @@ public class VendorWriteServiceImpl implements VendorWriteService {
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
-        errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoNick());
+        errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoUserId());
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
-        errorInfo = checkTaobaoNickExists(cuntaoServiceVendorDto.getTaobaoNick(), "淘宝账号已存在!");
+        errorInfo = checkTaobaoIdExists(cuntaoServiceVendorDto.getTaobaoUserId(), "淘宝账号已存在!");
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
@@ -113,11 +113,11 @@ public class VendorWriteServiceImpl implements VendorWriteService {
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
-        errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoNick());
+        errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoUserId());
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
-        errorInfo = checkTaobaoNickExists(cuntaoServiceVendorDto.getTaobaoNick(), "淘宝账号已存在!");
+        errorInfo = checkTaobaoIdExists(cuntaoServiceVendorDto.getTaobaoUserId(), "淘宝账号已存在!");
         if (errorInfo != null) {
             return Result.of(errorInfo);
         }
@@ -164,9 +164,9 @@ public class VendorWriteServiceImpl implements VendorWriteService {
     }
 
 
-    private ErrorInfo checkTaobaoNickExists(String taobaoNick, String errorMessage) {
+    private ErrorInfo checkTaobaoIdExists(Long userId, String errorMessage) {
         CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
-        example.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick);
+        example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(userId);
         List<CuntaoServiceVendor> result = cuntaoServiceVendorMapper.selectByExample(example);
         if (result != null && !result.isEmpty()) {
             return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, errorMessage);
@@ -175,13 +175,13 @@ public class VendorWriteServiceImpl implements VendorWriteService {
     }
 
 
-    private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick) {
-        ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(taobaoNick);
-        ErrorInfo errorInfo = checkTaobaoNick(companyUserDOresult, "服务商淘宝账号不存在或状态异常!");
+    private ErrorInfo checkTaobaoAndAliPayInfo(Long userId) {
+        ResultDO<BaseUserDO> result =uicReadServiceClient.getBaseUserByUserId(userId);
+        ErrorInfo errorInfo = checkTaobaoNick(result, "服务商淘宝账号不存在或状态异常!");
         if (errorInfo != null) {
             return errorInfo;
         }
-        BaseUserDO baseUserDO = companyUserDOresult.getModule();
+        BaseUserDO baseUserDO = result.getModule();
         ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(baseUserDO.getUserId());
         errorInfo = checkAlipayAccount(basePaymentAccountDOResult, "服务商淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
         if (errorInfo != null) {
